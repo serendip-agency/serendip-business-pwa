@@ -1,0 +1,99 @@
+<div id="router" [class.startActive]="startActive">
+    <router-outlet></router-outlet>
+</div>
+<div *ngIf='loggedIn' id="start-button" (click)="startActive = !startActive">
+    <img src="assets/graphics/brand/serendip-circle.svg" alt="" />
+</div>
+
+<div id="start" (click)="clickOnStartWrapper($event)" [class.fadeIn]="startActive">
+    
+    <div class="inner">
+        <div class="search">
+            <div class="search-inner">
+                <input type="text" dir="auto"  [(ngModel)]="search.text" placeholder="جست‌و‌جو ..." />
+                <img src='assets/icons/search.svg' />
+            </div>
+        </div>
+        <nav>
+            <ul>
+                <li>
+                    <a [routerLink]="['/']">
+                        <img src='assets/icons/dashboard-1.svg' /> 
+                        داشبورد
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/people']">
+                        <img src='assets/icons/people-users-1.svg' /> 
+                        اشخاص
+
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/company']">
+                        <img src='assets/icons/building-corp.svg' />
+                         شرکت ها
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/interaction']">
+                        <img src='assets/icons/integration-5.svg' />
+                         تعاملات
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/service']">
+                        <img src='assets/icons/service.svg' />
+                         خدمات
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/complaint']">
+                        <img src='assets/icons/complaints-customer-voice-2.svg' />
+                         شکایات
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/sale']">
+                        <img src='assets/icons/sell-money-expense-1.svg' /> 
+                        فروش
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/campaign']">
+                        <img src='assets/icons/campaign-3.svg' /> 
+                        کمپین
+                    </a>
+                </li>
+
+                <li>
+                    <a [routerLink]="['/settings']">
+                        <img src='assets/icons/settings-1.svg' /> 
+                        تنظیمات
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="tabs">
+            <mat-tab-group [color]="'ascent'" dynamicHeight="true">
+                <mat-tab label="پیام‌ها">
+                    <div class="tab-content">
+                        لیست پیام ها
+                    </div>
+                </mat-tab>
+                <mat-tab label="اعلان‌ها">
+                    <div class="tab-content">
+                        لیست اعلان ها
+                    </div>
+                </mat-tab>
+                <mat-tab label="وظایف">
+                    <div class="tab-content">
+                        لیست وظایف
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+
+    </div>
+</div>

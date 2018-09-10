@@ -1,0 +1,10 @@
+<div class="search-container">
+
+  <mat-form-field class="basedOn">
+    <mat-select placeholder="جست‌وجو بر اساس" [formControl]="selectedReportTypes" multiple>
+      <mat-option *ngFor="let item of reportTypes" [value]="item.key">
+        {{item.label}}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+</div>

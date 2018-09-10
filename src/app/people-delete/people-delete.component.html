@@ -1,0 +1,13 @@
+<div *ngIf="data && data.model">
+  <h1>آیا نسبت به حذف این شخص اطمینان دارید؟</h1>
+
+  <mat-list>
+    <mat-list-item> نام: {{data.model.firstName + ' ' + data.model.lastName}} </mat-list-item>
+  </mat-list>
+
+  <div class="button-row">
+    <button mat-raised-button color="warn">بله، حذف شود.</button>
+    <button mat-button>انصراف</button>
+  </div>
+
+</div>
