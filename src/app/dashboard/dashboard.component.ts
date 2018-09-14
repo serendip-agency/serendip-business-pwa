@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { PeopleFormComponent } from '../people-form/people-form.component';
-import { PeopleTableComponent } from '../people-table/people-table.component';
+import { PeopleFormComponent } from '../people/people-form/people-form.component';
+import { PeopleTableComponent } from '../people/people-table/people-table.component';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { Subscription } from 'rxjs';
 import * as _ from 'underscore';
@@ -12,8 +12,8 @@ import { DashboardSchema } from './dashboard.schema';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  activatedRoute: ActivatedRoute;
-  router: Router;
+
+  
   routerSubscription: Subscription;
   tab: any;
   section: any;
@@ -22,10 +22,9 @@ export class DashboardComponent implements OnInit {
   schema: DashboardSchema;
   screen: string;
 
-  constructor(private _router: Router, private _activatedRoute: ActivatedRoute) {
+  constructor(private router: Router, private activatedRoute: ActivatedRoute) {
 
-    this.router = _router;
-    this.activatedRoute = _activatedRoute;
+    
     this.schema = new DashboardSchema();
 
   }

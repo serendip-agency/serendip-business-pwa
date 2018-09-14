@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DataService } from '../data.service';
-import { InsertMessage } from '../messaging/InsertMessage';
-import { MessagingService } from '../messaging.service';
+import { DataService } from '../../data.service';
+import { InsertMessage } from '../../messaging/InsertMessage';
+import { MessagingService } from '../../messaging.service';
 
 @Component({
   selector: 'app-people-form',
@@ -47,7 +47,11 @@ export class PeopleFormComponent implements OnInit {
   }
 
 
+  getFormArray(form, arrayName) {
 
+    return (form as any).get(arrayName).controls;
+
+  }
   ngOnInit() {
 
     this.peopleForm = this.fb.group({

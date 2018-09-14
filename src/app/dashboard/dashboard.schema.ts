@@ -1,6 +1,6 @@
-import { PeopleFormComponent } from "../people-form/people-form.component";
-import { PeopleTableComponent } from "../people-table/people-table.component";
-import { PeopleListComponent } from "../people-list/people-list.component";
+import { PeopleFormComponent } from "../people/people-form/people-form.component";
+import { PeopleTableComponent } from "../people/people-table/people-table.component";
+import { PeopleListComponent } from "../people/people-list/people-list.component";
 
 export class DashboardSchema {
     private defaults = [
@@ -19,6 +19,14 @@ export class DashboardSchema {
                 {
                     name: 'new',
                     title: 'ثبت فرد جدید',
+                    widgets: [{
+                        inputs: {},
+                        component: PeopleFormComponent
+                    }]
+                },
+                {
+                    name: 'edit',
+                    showInNav : false,
                     widgets: [{
                         inputs: {},
                         component: PeopleFormComponent

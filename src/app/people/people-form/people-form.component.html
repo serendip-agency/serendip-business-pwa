@@ -20,7 +20,7 @@
 
         <div formArrayName="mobiles">
 
-          <div class="double-field" *ngFor="let social of peopleForm.get('mobiles').controls; let i=index" [formGroupName]="i">
+          <div class="double-field" *ngFor="let social of getFormArray(peopleForm,'mobiles'); let i=index" [formGroupName]="i">
 
             <mat-form-field class="w-30">
 
@@ -45,7 +45,7 @@
         </div>
 
         <div formArrayName="emails">
-          <mat-form-field *ngFor="let mobile of peopleForm.controls.emails.controls; let i=index">
+          <mat-form-field *ngFor="let mobile of getFormArray(peopleForm,'emails'); let i=index">
             <input matInput placeholder="ایمیل {{i == 0 ? '' : i + 1}}" [formControlName]="i" dir="ltr" />
 
             <div class="plus" *ngIf="i == 0" matSuffix (click)="addMobile()">
@@ -60,7 +60,7 @@
 
         <div formArrayName="socials">
 
-          <div class="double-field" *ngFor="let social of peopleForm.get('socials').controls; let i=index" [formGroupName]="i">
+          <div class="double-field" *ngFor="let social of getFormArray(peopleForm,'socials'); let i=index" [formGroupName]="i">
 
             <mat-form-field class="w-40">
 

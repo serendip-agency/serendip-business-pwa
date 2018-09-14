@@ -51,16 +51,39 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 
 
-import { PeopleFormComponent } from './people-form/people-form.component';
+import { PeopleFormComponent } from './people/people-form/people-form.component';
 import { IdbService } from './idb.service';
 import { SyncService } from './sync.service';
-import { PeopleTableComponent } from './people-table/people-table.component';
-import { PeopleSearchComponent } from './people-search/people-search.component';
+import { PeopleTableComponent } from './people/people-table/people-table.component';
+import { PeopleSearchComponent } from './people/people-search/people-search.component';
 
 import { DynamicModule } from 'ng-dynamic-component';
 import { MessagingService } from './messaging.service';
-import { PeopleDeleteComponent } from './people-delete/people-delete.component';
-import { PeopleListComponent } from './people-list/people-list.component';
+import { PeopleDeleteComponent } from './people/people-delete/people-delete.component';
+import { PeopleListComponent } from './people/people-list/people-list.component';
+import { CompanyDeleteComponent } from './company/company-delete/company-delete.component';
+import { CompanyListComponent } from './company/company-list/company-list.component';
+import { CompanyTableComponent } from './company/company-table/company-table.component';
+import { CompanyFormComponent } from './company/company-form/company-form.component';
+import { ComplaintDeleteComponent } from './complaint/complaint-delete/complaint-delete.component';
+import { ComplaintFormComponent } from './complaint/complaint-form/complaint-form.component';
+import { ComplaintTableComponent } from './complaint/complaint-table/complaint-table.component';
+import { ComplaintListComponent } from './complaint/complaint-list/complaint-list.component';
+import { ServiceDeleteComponent } from './service/service-delete/service-delete.component';
+import { ServiceTableComponent } from './service/service-table/service-table.component';
+import { ServiceListComponent } from './service/service-list/service-list.component';
+import { ServiceFormComponent } from './service/service-form/service-form.component';
+import { ProductDeleteComponent } from './product/product-delete/product-delete.component';
+import { ProductListComponent } from './product/product-list/product-list.component';
+import { ProductFormComponent } from './product/product-form/product-form.component';
+import { ProductTableComponent } from './product/product-table/product-table.component';
+import { CompanySearchComponent } from './company/company-search/company-search.component';
+import { ComplaintSearchComponent } from './complaint/complaint-search/complaint-search.component';
+import { ProductSearchComponent } from './product/product-search/product-search.component';
+import { InteractionFormComponent } from './interaction/interaction-form/interaction-form.component';
+import { InteractionTableComponent } from './interaction/interaction-table/interaction-table.component';
+import { InteractionListComponent } from './interaction/interaction-list/interaction-list.component';
+import { InteractionDeleteComponent } from './interaction/interaction-delete/interaction-delete.component';
 
 
 @NgModule({
@@ -72,7 +95,30 @@ import { PeopleListComponent } from './people-list/people-list.component';
     PeopleTableComponent,
     PeopleSearchComponent,
     PeopleDeleteComponent,
-    PeopleListComponent
+    PeopleListComponent,
+    CompanyDeleteComponent,
+    CompanyListComponent,
+    CompanyTableComponent,
+    CompanyFormComponent,
+    ComplaintDeleteComponent,
+    ComplaintFormComponent,
+    ComplaintTableComponent,
+    ComplaintListComponent,
+    ServiceDeleteComponent,
+    ServiceTableComponent,
+    ServiceListComponent,
+    ServiceFormComponent,
+    ProductDeleteComponent,
+    ProductListComponent,
+    ProductFormComponent,
+    ProductTableComponent,
+    CompanySearchComponent,
+    ComplaintSearchComponent,
+    ProductSearchComponent,
+    InteractionFormComponent,
+    InteractionTableComponent,
+    InteractionListComponent,
+    InteractionDeleteComponent
   ],
   entryComponents : [PeopleDeleteComponent],
   imports: [

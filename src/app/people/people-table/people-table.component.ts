@@ -1,12 +1,13 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatPaginatorIntl, MatBottomSheet } from '@angular/material';
-import { DataService } from '../data.service';
+import { DataService } from '../../data.service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { SelectionModel } from '@angular/cdk/collections';
 import { Subscription } from 'rxjs';
-import { InsertMessage } from '../messaging/InsertMessage';
-import { MessagingService } from '../messaging.service';
+import { InsertMessage } from '../../messaging/InsertMessage';
+import { MessagingService } from '../../messaging.service';
 import { PeopleDeleteComponent } from '../people-delete/people-delete.component';
+import { Router } from '@angular/router';
 
 
 
@@ -35,7 +36,7 @@ export class PeopleTableComponent implements OnInit, OnDestroy {
 
   selection = new SelectionModel<any>(true, []);
 
-  constructor(private bottomSheet: MatBottomSheet, private messagingService: MessagingService, private dataService: DataService, private sanitizer: DomSanitizer, _matPaginatorIntl: MatPaginatorIntl) {
+  constructor(private router: Router, private bottomSheet: MatBottomSheet, private messagingService: MessagingService, private dataService: DataService, private sanitizer: DomSanitizer, _matPaginatorIntl: MatPaginatorIntl) {
 
     _matPaginatorIntl.firstPageLabel = "اولین صفحه";
     _matPaginatorIntl.itemsPerPageLabel = "تعداد رکورد در هر صفحه";
@@ -91,13 +92,12 @@ export class PeopleTableComponent implements OnInit, OnDestroy {
   }
 
   edit(model) {
-
-    console.log(model);
+    this.router.navigate(['/dashboard', 'people', 'edit', model._id]);
   }
 
   delete(model) {
     this.bottomSheet.open(PeopleDeleteComponent, { data: { model } });
-    
+
   }
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
