@@ -1,0 +1,119 @@
+<div id="crm-manage">
+
+  <div class="box">
+    <mat-card *ngIf="tab == 'new'">
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image">
+          <img src="assets/graphics/brand/serendip-circle.svg" alt="" />
+
+        </div>
+        <mat-card-title>
+          ثبت اطلاعات کسب و کار
+        </mat-card-title>
+        <mat-card-subtitle>
+          نرم افزار مدیریت ارتباط با مشتری
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <form (ngSubmit)="saveCrm()" [formGroup]="crmForm" class="">
+
+          <!-- <mat-form-field>
+          <input matInput placeholder="نام" formControlName="firstName" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <input matInput placeholder="نام‌خانوادگی" formControlName="lastName" />
+        </mat-form-field>
+
+
+        <mat-form-field>
+          <input matInput placeholder="آدرس ایمیل" dir="auto" formControlName="email" />
+        </mat-form-field> -->
+
+
+          <mat-form-field>
+            <input matInput placeholder="نام کسب و کار" formControlName="title" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-chip-list #chipList>
+              <mat-chip *ngFor="let item of crmForm.get('members').value" (removed)="removeMember(item)">
+                {{item}}
+                <mat-icon matChipRemove>
+                  <img src="assets/icons/recycle-bin-trash.svg" alt="" />
+                </mat-icon>
+              </mat-chip>
+              <input placeholder="شماره تماس دیگر کاربران را وارد کنید." [matChipInputFor]="chipList"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes" [matChipInputAddOnBlur]="true"
+                (matChipInputTokenEnd)="addMember($event)">
+            </mat-chip-list>
+          </mat-form-field>
+
+
+          <div class="buttons">
+            <button color="primary" type="submit" mat-raised-button>ذخیره</button>
+          </div>
+
+
+
+        </form>
+      </mat-card-content>
+      <mat-card-actions>
+
+        <button color="secondary" type="button" [routerLink]="['/crm','list']" *ngIf="list.length > 0"
+          mat-raised-button>
+          لیست کسب و کارها
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card *ngIf="tab == 'choose' || tab == 'list'">
+      <mat-card-header>
+        <div mat-card-avatar class="example-header-image">
+          <img src="assets/graphics/brand/serendip-circle.svg" alt="" />
+
+        </div>
+        <mat-card-title>
+          انتخاب کسب و کار
+        </mat-card-title>
+        <mat-card-subtitle>
+          نرم افزار مدیریت ارتباط با مشتری
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+
+
+        <div class="list">
+          <div>
+
+            <button color="secondary" *ngFor="let item of list" type="button" (click)="choose(item)" mat-raised-button>
+              <img *ngIf="item._id == crmService.getActiveCrmId()" src="assets/icons/check-1.svg" alt="" />
+              <img *ngIf="item._id != crmService.getActiveCrmId()" src="assets/icons/arrow-left-back-2.svg" alt="" />
+              کسب و کار {{item.title}}
+
+            </button>
+          </div>
+          <div>
+
+
+          </div>
+
+        </div>
+
+
+
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button color="primary" type="button" [routerLink]="['/crm','new']" mat-raised-button>
+          ثبت کسب و کار جدید
+        </button>
+
+      </mat-card-actions>
+
+    </mat-card>
+  </div>
+
+</div>

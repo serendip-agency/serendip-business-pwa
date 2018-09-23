@@ -13,14 +13,14 @@ export interface Message {
   /** The message payload. This is an instance of the channel type */
   payload: any;
 
-  /** 
+  /**
    * Optional list of targets for this message. If not set, all channel subscribers gets the message.
    * Multiple components can use the same target id */
   targets?: string[];
 }
 
 // Note that typeof === 'function' here
-export type Newable<T> = { new(...args: any[]): T };
+export interface Newable<T> { new(...args: any[]): T; }
 
 export class ListenParams<T> {
   type: Newable<T> = null;
@@ -46,8 +46,7 @@ export class MessagingService {
   public listen<T>(params: ListenParams<T> | Newable<T>, next: (value: T) => void) {
     if (typeof params === 'object') {
       return this.channelImpl(params.type, params.targets, next);
-    }
-    else {
+    } else {
       return this.channelImpl(params, [], next);
     }
   }
@@ -55,8 +54,8 @@ export class MessagingService {
   private channelImpl<T>(msgType: { new(...args: any[]): T }, targets: string[], next: (value: T) => void): Subscription {
     const channel = msgType;
     return this.messageSubject.pipe(
-      filter((message) => { return message.channel === channel && this.validTarget(message.targets, targets); }),
-      map((message) => { return message.payload; })
+      filter((message) => message.channel === channel && this.validTarget(message.targets, targets)),
+      map((message) => message.payload)
     ).subscribe(next);
   }
 

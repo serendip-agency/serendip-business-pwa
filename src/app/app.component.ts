@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { SyncService } from './sync.service';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router, NavigationEnd, NavigationCancel } from '@angular/router';
+import { CrmService } from './crm.service';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,7 @@ export class AppComponent implements OnInit {
   loggedIn: boolean = false;
   routerLoading: boolean;
 
-  constructor(private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
+  constructor(private crmService : CrmService, private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
     this.snackBar = _snackBar;
     this.moment = _moment;
     this.authService = _authService;

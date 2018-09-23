@@ -1,3 +1,70 @@
-<p>
-  product-form works!
-</p>
+<div class="widget widget-full">
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar>
+        <img src="/assets/icons/barcode-product-2.svg" />
+      </div>
+      <mat-card-title>فرم محصول </mat-card-title>
+      <mat-card-subtitle>ثبت محصول جدید</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="logbox">
+        {{ productForm.value | json }}
+      </div>
+      <form [formGroup]="productForm" class="">
+
+        <mat-form-field>
+          <input matInput placeholder="نام محصول" formControlName="name" />
+        </mat-form-field>
+
+        <div class="double-field">
+
+
+         
+
+
+          <mat-form-field class="w-70">
+            <input matInput type="number" placeholder="قیمت محصول" formControlName="price" />
+          </mat-form-field>
+
+          <mat-form-field class="w-30">
+              <mat-select placeholder="واحد پولی" formControlName="currency">
+                <mat-option *ngFor="let type of ['ریال','تومان','دلار','یورو','یوآن']" [value]="type">
+                  {{type}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+        </div>
+
+        <mat-form-field>
+          <mat-chip-list #companyChipList>
+            <mat-chip *ngFor="let item of productForm.get('company').value ? [productForm.get('company').value] : []"
+              (click)="goCompany(item)" (removed)="productForm.get('company').setValue('')">
+              {{ getCompany(item)?.name }}
+              <mat-icon matChipRemove>
+                <img src="assets/icons/recycle-bin-trash.svg" alt="" />
+              </mat-icon>
+            </mat-chip>
+            <input placeholder="شرکت تامین کننده" #companyAutoInput (input)="filterCompany(companyAutoInput.value)"
+              [matChipInputFor]="companyChipList" [matAutocomplete]="companyAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="companyAutoInput.value= ''">
+          </mat-chip-list>
+          <mat-autocomplete #companyAuto="matAutocomplete" (optionSelected)="selectCompany($event);companyAutoInput.value= ''">
+            <mat-option *ngFor="let item of filteredCompanies" [value]="item._id">
+              {{item.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+
+      </form>
+
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="save()">ثبت</button>
+      <button mat-button type="reset" (click)="reset()">ریست</button>
+    </mat-card-actions>
+  </mat-card>
+</div>

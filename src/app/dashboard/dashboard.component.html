@@ -1,41 +1,41 @@
 <header>
 
-    <div class="inner">
-        <div class="logo">
-            <img src='/assets/graphics/brand/serendip-farsi.svg' />
-        </div>
-
-        <div class="title">
-            <div class="icon">
-                <img src='/assets/icons/people-users-1.svg' />
-            </div>
-            {{currentSchema.title}}
-        </div>
-        <div class="clear"></div>
-
+  <div class="inner">
+    <div class="logo">
+      <img src='/assets/graphics/brand/serendip-farsi.svg' />
     </div>
 
+    <div class="title" *ngIf="dashboardService.currentSection">
+      <div class="icon">
+        <img [src]=' "/assets/icons/" + dashboardService.currentSection.icon + ".svg"' />
+      </div>
+      {{dashboardService.currentSection.title}}
+    </div>
+    <div class="clear"></div>
 
-    <nav>
+  </div>
 
+  <nav>
 
-        <a *ngFor="let item of currentSchema.tabs" [routerLink]="['/dashboard',currentSchema.name,item.name]"
-            routerLinkActive="active-link">
-            <img [src]="'/assets/icons/tabs/' + item.name + '.svg'" />
-            {{item.title}}
-        </a>
+    <a *ngFor="let item of dashboardService.getActiveTabs();trackBy:item?.title" [routerLink]="['/dashboard',dashboardService.currentSection.name,item.name]"
+      routerLinkActive="active-link">
+      <img [src]="item.icon ? '/assets/icons/' + item.icon + '.svg' : '/assets/icons/tabs/' + item.name + '.svg'" />
 
-    </nav>
+      <span>
+      {{item.title}}
+    </span>
+    </a>
+
+  </nav>
 
 </header>
 
 <div class="grid-container">
 
-    <div class="widget-container" *ngFor="let item of currentTab.widgets" [hidden]="item.screen && item.screen != screen">
-        <ndc-dynamic *ngIf="!item.screen || item.screen == screen" [ndcDynamicComponent]="item.component"></ndc-dynamic>
+  <div class="widget-container" *ngFor="let item of getWidgets()" [hidden]="item.screen && item.screen != dashboardService.screen">
+    <ndc-dynamic *ngIf="!item.screen || item.screen == dashboardService.screen" [ndcDynamicComponent]="getComponent( item.component)"></ndc-dynamic>
+  </div>
 
-    </div>
-
-    <div class="clear"></div>
+  <div class="clear"></div>
 
 </div>

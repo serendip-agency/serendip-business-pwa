@@ -24,23 +24,22 @@
     background: rgba(0, 0, 0, 0.5);
     filter: grayscale(1);
     color: #fff;
-    opacity: 0;
-    transition: all ease .5s, opacity ease .7s;
+    opacity: 0; // transition: opacity ease .3s;
     z-index: -1;
-    
     .inner {
         max-width: 990px;
-        width:100%;
+        width: 100%;
         margin: 0 auto;
         background: #100a3e url('/assets/graphics/auth/astro-small.svg') no-repeat center bottom;
-        background-size: 140px;
+        background-size: 64px;
         height: 100%;
         border-radius: 5px 5px 0 0;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         position: absolute;
         bottom: 0;
         left: -600px;
         transition: left ease .5s;
+        transition: none;
         &:after {
             position: absolute;
             width: 100%;
@@ -52,8 +51,7 @@
             background: url('/assets/graphics/background/star-back.svg') repeat center bottom;
             background-size: 1200px;
             opacity: .3;
-        z-index: -1;
-
+            z-index: -1;
         }
     }
     &.fadeIn {
@@ -67,6 +65,8 @@
         }
     }
     .search {
+        max-width: 480px;
+        margin: 0 auto;
         margin-bottom: 32px;
         .search-inner {
             padding: 16px;
@@ -113,19 +113,20 @@
         }
     }
     nav {
-        padding: 16px;
+        padding: 15px;
+        padding-bottom:0;
+
         ul {
             padding: 0;
             margin: 0;
-            white-space: nowrap;
             overflow: hidden;
-            overflow-x: auto;
-            overflow-y: hidden;
             direction: rtl;
+            text-align: center;
             li {
                 display: inline-block;
                 width: 64px;
                 height: 64px;
+                margin: 5px 0;
                 a {
                     color: #fff;
                     text-decoration: none;
@@ -136,24 +137,74 @@
                         width: 40px;
                         height: 40px;
                         border-radius: 100%;
-                        box-sizing: border-box;
-                        filter:invert(1);
+                        background: #fff;
+                        padding: 2px;
+                        box-sizing: border-box; // filter: invert(1);
                         display: block;
                         margin: 0 auto;
-                        margin-bottom: 6px;
+                    }
+                    span {
+                        display: block;
+                        line-height: 24px;
+                        height: 24px;
                     }
                 }
             }
         }
     }
     .tabs {
-        background: rgba(255, 255, 255, 0.1);
-        margin: 0 15px;
+        margin: 0 auto;
+        box-sizing: border-box;
+        padding: 15px;
+        width: 100%;
+
+        .tabs-inner {
+            max-width: 480px;
+            margin:0 auto;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .tab-content {
             margin-top: 10px;
             padding: 16px;
             min-height: 200px;
             border-radius: 0 0 5px 5px;
+        }
+    }
+}
+
+
+
+
+@media(max-width:480px){
+    #start{
+        nav{
+            ul{
+              
+                margin:0 auto;
+                li{
+                    float: right;
+                    width:16.666%;
+
+                }
+            }
+        }
+    }
+}
+
+
+@media(max-width:380px){
+    #start{
+        nav{
+            ul{
+              
+                margin:0 auto;
+                li{
+                    float: right;
+                    width:25%;
+
+                }
+            }
         }
     }
 }

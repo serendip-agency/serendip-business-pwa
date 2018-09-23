@@ -1,3 +1,128 @@
-<p>
-  complaint-form works!
-</p>
+<div class="widget">
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar>
+        <img src="/assets/icons/complaints-customer-voice-2.svg" />
+      </div>
+      <mat-card-title>فرم شکایات</mat-card-title>
+      <mat-card-subtitle>ثبت شکایت جدید</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- <md-datepicker type="wide" #picker></md-datepicker>
+
+      <mat-form-field>
+        <input required matInput [(ngModel)]="today" name="today"  [matDatepicker]="picker" placeholder="تاریخ">
+
+      </mat-form-field> -->
+
+      <!-- <dp-date-picker dir="rtl" [(ngModel)]="dateObject" mode="day" placeholder="تاریخ" theme="dp-material">
+      </dp-date-picker> -->
+
+      <!-- <mat-form-field>
+        <input matInput [matDatepicker]="picker" placeholder="Choose a date">
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <button mat-raised-button (click)="picker.open()">Open</button> -->
+
+      <div class="logbox">
+        {{ complaintForm.value | json }}
+      </div>
+      <form [formGroup]="complaintForm" class="">
+
+        <mat-form-field>
+          <input dir="ltr" matInput placeholder="تاریخ دریافت شکایت" required autocomplete="off" formControlName="receivedAtDate"
+            theme="dp-material" [dpDayPicker]="{}" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <input dir="ltr" matInput [ngxTimepicker]="picker" [format]="24" placeholder="ساعت دریافت شکایت" required
+            autocomplete="off" formControlName="receivedAtTime" />
+
+          <ngx-material-timepicker #picker [cancelBtnTmpl]="timerCancelButton" [confirmBtnTmpl]="timerConfirmButton"></ngx-material-timepicker>
+
+          <ng-template #timerConfirmButton>
+            <button mat-raised-button color="primary">انتخاب</button>
+
+          </ng-template>
+          <ng-template #timerCancelButton>
+            <button mat-raised-button color="secondary">انصراف</button>
+          </ng-template>
+        </mat-form-field>
+
+
+        <mat-form-field>
+          <mat-chip-list #personChipList>
+            <mat-chip *ngFor="let item of complaintForm.get('person').value ? [complaintForm.get('person').value] : []"
+              (click)="goEmployee(item)" (removed)="complaintForm.get('person').setValue('')">
+              {{ getEmployee(item)?.firstName }}
+              {{ getEmployee(item)?.lastName }}
+              <mat-icon matChipRemove>
+                <img src="assets/icons/recycle-bin-trash.svg" alt="" />
+              </mat-icon>
+            </mat-chip>
+            <input placeholder="فرد شکایت کننده" #peopleAutoInput (input)="filterPeople(peopleAutoInput.value)"
+              [matChipInputFor]="personChipList" [matAutocomplete]="peopleAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="peopleAutoInput.value= ''">
+          </mat-chip-list>
+          <mat-autocomplete #peopleAuto="matAutocomplete" (optionSelected)="selectEmployee($event);peopleAutoInput.value= ''">
+            <mat-option *ngFor="let item of filteredPeople" [value]="item._id">
+              {{item.firstName}}
+              {{item.lastName}}
+              {{ rpd(item.mobiles[0]?.value) }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+
+        <mat-form-field>
+          <mat-chip-list #companyChipList>
+            <mat-chip *ngFor="let item of complaintForm.get('company').value ? [complaintForm.get('company').value] : []"
+              (click)="goCompany(item)" (removed)="complaintForm.get('company').setValue('')">
+              {{ getCompany(item)?.name }}
+              <mat-icon matChipRemove>
+                <img src="assets/icons/recycle-bin-trash.svg" alt="" />
+              </mat-icon>
+            </mat-chip>
+            <input placeholder="شرکت شکایت کننده" #companyAutoInput (input)="filterCompany(companyAutoInput.value)"
+              [matChipInputFor]="companyChipList" [matAutocomplete]="companyAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="companyAutoInput.value= ''">
+          </mat-chip-list>
+          <mat-autocomplete #companyAuto="matAutocomplete" (optionSelected)="selectCompany($event);companyAutoInput.value= ''">
+            <mat-option *ngFor="let item of filteredCompanies" [value]="item._id">
+              {{item.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+
+        <div>
+          <label for="">نوع شکایت: </label>
+          <mat-radio-group formControlName="type">
+            <mat-radio-button value="product">
+              شکایت از محصول
+            </mat-radio-button>
+            <mat-radio-button value="service">
+              شکایت از خدمت
+            </mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+
+        <div>
+          
+        </div>
+
+
+      </form>
+
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-raised-button color="primary" [disabled]="!complaintForm.valid" (click)="save()">ثبت</button>
+      <button mat-button type="button" (click)="initForm()">ریست</button>
+    </mat-card-actions>
+  </mat-card>
+
+
+</div>

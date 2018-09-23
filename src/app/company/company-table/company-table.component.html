@@ -1,3 +1,143 @@
-<p>
-  company-table works!
-</p>
+<div class="widget widget-full">
+  <mat-card>
+
+    <mat-card-header>
+      <div mat-card-avatar>
+        <img src="/assets/icons/building-corp.svg" />
+      </div>
+      <mat-card-title>جدول شرکت ها</mat-card-title>
+      <mat-card-subtitle>
+        جست‌وجو, گزارش‌گیری و عملیات دسته‌جمعی
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <table mat-table matSort [dataSource]="dataSource">
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox (change)="$event ? masterToggle() : null" [checked]="selection.hasValue() && isAllSelected()"
+              [indeterminate]="selection.hasValue() && !isAllSelected()">
+            </mat-checkbox>
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null" [checked]="selection.isSelected(row)">
+            </mat-checkbox>
+          </td>
+        </ng-container>
+
+        <!-- firstBane Column -->
+        <ng-container matColumnDef="name">
+          <th mat-sort-header="name" mat-header-cell *matHeaderCellDef> نام شرکت</th>
+          <td mat-cell *matCellDef="let element">
+            <span [innerHtml]="rpd(element.name || '-')"></span>
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="services">
+          <th class="number" mat-header-cell *matHeaderCellDef>
+            <img src='assets/icons/service.svg' />
+          </th>
+          <td class="number" mat-cell *matCellDef="let element">
+            <span [innerHtml]="rpd('0')"></span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="complaints">
+          <th class="number" mat-header-cell *matHeaderCellDef>
+            <img src='assets/icons/complaints-customer-voice-2.svg' />
+          </th>
+          <td class="number" mat-cell *matCellDef="let element">
+            <span [innerHtml]="rpd('0')"></span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="events">
+          <th class="number" mat-header-cell *matHeaderCellDef>
+            <img src='assets/icons/calendar-event-1.svg' />
+          </th>
+          <td class="number" mat-cell *matCellDef="let element">
+            <span [innerHtml]="rpd('0')"></span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="sales">
+          <th class="number" mat-header-cell *matHeaderCellDef>
+            <img src='assets/icons/sell-money-expense-1.svg' />
+          </th>
+          <td class="number" mat-cell *matCellDef="let element">
+            <span [innerHtml]="rpd('0')"></span>
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="score">
+          <th class="number" mat-header-cell *matHeaderCellDef>
+            <img src='assets/icons/badge-2.svg' />
+          </th>
+          <td class="number" mat-cell *matCellDef="let element">
+            <span [innerHtml]="rpd('0')"></span>
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef>
+            رتبه‌بندی
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <img src='assets/icons/star-large-3.svg' />
+            <img src='assets/icons/star-large-3.svg' />
+            <img src='assets/icons/star-large-3.svg' />
+            <img src='assets/icons/star-large-3.svg' />
+            <img src='assets/icons/star-large-3.svg' />
+
+          </td>
+        </ng-container>
+
+
+        <ng-container matColumnDef="flagged">
+          <th mat-header-cell *matHeaderCellDef>
+
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <img src='assets/icons/flag-large.svg' />
+
+
+          </td>
+        </ng-container>
+
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row (click)="selection.toggle(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+
+
+    </mat-card-content>
+
+    <mat-card-actions>
+
+      <button *ngIf="selection.selected.length == 1" mat-raised-button color="primary" (click)="edit(selection.selected[0])">ویرایش</button>
+      <button *ngIf="selection.selected.length == 1" mat-raised-button color="primary" (click)="delete(selection.selected[0])">حذف</button>
+
+      <button *ngIf="selection.selected.length > 1" mat-raised-button color="primary" (click)="bulkEdit(selection.selected)">
+        ویرایش انتخاب شده‌ها
+        ( {{ rpd( selection.selected.length ) }} )
+      </button>
+
+      <button *ngIf="selection.selected.length > 1" mat-raised-button color="primary" (click)="bulkDelete(selection.selected)">
+        حذف انتخاب شده‌ها
+        ( {{ rpd(selection.selected.length ) }} )
+      </button>
+
+
+    </mat-card-actions>
+
+    <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
+
+  </mat-card>
+
+</div>

@@ -1,3 +1,4 @@
+import { CrmComponent } from './crm/crm.component';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -16,11 +17,13 @@ const routes: Routes = [
   { path: 'dashboard/:section/:tab/:id', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'auth', component: AuthComponent },
   { path: 'auth/:tab', component: AuthComponent },
+  { path: 'crm', component: CrmComponent },
+  { path: 'crm/:tab', component: CrmComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: false })],
+  imports: [RouterModule.forRoot(routes, { useHash: true })],
   exports: [RouterModule],
   declarations: []
 })

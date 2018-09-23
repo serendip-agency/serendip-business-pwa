@@ -7,7 +7,11 @@
       <mat-card-title>فرم افراد حقیقی</mat-card-title>
       <mat-card-subtitle>ثبت فرد جدید</mat-card-subtitle>
     </mat-card-header>
+
     <mat-card-content>
+      <div class="logbox">
+        {{ peopleForm.value | json }}
+      </div>
       <form [formGroup]="peopleForm" class="">
 
         <mat-form-field>
@@ -20,7 +24,8 @@
 
         <div formArrayName="mobiles">
 
-          <div class="double-field" *ngFor="let social of getFormArray(peopleForm,'mobiles'); let i=index" [formGroupName]="i">
+          <div class="double-field" *ngFor="let social of getFormArray(peopleForm,'mobiles'); let i=index"
+            [formGroupName]="i">
 
             <mat-form-field class="w-30">
 
@@ -48,10 +53,10 @@
           <mat-form-field *ngFor="let mobile of getFormArray(peopleForm,'emails'); let i=index">
             <input matInput placeholder="ایمیل {{i == 0 ? '' : i + 1}}" [formControlName]="i" dir="ltr" />
 
-            <div class="plus" *ngIf="i == 0" matSuffix (click)="addMobile()">
+            <div class="plus" *ngIf="i == 0" matSuffix (click)="peopleForm.get('emails').push(fb.control(''))">
               <img src="/assets/icons/plus-add-2.svg" />
             </div>
-            <div class="minus" *ngIf="i != 0" matSuffix (click)="removeMobile(i)">
+            <div class="minus" *ngIf="i != 0" matSuffix (click)="peopleForm.get('emails').removeAt(i)">
               <img src="/assets/icons/recycle-bin-trash.svg" />
             </div>
           </mat-form-field>
@@ -60,7 +65,8 @@
 
         <div formArrayName="socials">
 
-          <div class="double-field" *ngFor="let social of getFormArray(peopleForm,'socials'); let i=index" [formGroupName]="i">
+          <div class="double-field" *ngFor="let social of getFormArray(peopleForm,'socials'); let i=index"
+            [formGroupName]="i">
 
             <mat-form-field class="w-40">
 
@@ -88,9 +94,9 @@
           <mat-label>
             جنسیت:
           </mat-label>
-          <mat-radio-group>
-            <mat-radio-button value="auto">مرد</mat-radio-button>
-            <mat-radio-button value="always">زن</mat-radio-button>
+          <mat-radio-group formControlName="gender">
+            <mat-radio-button value="male">مرد</mat-radio-button>
+            <mat-radio-button value="female">زن</mat-radio-button>
           </mat-radio-group>
         </div>
       </form>
