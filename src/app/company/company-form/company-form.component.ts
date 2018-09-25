@@ -149,7 +149,11 @@ export class CompanyFormComponent implements OnInit {
     //   }
     // });
 
-
+    navigator.geolocation.getCurrentPosition((data) => {
+      console.log(data);
+    }, (error) => {
+      console.error(error);
+    });
     const params = this.activatedRoute.snapshot.params;
 
 
@@ -169,7 +173,8 @@ export class CompanyFormComponent implements OnInit {
             city: [""],
             state: [""],
             country: [""],
-            postalCode: [""]
+            postalCode: [""],
+            geo : [""]
           })
         })
       ])

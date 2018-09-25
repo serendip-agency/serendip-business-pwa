@@ -70,8 +70,8 @@
                     <img src="assets/icons/recycle-bin-trash.svg" alt="" />
                   </mat-icon>
                 </mat-chip>
-                <input placeholder="افزاد مرتبط" #peopleAutoInput  (input)="filterPeople(peopleAutoInput.value,contact.get('peoples').value)" [matChipInputFor]="chipList"
-                  [matAutocomplete]="peopleAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                <input placeholder="افزاد مرتبط" #peopleAutoInput (input)="filterPeople(peopleAutoInput.value,contact.get('peoples').value)"
+                  [matChipInputFor]="chipList" [matAutocomplete]="peopleAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                   [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="peopleAutoInput.value= ''">
               </mat-chip-list>
 
@@ -80,7 +80,7 @@
                   {{item.firstName}}
                   {{item.lastName}}
                   {{
-                    rpd( item.mobiles[0]?.value)
+                  rpd( item.mobiles[0]?.value)
                   }}
                 </mat-option>
               </mat-autocomplete>
@@ -115,6 +115,13 @@
                 </mat-autocomplete>
               </mat-form-field>
 
+
+              <mat-form-field>
+                <input type="text" matInput placeholder="موقعیت مکانی" formControlName="geo" />
+                <div class="location"  matSuffix  >
+                  <img src="/assets/icons/location-address-2.svg" />
+                </div>
+              </mat-form-field>
 
 
               <mat-form-field>

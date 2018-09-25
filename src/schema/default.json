@@ -27,7 +27,7 @@
       },
       {
         "name": "new",
-        "title": "ثبت فرد جدید",
+        "title": " فرد جدید",
         "widgets": [
           {
             "inputs": {},
@@ -124,7 +124,7 @@
       },
       {
         "name": "new",
-        "title": "ثبت تعامل جدید",
+        "title": " تعامل جدید",
         "widgets": [
           {
             "inputs": {},
@@ -172,7 +172,7 @@
       },
       {
         "name": "new",
-        "title": "ثبت خدمت جدید",
+        "title": " خدمت جدید",
         "widgets": [
           {
             "inputs": {},
@@ -220,7 +220,7 @@
       },
       {
         "name": "new",
-        "title": "ثبت شکایت جدید",
+        "title": " شکایت جدید",
         "widgets": [
           {
             "inputs": {},
@@ -268,7 +268,7 @@
       },
       {
         "name": "new",
-        "title": "ثبت پیش فاکتور",
+        "title": " پیش فاکتور",
         "widgets": [
           {
             "inputs": {},
@@ -316,7 +316,7 @@
       },
       {
         "name": "new",
-        "title": "ثبت کمپین جدید",
+        "title": " کمپین جدید",
         "widgets": [
           {
             "inputs": {},

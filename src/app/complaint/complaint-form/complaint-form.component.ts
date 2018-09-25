@@ -70,8 +70,8 @@ export class ComplaintFormComponent implements OnInit {
   initForm() {
     this.complaintForm = this.fb.group({
       _id: [""],
-      receivedAtTime: [this.moment().format('HH:mm'), Validators.required],
-      receivedAtDate: [this.moment().format('jYYYY/jMM/jDD'), Validators.required],
+      receivedTime: [this.moment().format('HH:mm'), Validators.required],
+      receivedDate: [this.moment().format('jYYYY/jMM/jDD'), Validators.required],
       person: [""],
       company: [""],
       type: ['', Validators.required],

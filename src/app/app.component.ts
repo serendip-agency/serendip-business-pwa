@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
   loggedIn: boolean = false;
   routerLoading: boolean;
 
-  constructor(private crmService : CrmService, private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
+  constructor(private crmService: CrmService, private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
     this.snackBar = _snackBar;
     this.moment = _moment;
     this.authService = _authService;
@@ -59,33 +59,36 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe(async (event: any) => {
 
       this.routerLoading = true;
-      if (event instanceof NavigationEnd || event instanceof NavigationCancel){
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
         this.startActive = false;
         this.routerLoading = false;
 
       }
 
     });
-    setTimeout(() => {
-      this.snackBar.open('همگام سازی شروع شد ...', '', { duration: 1000 });
-    }, 1);
-    var syncStart = Date.now();
-    // this.syncService
-    //   .start({
-    //     onCollectionSync: (collection) => {
-    //       this.collectionSynced.unshift(collection);
-    //       console.log(collection + ' synced');
-    //     }
-    //   }
-    //   )
-    //   .then(() => {
 
-    //     this.snackBar.open(`همگام سازی در ${this.rpd(((Date.now() - syncStart) / 1000).toFixed(1))} ثانیه انجام شد.`, '', { duration: 10000 });
-    //     //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
-    //   }).catch((e) => {
-    //     this.snackBar.open('همگام سازی با خطا مواجه شد.', '', { duration: 3000 });
-    //     console.error(e);
-    //   });
+    if (this.crmService.getActiveCrmId() && this.authService.loggedIn)
+      setTimeout(() => {
+        this.snackBar.open('همگام سازی شروع شد ...', '', { duration: 1000 });
+        var syncStart = Date.now();
+        // this.syncService
+        //   .start({
+        //     onCollectionSync: (collection) => {
+        //       this.collectionSynced.unshift(collection);
+        //       console.log(collection + ' synced');
+        //     }
+        //   }
+        //   )
+        //   .then(() => {
+
+        //     this.snackBar.open(`همگام سازی در ${this.rpd(((Date.now() - syncStart) / 1000).toFixed(1))} ثانیه انجام شد.`, '', { duration: 10000 });
+        //     //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
+        //   }).catch((e) => {
+        //     this.snackBar.open('همگام سازی با خطا مواجه شد.', '', { duration: 3000 });
+        //     console.error(e);
+        //   });
+      }, 3000);
+
 
   }
 

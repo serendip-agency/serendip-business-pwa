@@ -31,25 +31,27 @@
       </div>
       <form [formGroup]="complaintForm" class="">
 
-        <mat-form-field>
-          <input dir="ltr" matInput placeholder="تاریخ دریافت شکایت" required autocomplete="off" formControlName="receivedAtDate"
-            theme="dp-material" [dpDayPicker]="{}" />
-        </mat-form-field>
+        <div class="double-field">
 
-        <mat-form-field>
-          <input dir="ltr" matInput [ngxTimepicker]="picker" [format]="24" placeholder="ساعت دریافت شکایت" required
-            autocomplete="off" formControlName="receivedAtTime" />
+          <mat-form-field>
+            <input dir="ltr" matInput placeholder="تاریخ دریافت شکایت" required autocomplete="off" formControlName="receivedTime"
+              theme="dp-material" [dpDayPicker]="{}" />
+          </mat-form-field>
+  
+          <mat-form-field>
+            <input dir="ltr" matInput [ngxTimepicker]="picker" [format]="24" placeholder="ساعت دریافت شکایت" required
+              autocomplete="off" formControlName="receivedTime" />
+            <ngx-material-timepicker #picker [cancelBtnTmpl]="timerCancelButton" [confirmBtnTmpl]="timerConfirmButton"></ngx-material-timepicker>
+            <ng-template #timerConfirmButton>
+              <button mat-raised-button color="primary">انتخاب</button>
+            </ng-template>
+            <ng-template #timerCancelButton>
+              <button mat-raised-button color="secondary">انصراف</button>
+            </ng-template>
+          </mat-form-field>
 
-          <ngx-material-timepicker #picker [cancelBtnTmpl]="timerCancelButton" [confirmBtnTmpl]="timerConfirmButton"></ngx-material-timepicker>
+        </div>
 
-          <ng-template #timerConfirmButton>
-            <button mat-raised-button color="primary">انتخاب</button>
-
-          </ng-template>
-          <ng-template #timerCancelButton>
-            <button mat-raised-button color="secondary">انصراف</button>
-          </ng-template>
-        </mat-form-field>
 
 
         <mat-form-field>

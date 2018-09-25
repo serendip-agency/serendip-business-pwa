@@ -87,9 +87,19 @@
     }
 }
 
+input[dir=ltr]{
+    text-align: left;
+    direction: ltr;
+    font-family: monospace!important;
+}
+
 .mat-table,
 .mat-paginator {
     background: none;
+}
+
+.mat-form-field-appearance-legacy .mat-form-field-infix {
+    padding: 9.5px 0;
 }
 
 .mat-card-actions,
@@ -119,11 +129,22 @@
     background: rgba(255, 255, 255, 0.7);
 }
 
+mat-form-field .location img,
 mat-form-field .plus img,
 mat-form-field .minus img {
     width: 30px;
     height: 30px;
     vertical-align: middle;
+    border-radius: 100%;
+    overflow: hidden;
+    transition: all ease .5s;
+    cursor: pointer;
+    box-sizing: border-box;
+
+    &:hover{
+        background: #eee;
+
+    }
 }
 
 .mat-card:not([class*=mat-elevation-z]) {
