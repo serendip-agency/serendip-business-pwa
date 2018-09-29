@@ -1,6 +1,6 @@
 import { DashboardService } from "./../dashboard.service";
 import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
-import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
+import { Router, ActivatedRoute, NavigationEnd, NavigationCancel } from "@angular/router";
 import { Subscription } from "rxjs";
 import * as _ from "underscore";
 
@@ -33,6 +33,7 @@ import { InteractionTableComponent } from "../interaction/interaction-table/inte
 import { InteractionListComponent } from "../interaction/interaction-list/interaction-list.component";
 import { InteractionDeleteComponent } from "../interaction/interaction-delete/interaction-delete.component";
 import { UserProfileComponent } from "../settings/user-profile/user-profile.component";
+import { CrmService } from "../crm.service";
 
 const dynamicComponents = {
   PeopleFormComponent,
@@ -69,16 +70,74 @@ const dynamicComponents = {
 @Component({
   selector: "app-dashboard",
   templateUrl: "./dashboard.component.html",
-  styleUrls: ["./dashboard.component.css"]
+  styleUrls: ["./dashboard.component.less"]
 })
 export class DashboardComponent implements OnInit {
+  explorerVisible: boolean = false;
+  explorerAnimDone: boolean = true;
   constructor(
     public dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    public crmService: CrmService
   ) { }
 
   routerSubscription: Subscription;
+  search: { text: String, mode: string } = { text: '', mode: 'contacts' };
+
+  startActive: Boolean = false;
+
+  clickOnStartWrapper(event: MouseEvent) {
+    if ((event.target as HTMLElement).getAttribute('id') === 'start')
+      this.startActive = false;
+  }
+
+  getExplorerTabs(tabs: any) {
+
+    return _.filter(tabs, (tab: any) => {
+      return tab.title != null && tab.name != "default";
+    });
+
+  }
+
+  explorerAnimTimeout = null;
+  explorerMouseIn(){
+
+    this.explorerVisible = true;
+    this.explorerAnimDone = false;
+
+    clearTimeout(this.explorerAnimTimeout);
+
+   this.explorerAnimTimeout=  setTimeout(() => {
+      this.explorerAnimDone = true;
+    }, 500);
+
+  }
+
+
+  explorerMouseOut(){
+
+    this.explorerVisible = false;
+    this.explorerAnimDone = false;
+
+    clearTimeout(this.explorerAnimTimeout);
+
+    this.explorerAnimTimeout=  setTimeout(() => {
+      this.explorerAnimDone = true;
+    }, 500);
+
+  }
+
+
+
+  getExplorerSections(sections:any){
+
+    return _.filter(sections, (sec: any) => {
+      return sec.name != "dashboard";
+    });
+
+
+  }
 
   handleParams() {
     if (this.dashboardService.currentSection) {
@@ -86,7 +145,7 @@ export class DashboardComponent implements OnInit {
         this.dashboardService.currentSection.tabs,
         (tab: any) => {
           if (tab.deactivateOnRouteChange) {
-            tab.title = null;
+            //  tab.title = null;
           }
           return tab;
         }
@@ -128,6 +187,7 @@ export class DashboardComponent implements OnInit {
   getComponent(componentName) {
     return dynamicComponents[componentName];
   }
+
   getWidgets() {
     if (
       this.dashboardService.currentSection &&
@@ -138,6 +198,7 @@ export class DashboardComponent implements OnInit {
       return [];
     }
   }
+
   async ngOnInit() {
 
     await this.dashboardService.setDefaultSchema();
@@ -148,6 +209,11 @@ export class DashboardComponent implements OnInit {
       if (event instanceof NavigationEnd) {
         this.handleParams();
       }
+
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
+        this.startActive = false;
+      }
+
     });
   }
 }

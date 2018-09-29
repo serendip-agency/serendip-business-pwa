@@ -6,6 +6,8 @@ import { DataService } from "../../data.service";
 import { InsertMessage } from "../../messaging/InsertMessage";
 import { MessagingService } from "../../messaging.service";
 import { Subscription } from "rxjs";
+import IranStates from "../../geo/IranStates";
+import * as _ from 'underscore';
 
 @Component({
   selector: "app-people-form",
@@ -20,6 +22,7 @@ export class PeopleFormComponent implements OnInit {
     emails: []
   };
   routerSubscription: Subscription;
+  iranStates: { "name": string; "Cities": { "name": string; }[]; }[];
 
   rpd(input) {
     if (!input) {
@@ -38,7 +41,29 @@ export class PeopleFormComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dashboardService: DashboardService
-  ) { }
+  ) {
+    this.iranStates = IranStates;
+  }
+
+  filterStates(input) {
+    return _.filter(this.iranStates, (iState) => {
+      return iState.name.indexOf(input) != -1
+    })
+  }
+
+  filterCities(state, input) {
+    if (!state)
+      return [];
+
+    if (this.filterStates(state).length == 1)
+      state = this.filterStates(state)[0].name;
+    else
+      return [];
+
+    return _.filter(_.findWhere(this.iranStates, { name: state }).Cities, (city) => {
+      return city.name.indexOf(input) != -1
+    })
+  }
 
   save() {
     if (!this.peopleForm.value._id) {
@@ -54,6 +79,20 @@ export class PeopleFormComponent implements OnInit {
 
   getFormArray(form, arrayName) {
     return (form as any).get(arrayName).controls;
+  }
+
+
+  setGeo(contact) {
+    navigator.geolocation.getCurrentPosition((data) => {
+      contact.get('address').get('geo').setValue(data.coords.latitude + ',' + data.coords.longitude)
+      console.log(data);
+    }, (error) => {
+      console.error(error);
+    });
+  }
+
+  goGeo(loc) {
+    window.open(`https://www.google.com/maps/@${loc},16z?hl=fa`, '_blank');
   }
 
   async ngOnInit() {
@@ -77,12 +116,14 @@ export class PeopleFormComponent implements OnInit {
         state: [""],
         zip: [""]
       }),
-      mobiles: this.fb.array([
-        this.fb.group({
-          type: [""],
-          value: [""]
-        })
-      ]),
+      // mobiles: this.fb.array([
+      //   this.fb.group({
+      //     type: [""],
+      //     value: [""]
+      //   })
+      // ]),
+
+      mobiles: this.fb.array([this.fb.control("")]),
       emails: this.fb.array([this.fb.control("")]),
       socials: this.fb.array([
         this.fb.group({
@@ -90,7 +131,22 @@ export class PeopleFormComponent implements OnInit {
           value: [""]
         })
       ]),
-      gender: [""]
+      gender: [""],
+      contacts: this.fb.array([
+        this.fb.group({
+          name: ["اطلاعات تماس اصلی"],
+          faxes: this.fb.array(['']),
+          telephones: this.fb.array(['']),
+          address: this.fb.group({
+            text: [""],
+            city: [""],
+            state: [""],
+            country: [""],
+            postalCode: [""],
+            geo: [""]
+          })
+        })
+      ])
     });
 
     this.peopleForm.valueChanges.subscribe(data => { });

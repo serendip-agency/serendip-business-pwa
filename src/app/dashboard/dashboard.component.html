@@ -11,31 +11,139 @@
       </div>
       {{dashboardService.currentSection.title}}
     </div>
+
+
+    <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible" >
+      <img [src]='"/assets/icons/arrow-right-next-2.svg"' />
+    </div>
+
     <div class="clear"></div>
 
+
   </div>
-
+  <!-- 
   <nav>
-
     <a *ngFor="let item of dashboardService.getActiveTabs();trackBy:item?.title" [routerLink]="['/dashboard',dashboardService.currentSection.name,item.name]"
       routerLinkActive="active-link">
       <img [src]="item.icon ? '/assets/icons/' + item.icon + '.svg' : '/assets/icons/tabs/' + item.name + '.svg'" />
 
       <span>
-      {{item.title}}
-    </span>
+        {{item.title}}
+      </span>
     </a>
+  </nav> -->
 
-  </nav>
 
 </header>
 
-<div class="grid-container">
+
+<aside id="explorer" [class.show]="!explorerVisible" class="closed" (mouseenter)="explorerMouseIn()" (mouseleave)="explorerMouseOut()">
+
+  <div class="explorer-inner">
+
+    <div class="splitter">
+      ابزار های فعال
+    </div>
+    <ul class="active empty">
+
+
+    </ul>
+
+    <div class="splitter">
+      مدیریت مشتری
+    </div>
+    <ul class="crm">
+      <li *ngFor="let section of  getExplorerSections(dashboardService.schema)">
+        <a (click)="section.toggleUl = !section.toggleUl">
+          <img [src]="'assets/icons/' + section.icon + '.svg'" />
+          <span>
+            {{section.title}}
+          </span>
+
+          <img class="toggle-ul" [class.active]="section.toggleUl" [src]='"/assets/icons/arrow-right-next-8.svg"' />
+
+        </a>
+
+        <ul [class.show]="section.toggleUl">
+          <li *ngFor="let tab of getExplorerTabs( section.tabs)" >
+            <a>
+              <div class="img">
+              <img [src]="'assets/icons/' + tab.icon + '.svg'" />
+            </div>
+              <span>
+                {{tab.title}}
+              </span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+    </ul>
+
+  </div>
+
+</aside>
+
+
+
+<div class="grid-container" [class.explorer-show]="explorerVisible" [class.go-back]="!explorerAnimDone">
 
   <div class="widget-container" *ngFor="let item of getWidgets()" [hidden]="item.screen && item.screen != dashboardService.screen">
     <ndc-dynamic *ngIf="!item.screen || item.screen == dashboardService.screen" [ndcDynamicComponent]="getComponent( item.component)"></ndc-dynamic>
   </div>
 
-  <div class="clear"></div>
 
+</div>
+
+
+<div *ngIf='crmService.getActiveCrmId()' id="start-button" (click)="startActive = !startActive">
+  <img src="assets/graphics/brand/serendip-circle.svg" alt="" />
+</div>
+
+<div id="start" (click)="clickOnStartWrapper($event)" [class.fadeIn]="startActive">
+
+  <div class="inner">
+    <div class="search">
+      <div class="search-inner">
+        <input type="text" dir="auto" [(ngModel)]="search.text" placeholder="جست‌و‌جو ..." />
+        <img src='assets/icons/search.svg' />
+      </div>
+    </div>
+    <nav>
+      <ul>
+        <li *ngFor="let item of dashboardService.schema">
+          <a [routerLink]="item.name == 'dashboard' ? ['/dashboard'] : ['/dashboard',item.name]">
+            <img [src]="'assets/icons/' + item.icon + '.svg'" />
+            <span>
+              {{item.title}}
+            </span>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="tabs">
+
+      <div class="tabs-inner">
+
+        <mat-tab-group [color]="'ascent'" dynamicHeight="true">
+          <mat-tab label="پیام‌ها">
+            <div class="tab-content">
+
+            </div>
+          </mat-tab>
+          <mat-tab label="اعلان‌ها">
+            <div class="tab-content">
+            </div>
+          </mat-tab>
+          <mat-tab label="وظایف">
+            <div class="tab-content">
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </div>
+
+    </div>
+  </div>
 </div>

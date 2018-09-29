@@ -59,8 +59,8 @@ This set of fonts are used in this project under the license: (.....)
 }
 
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 2px;
+    height: 2px;
 }
 
 ::-webkit-scrollbar-track {
@@ -68,7 +68,7 @@ This set of fonts are used in this project under the license: (.....)
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgb(53, 48, 116);
+    background: #eee;
 }
 
 input,
@@ -115,8 +115,7 @@ label {
         width: auto;
         display: block;
         margin: 10px auto;
-
-        &.default{
+        &.default {
             opacity: .2;
         }
     }
@@ -126,6 +125,35 @@ label {
         opacity: 0;
         position: absolute;
         z-index: 3;
+    }
+}
+
+.grid-container {
+    width: calc(~"100% - 60px");
+    float: left;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    transition: width ease .3s;
+    position: relative;
+    height: calc(~"100vh - 52px");
+    .widget-container {
+
+
+        .mat-card-content {
+            max-height: calc(~"100vh - 250px");
+            padding: 15px;
+            overflow: hidden;
+        }
+
+        &:hover .mat-card-content{
+            overflow: auto;
+        }
+    }
+    &.explorer-show {
+        width: calc(~"100% - 185px");
+    }
+    &.go-back {
+        width: calc(~"100% - 210px");
     }
 }
 
@@ -171,6 +199,7 @@ div.timepicker {
     text-align: left;
     margin: 30px auto;
     border-radius: 10px;
+    display: none;
 }
 
 #start {
@@ -205,125 +234,18 @@ body {
     }
 }
 
-.grid-container {
-    padding: 15px;
-}
-
 .clear {
     clear: both;
     content: ' ';
 }
 
-header {
-    box-sizing: border-box;
-    nav {
-        padding: 15px 30px;
-        padding-bottom: 0;
-
-        margin-bottom: 0;
-        overflow-y: hidden;
-        overflow-x: auto;
-        a {
-            display: inline-block;
-            border-left: 1px solid #ddd;
-            background: #fff;
-            color: #000;
-            line-height: 26px;
-            text-decoration: none;
-            padding: 5px;
-            margin-left:5px;
-            padding-left: 10px;
-            font-size: 13px;
-            position: relative;
-            transition: all ease .3s;
-            border-radius: 20px;
-            span {
-                color: #777;
-            }
-            &:hover,
-            &.active-link {
-                background: #D2AE6D;
-                color: #fff;
-                span {
-                    color: #fff;
-                }
-                img {
-                    filter: invert(1);
-                    border: 1px solid #000;
-                }
-            }
-            img {
-                display: inline-block;
-                height: 26px;
-                width: 26px;
-                padding: 2px;
-                box-sizing: border-box;
-                border-radius: 100%;
-                overflow: hidden;
-                vertical-align: middle;
-                margin-left: 2px;
-                border: 1px solid #ccc;
-                transition: all ease .3s;
-            }
-        }
+.widget {
+    form .mat-form-field,
+    table {
+        width: 100%;
     }
-    .inner {
-        position: relative;
-        padding: 15px;
-        background: #fff;
-        box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-        &:after {
-            clear: both;
-            display: block;
-            content: ' ';
-        }
-        .logo {
-            float: left;
-            img {
-                vertical-align: top;
-                display: inline-block;
-                height: 40px;
-                padding: 8px 0;
-                box-sizing: border-box;
-                width: auto;
-            }
-        }
-        .title {
-            float: right;
-            height: 40px;
-            line-height: 40px;
-            vertical-align: middle;
-            padding-left: 10px;
-            font-size: 19px;
-            font-weight: 100;
-            color: #fff;
-            border-radius: 5px;
-            overflow: hidden;
-            background: #6C87C3;
-            box-shadow: -2px 2px 5px rgba(0, 0, 0, .12);
-            .icon {
-                background: rgb(87, 112, 165);
-                float: right;
-                line-height: 40px;
-                height: 40px;
-                width: 40px;
-                vertical-align: top;
-                margin-left: 5px;
-                box-sizing: border-box;
-            
-                img {
-                    vertical-align: middle;
-                    height: 100%;
-                    width: 100%;
-                    display: inline-block;
-                    filter: invert(1);
-                    border-radius: 100%;
-                    overflow: hidden;
-                    padding:2px;
-                    box-sizing: border-box;
-                }
-            }
-        }
+    form {
+        margin-top: 15px;
     }
 }
 
@@ -332,37 +254,6 @@ header {
     margin-bottom: 5px;
 }
 
-.widget {
-    padding: 5px;
-    float: right;
-    vertical-align: top;
-    max-width: 100%;
-}
-
-.widget {
-    form mat-form-field,
-    table {
-        width: 100%;
-    }
-
-    form{
-        margin-top:15px;
-    }
-}
-
 .full-width {
     width: 100%;
-}
-
-.widget.widget-5 {
-    width: 100%;
-    max-width: 320px;
-    box-sizing: border-box;
-}
-
-.widget.widget-full {
-    width: 100%;
-    display: block;
-    float: none;
-    box-sizing: border-box;
 }

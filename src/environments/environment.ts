@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   api: 'http://localhost:2040',
-  clientId : '',
+  clientId: '',
+  googleApiKey: 'AIzaSyAYKkGr0q-YSC2IEbZkLxPr-y2_GT8BNcc'
 };
 
 /*

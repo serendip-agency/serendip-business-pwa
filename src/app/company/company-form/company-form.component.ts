@@ -12,6 +12,7 @@ import IranStates from "../../geo/IranStates";
 import * as _ from 'underscore';
 import { MatChipInputEvent, MatAutocompleteSelectedEvent, MatChipInput, MatChipList, MatSnackBar } from "@angular/material";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
+import { GmapsService } from "../../gmaps.service";
 
 
 @Component({
@@ -52,6 +53,7 @@ export class CompanyFormComponent implements OnInit {
     private dataService: DataService,
     private activatedRoute: ActivatedRoute,
     public ref: ChangeDetectorRef,
+    private gmapsService: GmapsService,
     private router: Router,
     private snackBar: MatSnackBar,
     private dashboardService: DashboardService
@@ -60,15 +62,12 @@ export class CompanyFormComponent implements OnInit {
   }
 
   filterStates(input) {
-
     return _.filter(this.iranStates, (iState) => {
       return iState.name.indexOf(input) != -1
     })
-
   }
 
   filterCities(state, input) {
-
     if (!state)
       return [];
 
@@ -80,7 +79,6 @@ export class CompanyFormComponent implements OnInit {
     return _.filter(_.findWhere(this.iranStates, { name: state }).Cities, (city) => {
       return city.name.indexOf(input) != -1
     })
-
   }
 
 
@@ -141,6 +139,19 @@ export class CompanyFormComponent implements OnInit {
 
   }
 
+  setGeo(contact) {
+    navigator.geolocation.getCurrentPosition((data) => {
+      contact.get('address').get('geo').setValue(data.coords.latitude + ',' + data.coords.longitude)
+      console.log(data);
+    }, (error) => {
+      console.error(error);
+    });
+  }
+
+  goGeo(loc) {
+    window.open(`https://www.google.com/maps/@${loc},16z?hl=fa`, '_blank');
+  }
+
   async ngOnInit() {
 
     // this.routerSubscription = this.router.events.subscribe(event => {
@@ -149,11 +160,9 @@ export class CompanyFormComponent implements OnInit {
     //   }
     // });
 
-    navigator.geolocation.getCurrentPosition((data) => {
-      console.log(data);
-    }, (error) => {
-      console.error(error);
-    });
+
+
+
     const params = this.activatedRoute.snapshot.params;
 
 
@@ -174,7 +183,7 @@ export class CompanyFormComponent implements OnInit {
             state: [""],
             country: [""],
             postalCode: [""],
-            geo : [""]
+            geo: [""]
           })
         })
       ])

@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 
 import * as _moment from 'jalali-moment';
 import { DatePickerComponent } from 'ng2-jalali-date-picker';
@@ -7,22 +7,24 @@ import { SyncService } from './sync.service';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router, NavigationEnd, NavigationCancel } from '@angular/router';
 import { CrmService } from './crm.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit,OnDestroy {
   @ViewChild('dayPicker') datePicker: DatePickerComponent;
 
   moment: any;
   authService: AuthService;
-  startActive: Boolean = false;
-  search: { text: String, mode: string } = { text: '', mode: 'contacts' };
   snackBar: MatSnackBar;
   loggedIn: boolean = false;
   routerLoading: boolean;
+
+  routerSubscription: Subscription;
+
 
   constructor(private crmService: CrmService, private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
     this.snackBar = _snackBar;
@@ -31,6 +33,7 @@ export class AppComponent implements OnInit {
     this.syncService = _syncService;
     this.router = _router;
     this.activatedRoute = _activatedRoute;
+
     setInterval(() => {
       this.loggedIn = this.authService.loggedIn;
     }, 1000);
@@ -50,19 +53,19 @@ export class AppComponent implements OnInit {
     return input.toString().replace(/\d/g, convert);
   }
 
-  clickOnStartWrapper(event: MouseEvent) {
-    if ((event.target as HTMLElement).getAttribute('id') === 'start')
-      this.startActive = false;
+
+  ngOnDestroy(){
+
+  this.routerSubscription.unsubscribe();
+    
   }
   ngOnInit() {
 
-    this.router.events.subscribe(async (event: any) => {
+    this.routerSubscription = this.router.events.subscribe(async (event: any) => {
 
       this.routerLoading = true;
       if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
-        this.startActive = false;
         this.routerLoading = false;
-
       }
 
     });

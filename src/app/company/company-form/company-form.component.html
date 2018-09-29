@@ -118,7 +118,10 @@
 
               <mat-form-field>
                 <input type="text" matInput placeholder="موقعیت مکانی" formControlName="geo" />
-                <div class="location"  matSuffix  >
+                <div class="location" (click)="setGeo(contact)" matSuffix>
+                  <img src="/assets/icons/location-address-1.svg" />
+                </div>
+                <div class="location" *ngIf="contact.get('address').get('geo').value" (click)="goGeo(contact.get('address').get('geo').value)" matSuffix>
                   <img src="/assets/icons/location-address-2.svg" />
                 </div>
               </mat-form-field>

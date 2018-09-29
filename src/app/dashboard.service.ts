@@ -15,14 +15,14 @@ export class DashboardService {
 
   constructor(private httpClient: HttpClient) {
 
-    // this.setScreen();
-    //  window.onresize = () => { this.setScreen() };
+  //  this.setScreen();
+  //   window.onresize = () => { this.setScreen() };
 
-    // if (localStorage.getItem("schema")) {
-    //   this.schema = JSON.parse(localStorage.getItem("schema"));
-    // } else {
-    //   this.setDefaultSchema();
-    // }
+    if (localStorage.getItem("schema")) {
+      this.schema = JSON.parse(localStorage.getItem("schema"));
+    } else {
+      this.setDefaultSchema();
+    }
   }
 
   setScreen() {
