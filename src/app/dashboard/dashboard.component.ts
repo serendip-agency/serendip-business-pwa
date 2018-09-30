@@ -1,5 +1,5 @@
 import { DashboardService } from "./../dashboard.service";
-import { Component, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from "@angular/core";
 import { Router, ActivatedRoute, NavigationEnd, NavigationCancel } from "@angular/router";
 import { Subscription } from "rxjs";
 import * as _ from "underscore";
@@ -34,6 +34,7 @@ import { InteractionListComponent } from "../interaction/interaction-list/intera
 import { InteractionDeleteComponent } from "../interaction/interaction-delete/interaction-delete.component";
 import { UserProfileComponent } from "../settings/user-profile/user-profile.component";
 import { CrmService } from "../crm.service";
+import { GmapsService } from "../gmaps.service";
 
 const dynamicComponents = {
   PeopleFormComponent,
@@ -72,15 +73,25 @@ const dynamicComponents = {
   templateUrl: "./dashboard.component.html",
   styleUrls: ["./dashboard.component.less"]
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
+
   explorerVisible: boolean = false;
   explorerAnimDone: boolean = true;
+
+  gridLayout = {
+    containers: []
+  };
+
   constructor(
     public dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    public crmService: CrmService
-  ) { }
+    public crmService: CrmService,
+  ) {
+
+  }
+
+
 
   routerSubscription: Subscription;
   search: { text: String, mode: string } = { text: '', mode: 'contacts' };
@@ -101,28 +112,28 @@ export class DashboardComponent implements OnInit {
   }
 
   explorerAnimTimeout = null;
-  explorerMouseIn(){
+  explorerMouseIn() {
 
     this.explorerVisible = true;
     this.explorerAnimDone = false;
 
     clearTimeout(this.explorerAnimTimeout);
 
-   this.explorerAnimTimeout=  setTimeout(() => {
+    this.explorerAnimTimeout = setTimeout(() => {
       this.explorerAnimDone = true;
     }, 500);
 
   }
 
 
-  explorerMouseOut(){
+  explorerMouseOut() {
 
     this.explorerVisible = false;
     this.explorerAnimDone = false;
 
     clearTimeout(this.explorerAnimTimeout);
 
-    this.explorerAnimTimeout=  setTimeout(() => {
+    this.explorerAnimTimeout = setTimeout(() => {
       this.explorerAnimDone = true;
     }, 500);
 
@@ -130,7 +141,7 @@ export class DashboardComponent implements OnInit {
 
 
 
-  getExplorerSections(sections:any){
+  getExplorerSections(sections: any) {
 
     return _.filter(sections, (sec: any) => {
       return sec.name != "dashboard";
@@ -140,66 +151,66 @@ export class DashboardComponent implements OnInit {
   }
 
   handleParams() {
-    if (this.dashboardService.currentSection) {
-      this.dashboardService.currentSection.tabs = _.map(
-        this.dashboardService.currentSection.tabs,
-        (tab: any) => {
-          if (tab.deactivateOnRouteChange) {
-            //  tab.title = null;
-          }
-          return tab;
-        }
-      );
-    }
 
     const params = this.activatedRoute.snapshot.params;
-    if (
-      !this.dashboardService.currentSection ||
-      (this.dashboardService.currentSection &&
-        this.dashboardService.currentSection.name !== params.section)
-    ) {
-      this.dashboardService.currentSection = _.findWhere(
-        this.dashboardService.schema,
-        {
-          name: params.section || "dashboard"
-        }
-      );
-    }
+
+    if (!this.dashboardService.currentSection || (this.dashboardService.currentSection && this.dashboardService.currentSection.name !== params.section))
+      this.dashboardService.currentSection = _.findWhere(this.dashboardService.schema, { name: params.section });
+
 
     if (this.dashboardService.currentSection) {
-      if (
-        !this.dashboardService.currentTab ||
-        (this.dashboardService.currentTab &&
-          this.dashboardService.currentTab.name !== params.tab)
-      ) {
-        this.dashboardService.currentTab = _.findWhere(
-          this.dashboardService.currentSection.tabs,
-          {
-            name: params.tab || "default"
-          }
-        );
-      }
+      this.gridLayout.containers.push({ tabs: _.clone(this.dashboardService.currentSection.tabs) });
+
+      this.gridLayout.containers[0].tabs[0].active = true;
     }
 
+
     console.log("handleParams called.");
+
+  }
+
+  addContainer() {
+
+    if (this.dashboardService.currentSection) {
+      this.gridLayout.containers.push({ tabs: JSON.parse(JSON.stringify(this.dashboardService.currentSection.tabs)) });
+      this.gridLayout.containers[1].tabs[0].active = true;
+    }
+
+
+  }
+
+  setTabActive(tab, container) {
+
+    _.forEach(container.tabs, (t: any) => {
+      if (t.name != tab.name)
+        t.active = false;
+    });
+
+    tab.active = true;
+
   }
 
   getComponent(componentName) {
     return dynamicComponents[componentName];
   }
 
-  getWidgets() {
-    if (
-      this.dashboardService.currentSection &&
-      this.dashboardService.currentTab
-    ) {
-      return this.dashboardService.currentTab.widgets;
-    } else {
-      return [];
-    }
-  }
+  getTabWidgets(tab) {
 
+    if (tab.widgets)
+      return tab.widgets
+    else
+      return [];
+
+  }
+  ngOnDestroy(): void {
+
+
+    if (this.routerSubscription)
+      this.routerSubscription.unsubscribe();
+
+  }
   async ngOnInit() {
+
 
     await this.dashboardService.setDefaultSchema();
 

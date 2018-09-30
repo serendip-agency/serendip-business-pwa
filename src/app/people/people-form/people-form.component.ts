@@ -8,6 +8,7 @@ import { MessagingService } from "../../messaging.service";
 import { Subscription } from "rxjs";
 import IranStates from "../../geo/IranStates";
 import * as _ from 'underscore';
+import { GmapsService } from "../../gmaps.service";
 
 @Component({
   selector: "app-people-form",
@@ -40,7 +41,8 @@ export class PeopleFormComponent implements OnInit {
     private dataService: DataService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    public gmapsService: GmapsService
   ) {
     this.iranStates = IranStates;
   }
@@ -83,12 +85,22 @@ export class PeopleFormComponent implements OnInit {
 
 
   setGeo(contact) {
-    navigator.geolocation.getCurrentPosition((data) => {
-      contact.get('address').get('geo').setValue(data.coords.latitude + ',' + data.coords.longitude)
-      console.log(data);
-    }, (error) => {
-      console.error(error);
-    });
+    // navigator.geolocation.getCurrentPosition((data) => {
+    //   contact.get('address').get('geo').setValue(data.coords.latitude + ',' + data.coords.longitude)
+    //   console.log(data);
+    // }, (error) => {
+    //   console.error(error);
+    // });
+
+    this.gmapsService.selectPosition(contact.get('address').get('geo').value, (latlng) => {
+
+      if (latlng == undefined) {
+
+      } else {
+        contact.get('address').get('geo').setValue(latlng)
+      }
+    })
+
   }
 
   goGeo(loc) {
@@ -155,14 +167,14 @@ export class PeopleFormComponent implements OnInit {
       var model = await this.dataService.details('people', params.id);
       console.log(model);
       this.peopleForm.patchValue(model);
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+     // this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
 
   }
   handleParams(): any {
     const params = this.activatedRoute.snapshot.params;
     if (params.id) {
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+    //  this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
   }
 

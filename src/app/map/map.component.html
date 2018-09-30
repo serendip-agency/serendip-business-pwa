@@ -1,0 +1,19 @@
+<div id="map-wrapper" [class.visible]="mapVisible">
+  <div id="map">
+
+  </div>
+
+  <div class="actions" *ngIf="selectPositionActionsVisible">
+
+    <button *ngIf="selectedPositionChange" (click)="gmapsService.selectPositionDone()">
+      انتخاب شد
+    </button>
+
+    <button (click)="gmapsService.selectPositionCancel()">
+
+      {{selectedPositionChange ? 'انصراف' : 'بازگشت'}}
+    </button>
+
+  </div>
+
+</div>

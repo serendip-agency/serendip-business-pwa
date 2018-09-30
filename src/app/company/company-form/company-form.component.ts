@@ -196,7 +196,7 @@ export class CompanyFormComponent implements OnInit {
       var model = await this.dataService.details('company', params.id);
       console.log(model);
       this.companyForm.patchValue(model);
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+     // this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
 
 
       // TO Do cache Employees
@@ -206,7 +206,7 @@ export class CompanyFormComponent implements OnInit {
   handleParams(): any {
     const params = this.activatedRoute.snapshot.params;
     if (params.id) {
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+     //this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
   }
 

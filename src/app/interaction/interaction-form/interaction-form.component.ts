@@ -99,14 +99,14 @@ export class InteractionFormComponent implements OnInit {
       var model = await this.dataService.details('interaction', params.id);
       console.log(model);
       this.interactionForm.patchValue(model);
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+      //this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
 
   }
   handleParams(): any {
     const params = this.activatedRoute.snapshot.params;
     if (params.id) {
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+    //  this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
   }
 

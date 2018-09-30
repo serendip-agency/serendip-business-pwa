@@ -132,20 +132,63 @@ label {
     width: calc(~"100% - 60px");
     float: left;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr;
     transition: width ease .3s;
     position: relative;
-    height: calc(~"100vh - 52px");
+    height: calc(~"100vh - 60px");
+    overflow: hidden;
+    &.f1 {
+        grid-template-columns: 1fr;
+    }
+    &.f2 {
+        grid-template-columns: 1fr 1fr;
+    }
+    &.f3 {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+    &.f4 {
+        grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    .tabs-container {
+        overflow: hidden;
+        box-sizing: border-box;
+        padding: 10px;
+        ul.tabs-nav {
+            padding: 0;
+            margin: 0;
+            display: block;
+            background: #efefef;
+            li {
+                display: inline-block;
+                line-height: 30px;
+                text-align: center;
+                padding: 0 10px;
+                margin-right: 15px;
+                border-radius: 5px 5px 0 0;
+                vertical-align: top;
+                color: #777;
+                background: #efefef;
+                cursor: pointer;
+                position: relative;
+                &.active {
+                    background: #fff;
+                }
+            }
+        }
+    }
     .widget-container {
-
-
+        overflow: hidden;
+        box-sizing: border-box;
         .mat-card-content {
-            max-height: calc(~"100vh - 250px");
+            max-height: calc(~"100vh - 230px");
             padding: 15px;
+            box-sizing: border-box;
             overflow: hidden;
         }
-
-        &:hover .mat-card-content{
+        .mat-card-actions {
+            padding: 15px;
+        }
+        &:hover .mat-card-content {
             overflow: auto;
         }
     }

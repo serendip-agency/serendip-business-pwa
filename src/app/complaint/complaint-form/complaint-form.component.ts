@@ -152,14 +152,14 @@ export class ComplaintFormComponent implements OnInit {
       var model = await this.dataService.details('complaint', params.id);
       console.log(model);
       this.complaintForm.patchValue(model);
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+      //this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
 
   }
   handleParams(): any {
     const params = this.activatedRoute.snapshot.params;
     if (params.id) {
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+      //this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
   }
 

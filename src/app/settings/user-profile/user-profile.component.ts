@@ -78,14 +78,14 @@ export class UserProfileComponent implements OnInit {
       var model = await this.dataService.details('user', params.id);
       console.log(model);
       this.userForm.patchValue(model);
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+     // this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
   }
 
   handleParams(): any {
     const params = this.activatedRoute.snapshot.params;
     if (params.id) {
-      this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+     // this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
   }
 

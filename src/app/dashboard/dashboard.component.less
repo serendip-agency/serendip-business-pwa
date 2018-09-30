@@ -2,9 +2,9 @@
     position: fixed;
     width: 64px;
     height: 64px;
-    bottom: 16px;
-    left: 16px;
-    z-index: 9999;
+    bottom: 10px;
+    left: 10px;
+    z-index: 100;
     border-radius: 100%;
 }
 
@@ -32,6 +32,7 @@ header {
             position: relative;
             transition: all ease .3s;
             border-radius: 20px;
+            
             span {
                 color: #777;
             }
@@ -65,7 +66,7 @@ header {
     .inner {
         position: relative;
         padding: 5px;
-        background: #6C87C3;
+        background: #D2AE6D;
         border-bottom: 1px solid #ccc;
         box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
         &:after {
@@ -84,7 +85,7 @@ header {
                 width: auto;
             }
         }
-        .explorer-toggle {
+        .explorer-toggle , .container-add {
             float: right;
             height: 40px;
             width: 40px;
@@ -160,7 +161,7 @@ header {
 }
 
 aside#explorer {
-    background: rgb(241, 241, 241);
+    background: #fff;
     padding: 10px;
     width: 180px;
     height: calc(~"100vh - 50px"); // box-shadow: 0 0 10px #ccc, -150px 0 100px #eee inset;
@@ -289,6 +290,7 @@ aside#explorer {
                     white-space: nowrap;
                     text-overflow: ellipsis;
                     overflow: hidden;
+                    cursor: pointer;
                     img {
                         width: 30px;
                         height: 30px;
@@ -314,7 +316,6 @@ aside#explorer {
                         box-sizing: border-box;
                         background: #fff;
                         background: rgba(210, 175, 109, 0.9);
-                        cursor: move;
                         &:hover {
                             background: #D2AE6D;
                             transition: all ease 0.3s;
@@ -330,6 +331,7 @@ aside#explorer {
                             font-weight: 100;
                             line-height: 26px;
                             color: rgb(92, 68, 25);
+                            cursor: move;
                             .img {
                                 display: inline-block;
                                 background: rgb(153, 124, 70);
@@ -362,11 +364,7 @@ aside#explorer {
     max-width: 100%;
 }
 
-.widget-container {
-    overflow: hidden;
-    box-sizing: border-box;
-    padding:10px;
-}
+
 
 #start {
     width: 100%;
@@ -412,7 +410,7 @@ aside#explorer {
     &.fadeIn {
         right: 0;
         opacity: 1;
-        z-index: 9998;
+        z-index: 50;
         border-radius: 0;
         filter: grayscale(0);
         .inner {

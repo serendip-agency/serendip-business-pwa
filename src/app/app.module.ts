@@ -93,6 +93,7 @@ import { InteractionDeleteComponent } from "./interaction/interaction-delete/int
 import { CrmComponent } from './crm/crm.component';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { UserProfileComponent } from './settings/user-profile/user-profile.component';
+import { MapComponent } from './map/map.component';
 
 const dynamicComponents = [
   PeopleFormComponent,
@@ -133,7 +134,8 @@ const dynamicComponents = [
     DashboardComponent,
     ...dynamicComponents,
     CrmComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    MapComponent
   ],
 
   entryComponents: [PeopleDeleteComponent],

@@ -8,15 +8,15 @@ import * as _ from "underscore";
   providedIn: "root"
 })
 export class DashboardService {
+
   schema: any;
   currentSection: any = null;
-  currentTab: any = null;
   screen: string = "desktop";
 
   constructor(private httpClient: HttpClient) {
 
-  //  this.setScreen();
-  //   window.onresize = () => { this.setScreen() };
+    //  this.setScreen();
+    //   window.onresize = () => { this.setScreen() };
 
     if (localStorage.getItem("schema")) {
       this.schema = JSON.parse(localStorage.getItem("schema"));
@@ -48,10 +48,5 @@ export class DashboardService {
       return item.title;
     });
   }
-
-  setCurrentTab(tab) {
-    setTimeout(() => {
-      this.currentTab = _.extend(this.currentTab, tab);
-    }, 10);
-  }
+  
 }

@@ -13,9 +13,19 @@
     </div>
 
 
-    <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible" >
+
+      
+
+    <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible">
       <img [src]='"/assets/icons/arrow-right-next-2.svg"' />
     </div>
+
+
+
+    <div class="container-add" (click)="addContainer()" >
+        <img [src]='"/assets/icons/plus-add-2.svg"' />
+      </div>
+
 
     <div class="clear"></div>
 
@@ -65,11 +75,11 @@
         </a>
 
         <ul [class.show]="section.toggleUl">
-          <li *ngFor="let tab of getExplorerTabs( section.tabs)" >
+          <li *ngFor="let tab of getExplorerTabs( section.tabs)">
             <a>
               <div class="img">
-              <img [src]="'assets/icons/' + tab.icon + '.svg'" />
-            </div>
+                <img [src]="'assets/icons/' + tab.icon + '.svg'" />
+              </div>
               <span>
                 {{tab.title}}
               </span>
@@ -86,13 +96,24 @@
 
 
 
-<div class="grid-container" [class.explorer-show]="explorerVisible" [class.go-back]="!explorerAnimDone">
+<div class="grid-container f{{gridLayout.containers.length}}"  [class.explorer-show]="explorerVisible"
+  [class.go-back]="!explorerAnimDone">
 
-  <div class="widget-container" *ngFor="let item of getWidgets()" [hidden]="item.screen && item.screen != dashboardService.screen">
-    <ndc-dynamic *ngIf="!item.screen || item.screen == dashboardService.screen" [ndcDynamicComponent]="getComponent( item.component)"></ndc-dynamic>
+  <div class="tabs-container" *ngFor="let container of gridLayout.containers">
+
+    <ul class="tabs-nav">
+      <li *ngFor="let tab of container.tabs" [class.active]="tab.active" (click)="setTabActive(tab,container)">
+        {{tab.title}}
+      </li>
+    </ul>
+
+    <div *ngFor="let tab of container.tabs" [hidden]="!tab.active">
+      <div class="widget-container" *ngFor="let widget of getTabWidgets(tab)" [hidden]="widget.screen && widget.screen != dashboardService.screen">
+        <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicComponent]="getComponent( widget.component)"></ndc-dynamic>
+      </div>
+    </div>
+
   </div>
-
-
 </div>
 
 
