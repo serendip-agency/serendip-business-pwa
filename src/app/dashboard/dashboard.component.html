@@ -14,7 +14,7 @@
 
 
 
-      
+
 
     <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible">
       <img [src]='"/assets/icons/arrow-right-next-2.svg"' />
@@ -22,9 +22,9 @@
 
 
 
-    <div class="container-add" (click)="addContainer()" >
-        <img [src]='"/assets/icons/plus-add-2.svg"' />
-      </div>
+    <div class="container-add" (click)="addContainer()">
+      <img [src]='"/assets/icons/plus-add-2.svg"' />
+    </div>
 
 
     <div class="clear"></div>
@@ -76,7 +76,7 @@
 
         <ul [class.show]="section.toggleUl">
           <li *ngFor="let tab of getExplorerTabs( section.tabs)">
-            <a>
+            <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab : tab}">
               <div class="img">
                 <img [src]="'assets/icons/' + tab.icon + '.svg'" />
               </div>
@@ -96,15 +96,44 @@
 
 
 
-<div class="grid-container f{{gridLayout.containers.length}}"  [class.explorer-show]="explorerVisible"
-  [class.go-back]="!explorerAnimDone">
+<div class="grid-container f{{gridLayout.containers.length}}" [class.explorer-show]="explorerVisible" [class.go-back]="!explorerAnimDone">
 
-  <div class="tabs-container" *ngFor="let container of gridLayout.containers">
+  <div class="tabs-container" dndDropzone (dndDragover)="onTabDragover($event,c)" (dndDrop)="onTabDrop($event,c)"
+    *ngFor="let container of gridLayout.containers;let c = index">
+
+    <!--optional placeholder element for dropzone-->
+    <!--will be removed from DOM on init-->
+    <div class="placeholder" dndPlaceholderRef>
+
+    </div>
 
     <ul class="tabs-nav">
-      <li *ngFor="let tab of container.tabs" [class.active]="tab.active" (click)="setTabActive(tab,container)">
-        {{tab.title}}
+      <li *ngFor="let tab of container.tabs;let i = index" [class.nextIsActive]="container.tabs[i + 1] && container.tabs[i + 1].active"
+        [class.prevIsActive]="container.tabs[i - 1] && container.tabs[i - 1].active" [class.active]="tab.active"
+        (click)="setTabActive(tab,container)">
+
+        <a class="tab-handle" [dndEffectAllowed]="'all'" [dndDraggable]="{ containerIndex : c,tabIndex : i}">
+          <div class="tab-icon">
+            <img [src]="'assets/icons/' + tab.icon + '.svg'" />
+          </div>
+          <div class="tab-title">
+            {{tab.title}}
+          </div>
+          <div class="tab-close" (click)="closeTab(c,i)">
+            <img [src]="'assets/icons/close-5.svg'" />
+          </div>
+        </a>
+
       </li>
+
+      <li [class.prevIsActive]="container.tabs[container.tabs.length - 1] && container.tabs[container.tabs.length - 1].active">
+        <a class="tab-handle">
+          &nbsp;
+        </a>
+      </li>
+
+
+
     </ul>
 
     <div *ngFor="let tab of container.tabs" [hidden]="!tab.active">

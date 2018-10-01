@@ -6,6 +6,8 @@
     left: 10px;
     z-index: 100;
     border-radius: 100%;
+    overflow: hidden;
+    box-shadow: -2px 3px 0px #c5a262;
 }
 
 header {
@@ -32,7 +34,6 @@ header {
             position: relative;
             transition: all ease .3s;
             border-radius: 20px;
-            
             span {
                 color: #777;
             }
@@ -85,7 +86,8 @@ header {
                 width: auto;
             }
         }
-        .explorer-toggle , .container-add {
+        .explorer-toggle,
+        .container-add {
             float: right;
             height: 40px;
             width: 40px;
@@ -364,16 +366,14 @@ aside#explorer {
     max-width: 100%;
 }
 
-
-
 #start {
     width: 100%;
-    height: 100%;
+    height: calc(~"100vh - 50px");
     position: fixed;
-    bottom: 0;
+    top: 50px;
     right: 0;
     overflow: hidden;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.3);
     filter: grayscale(1);
     color: #fff;
     opacity: 0; // transition: opacity ease .3s;
@@ -382,7 +382,7 @@ aside#explorer {
         max-width: 420px;
         width: 100%;
         margin: 0 auto;
-        background: #100a3e url('/assets/graphics/auth/astro-small.svg') no-repeat center bottom;
+        background: #c3a265 url('/assets/graphics/auth/astro-small.svg') no-repeat center bottom;
         background-size: 64px;
         height: 100%;
         border-radius: 5px 5px 0 0;

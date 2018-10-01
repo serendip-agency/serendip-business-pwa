@@ -95,6 +95,9 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 import { UserProfileComponent } from './settings/user-profile/user-profile.component';
 import { MapComponent } from './map/map.component';
 
+import { DndModule } from 'ngx-drag-drop';
+
+
 const dynamicComponents = [
   PeopleFormComponent,
   PeopleTableComponent,
@@ -144,7 +147,7 @@ const dynamicComponents = [
     DynamicModule.withComponents(dynamicComponents),
     BrowserModule,
     BrowserAnimationsModule,
-
+    DndModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,

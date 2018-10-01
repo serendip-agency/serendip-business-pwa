@@ -428,5 +428,18 @@
         ]
       }
     ]
+  },
+  {
+    "name" : "support",
+    "title" : "‍‍پشتیبانی",
+    "icon" : "support-1",
+    "tabs": []
+  },
+
+  {
+    "name" : "support",
+    "title" : "باشگاه",
+    "icon" : "club-1",
+    "tabs": []
   }
 ]

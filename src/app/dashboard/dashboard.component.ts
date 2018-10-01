@@ -35,6 +35,7 @@ import { InteractionDeleteComponent } from "../interaction/interaction-delete/in
 import { UserProfileComponent } from "../settings/user-profile/user-profile.component";
 import { CrmService } from "../crm.service";
 import { GmapsService } from "../gmaps.service";
+import { DndDropEvent } from "ngx-drag-drop";
 
 const dynamicComponents = {
   PeopleFormComponent,
@@ -75,6 +76,11 @@ const dynamicComponents = {
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
+  startActive: Boolean = false;
+  routerSubscription: Subscription;
+  search: { text: String, mode: string } = { text: '', mode: 'contacts' };
+
+
   explorerVisible: boolean = false;
   explorerAnimDone: boolean = true;
 
@@ -92,12 +98,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
 
-
-  routerSubscription: Subscription;
-  search: { text: String, mode: string } = { text: '', mode: 'contacts' };
-
-  startActive: Boolean = false;
-
   clickOnStartWrapper(event: MouseEvent) {
     if ((event.target as HTMLElement).getAttribute('id') === 'start')
       this.startActive = false;
@@ -113,7 +113,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   explorerAnimTimeout = null;
   explorerMouseIn() {
-
     this.explorerVisible = true;
     this.explorerAnimDone = false;
 
@@ -122,12 +121,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.explorerAnimTimeout = setTimeout(() => {
       this.explorerAnimDone = true;
     }, 500);
-
   }
 
 
   explorerMouseOut() {
-
     this.explorerVisible = false;
     this.explorerAnimDone = false;
 
@@ -136,9 +133,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.explorerAnimTimeout = setTimeout(() => {
       this.explorerAnimDone = true;
     }, 500);
-
   }
 
+
+  onTabDragover(event: DragEvent) {
+
+    console.log("dragover", JSON.stringify(event, null, 2));
+  }
+
+  onTabDrop(event: DndDropEvent, dropToContainerIndex) {
+
+
+
+    var eventData: { containerIndex: number, tabIndex: number, tab: any } = event.data;
+    console.log(eventData);
+
+
+    var toDrop = eventData.tab || this.gridLayout.containers[eventData.containerIndex].tabs[eventData.tabIndex];
+
+    _.forEach(this.gridLayout.containers[dropToContainerIndex].tabs, (tab: { active: boolean }) => {
+      tab.active = false;
+    });
+
+    if (eventData.containerIndex != dropToContainerIndex) {
+      toDrop.active = true;
+    }
+
+    if (eventData.containerIndex != undefined)
+      this.gridLayout.containers[eventData.containerIndex].tabs.splice(eventData.tabIndex, 1);
+
+
+   this.gridLayout.containers[dropToContainerIndex].tabs.push(toDrop);
+
+
+    if (eventData.containerIndex != undefined)
+      if (this.gridLayout.containers[eventData.containerIndex].tabs.length == 1 || _.where(this.gridLayout.containers[eventData.containerIndex].tabs, { active: true }).length == 0)
+        this.gridLayout.containers[eventData.containerIndex].tabs[0].active = true;
+
+  }
 
 
   getExplorerSections(sections: any) {
@@ -146,7 +178,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return _.filter(sections, (sec: any) => {
       return sec.name != "dashboard";
     });
-
 
   }
 
@@ -164,7 +195,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.gridLayout.containers[0].tabs[0].active = true;
     }
 
-
     console.log("handleParams called.");
 
   }
@@ -172,17 +202,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   addContainer() {
 
     if (this.dashboardService.currentSection) {
-      this.gridLayout.containers.push({ tabs: JSON.parse(JSON.stringify(this.dashboardService.currentSection.tabs)) });
-      this.gridLayout.containers[1].tabs[0].active = true;
+      //JSON.parse(JSON.stringify(this.dashboardService.currentSection.tabs))
+      this.gridLayout.containers.push({ tabs: [] });
+      // this.gridLayout.containers[1].tabs[0].active = true;
     }
-
 
   }
 
   setTabActive(tab, container) {
 
     _.forEach(container.tabs, (t: any) => {
-      if (t.name != tab.name)
         t.active = false;
     });
 
@@ -204,26 +233,33 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
 
-
     if (this.routerSubscription)
       this.routerSubscription.unsubscribe();
 
   }
-  async ngOnInit() {
 
+  closeTab(containerIndex, tabIndex) {
+
+    this.gridLayout.containers[containerIndex].tabs.splice(tabIndex, 1);
+
+    if (this.gridLayout.containers[containerIndex].tabs.length == 1 || _.where(this.gridLayout.containers[containerIndex].tabs, { active: true }).length == 0)
+      this.gridLayout.containers[containerIndex].tabs[0].active = true;
+
+  }
+
+
+  async ngOnInit() {
 
     await this.dashboardService.setDefaultSchema();
 
     this.handleParams();
 
     this.routerSubscription = this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
+      if (event instanceof NavigationEnd)
         this.handleParams();
-      }
 
-      if (event instanceof NavigationEnd || event instanceof NavigationCancel) {
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel)
         this.startActive = false;
-      }
 
     });
   }
