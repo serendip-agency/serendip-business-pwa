@@ -2,7 +2,7 @@
 
 import { DashboardService } from "./../../dashboard.service";
 import { ActivatedRoute, Router, NavigationEnd } from "@angular/router";
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators, FormControl } from "@angular/forms";
 import { DataService } from "../../data.service";
 import { InsertMessage } from "../../messaging/InsertMessage";
@@ -13,6 +13,7 @@ import * as _ from 'underscore';
 import { MatChipInputEvent, MatAutocompleteSelectedEvent, MatChipInput, MatChipList, MatSnackBar } from "@angular/material";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { GmapsService } from "../../gmaps.service";
+import { IdbService } from "../../idb.service";
 
 
 @Component({
@@ -22,17 +23,34 @@ import { GmapsService } from "../../gmaps.service";
 })
 export class CompanyFormComponent implements OnInit {
 
+  componentName: string = 'CompanyFormComponent';
+
   companyForm: FormGroup;
 
   model: any = {
     socials: [],
     emails: []
   };
+
   routerSubscription: Subscription;
+
   iranStates: { "name": string; "Cities": { "name": string; }[]; }[];
+
   filteredPeople = [];
 
   cachedEmployees = [];
+
+  /**
+   * unique identifier for this widget. using for state management
+   */
+  @Input() widgetId: string;
+  @Input() documentId: string;
+  @Input() tab: any;
+
+
+  @Output() widgetIdChange = new EventEmitter<string>();
+  @Output() widgetDataChange = new EventEmitter<any>();
+
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
@@ -56,7 +74,8 @@ export class CompanyFormComponent implements OnInit {
     private gmapsService: GmapsService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private dashboardService: DashboardService
+    private dashboardService: DashboardService,
+    private idbService: IdbService
   ) {
     this.iranStates = IranStates;
   }
@@ -152,6 +171,7 @@ export class CompanyFormComponent implements OnInit {
     window.open(`https://www.google.com/maps/@${loc},16z?hl=fa`, '_blank');
   }
 
+
   async ngOnInit() {
 
     // this.routerSubscription = this.router.events.subscribe(event => {
@@ -160,13 +180,8 @@ export class CompanyFormComponent implements OnInit {
     //   }
     // });
 
-
-
-
-    const params = this.activatedRoute.snapshot.params;
-
-
     this.companyForm = this.fb.group({
+      _widgetId: [this.widgetId],
       _id: [""],
       name: ["", Validators.required],
       type: [[]],
@@ -188,27 +203,48 @@ export class CompanyFormComponent implements OnInit {
         })
       ])
     });
+    var stateDb = await this.idbService.userIDB("state");
 
     //.push(this.fb.control(''))
-    this.companyForm.valueChanges.subscribe(data => { });
+    this.companyForm.valueChanges.subscribe(async (data: any) => {
 
-    if (params.id) {
-      var model = await this.dataService.details('company', params.id);
-      console.log(model);
-      this.companyForm.patchValue(model);
-     // this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+      this.widgetDataChange.emit(data);
+
+      var stateKey: string = this.widgetId;
+      if (!stateKey) {
+        this.widgetId = stateKey = this.componentName + '-' + Date.now() + '-' + Math.random().toString().split('.')[1];
+        this.widgetIdChange.emit(this.widgetId);
+        this.companyForm.patchValue({ "_widgetId": this.widgetId });
+      }
+
+      await stateDb.set(stateKey, { id: stateKey, componentName: this.componentName, model: data, tab: this.tab });
+
+    });
 
 
-      // TO Do cache Employees
+    var savedState;
+    try {
+      savedState = await stateDb.get(this.widgetId);
+    } catch (error) {
+    }
+
+    if (savedState) {
+      this.companyForm.patchValue(savedState.model);
+    } else {
+
+      if (this.documentId) {
+        var model = await this.dataService.details('company', this.documentId);
+        this.companyForm.patchValue(model);
+      }
     }
 
   }
-  handleParams(): any {
-    const params = this.activatedRoute.snapshot.params;
-    if (params.id) {
-     //this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
-    }
-  }
+  // handleParams(): any {
+  //   const params = this.activatedRoute.snapshot.params;
+  //   if (params.id) {
+  //     //this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+  //   }
+  // }
 
   addMobile() {
     (this.companyForm.controls.mobiles as FormArray).push(

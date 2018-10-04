@@ -115,7 +115,7 @@
 
         <div formArrayName="contacts">
 
-          <div class="contact" *ngFor="let contact of peopleForm.get('contacts').controls; let i=index"
+          <div class="contact" *ngFor="let contact of getFormArray(peopleForm,'contacts'); let i=index"
             [formGroupName]="i">
 
             <mat-form-field>

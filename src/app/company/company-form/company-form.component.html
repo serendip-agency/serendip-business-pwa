@@ -28,7 +28,7 @@
 
         <div formArrayName="contacts">
 
-          <div class="contact" *ngFor="let contact of companyForm.get('contacts').controls; let i=index"
+          <div class="contact" *ngFor="let contact of  getFormArray(companyForm,'contacts'); let i=index"
             [formGroupName]="i">
 
             <mat-form-field>
@@ -36,7 +36,7 @@
             </mat-form-field>
 
             <div formArrayName="telephones">
-              <mat-form-field *ngFor="let telphone of contact.get('telephones').controls; let b=index">
+              <mat-form-field *ngFor="let telphone of  getFormArray(contact,'telephones'); let b=index">
                 <input matInput placeholder="تلفن {{b == 0 ? '' : b + 1}}" [formControlName]="b" dir="ltr" />
 
                 <div class="plus" *ngIf="b == 0" matSuffix (click)="contact.get('telephones').push(fb.control(''));">
@@ -49,7 +49,7 @@
             </div>
 
             <div formArrayName="faxes">
-              <mat-form-field *ngFor="let telphone of contact.get('faxes').controls; let b=index">
+              <mat-form-field *ngFor="let telphone of  getFormArray(contact,'faxes'); let b=index">
                 <input matInput placeholder="فکس {{b == 0 ? '' : b + 1}}" [formControlName]="b" dir="ltr" />
 
                 <div class="plus" *ngIf="b == 0" matSuffix (click)="contact.get('faxes').push(fb.control(''));">

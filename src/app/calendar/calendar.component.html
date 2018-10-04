@@ -1,0 +1,71 @@
+<div id="calendar">
+  <aside></aside>
+
+  <div class="toolbar">
+
+    <div class="inner">
+
+      <div class="box">
+
+        <mat-form-field>
+          <mat-select [(ngModel)]="calendarType" placeholder="نوع تقویم">
+            <mat-option [value]="'persian'">
+              جلالی
+            </mat-option>
+            <mat-option [value]="'gregorian'">
+              میلادی
+            </mat-option>
+            <mat-option [value]="'islamic'">
+              قمری
+            </mat-option>
+
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+  </div>
+
+  <section class="month-view">
+
+    <div class="weekday">
+      شنبه
+    </div>
+
+    <div class="weekday">
+      یک‌شنبه
+    </div>
+
+    <div class="weekday">
+      دو‌شنبه
+    </div>
+
+    <div class="weekday">
+      سه‌شنبه
+    </div>
+
+    <div class="weekday">
+      چهار‌شنبه
+    </div>
+
+    <div class="weekday">
+      پنج‌شنبه
+    </div>
+
+    <div class="weekday">
+      جمعه
+    </div>
+    <div *ngFor="let item of monthView" class="block {{item.class.join(' ')}}">
+
+      <div class="day"> {{rpd (item.moment.format('jDD'))}} </div>
+
+      <div class="month">
+        {{item.moment.format('jMMMM')}}
+      </div>
+
+      <br>
+    </div>
+
+  </section>
+</div>

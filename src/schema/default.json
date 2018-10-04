@@ -65,24 +65,9 @@
     "icon": "building-corp",
     "tabs": [
       {
-        "name": "default",
-        "title": "داشبورد",
-        "widgets": []
-      },
-      {
         "name": "new",
         "title": " شرکت جدید",
         "icon": "plus-add-1",
-        "widgets": [
-          {
-            "inputs": {},
-            "component": "CompanyFormComponent"
-          }
-        ]
-      },
-      {
-        "name": "edit",
-        
         "widgets": [
           {
             "inputs": {},

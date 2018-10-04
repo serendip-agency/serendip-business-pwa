@@ -71,20 +71,24 @@ export class IdbService {
 
 
   constructor() {
-
     console.log('IdbService constructed ...');
-
   }
 
-  async syncIDB(store: string) {
+  async syncIDB(store:  "pull" | "push") {
     return new Idb(idb.default.open("SYNC", 1, (db) => {
       db.createObjectStore("pull");
       db.createObjectStore("push");
     }), store);
   }
 
+  async userIDB(store: "state") {
+    return new Idb(idb.default.open("USER", 1, (db) => {
+      db.createObjectStore("state");
+    }), store);
+  }
 
-  async dataIDB(store: string) {
+
+  async dataIDB(store: string | "company" | "person" | "product") {
     return new Idb(idb.default.open("DB", 1, (db) => {
       db.createObjectStore("company");
       db.createObjectStore("person");

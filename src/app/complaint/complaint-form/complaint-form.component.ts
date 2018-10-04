@@ -10,7 +10,7 @@ import { Subscription } from "rxjs";
 import { MatChipInputEvent, MatAutocompleteSelectedEvent, MatChipInput, MatChipList, MatSnackBar } from "@angular/material";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import * as _ from 'underscore';
-import * as Moment from 'jalali-moment'
+import * as Moment from 'moment-jalaali'
 
 @Component({
   selector: "app-complaint-form",

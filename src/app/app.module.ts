@@ -96,6 +96,7 @@ import { UserProfileComponent } from './settings/user-profile/user-profile.compo
 import { MapComponent } from './map/map.component';
 
 import { DndModule } from 'ngx-drag-drop';
+import { CalendarComponent } from './calendar/calendar.component';
 
 
 const dynamicComponents = [
@@ -138,7 +139,8 @@ const dynamicComponents = [
     ...dynamicComponents,
     CrmComponent,
     UserProfileComponent,
-    MapComponent
+    MapComponent,
+    CalendarComponent
   ],
 
   entryComponents: [PeopleDeleteComponent],

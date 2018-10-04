@@ -1,6 +1,6 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 
-import * as _moment from 'jalali-moment';
+import * as _moment from 'moment-jalaali';
 import { DatePickerComponent } from 'ng2-jalali-date-picker';
 import { AuthService } from './auth.service';
 import { SyncService } from './sync.service';
@@ -9,12 +9,15 @@ import { ActivatedRoute, Router, NavigationEnd, NavigationCancel } from '@angula
 import { CrmService } from './crm.service';
 import { Subscription } from 'rxjs';
 
+import * as html2canvas from 'html2canvas';
+
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.less']
 })
-export class AppComponent implements OnInit,OnDestroy {
+export class AppComponent implements OnInit, OnDestroy {
   @ViewChild('dayPicker') datePicker: DatePickerComponent;
 
   moment: any;
@@ -54,13 +57,19 @@ export class AppComponent implements OnInit,OnDestroy {
   }
 
 
-  ngOnDestroy(){
+  ngOnDestroy() {
 
-  this.routerSubscription.unsubscribe();
-    
+    this.routerSubscription.unsubscribe();
+
   }
   ngOnInit() {
 
+    // setTimeout(() => {
+    //   html2canvas(document.getElementsByClassName("grid-container")[0]).then(canvas => {
+    //     document.body.appendChild(canvas)
+    //   });
+    // }, 2000);
+    
     this.routerSubscription = this.router.events.subscribe(async (event: any) => {
 
       this.routerLoading = true;
