@@ -1,8 +1,6 @@
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "material.less";
 // @import url('https://fonts.googleapis.com/css?family=Roboto:300,400');
-
-
 /**
 *
 *	Name:			IRANYekan Font
@@ -56,8 +54,8 @@ This set of fonts are used in this project under the license: (.....)
 }
 
 ::-webkit-scrollbar {
-    width: 2px;
-    height: 2px;
+    width: 1px;
+    height: 1px;
 }
 
 ::-webkit-scrollbar-track {
@@ -65,7 +63,7 @@ This set of fonts are used in this project under the license: (.....)
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #eee;
+    background: rgba(255, 255, 255, 0.15);
 }
 
 input,
@@ -183,6 +181,8 @@ label {
             display: block;
             background: #efefef;
             user-select: none;
+            height: 30px;
+            white-space: nowrap;
             li {
                 display: inline-block;
                 line-height: 30px;
@@ -291,6 +291,54 @@ label {
     }
     &.go-back {
         width: calc(~"100% - 210px");
+    }
+}
+
+@media(max-width:640px) {
+    aside#explorer {
+        position: fixed;
+        top: 0;
+        right: 0;
+        float: none;
+        z-index: 5;
+        height: 100vh !important;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        &.hide {
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+        .explorer-inner {
+            padding-top: 50px;
+        }
+        &.docScrolled {
+            right: -60px;
+        }
+    }
+    .grid-container {
+        height: auto;
+        width: calc(100% - 50px);
+        &.docScrolled {
+            width: 100%;
+      
+        }
+        .tabs-container {
+            padding: 5px 5px 0 0;
+        }
+        &.explorer-show {
+            width: calc(100% - 50px);
+        }
+        &.go-back {
+            width: calc(100% - 50px);
+        }
+        .widget-container {
+            .mat-card-content {
+                max-height: unset;
+                padding: 5px;
+                box-sizing: border-box;
+            }
+            .widget form {
+                margin-top: 0;
+            }
+        }
     }
 }
 

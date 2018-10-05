@@ -4,10 +4,10 @@ import { MatChipInputEvent } from "@angular/material";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { AuthService, userToken } from "../auth.service";
 import { HttpClient } from "@angular/common/http";
-import { environment } from "../../environments/environment.prod";
 import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
 import { Subscription } from "rxjs";
 import { CrmService } from "../crm.service";
+import { environment } from "../../environments/environment";
 
 @Component({
   selector: "app-crm",
@@ -85,7 +85,9 @@ export class CrmComponent implements OnInit, OnDestroy {
 
   async handleParams() {
 
+    
     await this.refresh();
+
     this.tab = this.activatedRoute.snapshot.params.tab || 'list';
 
     if (this.tab == 'choose')
@@ -105,8 +107,11 @@ export class CrmComponent implements OnInit, OnDestroy {
       members: this.fb.array([])
     });
     
+
+
     try {
       this.token = await this.authService.token();
+     await this.handleParams();
 
     } catch (error) {
       this.router.navigate(['/auth']);
@@ -115,7 +120,6 @@ export class CrmComponent implements OnInit, OnDestroy {
 
 
 
-    this.handleParams();
 
     this.routerSubscription = this.routerSubscription = this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd)

@@ -106,8 +106,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return input.toString().replace(/\d/g, convert);
   }
 
-
-  startActive: Boolean = false;
   routerSubscription: Subscription;
   search: { text: String, mode: string } = { text: '', mode: 'contacts' };
 
@@ -145,6 +143,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardDateTimeFormats.push(this.dashboardDateTimeFormats.shift());
     localStorage.setItem("dashboardDateTimeFormat", this.dashboardDateTimeFormats[0]);
 
+    this.dashboardDateTimeTick();
+
   }
 
 
@@ -172,7 +172,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   clickOnStartWrapper(event: MouseEvent) {
     if ((event.target as HTMLElement).getAttribute('id') === 'start')
-      this.startActive = false;
+      document.getElementById("start").classList.remove("fadeIn");
   }
 
   getExplorerTabs(tabs: any) {
@@ -248,6 +248,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   onTabDragover(event: DragEvent, containerIndex: number) {
 
+
+    if (this.dashboardService.screen == "mobile")
+      return;
     //console.log("dragover",  event,containerIndex);
     var targetPosition = (event.target as HTMLElement).parentElement.getBoundingClientRect();
 
@@ -277,13 +280,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   onTabDrop(event: DndDropEvent, dropToContainerIndex) {
 
 
+    if (this.dashboardService.screen == "mobile")
+      this.explorerMouseOut();
 
     var eventData: { containerIndex: number, tabIndex: number, tab: any } = event.data;
     console.log(eventData);
 
-    if (eventData.tab.widgets[0].id)
-      if (JSON.stringify(this.gridLayout.containers).indexOf(eventData.tab.widgets[0].id) != -1)
-        return;
+    if (eventData.tab)
+      if (eventData.tab.widgets[0].id)
+        if (JSON.stringify(this.gridLayout.containers).indexOf(eventData.tab.widgets[0].id) != -1)
+          return;
 
 
     var toDrop = eventData.tab || this.gridLayout.containers[eventData.containerIndex].tabs[eventData.tabIndex];
@@ -327,11 +333,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
     if (this.dashboardService.currentSection) {
+
+      this.gridLayout.containers = [];
+
       this.gridLayout.containers.push({ tabs: _.clone(this.dashboardService.currentSection.tabs) });
 
       this.gridLayout.containers[0].tabs[0].active = true;
 
-      this.addContainer();
+
+      if (this.dashboardService.screen == "desktop")
+        this.addContainer();
 
     }
 
@@ -467,11 +478,161 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   }
+
+
+  async handleHeaderSwipe() {
+
+    var headerElement = document.getElementById("header");
+    headerElement.querySelector(".inner").setAttribute("style", `left:0;`);
+    headerElement.querySelector(".shortcuts").setAttribute("style", `left:-100%;`);
+
+    var swipeDownTimeout = null;
+
+    var swipeRight = () => {
+      headerElement.onmousemove = null;
+      headerElement.ontouchmove = null;
+
+      console.log('header swipe right');
+
+      if (document.querySelector("aside#explorer").classList.contains("hide")) {
+
+        headerElement.querySelector(".inner").setAttribute("style", `left:100%;`);
+        headerElement.querySelector(".shortcuts").setAttribute("style", `left:0;`);
+      } else
+        this.explorerMouseOut();
+
+      if (swipeDownTimeout)
+        clearTimeout(swipeDownTimeout);
+      swipeDownTimeout = setTimeout(() => {
+        swipeLeft();
+      }, 5000);
+    }
+
+    var swipeLeft = () => {
+
+      console.log('header swipe left');
+
+      headerElement.onmousemove = null;
+      headerElement.ontouchmove = null;
+
+      if (headerElement.querySelector(".inner").getAttribute("style") != `left:0;`) {
+        headerElement.querySelector(".inner").setAttribute("style", `left:0;`);
+        headerElement.querySelector(".shortcuts").setAttribute("style", `left:-100%;`);
+
+      } else {
+        this.explorerMouseIn();
+      }
+
+
+    };
+
+    headerElement.ontouchstart = headerElement.onmousedown = (down_ev: any) => {
+
+      var startPoint = down_ev.clientX || down_ev.touches[0].clientX;
+
+      headerElement.classList.add("swipe");
+
+
+      headerElement.ontouchmove = headerElement.onmousemove = (move_ev: any) => {
+        var currentPoint = move_ev.clientX || move_ev.touches[0].clientX;
+        var lineLength = currentPoint - startPoint;
+        if (lineLength < -100)
+          swipeLeft();
+
+
+        if (lineLength > 100)
+          swipeRight();
+      }
+
+    }
+
+    headerElement.ontouchend = headerElement.onmouseup = () => {
+
+      headerElement.onmousemove = null;
+      headerElement.ontouchmove = null;
+
+      headerElement.classList.remove("swipe");
+
+    }
+
+
+  }
+
+
+  async handleStartButtonMove() {
+
+    var elem = document.getElementById("start-button");
+
+    var captureMove = false;
+    var moved = false;
+    var elemPos = { x: elem.offsetLeft, y: elem.offsetTop };
+    var startPos = { x: 0, y: 0 };
+
+    elem.ontouchstart = elem.onmousedown = (start_ev: any) => {
+
+      elemPos = { x: elem.offsetLeft, y: elem.offsetTop };
+      captureMove = true;
+      moved = false;
+
+      startPos = { x: start_ev.clientX || start_ev.touches[0].clientX, y: start_ev.clientY || start_ev.touches[0].clientY };
+
+    };
+
+    document.ontouchmove = document.onmousemove = (move_ev: any) => {
+
+
+      if (!captureMove)
+        return;
+
+
+      document.querySelector("body").setAttribute("style", "overflow:hidden;");
+
+      elem.classList.add("moving");
+
+      var movePos = { x: move_ev.clientX || move_ev.touches[0].clientX, y: move_ev.clientY || move_ev.touches[0].clientY };
+
+      var destPos = {
+        x: elemPos.x - (startPos.x - movePos.x),
+        y: elemPos.y - (startPos.y - movePos.y),
+      };
+
+      if (destPos.x < 5 || destPos.x > window.innerWidth - (this.dashboardService.screen == "mobile" ? 37 : 69))
+        return;
+
+      if (destPos.y < 5 || destPos.y > window.innerHeight - (this.dashboardService.screen == "mobile" ? 37 : 69))
+        return;
+
+
+      // console.log(move_ev);
+
+      // elem.classList.add("move");
+      elem.setAttribute("style", `top:${destPos.y}px;left:${destPos.x}px;`);
+      moved = true;
+    };
+    document.ontouchend = document.onmouseup = (ev: any) => {
+      if (captureMove) {
+        captureMove = false;
+        elem.classList.remove("moving");
+        document.querySelector("body").removeAttribute("style");
+
+        if (ev instanceof MouseEvent)
+          if (!moved) document.getElementById("start").classList.toggle("fadeIn");
+
+      }
+    };
+
+
+
+  }
+
   async ngOnInit() {
 
 
     await this.dashboardService.setDefaultSchema();
 
+
+    this.handleHeaderSwipe();
+    this.handleStartButtonMove();
     this.dashboardDateTimeTick();
 
     this.dashboardDateTimeInterval = setInterval(() => {
@@ -479,7 +640,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }, 1000);
 
 
-    this.explorerMouseIn();
+    document.onscroll = () => {
+
+      if (document.scrollingElement.scrollTop > 30) {
+
+        document.querySelector("aside#explorer").classList.add("docScrolled");
+        document.querySelector(".grid-container").classList.add("docScrolled");
+
+      } else {
+        document.querySelector("aside#explorer").classList.remove("docScrolled");
+        document.querySelector(".grid-container").classList.remove("docScrolled");
+      }
+    };
+
+    if (this.dashboardService.screen == "desktop")
+      this.explorerMouseIn();
+
+
     this.refreshOpenWidgets();
     this.refreshOpenWidgetEmitter.subscribe(() => {
       this.refreshOpenWidgets();
@@ -491,7 +668,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.handleParams();
 
       if (event instanceof NavigationEnd || event instanceof NavigationCancel)
-        this.startActive = false;
+        document.getElementById("start").classList.remove("fadeIn");
 
     });
   }

@@ -1,316 +1,318 @@
 <app-calendar></app-calendar>
-<header>
 
-  <div class="inner">
-    <div class="logo">
-      <img src='/assets/graphics/brand/serendip-logo-light.svg' />
+<div class="dashboard-wrapper">
+  <header id="header">
+
+    <div class="shortcuts">
+      <ul>
+
+
+        <li>
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-note.svg" alt="">
+          </a>
+        </li>
+
+
+        <li>
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-calendar.svg" alt="">
+          </a>
+        </li>
+        <li>
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-map.svg" alt="">
+          </a>
+        </li>
+
+        <li>
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-weather.svg" alt="">
+          </a>
+        </li>
+
+        <li>
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-cal.svg" alt="">
+          </a>
+        </li>
+
+        <li class="capture">
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-capture-1.svg" alt="">
+          </a>
+        </li>
+
+        <li>
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-clock-2.svg" alt="">
+          </a>
+        </li>
+
+
+        <li>
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-colors.svg" alt="">
+          </a>
+        </li>
+
+
+
+
+
+        <li>
+          <a>
+            <img src="/assets/icon-crm-header/icons-crm-header-air.svg" alt="">
+          </a>
+        </li>
+
+
+
+
+
+
+
+      </ul>
     </div>
 
-    <div class="quick" (click)="toggleDashboardDateTimeFormat()">
 
-      <div class="datetime">
-
-        <span class="time">
-          <img *ngFor="let w of dashboardTime.split('')" [src]=' "/assets/digital-numbers/" + w + ".svg"' />
-        </span>
-
-        <span class="date">
-          {{ rpd( dashboardDate ) }}
-        </span>
+    <div class="inner">
+      <div class="logo">
+        <img src='/assets/graphics/brand/serendip-logo-light.svg' />
       </div>
 
-      <div class="shortcuts">
-        <ul>
+
+    
+      <div class="quick" (click)="toggleDashboardDateTimeFormat()">
+
+        <div class="datetime">
+
+          <span class="time">
+            <img *ngFor="let w of dashboardTime.split('')" [src]=' "/assets/digital-numbers/" + w + ".svg"' />
+          </span>
+
+          <span class="date">
+            {{ rpd( dashboardDate ) }}
+          </span>
+        </div>
 
 
-          <li>
-            <a>
-              <img src="/assets/icon-crm-header/icons-crm-header-note.svg" alt="">
-            </a>
-          </li>
+
+      </div>
+      <div class="title" *ngIf="dashboardService.currentSection">
+        <div class="icon">
+          <img [src]=' "/assets/icons/" + dashboardService.currentSection.icon + ".svg"' />
+        </div>
+
+        {{dashboardService.currentSection.title}}
+      </div>
 
 
-          <li>
-            <a>
-              <img src="/assets/icon-crm-header/icons-crm-header-calendar.svg" alt="">
-            </a>
-          </li>
-          <li>
-            <a>
-              <img src="/assets/icon-crm-header/icons-crm-header-map.svg" alt="">
-            </a>
-          </li>
 
-          <li>
-            <a>
-              <img src="/assets/icon-crm-header/icons-crm-header-weather.svg" alt="">
-            </a>
-          </li>
 
-          <li>
-            <a>
-              <img src="/assets/icon-crm-header/icons-crm-header-cal.svg" alt="">
-            </a>
-          </li>
 
-          <li>
-            <a>
-              <img src="/assets/icon-crm-header/icons-crm-header-capture-1.svg" alt="">
-            </a>
-          </li>
+      <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible">
+        <img [src]='"/assets/icons/arrow-right-next-2.svg"' />
+      </div>
 
-          <li>
-              <a>
-                <img src="/assets/icon-crm-header/icons-crm-header-clock-2.svg" alt="">
+
+      <!-- 
+      <div class="container-add" (click)="addContainer()">
+        <img [src]='"/assets/icons/plus-add-2.svg"' />
+      </div> -->
+
+      <div *ngFor="let item of [1,2,3,4,6,9]" class="grid-layout grid-layout-{{item}}" (click)="setGridLayout(item)">
+        <img [src]="'/assets/icons/tab-' + item + '.svg'" />
+      </div>
+
+
+      <div class="clear"></div>
+
+
+    </div>
+    <!-- 
+    <nav>
+      <a *ngFor="let item of dashboardService.getActiveTabs();trackBy:item?.title" [routerLink]="['/dashboard',dashboardService.currentSection.name,item.name]"
+        routerLinkActive="active-link">
+        <img [src]="item.icon ? '/assets/icons/' + item.icon + '.svg' : '/assets/icons/tabs/' + item.name + '.svg'" />
+  
+        <span>
+          {{item.title}}
+        </span>
+      </a>
+    </nav> -->
+
+
+  </header>
+
+
+  <aside id="explorer" [class.hide]="!explorerVisible" class="closed" (mouseenter)="explorerMouseIn()" (mouseleave)="explorerMouseOut()">
+
+    <div class="explorer-inner">
+
+      <div class="splitter">
+        ابزار های فعال
+      </div>
+      <ul class="active" [class.empty]="openWidgets.length == 0">
+
+
+        <li *ngFor="let widget of  openWidgets ">
+          <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab : widget.tab }">
+
+            <div class="img">
+              <img [src]="'assets/icons/' + widget.tab.icon + '.svg'" />
+            </div>
+            <span>
+              {{widget.tab.title}}
+            </span>
+
+            <span class="close" (click)="deleteWidgetState(widget.id)">
+              <img [src]="'assets/icons/close-5.svg'" />
+            </span>
+
+
+          </a>
+        </li>
+
+
+      </ul>
+
+      <div class="splitter">
+        مدیریت مشتری
+      </div>
+      <ul class="crm">
+        <li *ngFor="let section of  getExplorerSections(dashboardService.schema)">
+          <a (click)="section.toggleUl = !section.toggleUl">
+            <img [src]="'assets/icons/' + section.icon + '.svg'" />
+            <span>
+              {{section.title}}
+            </span>
+
+            <img class="toggle-ul" [class.active]="section.toggleUl" [src]='"/assets/icons/arrow-right-next-8.svg"' />
+
+          </a>
+
+          <ul [class.show]="section.toggleUl">
+            <li *ngFor="let tab of getExplorerTabs( section.tabs)">
+              <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab : tab}">
+                <div class="img">
+                  <img [src]="'assets/icons/' + tab.icon + '.svg'" />
+                </div>
+                <span>
+                  {{tab.title}}
+                </span>
               </a>
             </li>
+          </ul>
+        </li>
 
-            <li>
-                <a>
-                  <img src="/assets/icon-crm-header/icons-crm-header-clock-2.svg" alt="">
-                </a>
-              </li>
-    
+      </ul>
 
-              <li>
-                  <a>
-                    <img src="/assets/icon-crm-header/icons-crm-header-colors.svg" alt="">
-                  </a>
-                </li>
-      
+    </div>
+
+  </aside>
 
 
 
+  <div class="grid-container f{{gridLayout.containers.length}}" [class.explorer-show]="explorerVisible" [class.go-back]="!explorerAnimDone">
 
-          <li>
-            <a>
-              <img src="/assets/icon-crm-header/icons-crm-header-air.svg" alt="">
-            </a>
-          </li>
+    <div class="tabs-container" dndDropzone (dndDragover)="onTabDragover($event,c)" (dndDrop)="onTabDrop($event,c)"
+      *ngFor="let container of gridLayout.containers;let c = index">
 
+      <!--optional placeholder element for dropzone-->
+      <!--will be removed from DOM on init-->
+      <div class="placeholder" dndPlaceholderRef>
 
-
-
-
-
-
-        </ul>
       </div>
 
-    </div>
-    <div class="title" *ngIf="dashboardService.currentSection">
-      <div class="icon">
-        <img [src]=' "/assets/icons/" + dashboardService.currentSection.icon + ".svg"' />
-      </div>
+      <ul class="tabs-nav">
+        <li *ngFor="let tab of container.tabs;let i = index" [class.nextIsActive]="container.tabs[i + 1] && container.tabs[i + 1].active"
+          [class.prevIsActive]="container.tabs[i - 1] && container.tabs[i - 1].active" [class.active]="tab.active"
+          (click)="setTabActive(tab,container)">
 
-      {{dashboardService.currentSection.title}}
-    </div>
+          <a class="tab-handle" [dndEffectAllowed]="'all'" [dndDraggable]="{ containerIndex : c,tabIndex : i}">
+            <div class="tab-icon">
+              <img [src]="'assets/icons/' + tab.icon + '.svg'" />
+            </div>
+            <div class="tab-title">
+              {{tab.title}}
+            </div>
+            <div class="tab-close" (click)="closeTab(c,i)">
+              <img [src]="'assets/icons/close-5.svg'" />
+            </div>
+          </a>
 
+        </li>
 
-
-
-
-    <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible">
-      <img [src]='"/assets/icons/arrow-right-next-2.svg"' />
-    </div>
-
-
-    <!-- 
-    <div class="container-add" (click)="addContainer()">
-      <img [src]='"/assets/icons/plus-add-2.svg"' />
-    </div> -->
-
-    <div *ngFor="let item of [1,2,3,4,6,9]" class="grid-layout" (click)="setGridLayout(item)">
-      <img [src]="'/assets/icons/tab-' + item + '.svg'" />
-    </div>
-
-
-    <div class="clear"></div>
-
-
-  </div>
-  <!-- 
-  <nav>
-    <a *ngFor="let item of dashboardService.getActiveTabs();trackBy:item?.title" [routerLink]="['/dashboard',dashboardService.currentSection.name,item.name]"
-      routerLinkActive="active-link">
-      <img [src]="item.icon ? '/assets/icons/' + item.icon + '.svg' : '/assets/icons/tabs/' + item.name + '.svg'" />
-
-      <span>
-        {{item.title}}
-      </span>
-    </a>
-  </nav> -->
-
-
-</header>
-
-
-<aside id="explorer" [class.hide]="!explorerVisible" class="closed" (mouseenter)="explorerMouseIn()" (mouseleave)="explorerMouseOut()">
-
-  <div class="explorer-inner">
-
-    <div class="splitter">
-      ابزار های فعال
-    </div>
-    <ul class="active" [class.empty]="openWidgets.length == 0">
-
-
-      <li *ngFor="let widget of  openWidgets ">
-        <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab : widget.tab }">
-
-          <div class="img">
-            <img [src]="'assets/icons/' + widget.tab.icon + '.svg'" />
-          </div>
-          <span>
-            {{widget.tab.title}}
-          </span>
-
-          <span class="close" (click)="deleteWidgetState(widget.id)">
-            <img [src]="'assets/icons/close-5.svg'" />
-          </span>
-
-
-        </a>
-      </li>
-
-
-    </ul>
-
-    <div class="splitter">
-      مدیریت مشتری
-    </div>
-    <ul class="crm">
-      <li *ngFor="let section of  getExplorerSections(dashboardService.schema)">
-        <a (click)="section.toggleUl = !section.toggleUl">
-          <img [src]="'assets/icons/' + section.icon + '.svg'" />
-          <span>
-            {{section.title}}
-          </span>
-
-          <img class="toggle-ul" [class.active]="section.toggleUl" [src]='"/assets/icons/arrow-right-next-8.svg"' />
-
-        </a>
-
-        <ul [class.show]="section.toggleUl">
-          <li *ngFor="let tab of getExplorerTabs( section.tabs)">
-            <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab : tab}">
-              <div class="img">
-                <img [src]="'assets/icons/' + tab.icon + '.svg'" />
-              </div>
-              <span>
-                {{tab.title}}
-              </span>
-            </a>
-          </li>
-        </ul>
-      </li>
-
-    </ul>
-
-  </div>
-
-</aside>
-
-
-
-<div class="grid-container f{{gridLayout.containers.length}}" [class.explorer-show]="explorerVisible" [class.go-back]="!explorerAnimDone">
-
-  <div class="tabs-container" dndDropzone (dndDragover)="onTabDragover($event,c)" (dndDrop)="onTabDrop($event,c)"
-    *ngFor="let container of gridLayout.containers;let c = index">
-
-    <!--optional placeholder element for dropzone-->
-    <!--will be removed from DOM on init-->
-    <div class="placeholder" dndPlaceholderRef>
-
-    </div>
-
-    <ul class="tabs-nav">
-      <li *ngFor="let tab of container.tabs;let i = index" [class.nextIsActive]="container.tabs[i + 1] && container.tabs[i + 1].active"
-        [class.prevIsActive]="container.tabs[i - 1] && container.tabs[i - 1].active" [class.active]="tab.active"
-        (click)="setTabActive(tab,container)">
-
-        <a class="tab-handle" [dndEffectAllowed]="'all'" [dndDraggable]="{ containerIndex : c,tabIndex : i}">
-          <div class="tab-icon">
-            <img [src]="'assets/icons/' + tab.icon + '.svg'" />
-          </div>
-          <div class="tab-title">
-            {{tab.title}}
-          </div>
-          <div class="tab-close" (click)="closeTab(c,i)">
-            <img [src]="'assets/icons/close-5.svg'" />
-          </div>
-        </a>
-
-      </li>
-
-      <li [class.prevIsActive]="container.tabs[container.tabs.length - 1] && container.tabs[container.tabs.length - 1].active">
-        <a class="tab-handle">
-          &nbsp;
-        </a>
-      </li>
-
-    </ul>
-
-    <div *ngFor="let tab of container.tabs" [hidden]="!tab.active">
-      <div class="widget-container" *ngFor="let widget of getTabWidgets(tab)" [hidden]="widget.screen && widget.screen != dashboardService.screen">
-        <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="{ widgetId : widget.id , tab : tab}"
-          [ndcDynamicOutputs]="{ widgetIdChange : widgetIdChange(widget) , widgetDataChange : widgetDataChange() }"
-          [ndcDynamicComponent]="getComponent(widget.component)"></ndc-dynamic>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-<div *ngIf='crmService.getActiveCrmId()' id="start-button" (click)="startActive = !startActive">
-  <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="" />
-</div>
-
-<div id="start" (click)="clickOnStartWrapper($event)" [class.fadeIn]="startActive">
-
-  <div class="inner">
-    <div class="search">
-      <div class="search-inner">
-        <input type="text" dir="auto" [(ngModel)]="search.text" placeholder="جست‌و‌جو ..." />
-        <img src='assets/icons/search.svg' />
-      </div>
-    </div>
-    <nav>
-      <ul>
-        <li *ngFor="let item of dashboardService.schema">
-          <a [routerLink]="item.name == 'dashboard' ? ['/dashboard'] : ['/dashboard',item.name]">
-            <img [src]="'assets/icons/' + item.icon + '.svg'" />
-            <span>
-              {{item.title}}
-            </span>
+        <li [class.prevIsActive]="container.tabs[container.tabs.length - 1] && container.tabs[container.tabs.length - 1].active">
+          <a class="tab-handle">
+            &nbsp;
           </a>
         </li>
 
       </ul>
-    </nav>
 
-    <div class="tabs">
-
-      <div class="tabs-inner">
-
-        <mat-tab-group [color]="'ascent'" dynamicHeight="true">
-          <mat-tab label="پیام‌ها">
-            <div class="tab-content">
-
-            </div>
-          </mat-tab>
-          <mat-tab label="اعلان‌ها">
-            <div class="tab-content">
-            </div>
-          </mat-tab>
-          <mat-tab label="وظایف">
-            <div class="tab-content">
-            </div>
-          </mat-tab>
-        </mat-tab-group>
+      <div *ngFor="let tab of container.tabs" [hidden]="!tab.active">
+        <div class="widget-container" *ngFor="let widget of getTabWidgets(tab)" [hidden]="widget.screen && widget.screen != dashboardService.screen">
+          <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="{ widgetId : widget.id , tab : tab}"
+            [ndcDynamicOutputs]="{ widgetIdChange : widgetIdChange(widget) , widgetDataChange : widgetDataChange() }"
+            [ndcDynamicComponent]="getComponent(widget.component)"></ndc-dynamic>
+        </div>
       </div>
 
+    </div>
+  </div>
+
+
+  <div *ngIf='crmService.getActiveCrmId()' id="start-button">
+    <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="" />
+  </div>
+
+  <div id="start" (click)="clickOnStartWrapper($event)" >
+
+    <div class="inner">
+      <div class="search">
+        <div class="search-inner">
+          <input type="text" dir="auto" [(ngModel)]="search.text" placeholder="جست‌و‌جو ..." />
+          <img src='assets/icons/search.svg' />
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li *ngFor="let item of dashboardService.schema">
+            <a [routerLink]="item.name == 'dashboard' ? ['/dashboard'] : ['/dashboard',item.name]">
+              <img [src]="'assets/icons/' + item.icon + '.svg'" />
+              <span>
+                {{item.title}}
+              </span>
+            </a>
+          </li>
+
+        </ul>
+      </nav>
+
+      <div class="tabs">
+
+        <div class="tabs-inner">
+
+          <mat-tab-group [color]="'ascent'" dynamicHeight="true">
+            <mat-tab label="پیام‌ها">
+              <div class="tab-content">
+
+              </div>
+            </mat-tab>
+            <mat-tab label="اعلان‌ها">
+              <div class="tab-content">
+              </div>
+            </mat-tab>
+            <mat-tab label="وظایف">
+              <div class="tab-content">
+              </div>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+
+      </div>
     </div>
   </div>
 </div>

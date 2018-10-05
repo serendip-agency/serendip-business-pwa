@@ -11,12 +11,12 @@ export class DashboardService {
 
   schema: any;
   currentSection: any = null;
-  screen: string = "desktop";
+  screen: "desktop" | "mobile" = "desktop";
 
   constructor(private httpClient: HttpClient) {
 
-    //  this.setScreen();
-    //   window.onresize = () => { this.setScreen() };
+    this.setScreen();
+    window.onresize = () => { this.setScreen() };
 
     if (localStorage.getItem("schema")) {
       this.schema = JSON.parse(localStorage.getItem("schema"));
@@ -26,7 +26,7 @@ export class DashboardService {
   }
 
   setScreen() {
-    this.screen = window.innerWidth < 900 ? "mobile" : "desktop";
+    this.screen = window.innerWidth < 640 ? "mobile" : "desktop";
 
   }
 
@@ -48,5 +48,5 @@ export class DashboardService {
       return item.title;
     });
   }
-  
+
 }
