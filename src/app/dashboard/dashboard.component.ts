@@ -94,6 +94,7 @@ const dynamicComponents = {
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   openWidgets: any[] = [];
+  screen: string;
 
 
   rpd(input) {
@@ -501,11 +502,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } else
         this.explorerMouseOut();
 
-      if (swipeDownTimeout)
-        clearTimeout(swipeDownTimeout);
-      swipeDownTimeout = setTimeout(() => {
-        swipeLeft();
-      }, 5000);
+      // if (swipeDownTimeout)
+      //   clearTimeout(swipeDownTimeout);
+      // swipeDownTimeout = setTimeout(() => {
+      //   swipeLeft();
+      // }, 5000);
     }
 
     var swipeLeft = () => {
@@ -536,11 +537,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       headerElement.ontouchmove = headerElement.onmousemove = (move_ev: any) => {
         var currentPoint = move_ev.clientX || move_ev.touches[0].clientX;
         var lineLength = currentPoint - startPoint;
-        if (lineLength < -100)
+        if (lineLength < -80)
           swipeLeft();
 
 
-        if (lineLength > 100)
+        if (lineLength > 80)
           swipeRight();
       }
 
@@ -625,8 +626,51 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
+  handleTabsScroll() {
+
+    document.onmousedown = (ev) => {
+
+
+
+    };
+
+  }
+
+  fullNavTabs = [];
+
+  isNavTabFull(navTabId) {
+
+    return this.fullNavTabs.indexOf(navTabId) != -1;
+
+  }
   async ngOnInit() {
 
+    setInterval(() => {
+
+      _.forEach(document.querySelectorAll("ul.tabs-nav"), navTab => {
+        var navTabId = navTab.getAttribute("id");
+
+        var isFull = navTab.getBoundingClientRect().width / this.gridLayout.containers[parseInt( navTabId.split('-').reverse()[0])].tabs.length < 90;
+        if (isFull) {
+          if (this.fullNavTabs.indexOf(navTabId) == -1) {
+            this.fullNavTabs.push(navTabId);
+          }
+        }
+        else {
+          if (this.fullNavTabs.indexOf(navTabId) != -1)
+            this.fullNavTabs.splice(this.fullNavTabs.indexOf(navTabId), 1);
+        }
+
+      });
+
+    }, 1000);
+
+
+    window.onresize = () => {
+      this.screen = window.innerWidth < 640 ? "mobile" : "desktop";
+      if (this.screen == "mobile")
+        this.setGridLayout(1);
+    }
 
     await this.dashboardService.setDefaultSchema();
 

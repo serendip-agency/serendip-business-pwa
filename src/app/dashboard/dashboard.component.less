@@ -3,7 +3,7 @@
     width: 64px;
     height: 64px; // bottom: 10px;
     // left: 10px;
-    z-index: 100;
+    z-index: 550;
     border-radius: 100%;
     overflow: hidden; // box-shadow: -2px 3px 0px #c5a262;
     cursor: pointer;
@@ -40,7 +40,7 @@
 
 header {
     position: relative;
-    z-index: 10;
+    z-index: 400;
     box-sizing: border-box;
     height: 50px;
     overflow: hidden;
@@ -340,6 +340,7 @@ aside#explorer {
     overflow-y: scroll;
     overflow-x: hidden; // transition: width cubic-bezier(0.68, -0.55, 0.265, 1.55) .3s; //  transition: width linear .3s;
     transition: width ease-in-out .25s; //  transition: width linear .3s;
+    z-index: 300;
     &.hide {
         .explorer-inner>ul.active {
             &>li {
@@ -650,7 +651,7 @@ aside#explorer {
     &.fadeIn {
         right: 0;
         opacity: 1;
-        z-index: 50;
+        z-index: 500;
         border-radius: 0;
         filter: grayscale(0);
         .inner {

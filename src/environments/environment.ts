@@ -7,7 +7,7 @@ export const environment = {
   //api: 'http://localhost:2040',
   api: 'http://192.168.2.222:2040',
   clientId: '',
-  googleApiKey: 'AIzaSyB64WvLFXluxveiDJE8-k-fW9_LJ2Zh7CE'
+  googleApiKey: 'AIzaSyB1ZFq-cxNYtuxRXSZgpMrdUfBe7Mr-X_g'
 };
 
 /*

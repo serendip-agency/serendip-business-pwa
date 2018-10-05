@@ -183,6 +183,59 @@ label {
             user-select: none;
             height: 30px;
             white-space: nowrap;
+            overflow-y: hidden;
+            overflow-x: scroll;
+            li.full-nav {
+                display: none;
+            }
+            &.full {
+                li {
+                    display: none;
+                }
+                li.active,
+                li.full-nav {
+                    display: inline-block;
+                }
+            }
+            &.showTabs {
+                li.full-nav {
+                    display: none;
+                }
+                background:#efefef;
+                position: absolute;
+                top:0;
+                left:0;
+                height:100%;
+                width:100%;
+                z-index:100;
+                box-sizing: border-box;
+                li {
+                    position: absolute;
+                    display: block;
+                    height: 90vh;
+                    border-top: 1px solid #ddd;
+                    border-right: 1px solid #ddd;
+                    text-align: right;
+                    width: auto;
+                    left: 0;
+                    background: #fff;
+
+                    a {
+                        background: #fff;
+                    }
+
+                    .tab-title{
+                        max-width: unset;
+                    }
+                    .tab-close{
+                        display: block;
+                    }
+                }
+                li.full-nav,
+                li:last-child {
+                    display: none;
+                }
+            }
             li {
                 display: inline-block;
                 line-height: 30px;
@@ -235,11 +288,18 @@ label {
                     position: relative;
                     z-index: 1;
                     font-size: 12px;
+                    max-width: 60px;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    white-space: nowrap;
                 }
                 .tab-icon {
                     display: inline-block;
                     width: 18px;
                     height: 18px;
+                    line-height: 18px;
+                    font-size: 15px;
+                    font-weight: 100;
                     border-radius: 100%;
                     vertical-align: middle;
                     position: absolute;
@@ -295,6 +355,11 @@ label {
 }
 
 @media(max-width:640px) {
+
+
+    .grid-container .tabs-container{
+        min-height: 100vh;
+    }
     aside#explorer {
         position: fixed;
         top: 0;
@@ -318,7 +383,6 @@ label {
         width: calc(100% - 50px);
         &.docScrolled {
             width: 100%;
-      
         }
         .tabs-container {
             padding: 5px 5px 0 0;
