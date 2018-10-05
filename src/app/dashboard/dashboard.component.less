@@ -342,6 +342,11 @@ aside#explorer {
     transition: width ease-in-out .25s; //  transition: width linear .3s;
     z-index: 300;
     &.hide {
+
+        ul > li > a > span.close{
+            display: none!important;
+        }
+
         .explorer-inner>ul.active {
             &>li {
                 background: none;
@@ -412,6 +417,7 @@ aside#explorer {
         }
     }
     .explorer-inner {
+        padding-bottom: 120px;
         .splitter {
             background: #6C87C3;
             font-weight: 100;

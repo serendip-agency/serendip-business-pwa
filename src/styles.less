@@ -53,6 +53,10 @@ This set of fonts are used in this project under the license: (.....)
     url('assets/fonts/iranyekanwebregular.ttf') format('truetype');
 }
 
+* {
+    transition: none !important;
+}
+
 ::-webkit-scrollbar {
     width: 1px;
     height: 1px;
@@ -191,6 +195,9 @@ label {
             &.full {
                 li {
                     display: none;
+                    .tab-title {
+                        max-width: 200px;
+                    }
                 }
                 li.active,
                 li.full-nav {
@@ -213,23 +220,29 @@ label {
                     position: absolute;
                     display: block;
                     height: 90vh;
-                    border-top: 1px solid #ddd;
-                    border-right: 1px solid #ddd;
+                    border-top: 1px solid rgb(240, 240, 240);
+                    border-right: 1px solid rgb(240, 240, 240);
                     text-align: right;
                     width: auto;
                     left: 0;
                     background: #fff;
-
+                    border-radius: 0 0 0 0;
+                    overflow: hidden;
                     a {
                         background: #fff;
                     }
-
-                    .tab-title{
+                    .tab-title {
                         max-width: unset;
                     }
-                    .tab-close{
+                    .tab-close {
                         display: block;
                     }
+                }
+
+                li.active{
+                    border-color: rgba(210, 175, 109, 0.6);
+                    border-radius: 0 0 0 0;
+                  
                 }
                 li.full-nav,
                 li:last-child {
@@ -355,9 +368,7 @@ label {
 }
 
 @media(max-width:640px) {
-
-
-    .grid-container .tabs-container{
+    .grid-container .tabs-container {
         min-height: 100vh;
     }
     aside#explorer {
