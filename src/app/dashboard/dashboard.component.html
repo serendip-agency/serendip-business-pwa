@@ -227,12 +227,10 @@
 
 
       <ul class="tabs-nav" [class.showTabs]="container.showTabs" [id]="'nav-tab-' + c  " [class.full]="isNavTabFull('nav-tab-' + c )">
-        <li *ngFor="let tab of container.tabs;let i = index" 
-         [style.top]="container.showTabs ? ( i * 30 ) + 15 + 'px' : 'unset'" 
-        [style.right]="container.showTabs ? ( i * 15 )+ 10 + 'px' : 'unset'"
-         [id]="'tab-' + c + '-'+ i" [class.nextIsActive]="container.tabs[i + 1] && container.tabs[i + 1].active"
-          [class.prevIsActive]="container.tabs[i - 1] && container.tabs[i - 1].active" [class.active]="tab.active"
-          (click)="setTabActive(tab,container);container.showTabs = false;">
+        <li *ngFor="let tab of container.tabs;let i = index" [style.top]="container.showTabs ? ( i * 40 ) + 5 + 'px' : 'unset'"
+          [style.z-index]="i" [style.right]="container.showTabs ? ( i * 5 )+ 5  + 'px' : 'unset'" [id]="'tab-' + c + '-'+ i"
+          [class.nextIsActive]="container.tabs[i + 1] && container.tabs[i + 1].active" [class.prevIsActive]="container.tabs[i - 1] && container.tabs[i - 1].active"
+          [class.active]="tab.active" (click)="setTabActive(tab,container);container.showTabs = false;">
 
           <a class="tab-handle" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'" [dndDraggable]="{ containerIndex : c,tabIndex : i}">
             <div class="tab-icon">

@@ -43,6 +43,7 @@ import { IdbService } from "../idb.service";
 
 import * as moment from 'moment-jalaali';
 import { EventEmitter } from "@angular/core";
+import { UserActivityBySectionComponent } from "../charts/user-activity-by-section/user-activity-by-section.component";
 
 polyfill({
   // use this to make use of the scroll behaviour
@@ -84,7 +85,8 @@ const dynamicComponents = {
   InteractionTableComponent,
   InteractionListComponent,
   InteractionDeleteComponent,
-  UserProfileComponent
+  UserProfileComponent,
+  UserActivityBySectionComponent
 };
 
 @Component({
@@ -330,7 +332,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const params = this.activatedRoute.snapshot.params;
 
     if (!this.dashboardService.currentSection || (this.dashboardService.currentSection && this.dashboardService.currentSection.name !== params.section))
-      this.dashboardService.currentSection = _.findWhere(this.dashboardService.schema, { name: params.section });
+      this.dashboardService.currentSection = _.findWhere(this.dashboardService.schema, { name: params.section || "dashboard" });
 
 
     if (this.dashboardService.currentSection) {
@@ -650,7 +652,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       _.forEach(document.querySelectorAll("ul.tabs-nav"), navTab => {
         var navTabId = navTab.getAttribute("id");
 
-        var isFull = navTab.getBoundingClientRect().width / this.gridLayout.containers[parseInt( navTabId.split('-').reverse()[0])].tabs.length < 90;
+        var isFull = navTab.getBoundingClientRect().width / this.gridLayout.containers[parseInt(navTabId.split('-').reverse()[0])].tabs.length < 90;
         if (isFull) {
           if (this.fullNavTabs.indexOf(navTabId) == -1) {
             this.fullNavTabs.push(navTabId);

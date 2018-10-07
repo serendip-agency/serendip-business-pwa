@@ -40,6 +40,8 @@ export class CompanyFormComponent implements OnInit {
 
   cachedEmployees = [];
 
+  mapId = `gmap-${Date.now()}`;
+
   /**
    * unique identifier for this widget. using for state management
    */
@@ -71,11 +73,11 @@ export class CompanyFormComponent implements OnInit {
     private dataService: DataService,
     private activatedRoute: ActivatedRoute,
     public ref: ChangeDetectorRef,
-    private gmapsService: GmapsService,
     private router: Router,
     private snackBar: MatSnackBar,
     private dashboardService: DashboardService,
-    private idbService: IdbService
+    private idbService: IdbService,
+    private gmapsService: GmapsService
   ) {
     this.iranStates = IranStates;
   }
@@ -155,16 +157,35 @@ export class CompanyFormComponent implements OnInit {
 
   getFormArray(form, arrayName) {
     return (form as any).get(arrayName).controls;
-
   }
 
-  setGeo(contact) {
-    navigator.geolocation.getCurrentPosition((data) => {
-      contact.get('address').get('geo').setValue(data.coords.latitude + ',' + data.coords.longitude)
-      console.log(data);
-    }, (error) => {
-      console.error(error);
-    });
+  async  setGeo(contact) {
+
+
+
+    var defaultPositions = [];
+
+    var lastValue = contact.get('address').get('geo').value.trim();
+
+    if (lastValue) {
+
+      defaultPositions.push({ lat: parseFloat(lastValue.split(',')[0]), lng: parseFloat(lastValue.split(',')[1]) });
+
+    }
+
+    this.gmapsService.selectSingle(this.mapId, defaultPositions);
+
+    var positions = await this.gmapsService.onSelectDone(this.mapId);
+
+
+    contact.get('address').get('geo').setValue(positions[0].lat + ',' + positions[0].lng);
+
+    // navigator.geolocation.getCurrentPosition((data) => {
+    //   contact.get('address').get('geo').setValue(data.coords.latitude + ',' + data.coords.longitude)
+    //   console.log(data);
+    // }, (error) => {
+    //   console.error(error);
+    // });
   }
 
   goGeo(loc) {

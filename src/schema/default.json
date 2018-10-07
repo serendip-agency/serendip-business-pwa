@@ -6,7 +6,14 @@
     "tabs": [
       {
         "name": "default",
-        "widgets": []
+        "title": "عملکرد کاربران",
+        "icon": "plus-add-1",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "UserActivityBySectionComponent"
+          }
+        ]
       }
     ]
   },
@@ -14,12 +21,11 @@
     "name": "people",
     "title": "اشخاص",
     "icon": "people-users-1",
-
     "tabs": [
       {
         "name": "default",
         "title": "داشبورد",
-        "icon" : "plus-add-1",
+        "icon": "plus-add-1",
         "widgets": [
           {
             "inputs": {},
@@ -30,8 +36,7 @@
       {
         "name": "new",
         "title": " فرد جدید",
-        "icon" : "plus-add-1",
-
+        "icon": "plus-add-1",
         "widgets": [
           {
             "inputs": {},
@@ -42,8 +47,7 @@
       {
         "name": "data",
         "title": "لیست",
-        "icon":"information-data-1",
-        
+        "icon": "information-data-1",
         "widgets": [
           {
             "inputs": {},
@@ -77,8 +81,7 @@
       },
       {
         "name": "data",
-        "icon":"information-data-1",
-
+        "icon": "information-data-1",
         "title": "لیست",
         "widgets": [
           {
@@ -107,8 +110,7 @@
       },
       {
         "name": "new",
-        "icon" : "plus-add-1",
-
+        "icon": "plus-add-1",
         "title": " تعامل جدید",
         "widgets": [
           {
@@ -119,7 +121,6 @@
       },
       {
         "name": "edit",
-        
         "widgets": [
           {
             "inputs": {},
@@ -129,8 +130,7 @@
       },
       {
         "name": "data",
-        "icon":"information-data-1",
-
+        "icon": "information-data-1",
         "title": "لیست",
         "widgets": [
           {
@@ -159,8 +159,7 @@
       },
       {
         "name": "new",
-        "icon" : "plus-add-1",
-
+        "icon": "plus-add-1",
         "title": " خدمت جدید",
         "widgets": [
           {
@@ -171,7 +170,6 @@
       },
       {
         "name": "edit",
-        
         "widgets": [
           {
             "inputs": {},
@@ -181,8 +179,7 @@
       },
       {
         "name": "data",
-        "icon":"information-data-1",
-
+        "icon": "information-data-1",
         "title": "لیست",
         "widgets": [
           {
@@ -211,8 +208,7 @@
       },
       {
         "name": "new",
-        "icon" : "plus-add-1",
-
+        "icon": "plus-add-1",
         "title": " شکایت جدید",
         "widgets": [
           {
@@ -223,8 +219,7 @@
       },
       {
         "name": "data",
-        "icon":"information-data-1",
-
+        "icon": "information-data-1",
         "title": "لیست",
         "widgets": [
           {
@@ -253,8 +248,7 @@
       },
       {
         "name": "new",
-        "icon" : "plus-add-1",
-
+        "icon": "plus-add-1",
         "title": " پیش فاکتور",
         "widgets": [
           {
@@ -265,7 +259,6 @@
       },
       {
         "name": "edit",
-        
         "widgets": [
           {
             "inputs": {},
@@ -276,8 +269,7 @@
       {
         "name": "data",
         "title": "لیست",
-        "icon":"information-data-1",
-
+        "icon": "information-data-1",
         "widgets": [
           {
             "inputs": {},
@@ -305,8 +297,7 @@
       },
       {
         "name": "new",
-        "icon" : "plus-add-1",
-
+        "icon": "plus-add-1",
         "title": " کمپین جدید",
         "widgets": [
           {
@@ -317,7 +308,6 @@
       },
       {
         "name": "edit",
-        
         "widgets": [
           {
             "inputs": {},
@@ -327,8 +317,7 @@
       },
       {
         "name": "data",
-        "icon":"information-data-1",
-
+        "icon": "information-data-1",
         "title": "لیست",
         "widgets": [
           {
@@ -357,8 +346,7 @@
       },
       {
         "name": "new",
-        "icon" : "plus-add-1",
-
+        "icon": "plus-add-1",
         "title": "محصول جدید",
         "widgets": [
           {
@@ -369,7 +357,6 @@
       },
       {
         "name": "edit",
-        
         "widgets": [
           {
             "inputs": {},
@@ -379,7 +366,7 @@
       },
       {
         "name": "data",
-        "icon":"information-data-1",
+        "icon": "information-data-1",
         "title": "لیست",
         "widgets": [
           {
@@ -415,16 +402,15 @@
     ]
   },
   {
-    "name" : "support",
-    "title" : "‍‍پشتیبانی",
-    "icon" : "support-1",
+    "name": "support",
+    "title": "‍‍پشتیبانی",
+    "icon": "support-1",
     "tabs": []
   },
-
   {
-    "name" : "support",
-    "title" : "باشگاه",
-    "icon" : "club-1",
+    "name": "support",
+    "title": "باشگاه",
+    "icon": "club-1",
     "tabs": []
   }
 ]

@@ -92,14 +92,17 @@ export class PeopleFormComponent implements OnInit {
     //   console.error(error);
     // });
 
-    this.gmapsService.selectPosition(contact.get('address').get('geo').value, (latlng) => {
+    // this.gmapsService.selectPosition(contact.get('address').get('geo').value, (latlng) => {
 
-      if (latlng == undefined) {
+    //   if (latlng == undefined) {
 
-      } else {
-        contact.get('address').get('geo').setValue(latlng)
-      }
-    })
+    //   } else {
+    //     contact.get('address').get('geo').setValue(latlng)
+    //   }
+    // })
+
+
+    
 
   }
 

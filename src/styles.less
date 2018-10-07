@@ -53,10 +53,9 @@ This set of fonts are used in this project under the license: (.....)
     url('assets/fonts/iranyekanwebregular.ttf') format('truetype');
 }
 
-* {
-    transition: none !important;
-}
-
+// * {
+//     transition: none !important;
+// }
 ::-webkit-scrollbar {
     width: 1px;
     height: 1px;
@@ -83,6 +82,78 @@ textarea {
     nav {
         background: rgba(255, 255, 255, 0.7);
         box-shadow: 0 0 20px #fff inset;
+    }
+}
+
+.chart-container {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    .polar-chart .radial-gridline-path {
+        stroke: none;
+    }
+    .polar-chart .radial-gridline-path:nth-child(2n+1) {
+        fill: rgb(245, 245, 245);
+    }
+    .polar-chart .radial-gridline-path:nth-child(2n) {
+        fill: #fff;
+    }
+    text {
+        font-size: 11px !important;
+        font-weight: 100 !important;
+    }
+    .pie-label-line {
+        stroke: rgb(210, 210, 210) !important;
+    }
+    .pie-label {
+        font-weight: bold !important;
+    }
+    .pie-label[style*='text-anchor: start;'] {
+        text-anchor: end !important;
+    }
+    .pie-label[style*='text-anchor: end;'] {
+        text-anchor: start !important;
+    }
+    .chart-legend {
+        background: rgb(245, 245, 245);
+        border-radius: 10px; // padding: 5px;
+        box-sizing: border-box;
+        width: 100px;
+        .legend-title {
+            line-height: 30px;
+            margin: 0 auto;
+            padding: 0 5px;
+            .legend-title-text {
+                line-height: unset;
+                display: block;
+                font-weight: 500;
+            }
+        }
+        .legend-wrap {
+            width: 100%;
+        }
+        .legend-labels {
+            background: none;
+            .legend-label {
+                line-height: 24px;
+                margin: 0;
+                padding: 0 5px;
+            }
+        }
+        .legend-label-text {
+            text-align: right;
+            color: #333;
+            font-size: 9px;
+        }
+        .legend-label-color {
+            margin-left: 5px;
+            margin-right: unset;
+            border-radius: 100%;
+            vertical-align: top;
+            width: 10px;
+            height: 10px;
+        }
     }
 }
 
@@ -220,16 +291,20 @@ label {
                     position: absolute;
                     display: block;
                     height: 90vh;
-                    border-top: 1px solid rgb(240, 240, 240);
-                    border-right: 1px solid rgb(240, 240, 240);
+                    border-top: 1px solid rgb(230, 230, 230);
+                    border-right: 1px solid rgb(230, 230, 230);
                     text-align: right;
                     width: auto;
+                    right: 10px;
                     left: 0;
+                    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+                    border-radius: 0 10px 0 0;
                     background: #fff;
-                    border-radius: 0 0 0 0;
                     overflow: hidden;
                     a {
-                        background: #fff;
+                        background: rgb(245, 245, 245);
+                        border-bottom: 1px solid rgb(230, 230, 230);
+                        border-radius: 0 0 0 0 !important;
                     }
                     .tab-title {
                         max-width: unset;
@@ -238,11 +313,17 @@ label {
                         display: block;
                     }
                 }
-
-                li.active{
-                    border-color: rgba(210, 175, 109, 0.6);
-                    border-radius: 0 0 0 0;
-                  
+                li.active {
+                    border-radius: 0 10px 0 0;
+                    a {
+                        background: #D2AE6D;
+                    }
+                    .tab-title {
+                        color: #fff;
+                    }
+                    img {
+                        filter: invert(1);
+                    }
                 }
                 li.full-nav,
                 li:last-child {

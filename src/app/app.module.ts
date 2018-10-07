@@ -91,12 +91,15 @@ import { InteractionTableComponent } from "./interaction/interaction-table/inter
 import { InteractionListComponent } from "./interaction/interaction-list/interaction-list.component";
 import { InteractionDeleteComponent } from "./interaction/interaction-delete/interaction-delete.component";
 import { CrmComponent } from './crm/crm.component';
-import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { UserProfileComponent } from './settings/user-profile/user-profile.component';
 import { MapComponent } from './map/map.component';
 
+import { NgxChartsModule } from '@swimlane/ngx-charts'
+
 import { DndModule } from 'ngx-drag-drop';
 import { CalendarComponent } from './calendar/calendar.component';
+import { UserActivityBySectionComponent } from './charts/user-activity-by-section/user-activity-by-section.component';
 
 
 const dynamicComponents = [
@@ -129,6 +132,7 @@ const dynamicComponents = [
   InteractionListComponent,
   InteractionDeleteComponent,
   UserProfileComponent,
+  UserActivityBySectionComponent
 ];
 
 @NgModule({
@@ -136,11 +140,11 @@ const dynamicComponents = [
     AppComponent,
     AuthComponent,
     DashboardComponent,
-    ...dynamicComponents,
     CrmComponent,
     UserProfileComponent,
     MapComponent,
-    CalendarComponent
+    CalendarComponent,
+    ...dynamicComponents,
   ],
 
   entryComponents: [PeopleDeleteComponent],
@@ -148,6 +152,7 @@ const dynamicComponents = [
     NgxMaterialTimepickerModule.forRoot(),
     DynamicModule.withComponents(dynamicComponents),
     BrowserModule,
+    NgxChartsModule,
     BrowserAnimationsModule,
     DndModule,
     FormsModule,
@@ -159,7 +164,7 @@ const dynamicComponents = [
     MatButtonModule,
     MatInputModule,
     MatAutocompleteModule,
-  MatDatepickerModule,
+    MatDatepickerModule,
     MatFormFieldModule,
     MatRadioModule,
     MatSelectModule,
@@ -202,4 +207,4 @@ const dynamicComponents = [
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

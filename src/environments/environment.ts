@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  //api: 'http://localhost:2040',
-  api: 'http://192.168.2.222:2040',
+  api: 'http://localhost:2040',
+  // api: 'http://192.168.2.222:2040',
   clientId: '',
   googleApiKey: 'AIzaSyB1ZFq-cxNYtuxRXSZgpMrdUfBe7Mr-X_g'
 };

@@ -1,0 +1,16 @@
+<mat-card>
+
+  <mat-card-content>
+
+
+    <ngx-charts-polar-chart [id]="chartId" [xAxis]="true" [yAxis]="true" [legendTitle]="'کاربران'" [legend]="true"
+      [view]="[500,400]" class="chart-container" [results]="data">
+    </ngx-charts-polar-chart>
+
+    <ngx-charts-line-chart   [id]="chartId+'2'" [xAxis]="true" [yAxis]="true" [legendTitle]="'کاربران'" [legend]="true"
+    [view]="[500,400]" class="chart-container" [results]="data">
+  </ngx-charts-line-chart>
+
+  </mat-card-content>
+
+</mat-card>
