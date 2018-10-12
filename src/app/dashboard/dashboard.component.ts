@@ -44,6 +44,7 @@ import { IdbService } from "../idb.service";
 import * as moment from 'moment-jalaali';
 import { EventEmitter } from "@angular/core";
 import { UserActivityBySectionComponent } from "../charts/user-activity-by-section/user-activity-by-section.component";
+import { OutcomeByCampaignComponent } from "../charts/outcome-by-campaign/outcome-by-campaign.component";
 
 polyfill({
   // use this to make use of the scroll behaviour
@@ -86,7 +87,8 @@ const dynamicComponents = {
   InteractionListComponent,
   InteractionDeleteComponent,
   UserProfileComponent,
-  UserActivityBySectionComponent
+  UserActivityBySectionComponent,
+  OutcomeByCampaignComponent
 };
 
 @Component({
@@ -97,6 +99,9 @@ const dynamicComponents = {
 export class DashboardComponent implements OnInit, OnDestroy {
   openWidgets: any[] = [];
   screen: string;
+
+
+  gridSizeChange = new EventEmitter();
 
 
   rpd(input) {
@@ -154,7 +159,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   explorerVisible: boolean = false;
   explorerAnimDone: boolean = true;
 
-  gridLayout = {
+  gridLayout: { containers: { tabs: { active: boolean, widgets: { id: string }[] }[] }[] } = {
     containers: []
   };
 
@@ -167,7 +172,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private changeRef: ChangeDetectorRef
   ) {
 
-    moment.loadPersian({ dialect: 'persian-modern', usePersianDigits: true });
+    moment.loadPersian({ dialect: 'persian-modern', usePersianDigits: false });
 
 
   }
@@ -192,10 +197,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.explorerVisible = true;
     this.explorerAnimDone = false;
 
+    this.gridSizeChange.emit();
     clearTimeout(this.explorerAnimInTimeout);
 
     this.explorerAnimInTimeout = setTimeout(() => {
       this.explorerAnimDone = true;
+      this.gridSizeChange.emit();
+
     }, 300);
   }
 
@@ -203,11 +211,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   explorerMouseOut() {
     this.explorerVisible = false;
     this.explorerAnimDone = false;
+    this.gridSizeChange.emit();
 
     clearTimeout(this.explorerAnimOutTimeout);
 
     this.explorerAnimOutTimeout = setTimeout(() => {
       this.explorerAnimDone = true;
+      this.gridSizeChange.emit();
+
     }, 500);
   }
 
@@ -215,44 +226,54 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   setGridLayout(layoutNumber) {
 
-
-
-    if (layoutNumber > this.gridLayout.containers.length)
-      for (let i = 1; i <= layoutNumber - this.gridLayout.containers.length; i++)
-        setTimeout(() => {
+    if (layoutNumber > this.gridLayout.containers.length) {
+      var toAdd = layoutNumber - this.gridLayout.containers.length;
+      console.log('containers to add', toAdd);
+      for (let i = 1; i <= toAdd; i++)
+        requestAnimationFrame(() => {
           this.addContainer();
-        }, i * 10);
-
+        });
+    }
 
     if (layoutNumber < this.gridLayout.containers.length) {
-
       for (let i = this.gridLayout.containers.length - 1; i >= layoutNumber; i--) {
-
-
         _.forEach(this.gridLayout.containers[i].tabs, (tab: any) => {
 
           this.gridLayout.containers[layoutNumber - 1].tabs.push(tab);
           this.gridLayout.containers[i].tabs.splice(this.gridLayout.containers[i].tabs.indexOf(tab), 1);
 
         });
-
         this.gridLayout.containers.splice(i, 1);
-
-
-
       }
-
-
     }
 
+    this.setActiveTabs();
 
+  }
+
+
+  setActiveTabs() {
+
+    this.gridLayout.containers.forEach((cont) => {
+      if (cont.tabs.length > 0) {
+        var activeTabsInContainer = _.where(cont.tabs, { active: true });
+        if (activeTabsInContainer.length == 0 || activeTabsInContainer.length > 1) {
+
+          cont.tabs.forEach((tab) => { tab.active = false; });
+
+          cont.tabs[0].active = true;
+
+        }
+
+      }
+    });
 
   }
 
   onTabDragover(event: DragEvent, containerIndex: number) {
 
 
-    if (this.dashboardService.screen == "mobile")
+    if (this.screen == "mobile")
       return;
     //console.log("dragover",  event,containerIndex);
     var targetPosition = (event.target as HTMLElement).parentElement.getBoundingClientRect();
@@ -262,15 +283,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
     // If handle is near left side of container its possible he needs another container
+
     if (handlerPosition.top > 100)
       if (handlerPosition.left - targetPosition.left < 200 && handlerPosition.left - targetPosition.left > 0) {
         var notEmptyContainersCount = _.filter(this.gridLayout.containers, (container) => {
           return container.tabs && container.tabs.length > 0;
         }).length;
 
-        if (this.gridLayout.containers.length < 3)
-          if (notEmptyContainersCount - containerIndex == 1 && !this.gridLayout.containers[containerIndex + 1])
-            this.addContainer();
+        //if (this.gridLayout.containers.length < 3)
+        if (notEmptyContainersCount - containerIndex == 1 && !this.gridLayout.containers[containerIndex + 1]) {
+          console.log('dragover container add');
+          this.addContainer();
+
+
+        }
+
+        var grid = document.querySelector(".grid-container");
+        if (containerIndex > 3)
+          grid.scroll({ left: grid.scrollLeft - 200, behavior: 'smooth' });
+
+
 
       }
 
@@ -280,14 +312,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
 
-  onTabDrop(event: DndDropEvent, dropToContainerIndex) {
+  onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
 
 
-    if (this.dashboardService.screen == "mobile")
+    if (this.screen == "mobile")
       this.explorerMouseOut();
 
     var eventData: { containerIndex: number, tabIndex: number, tab: any } = event.data;
-    console.log(eventData);
+
 
     if (eventData.tab)
       if (eventData.tab.widgets[0].id)
@@ -314,7 +346,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (eventData.containerIndex != undefined)
       if (this.gridLayout.containers[eventData.containerIndex].tabs.length == 1 || _.where(this.gridLayout.containers[eventData.containerIndex].tabs, { active: true }).length == 0)
-        this.gridLayout.containers[eventData.containerIndex].tabs[0].active = true;
+        if (this.gridLayout.containers[eventData.containerIndex].tabs[0])
+          this.gridLayout.containers[eventData.containerIndex].tabs[0].active = true;
 
   }
 
@@ -324,6 +357,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return _.filter(sections, (sec: any) => {
       return sec.name != "dashboard";
     });
+
 
   }
 
@@ -344,8 +378,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.gridLayout.containers[0].tabs[0].active = true;
 
 
-      if (this.dashboardService.screen == "desktop")
+      if (this.dashboardService.screen == "desktop") {
         this.addContainer();
+
+        console.log('hello');
+
+        if (this.gridLayout.containers[0].tabs[1]) {
+
+          this.onTabDrop({ data: { containerIndex: 0, tabIndex: 1, tab: this.gridLayout.containers[0].tabs[1] } }, 1)
+
+        }
+
+      }
 
     }
 
@@ -413,6 +457,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return [];
 
   }
+
+
   ngOnDestroy(): void {
     if (this.routerSubscription)
       this.routerSubscription.unsubscribe();
@@ -486,8 +532,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   async handleHeaderSwipe() {
 
     var headerElement = document.getElementById("header");
-    headerElement.querySelector(".inner").setAttribute("style", `left:0;`);
-    headerElement.querySelector(".shortcuts").setAttribute("style", `left:-100%;`);
+
+    headerElement.querySelector(".shortcuts").classList.remove('show');
 
     var swipeDownTimeout = null;
 
@@ -498,17 +544,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       console.log('header swipe right');
 
       if (document.querySelector("aside#explorer").classList.contains("hide")) {
-
-        headerElement.querySelector(".inner").setAttribute("style", `left:100%;`);
-        headerElement.querySelector(".shortcuts").setAttribute("style", `left:0;`);
+        headerElement.querySelector(".shortcuts").classList.add("show");
       } else
         this.explorerMouseOut();
 
-      // if (swipeDownTimeout)
-      //   clearTimeout(swipeDownTimeout);
-      // swipeDownTimeout = setTimeout(() => {
-      //   swipeLeft();
-      // }, 5000);
     }
 
     var swipeLeft = () => {
@@ -518,9 +557,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       headerElement.onmousemove = null;
       headerElement.ontouchmove = null;
 
-      if (headerElement.querySelector(".inner").getAttribute("style") != `left:0;`) {
-        headerElement.querySelector(".inner").setAttribute("style", `left:0;`);
-        headerElement.querySelector(".shortcuts").setAttribute("style", `left:-100%;`);
+      if (headerElement.querySelector(".shortcuts").classList.contains("show")) {
+
+        headerElement.querySelector(".shortcuts").classList.remove("show");
 
       } else {
         this.explorerMouseIn();
@@ -628,16 +667,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  handleTabsScroll() {
-
-    document.onmousedown = (ev) => {
-
-
-
-    };
-
-  }
-
   fullNavTabs = [];
 
   isNavTabFull(navTabId) {
@@ -645,14 +674,44 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return this.fullNavTabs.indexOf(navTabId) != -1;
 
   }
-  async ngOnInit() {
+
+  adjustLayout() {
+
+
+    var gridElem = document.querySelector(".grid-container");
+
+    if (!gridElem)
+      return;
+
+    var gridRect = gridElem.getBoundingClientRect();
+
+    console.log('adjust layout ' + gridRect.width, Math.round(gridRect.width / 420));
+
+    var count = Math.round(gridRect.width / 420);
+
+    if (count == 1 || count > this.gridLayout.containers.length)
+      this.setGridLayout(count);
+
+
+  }
+
+  handleFullNav() {
 
     setInterval(() => {
 
       _.forEach(document.querySelectorAll("ul.tabs-nav"), navTab => {
         var navTabId = navTab.getAttribute("id");
+        var container = this.gridLayout.containers[parseInt(navTabId.split('-').reverse()[0])];
+        if (!container)
+          return;
 
-        var isFull = navTab.getBoundingClientRect().width / this.gridLayout.containers[parseInt(navTabId.split('-').reverse()[0])].tabs.length < 90;
+        var isFull = navTab.getBoundingClientRect().width / container.tabs.length < 150;
+        // var isFull = navTab.getBoundingClientRect().width <= _.reduceRight(navTab.querySelectorAll("li"), (memo, item: HTMLElement) => {
+        //   return memo + item.getBoundingClientRect().width;
+        // }, 0);
+
+        // isFull = false;
+
         if (isFull) {
           if (this.fullNavTabs.indexOf(navTabId) == -1) {
             this.fullNavTabs.push(navTabId);
@@ -667,16 +726,92 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     }, 1000);
 
+  }
+
+
+  handleGridMouseDragScroll() {
+
+    var start = { x: 0, y: 0 };
+    var capture = false;
+    var grid = document.querySelector(".grid-container") as HTMLElement;
+
+    var captureTimeout;
+
+
+    grid.onmousewheel = (ev: MouseWheelEvent) => {
+      console.log(ev.deltaY);
+      var target = ev.target as HTMLElement;
+      if (target.classList.contains('grid-container') || target.classList.contains('tabs-container')) {
+
+        if (ev.deltaY > 0) {
+          grid.scroll({ left: grid.scrollLeft - 100, behavior: 'instant' });
+        } else {
+          grid.scroll({ left: grid.scrollLeft + 100, behavior: 'instant' });
+        }
+      }
+    };
+    grid.onmousedown = (down_ev: MouseEvent) => {
+
+
+
+      var target = down_ev.target as HTMLElement;
+
+      if (target.classList.contains('grid-container') || target.classList.contains('tabs-container')) {
+
+        if (captureTimeout)
+          clearTimeout(captureTimeout);
+
+        captureTimeout = setTimeout(() => {
+          capture = false;
+        }, 1000);
+
+        capture = true;
+        start = { x: down_ev.clientX, y: down_ev.clientY };
+        console.log('mouse down', down_ev.clientX);
+      }
+    };
+
+    grid.onmousemove = (move_ev: MouseEvent) => {
+
+      if (capture) {
+
+        grid.scroll({ left: grid.scrollLeft - (move_ev.clientX - start.x) / 5, behavior: 'instant' });
+      } else {
+
+
+
+      }
+
+    };
+
+    grid.onmouseup = (up_ev: MouseEvent) => {
+
+      capture = false;
+    };
+
+  }
+
+  async ngOnInit() {
+
+    this.handleGridMouseDragScroll();
+    await this.dashboardService.setDefaultSchema();
+    await this.handleParams();
+
+    this.gridSizeChange.subscribe(() => {
+
+      this.adjustLayout();
+
+    });
 
     window.onresize = () => {
-      this.screen = window.innerWidth < 640 ? "mobile" : "desktop";
-      if (this.screen == "mobile")
-        this.setGridLayout(1);
-    }
 
-    await this.dashboardService.setDefaultSchema();
+      this.gridSizeChange.emit();
 
+    };
 
+    this.gridSizeChange.emit();
+
+    this.handleFullNav();
     this.handleHeaderSwipe();
     this.handleStartButtonMove();
     this.dashboardDateTimeTick();
@@ -699,15 +834,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
 
-    if (this.dashboardService.screen == "desktop")
-      this.explorerMouseIn();
-
-
     this.refreshOpenWidgets();
     this.refreshOpenWidgetEmitter.subscribe(() => {
       this.refreshOpenWidgets();
     });
-    this.handleParams();
 
     this.routerSubscription = this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd)
@@ -717,5 +847,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         document.getElementById("start").classList.remove("fadeIn");
 
     });
+
   }
 }

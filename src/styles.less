@@ -1,4 +1,3 @@
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
 @import "material.less";
 // @import url('https://fonts.googleapis.com/css?family=Roboto:300,400');
 /**
@@ -57,16 +56,16 @@ This set of fonts are used in this project under the license: (.....)
 //     transition: none !important;
 // }
 ::-webkit-scrollbar {
-    width: 1px;
-    height: 1px;
+    width: 2px;
+    height: 2px;
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: #fff;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: #D2AE6D;
 }
 
 input,
@@ -85,11 +84,29 @@ textarea {
     }
 }
 
+ngx-charts-number-card .cell .trimmed-label {
+    text-align: right !important;
+}
+
+
 .chart-container {
     display: block;
     width: 100%;
     height: 100%;
+    max-width: 500px;
+    margin: 0 auto;
     position: relative;
+    opacity: 0;
+    transition: all ease .5s;
+    user-select: none;
+    &.fadeIn {
+        opacity: 1;
+    }
+    &:after {
+        display: block;
+        clear: both;
+        content: ' ';
+    }
     .polar-chart .radial-gridline-path {
         stroke: none;
     }
@@ -109,10 +126,10 @@ textarea {
     .pie-label {
         font-weight: bold !important;
     }
-    .pie-label[style*='text-anchor: start;'] {
+    text[style*='text-anchor: start;'] {
         text-anchor: end !important;
     }
-    .pie-label[style*='text-anchor: end;'] {
+    text[style*='text-anchor: end;'] {
         text-anchor: start !important;
     }
     .chart-legend {
@@ -200,45 +217,40 @@ label {
 
 .grid-container {
     width: calc(~"100% - 55px");
-    float: left;
-    display: grid;
-    transition: width ease-in-out .1s;
+    display: block; //transition: width ease-in-out .1s;
     position: relative;
     height: calc(~"100vh - 60px");
-    overflow: hidden;
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
-    &.f1 {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr;
+    overflow-x:hidden;
+    overflow-y:hidden;
+    
+    white-space: nowrap;
+    margin-right: auto;
+
+    user-select: none;
+    
+    &:hover{
+        overflow-x:scroll;
     }
-    &.f2 {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr;
-    }
-    &.f3 {
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr;
-    }
-    &.f4 {
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-    }
-    &.f6,
-        {
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-    }
-    &.f9,
-        {
-        grid-template-columns: 1fr 1fr 1fr;
-        grid-template-rows: 1fr 1fr 1fr;
-    }
+
     .tabs-container {
         overflow: hidden;
+        white-space: normal;
         box-sizing: border-box;
         padding: 10px;
         position: relative;
+        display: inline-block;
+        min-width: 420px;
+        min-height: calc(~"100vh - 90px");
+        max-height: calc(~"100vh - 90px");
+
+        transition: all ease .5s;
+
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+      
         .placeholder {
             background: rgba(255, 255, 255, .5);
             border-radius: 10px;
@@ -253,13 +265,15 @@ label {
         ul.tabs-nav {
             padding: 0;
             margin: 0;
+            margin-bottom: -1px;
             display: block;
             background: #efefef;
             user-select: none;
             height: 30px;
             white-space: nowrap;
-            overflow-y: hidden;
-            overflow-x: scroll;
+            overflow : hidden;
+            max-width: 420px;
+
             li.full-nav {
                 display: none;
             }
@@ -288,17 +302,27 @@ label {
                 z-index:100;
                 box-sizing: border-box;
                 li {
+                    &::after {
+                        display: none;
+                    }
                     position: absolute;
                     display: block;
-                    height: 90vh;
-                    border-top: 1px solid rgb(230, 230, 230);
-                    border-right: 1px solid rgb(230, 230, 230);
+                    height: 260px;
+                    border-top: 1px solid rgb(230,
+                    230,
+                    230);
+                    border-right: 1px solid rgb(230,
+                    230,
+                    230);
                     text-align: right;
                     width: auto;
                     right: 10px;
-                    left: 0;
-                    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-                    border-radius: 0 10px 0 0;
+                    left: 10px;
+                    box-shadow: 0 0 10px rgba(0,
+                    0,
+                    0,
+                    0.25);
+                    border-radius: 10px !important;
                     background: #fff;
                     overflow: hidden;
                     a {
@@ -338,28 +362,61 @@ label {
                 cursor: pointer;
                 z-index: 1;
                 position: relative;
+                &:after {
+                    position: absolute;
+                    width: 1px;
+                    height: 20px;
+                    top: 5px;
+                    left: 0;
+                    background: #ddd;
+                    content: ' ';
+                }
+                &:last-child,
+                &.full-nav,
+                &.last-item {
+                    &:after {
+                        display: none;
+                    }
+                }
                 &,
                 a {
-                    transition: border-radius ease 0s;
+                    transition: border-radius ease 0s, background ease .5s;
                 }
-                &.active {
+                &.active,
+                &.hover,
+                &.active.hover {
+                    &:after {
+                        display: none;
+                    }
                     border-radius: 10px 10px 0 0;
                     overflow: hidden;
                     a {
                         background: #fff;
                     }
                 }
-                &.nextIsActive {
+                &.hover {
+                    a {
+                        background: rgb(242, 242, 242);
+                    }
+                }
+                &.nextIsActive,
+                &.nextIsHover,
+                &.nextIsActive.nextIsHover {
                     background: #fff;
+                    &:after {
+                        display: none;
+                    }
                     &,
                     a {
                         transition: border-radius ease 0.3s;
                     }
                     a {
-                        border-radius: 0 0 0 0;
+                        border-radius: 0 0 0px 10px;
                     }
                 }
-                &.prevIsActive {
+                &.prevIsActive,
+                &.prevIsHover,
+                &.prevIsActive.prevIsHover {
                     background: #fff;
                     &,
                     a {
@@ -369,10 +426,13 @@ label {
                         border-radius: 0 0 10px 0px;
                     }
                 }
+                &.prevIsHover {
+                    background: rgb(242, 242, 242);
+                }
                 .tab-handle {
                     display: block;
                     position: relative;
-                    padding: 0 24px;
+                    padding: 0 30px 0 20px;
                     background: #efefef;
                 }
                 .tab-title {
@@ -381,27 +441,27 @@ label {
                     vertical-align: top;
                     position: relative;
                     z-index: 1;
-                    font-size: 12px;
-                    max-width: 60px;
+                    font-size: 12px; // max-width: 60px;
                     text-overflow: ellipsis;
                     overflow: hidden;
                     white-space: nowrap;
+                    text-align: start;
+                    max-width: 100px;
+                    min-width: 100px;
                 }
                 .tab-icon {
                     display: inline-block;
-                    width: 18px;
-                    height: 18px;
-                    line-height: 18px;
-                    font-size: 15px;
-                    font-weight: 100;
+                    width: 24px;
+                    height: 24px;
                     border-radius: 100%;
                     vertical-align: middle;
                     position: absolute;
-                    top: 6px;
+                    top: 3px;
                     right: 3px;
                     img {
                         width: 100%;
                         height: 100%;
+                        transform: rotate(1deg);
                     }
                 }
                 &:hover .tab-close {
@@ -413,8 +473,8 @@ label {
                     border-radius: 100%;
                     vertical-align: middle;
                     position: absolute;
-                    top: 6px;
-                    left: 4px;
+                    top: 4px;
+                    left: 3px;
                     display: none;
                     img {
                         width: 100%;
@@ -427,17 +487,54 @@ label {
     .widget-container {
         overflow: hidden;
         box-sizing: border-box;
-        .mat-card-content {
-            max-height: calc(~"100vh - 230px");
-            padding: 15px;
-            box-sizing: border-box;
-            overflow: hidden;
-        }
-        .mat-card-actions {
-            padding: 15px;
-        }
-        &:hover .mat-card-content {
-            overflow: auto;
+        .mat-card {
+            background: #fff;
+            padding: 0 !important;
+            max-width: 420px;
+
+            .mat-card-content {
+                max-height: calc(~"100vh - 250px");
+                box-sizing: border-box;
+                overflow-x: hidden;
+                overflow-y:hidden;
+                padding: 15px;
+                margin-bottom: 0;
+                padding-top: 0;
+                border-left: 6px solid transparent;
+
+                &:hover{
+                    overflow-y:scroll;
+                border-left: none;
+
+           
+                }
+            }
+
+            &.table{
+                max-width: 860px;
+
+            }
+            &.chart {
+                max-height: calc(~"100vh - 130px");
+                max-width: 420px;
+                .mat-card-content {
+                    padding: 0;
+                }
+            }
+            .mat-card-header {
+                padding: 10px;
+            }
+            .mat-card-actions {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 10px;
+                background: rgb(248, 248, 248);
+                border-top: 2px solid rgb(242, 242, 242);
+                &:last-child {
+                    margin: 0;
+                    padding-bottom: 10px;
+                }
+            }
         }
     }
     &.explorer-show {
@@ -448,7 +545,7 @@ label {
     }
 }
 
-@media(max-width:640px) {
+@media(max-width:860px) {
     .grid-container .tabs-container {
         min-height: 100vh;
     }
@@ -486,10 +583,13 @@ label {
             width: calc(100% - 50px);
         }
         .widget-container {
-            .mat-card-content {
-                max-height: unset;
-                padding: 5px;
-                box-sizing: border-box;
+            .mat-card {
+                .mat-card-content {}
+                &.chart,
+                .mat-card-content {
+                    max-height: unset;
+                    overflow: visible;
+                }
             }
             .widget form {
                 margin-top: 0;
@@ -498,6 +598,20 @@ label {
     }
 }
 
+
+@media(max-width:480px) {
+
+    .grid-container{
+
+        .tabs-container{
+            width:100%;
+            min-width: 100%;
+            max-width: 100%;
+            display: block;
+        }
+    }
+
+}
 div.timepicker {
     direction: ltr;
     &,
@@ -586,7 +700,7 @@ body {
         width: 100%;
     }
     form {
-        margin-top: 15px;
+        margin-top: 0;
     }
 }
 

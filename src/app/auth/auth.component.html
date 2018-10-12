@@ -1,7 +1,7 @@
 <div id="auth" *ngIf="!authService.loggedIn">
 
   <div class="moon">
-    <img class="logo" src='assets/graphics/brand/serendip-circle.svg' />
+    <img *ngIf="!loading" class="logo" src='assets/graphics/brand/serendip-circle.svg' />
 
     <div class="activate" *ngIf="tab =='activate'">
 

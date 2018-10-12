@@ -24,7 +24,8 @@
               "src/schema"
             ],
             "styles": [
-              "src/styles.less"
+              "src/styles.less",
+              "src/material-theme.scss"
             ],
             "scripts": []
           },

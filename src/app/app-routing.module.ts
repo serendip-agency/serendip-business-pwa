@@ -15,10 +15,10 @@ const routes: Routes = [
   { path: 'dashboard/:section', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'dashboard/:section/:tab', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'dashboard/:section/:tab/:id', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'crm', component: CrmComponent},
+  { path: 'crm/:tab', component: CrmComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'auth/:tab', component: AuthComponent },
-  { path: 'crm', component: CrmComponent },
-  { path: 'crm/:tab', component: CrmComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
 ];
 

@@ -1,0 +1,35 @@
+<section class="month-view {{size}}">
+
+  <div class="weekday" *ngFor="let day of moment.weekdays(true)">
+    <div class="day">
+      {{size == 'mini' ? day.split('')[0] : day}}
+    </div>
+
+  </div>
+
+
+  <div *ngFor="let item of monthView" class="block {{item.class.join(' ')}}" [class.today]="item.moment.format('YYYY-MM-DD') == moment().format('YYYY-MM-DD')  ">
+
+    <div class="day" [class.holiday]="item.holiday" *ngIf="calendarType == 'gregorian'"> {{rpd (item.moment.format('DD'))}} </div>
+    <div class="day"  [class.holiday]="item.holiday" *ngIf="calendarType == 'persian'"> {{rpd (item.moment.format('jDD'))}} </div>
+
+    <div class="month" *ngIf="calendarType == 'gregorian'">
+      {{item.moment.format('MMMM')}}
+    </div>
+    
+    <div class="month" *ngIf="calendarType == 'persian'">
+      {{item.moment.format('jMMMM')}}
+    </div>
+
+
+    <div class="events" *ngIf="item.class.indexOf('prevMonth') == -1 && item.class.indexOf('nextMonth') == -1 ">
+      <div class="event" *ngFor="let ev of item.events">
+        {{ev.text}}
+      </div>
+    </div>
+
+
+    <br>
+  </div>
+
+</section>

@@ -10,6 +10,11 @@
     max-height: 90vh !important;
 }
 
+.mat-progress-spinner.mat-progress-spinner-indeterminate-animation[mode=indeterminate] circle {
+
+    stroke-width: 4px!important;
+}
+
 .mat-simple-snackbar,
 .mat-tab-label,
 .mat-card,
@@ -102,8 +107,6 @@ input[dir=ltr] {
     padding: 9.5px 0;
 }
 
-.mat-card-actions,
-.mat-card-content,
 .mat-card-subtitle,
 .mat-card-title {
     margin-top: 2.5px !important;
@@ -135,9 +138,7 @@ input[dir=ltr] {
     height: 22px;
 }
 
-.mat-card {
-    background: rgba(255, 255, 255, 0.7);
-}
+.mat-card {}
 
 mat-form-field .location img,
 mat-form-field .plus img,
@@ -157,10 +158,6 @@ mat-form-field .minus img {
     }
 }
 
-.mat-card {
-    padding: 15px !important;
-}
-
 .mat-card:not([class*=mat-elevation-z]) {
     box-shadow: 0 0 160px #fff inset, 0 3px 1px -2px rgba(0, 0, 0, .1), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12) !important;
 }
@@ -169,16 +166,13 @@ mat-form-field .minus img {
     .mat-select {
         margin-top: 2.5px;
     }
-    .mat-form-field-appearance-legacy .mat-form-field-infix
-    {
-        padding:6px 0;
-
+    .mat-form-field-appearance-legacy .mat-form-field-infix {
+        padding: 6px 0;
     }
     .mat-card {
         padding: 10px !important;
-        .mat-form-field{
+        .mat-form-field {
             font-size: 12px;
-
         }
     }
     .mat-card-avatar {

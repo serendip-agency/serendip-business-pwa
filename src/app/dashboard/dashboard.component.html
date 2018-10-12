@@ -1,4 +1,4 @@
-<app-calendar></app-calendar>
+<app-calendar *ngIf="showCalendar"></app-calendar>
 
 <div class="dashboard-wrapper">
   <header id="header">
@@ -6,19 +6,18 @@
     <div class="shortcuts">
       <ul>
 
-
         <li>
           <a>
             <img src="/assets/icon-crm-header/icons-crm-header-note.svg" alt="">
           </a>
         </li>
 
-
         <li>
-          <a>
+          <a (click)="showCalendar = !showCalendar">
             <img src="/assets/icon-crm-header/icons-crm-header-calendar.svg" alt="">
           </a>
         </li>
+
         <li>
           <a>
             <img src="/assets/icon-crm-header/icons-crm-header-map.svg" alt="">
@@ -88,7 +87,7 @@
         <div class="datetime">
 
           <span class="time">
-            <img *ngFor="let w of dashboardTime.split('')" [src]=' "/assets/digital-numbers/" + w + ".svg"' />
+            <img *ngFor="let w of dashboardTime.split('')" [src]='"/assets/digital-numbers/" + w + ".svg"' />
           </span>
 
           <span class="date">
@@ -121,9 +120,9 @@
         <img [src]='"/assets/icons/plus-add-2.svg"' />
       </div> -->
 
-      <div *ngFor="let item of [1,2,3,4,6,9]" class="grid-layout grid-layout-{{item}}" (click)="setGridLayout(item)">
+      <!-- <div *ngFor="let item of [1,2,3,4,6,9]" class="grid-layout grid-layout-{{item}}" (click)="setGridLayout(item)">
         <img [src]="'/assets/icons/tab-' + item + '.svg'" />
-      </div>
+      </div> -->
 
 
       <div class="clear"></div>
@@ -145,8 +144,8 @@
 
   </header>
 
-
-  <aside id="explorer" [class.hide]="!explorerVisible" class="closed" (mouseenter)="explorerMouseIn()" (mouseleave)="explorerMouseOut()">
+  <!-- (mouseenter)="explorerMouseIn()" (mouseleave)="explorerMouseOut()" -->
+  <aside id="explorer" [class.hide]="!explorerVisible">
 
     <div class="explorer-inner">
 
@@ -212,9 +211,8 @@
 
   </aside>
 
-
-
-  <div class="grid-container f{{gridLayout.containers.length}}" [class.explorer-show]="explorerVisible" [class.go-back]="!explorerAnimDone">
+  <div class="grid-container" [ngClass]="'f' + gridLayout.containers.length" [class.explorer-show]="explorerVisible"
+    [class.go-back]="!explorerAnimDone">
 
     <div class="tabs-container" dndDropzone (dndDragover)="onTabDragover($event,c)" (dndDrop)="onTabDrop($event,c)"
       *ngFor="let container of gridLayout.containers;let c = index">
@@ -226,11 +224,15 @@
       </div>
 
 
-      <ul class="tabs-nav" [class.showTabs]="container.showTabs" [id]="'nav-tab-' + c  " [class.full]="isNavTabFull('nav-tab-' + c )">
-        <li *ngFor="let tab of container.tabs;let i = index" [style.top]="container.showTabs ? ( i * 40 ) + 5 + 'px' : 'unset'"
-          [style.z-index]="i" [style.right]="container.showTabs ? ( i * 5 )+ 5  + 'px' : 'unset'" [id]="'tab-' + c + '-'+ i"
-          [class.nextIsActive]="container.tabs[i + 1] && container.tabs[i + 1].active" [class.prevIsActive]="container.tabs[i - 1] && container.tabs[i - 1].active"
-          [class.active]="tab.active" (click)="setTabActive(tab,container);container.showTabs = false;">
+      <ul class="tabs-nav" *ngIf="container.tabs.length > 0" [class.showTabs]="container.showTabs" [id]="'nav-tab-' + c  "
+        [class.full]="isNavTabFull('nav-tab-' + c )">
+        <li *ngFor="let tab of container.tabs;let i = index" [style.top]="container.showTabs ? ( i * 40 ) + 10 + 'px' : 'unset'"
+          [class.last-item]="i == container.tabs.length - 1" [style.z-index]="i" [style.left]="container.showTabs ? ( i * 10 )+ 10  + 'px' : 'unset'"
+          [style.right]="container.showTabs ? ( i * 10 )+ 10  + 'px' : 'unset'" [id]="'tab-' + c + '-'+ i"
+          [class.nextIsActive]="container.tabs[i + 1] && (container.tabs[i + 1].active )" [class.prevIsActive]="container.tabs[i - 1] && (container.tabs[i - 1].active )"
+          [class.nextIsHover]="container.tabs[i + 1] && (container.tabs[i + 1].hover)" [class.prevIsHover]="container.tabs[i - 1] && (container.tabs[i - 1].hover)"
+          [class.active]="tab.active" [class.hover]="tab.hover" (mouseenter)="tab.hover = !container.showTabs;"
+          (mouseout)="tab.hover = false;" (click)="setTabActive(tab,container);container.showTabs = false;">
 
           <a class="tab-handle" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'" [dndDraggable]="{ containerIndex : c,tabIndex : i}">
             <div class="tab-icon">
@@ -260,7 +262,8 @@
         </li>
 
 
-        <li [class.prevIsActive]="container.tabs[container.tabs.length - 1] && container.tabs[container.tabs.length - 1].active">
+        <li [class.prevIsActive]="container.tabs[container.tabs.length - 1] && (container.tabs[container.tabs.length - 1].active  )"
+          [class.prevIsHover]="container.tabs[container.tabs.length - 1] && ( container.tabs[container.tabs.length - 1].hover)">
           <a class="tab-handle">
             &nbsp;
           </a>
@@ -268,7 +271,7 @@
 
       </ul>
 
-      <div *ngFor="let tab of container.tabs" [hidden]="!tab.active">
+      <div *ngFor="let tab of container.tabs" [hidden]="!tab.active || container.showTabs">
         <div class="widget-container" *ngFor="let widget of getTabWidgets(tab)" [hidden]="widget.screen && widget.screen != dashboardService.screen">
           <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="{ widgetId : widget.id , tab : tab}"
             [ndcDynamicOutputs]="{ widgetIdChange : widgetIdChange(widget) , widgetDataChange : widgetDataChange() }"

@@ -100,6 +100,10 @@ import { NgxChartsModule } from '@swimlane/ngx-charts'
 import { DndModule } from 'ngx-drag-drop';
 import { CalendarComponent } from './calendar/calendar.component';
 import { UserActivityBySectionComponent } from './charts/user-activity-by-section/user-activity-by-section.component';
+import { OutcomeByCampaignComponent } from './charts/outcome-by-campaign/outcome-by-campaign.component';
+import { CalendarMonthComponent } from './calendar/calendar-month/calendar-month.component';
+import { CalendarDayComponent } from './calendar/calendar-day/calendar-day.component';
+import { CalendarScheduleComponent } from './calendar/calendar-schedule/calendar-schedule.component';
 
 
 const dynamicComponents = [
@@ -132,21 +136,26 @@ const dynamicComponents = [
   InteractionListComponent,
   InteractionDeleteComponent,
   UserProfileComponent,
-  UserActivityBySectionComponent
+  UserActivityBySectionComponent,
+  OutcomeByCampaignComponent,
+  CalendarMonthComponent,
+  CalendarDayComponent,
+  CalendarScheduleComponent
 ];
+
+var primaryComponents = [AppComponent,
+  AuthComponent,
+  DashboardComponent,
+  CrmComponent,
+  UserProfileComponent,
+  MapComponent,
+  CalendarComponent];
 
 @NgModule({
   declarations: [
-    AppComponent,
-    AuthComponent,
-    DashboardComponent,
-    CrmComponent,
-    UserProfileComponent,
-    MapComponent,
-    CalendarComponent,
+    ...primaryComponents,
     ...dynamicComponents,
   ],
-
   entryComponents: [PeopleDeleteComponent],
   imports: [
     NgxMaterialTimepickerModule.forRoot(),

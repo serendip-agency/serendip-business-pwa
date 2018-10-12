@@ -1,10 +1,12 @@
 #auth {
-    min-height: 100vh;
     background-repeat: repeat;
     background-position: center bottom;
-    padding: 30px 0;
+    padding: 0;
     box-sizing: border-box;
     background: #22223a;
+    height: 100vh;
+    text-align: center;
+    
     &:before {
         background-size: 1200px;
         background: url("/assets/graphics/background/star-back.svg");
@@ -31,6 +33,14 @@
     .loading {
         padding: 30px 0;
         text-align: center;
+        background: url("/assets/graphics/brand/serendip-circle.svg") no-repeat;
+        background-position: center center;
+        background-size: 80px;
+        transform: translateY(-50%);
+        margin-top: 50%;
+        circle {
+            stroke-width: 4px;
+        }
         mat-spinner {
             margin: 0 auto;
         }
@@ -48,6 +58,11 @@
         background: #fff url("/assets/graphics/auth/planet.svg");
         background-size: contain;
         box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.1);
+        top: 50%;
+        transform: translateY(-50%);
+        vertical-align: middle;
+        display: inline-block;
+
         img.logo {
             max-width: 96px;
             display: block;
@@ -124,11 +139,14 @@
     }
 }
 
-@media (max-width:768px ) and (max-height : 1024px) {
+@media (max-width:768px) and (max-height: 1024px) {
     #auth {
         padding: 0;
         box-sizing: border-box;
         .moon {
+            margin:0;
+            transform: none;
+            top:0;
             width: 100%;
             border-radius: 0 0 0 100%;
             padding: 15px 0 0 0;
@@ -155,7 +173,7 @@
             border-radius: 0;
             padding: 15px 0;
             background-image: none;
-            height:auto;
+            height: auto;
             img.logo {
                 margin: 0 auto;
             }

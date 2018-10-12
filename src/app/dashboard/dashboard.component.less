@@ -7,11 +7,10 @@
     border-radius: 100%;
     overflow: hidden; // box-shadow: -2px 3px 0px #c5a262;
     cursor: pointer;
-    user-select: none;
-    transition: all ease-in-out .3s;
+    user-select: none; // transition: all ease-in-out .3s;
     outline: none;
     left: 5px;
-    top: calc(~"100% - 69px");
+    top: calc(~"100% - 79px");
     &:active {
         outline: none;
     }
@@ -98,22 +97,23 @@ header {
     &.swipe {
         cursor: move;
     }
-    .inner,
     .shortcuts {
-        transition: left ease-in-out .7s;
-    }
-    .shortcuts {
-        width: 100%;
+        width: 370px;
         margin: 0 auto;
         line-height: 40px;
         height: 50px;
         text-transform: uppercase;
-        text-align: center;
+        text-align: right;
         position: absolute;
         top: 0;
-        left: -100%;
-        background: rgba(0, 0, 0, 0.01);
+        opacity: 0;
+        right: 40px;
         direction: ltr;
+        transition: opacity ease .5s;
+        z-index: 100;
+        &.show {
+            opacity: 1;
+        }
         ul {
             padding: 5px;
             box-sizing: border-box;
@@ -128,10 +128,10 @@ header {
                     height: 40px;
                     width: 40px;
                     border-radius: 100%;
-                    padding: 2px;
                     box-sizing: border-box;
                     transition: background ease .3s;
                     position: relative;
+                    cursor: pointer;
                     &:after {
                         position: absolute;
                         display: block;
@@ -149,7 +149,6 @@ header {
                         height: 100%;
                         display: block;
                         border-radius: 100%;
-                        background: rgba(255, 255, 255, 0.1);
                     }
                 }
             }
@@ -251,7 +250,7 @@ header {
             vertical-align: middle;
             transform: rotate(180deg);
             transition: all cubic-bezier(0.6, -0.28, 0.735, 0.045) .3s; //  transition: transform linear .5s;
-            margin-top: 2.5px;
+            margin-top: 1px;
             &:after {
                 position: absolute;
                 display: block;
@@ -327,10 +326,14 @@ aside#explorer {
     border-left: 1px solid #eee;
     float: right;
     box-sizing: border-box;
-    overflow-y: scroll;
+    overflow-y: hidden;
     overflow-x: hidden; // transition: width cubic-bezier(0.68, -0.55, 0.265, 1.55) .3s; //  transition: width linear .3s;
-    transition: width ease-in-out .25s; //  transition: width linear .3s;
+    // transition: width ease-in-out .25s; //  transition: width linear .3s;
     z-index: 300;
+  
+    &:hover {
+        overflow-y: scroll;
+    }
     &.hide {
         ul>li>a>span.close {
             display: none !important;
@@ -390,7 +393,7 @@ aside#explorer {
                             height: 30px;
                             line-height: 30px;
                             overflow: hidden;
-                            margin: 2px auto;
+                            margin: 3px auto;
                             border: none;
                             text-align: center;
                             .img {
@@ -445,8 +448,7 @@ aside#explorer {
                 display: block;
                 list-style: none;
                 cursor: default;
-                padding: 5px 0;
-                transition: transform ease 1.5s;
+                padding: 5px 0; // transition: transform ease 1.5s;
                 border-bottom: 1px solid rgb(235, 235, 235);
                 position: relative;
                 img.toggle-ul {
@@ -496,7 +498,7 @@ aside#explorer {
                         padding: 0 4px;
                         border: 1px solid rgb(210, 175, 109);
                         border-radius: 20px;
-                        margin: 10px 0;
+                        margin: 10px auto;
                         box-sizing: border-box;
                         background: #fff;
                         background: rgba(210, 175, 109, 0.9);

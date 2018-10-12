@@ -3,74 +3,32 @@ import * as sutils from 'serendip-utility'
 import * as _ from "underscore";
 
 @Component({
-  selector: 'app-user-activity-by-section',
-  templateUrl: './user-activity-by-section.component.html',
-  styleUrls: ['./user-activity-by-section.component.css']
+  selector: 'app-outcome-by-campaign',
+  templateUrl: './outcome-by-campaign.component.html',
+  styleUrls: ['./outcome-by-campaign.component.css']
 })
-export class UserActivityBySectionComponent implements OnInit {
-  animations: boolean = true;
-
-  constructor(private changeRef: ChangeDetectorRef) { }
+export class OutcomeByCampaignComponent implements OnInit {
 
   data = [
     {
-      "name": "م. اسماعیلی",
-      "series": [
-        {
-          "value": 10,
-          "name": "خدمات"
-        },
-        {
-          "value": 5,
-          "name": "شکایات"
-        },
-        {
-          "value": 20,
-          "name": "فروش"
-        }
-
-      ]
+      name: 'ت. وب',
+      value: 450
     },
     {
-      "name": "و. بزاز",
-      "series": [
-        {
-          "value": 5,
-          "name": "خدمات"
-        },
-        {
-          "value": 15,
-          "name": "شکایات"
-        },
-        {
-          "value": 10,
-          "name": "فروش"
-        }
-      ]
+      name: 'ت. بصری',
+      value: 600
     },
     {
-      "name": "خ. کریمی",
-      "series": [
-        {
-          "value": 4,
-          "name": "خدمات"
-        },
-        {
-          "value": 8,
-          "name": "شکایات"
-        },
-        {
-          "value": 1,
-          "name": "فروش"
-        }
-      ]
+      name: 'ت. پیامکی',
+      value: 100
     }
-  ]
+  ];
 
   view = [300, 300];
 
-  chartId = `chart-${Date.now()}`;
 
+  constructor(private changeRef: ChangeDetectorRef) { }
+  chartId = `chart-${Date.now()}`;
 
   adjustSize() {
     var chartContainer = document.getElementById(this.chartId);
@@ -82,7 +40,6 @@ export class UserActivityBySectionComponent implements OnInit {
     if (containerWidth > 500)
       containerWidth = 500;
 
-
     if (containerWidth < 220)
       return;
 
@@ -92,31 +49,27 @@ export class UserActivityBySectionComponent implements OnInit {
     this.view[0] = containerWidth;
     this.view[1] = containerWidth;
 
-    console.log('polar', containerWidth);
-
     this.data = [...this.data];
     this.changeRef.detectChanges();
   }
 
   fadeIn() {
     var elem = document.getElementById(this.chartId);
-    if (elem) {
+    if (elem)
       elem.classList.add("fadeIn");
-      setTimeout(() => {
-        this.animations = false;
-      }, 2000);
-    }
     else
       setTimeout(() => {
         this.fadeIn();
       }, 2000);
   }
+
+
+
   ngOnInit() {
 
+    console.log(`init chart ${this.chartId}`);
     setTimeout(() => {
       this.fadeIn();
-
-
     }, 2000);
 
     setInterval(() => {
@@ -133,8 +86,5 @@ export class UserActivityBySectionComponent implements OnInit {
     }, 1000);
 
   }
-
-
-
 
 }

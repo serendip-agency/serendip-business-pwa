@@ -1,7 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import * as Moment from 'moment-jalaali'
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import * as Moment from 'moment'
+import * as MomentJalaali from 'moment-jalaali'
 
 import * as sUtil from 'serendip-utility';
+import * as _ from 'underscore'
 
 
 @Component({
@@ -10,55 +12,15 @@ import * as sUtil from 'serendip-utility';
   styleUrls: ['./calendar.component.less']
 })
 export class CalendarComponent implements OnInit {
+
   moment: typeof Moment;
 
   monthView = [];
 
-  calendarType: "islamic" | "persian" | 'gregorian' = "persian";
-  constructor() {
+  date;
 
-    this.moment = Moment;
-    this.moment.loadPersian({ dialect: 'persian-modern', usePersianDigits: false })
-
-
-    var startOfTheMonth = this.moment(this.moment().format("jYYYY/jM/1"), "jYYYY/jM/jD").add(-1, 'month').toDate();
-    var startOfTheMonthWeekday = this.moment(startOfTheMonth).weekday();
-
-    var daysInMonth = this.moment.jDaysInMonth(parseInt(this.moment(startOfTheMonth).format('jYYYY')), parseInt(this.moment(startOfTheMonth).format('jMM')) - 1);
-    var endOfMonth = this.moment(startOfTheMonth).add(daysInMonth, 'days').toDate();
-    var endOfMonthWeekday = this.moment(endOfMonth).weekday();
-
-   //console.log(this.moment(startOfTheMonth).weekday(), daysInMonth);
-
-    for (let i = startOfTheMonthWeekday; i > 0; i--) {
-
-      this.monthView.push({
-        moment: this.moment(startOfTheMonth).add(i * -1, 'd'),
-        class: ['prevMonth']
-      });
-
-    }
-
-    for (let i = 0; i < daysInMonth; i++) {
-
-      this.monthView.push({
-        moment: this.moment(startOfTheMonth).add(i, 'd'),
-
-        class: ['currentMonth']
-      });
-
-    }
-
-
-    for (let i = endOfMonthWeekday; i <= 6; i++) {
-
-      this.monthView.push({
-        moment: this.moment(endOfMonth).add(i, 'd'),
-        class: ['nextMonth']
-      });
-
-    }
-
+  calendarType: "persian" | 'gregorian' = "persian";
+  constructor(private changeRef: ChangeDetectorRef) {
 
   }
 
@@ -73,12 +35,22 @@ export class CalendarComponent implements OnInit {
   }
 
 
+  nextMonth() {
+    this.date.add(1, 'month');
+    this.changeRef.detectChanges();
+  }
+
+  prevMonth() {
+    this.date.add(-1, 'month');
+    this.changeRef.detectChanges();
+  }
   ngOnInit() {
 
 
+    this.moment = MomentJalaali;
+    this.moment.loadPersian({ dialect: 'persian-modern', usePersianDigits: false });
 
-
-
+    this.date = this.moment();
   }
 
 }

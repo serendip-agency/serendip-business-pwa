@@ -26,7 +26,7 @@ export class DashboardService {
   }
 
   setScreen() {
-    this.screen = window.innerWidth < 640 ? "mobile" : "desktop";
+    this.screen = window.innerWidth < 860 ? "mobile" : "desktop";
 
   }
 

@@ -1,71 +1,42 @@
 <div id="calendar">
-  <aside></aside>
+  <aside>
+
+    <app-calendar-month [month]="calendarType == 'persian' ? date.jMonth() +1: date.month() +1" [year]="calendarType == 'persian' ? date.jYear()  : date.year() "
+      [size]="'mini'" [calendarType]="calendarType"></app-calendar-month>
+
+  </aside>
 
   <div class="toolbar">
 
     <div class="inner">
 
-      <div class="box">
+      <div class="box type">
 
         <mat-form-field>
-          <mat-select [(ngModel)]="calendarType" placeholder="نوع تقویم">
+          <mat-select [(ngModel)]="calendarType" (ngModelChange)="typeChange(calendarType)" placeholder="نوع تقویم">
             <mat-option [value]="'persian'">
               جلالی
             </mat-option>
             <mat-option [value]="'gregorian'">
               میلادی
             </mat-option>
-            <mat-option [value]="'islamic'">
-              قمری
-            </mat-option>
 
           </mat-select>
         </mat-form-field>
+      </div>
+
+      <div class="box month">
+        <img src="assets/icons/arrow-right-next-10.svg" (click)="prevMonth()" alt="" />
+        {{ calendarType == 'persian' ? rpd( date.format("jMMMM jYYYY")) : rpd( date.format("MMMM YYYY")) }}
+        <img src="assets/icons/arrow-left-back-10.svg" (click)="nextMonth()" alt="" />
       </div>
 
     </div>
 
   </div>
 
-  <section class="month-view">
-
-    <div class="weekday">
-      شنبه
-    </div>
-
-    <div class="weekday">
-      یک‌شنبه
-    </div>
-
-    <div class="weekday">
-      دو‌شنبه
-    </div>
-
-    <div class="weekday">
-      سه‌شنبه
-    </div>
-
-    <div class="weekday">
-      چهار‌شنبه
-    </div>
-
-    <div class="weekday">
-      پنج‌شنبه
-    </div>
-
-    <div class="weekday">
-      جمعه
-    </div>
-    <div *ngFor="let item of monthView" class="block {{item.class.join(' ')}}">
-
-      <div class="day"> {{rpd (item.moment.format('jDD'))}} </div>
-
-      <div class="month">
-        {{item.moment.format('jMMMM')}}
-      </div>
-
-      <br>
-    </div>
-
-  </section>
+  <div class="big-calendar">
+    <app-calendar-month [month]="calendarType == 'persian' ? date.jMonth() +1 : date.month() +1 " [year]="calendarType == 'persian' ? date.jYear()  : date.year() "
+      [calendarType]="calendarType"></app-calendar-month>
+  </div>
 </div>
