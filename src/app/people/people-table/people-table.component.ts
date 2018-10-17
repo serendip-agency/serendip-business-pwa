@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy, EventEmitter, Output } from "@angular/core";
 import {
   MatPaginator,
   MatTableDataSource,
@@ -13,6 +13,8 @@ import { InsertMessage } from "../../messaging/InsertMessage";
 import { MessagingService } from "../../messaging.service";
 import { PeopleDeleteComponent } from "../people-delete/people-delete.component";
 import { Router } from "@angular/router";
+import { UpdateMessage } from "src/app/messaging/updateMessage";
+import { widgetCommandInterface } from "src/app/models";
 
 @Component({
   selector: "app-people-table",
@@ -22,6 +24,10 @@ import { Router } from "@angular/router";
 export class PeopleTableComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator)
   paginator: MatPaginator;
+
+
+  @Output() widgetCommand = new EventEmitter<widgetCommandInterface>();
+
 
   loading = true;
   dataSource = new MatTableDataSource<any>();
@@ -43,6 +49,7 @@ export class PeopleTableComponent implements OnInit, OnDestroy {
   ];
 
   selection = new SelectionModel<any>(true, []);
+  updateItemSubscription: Subscription;
 
   constructor(
     private router: Router,
@@ -77,6 +84,7 @@ export class PeopleTableComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+
     this.refresh();
 
     this.newItemSubscription = this.messagingService.listen(
@@ -88,6 +96,17 @@ export class PeopleTableComponent implements OnInit, OnDestroy {
         this.refresh();
       }
     );
+
+    this.updateItemSubscription = this.messagingService.listen(
+      {
+        type: UpdateMessage,
+        targets: ["people"]
+      },
+      msg => {
+        this.refresh();
+      }
+    );
+
   }
 
   async refresh() {
@@ -104,11 +123,20 @@ export class PeopleTableComponent implements OnInit, OnDestroy {
       this.loading = false;
     });
     this.dataSource.data = await this.dataService.list("people", 0, 10);
+    console.log(this.dataSource.data);
     this.loading = false;
   }
 
   edit(model) {
-    this.router.navigate(["/dashboard", "people", "edit", model._id]);
+
+    this.selection.clear();
+    this.widgetCommand.emit({
+      command: 'openWidget',
+      documentId: model._id,
+      icon: 'office-paper-work-pen',
+      component: 'PeopleFormComponent'
+    });
+
   }
 
   delete(model) {

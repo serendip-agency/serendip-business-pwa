@@ -1,11 +1,13 @@
-<div id="auth" *ngIf="!authService.loggedIn">
+<div id="auth" [class.day]="day" *ngIf="!authService.loggedIn" >
 
-  <div class="moon">
+  <div class="moon" (mouseover)="day = true" (mouseout)="day = false">
     <img *ngIf="!loading" class="logo" src='assets/graphics/brand/serendip-circle.svg' />
-
+    <div class="loading" *ngIf="loading">
+      <mat-spinner></mat-spinner>
+    </div>
     <div class="activate" *ngIf="tab =='activate'">
 
-      <form *ngIf="!loading" (ngSubmit)="activate(model)" #activateForm="ngForm">
+      <form (ngSubmit)="activate(model)" #activateForm="ngForm">
 
         <div class="title">
           فعال سازی حساب کاربری
@@ -69,7 +71,7 @@
 
     <div class="login" *ngIf="tab =='login'">
 
-      <form *ngIf="!loading" (ngSubmit)="login(model)" #loginForm="ngForm">
+      <form (ngSubmit)="login(model)" #loginForm="ngForm">
         <div class="title">
           ورود به حساب کاربری
         </div>
@@ -123,16 +125,14 @@
 
       </form>
 
-      <div class="loading" *ngIf="loading">
-        <mat-spinner></mat-spinner>
-      </div>
+
     </div>
 
 
     <div class="register" *ngIf="tab =='register'">
 
-     
-      <form *ngIf="!loading" (ngSubmit)="register(model)" #registerForm="ngForm">
+
+      <form (ngSubmit)="register(model)" #registerForm="ngForm">
         <div class="title">
           ایجاد حساب کاربری
         </div>
@@ -196,15 +196,13 @@
         </ul>
 
       </form>
-      <div class="loading" *ngIf="loading">
-        <mat-spinner></mat-spinner>
-      </div>
+
     </div>
 
 
     <div class="forgot" *ngIf="tab =='forgot'">
 
-      <form *ngIf="!loading" (ngSubmit)="sendResetPasswordToken(model)" #forgotForm="ngForm">
+      <form (ngSubmit)="sendResetPasswordToken(model)" #forgotForm="ngForm">
 
         <div class="title">
           فراموشی رمز عبور
@@ -239,13 +237,11 @@
         </ul>
 
       </form>
-      <div class="loading" *ngIf="loading">
-        <mat-spinner></mat-spinner>
-      </div>
+
     </div>
 
     <div class="reset" *ngIf="tab =='reset'">
-      <form *ngIf="!loading" (ngSubmit)="resetPassword(model)" #resetForm="ngForm">
+      <form (ngSubmit)="resetPassword(model)" #resetForm="ngForm">
         <div class="title">
           تغییر رمز با کد
         </div>
@@ -288,9 +284,7 @@
 
         </ul>
       </form>
-      <div class="loading" *ngIf="loading">
-        <mat-spinner></mat-spinner>
-      </div>
+
     </div>
   </div>
 </div>

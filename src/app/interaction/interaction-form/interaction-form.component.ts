@@ -69,28 +69,33 @@ export class InteractionFormComponent implements OnInit {
 
     this.interactionForm = this.fb.group({
       _id: [""],
-      firstName: ["", Validators.required],
-      lastName: [""],
-      address: this.fb.group({
-        street: [""],
-        city: [""],
-        state: [""],
-        zip: [""]
-      }),
-      mobiles: this.fb.array([
+      user: [""],
+      company: [""],
+      person: [""],
+      sessionId: [""],
+      sessionProvider: [""],
+      type: ['', Validators.required],
+      campaignTrees: this.fb.array([
         this.fb.group({
-          type: [""],
-          value: [""]
+          // utm_campaign should be campaign id of existing record in database
+          campaign: [""],
+          // utm_source ex: google, newsletter
+          source: [""],
+          // utm_medium ex: banner, cpc, email
+          medium: [""],
+          // utm_content will be used for A/B testing ex: google-ad-1, logoWeb 
+          content: [""],
         })
       ]),
-      emails: this.fb.array([this.fb.control("")]),
-      socials: this.fb.array([
-        this.fb.group({
-          type: [""],
-          value: [""]
-        })
-      ]),
-      gender: [""]
+      path: [""],
+      submitDate: [""],
+      interactDate: [""],
+      sales: this.fb.array([]),
+      tempSale: [''],
+      services: this.fb.array([]),
+      tempService: [''],
+      complaints: this.fb.array([]),
+      tempComplaint: [''],
     });
 
     this.interactionForm.valueChanges.subscribe(data => { });
@@ -106,7 +111,7 @@ export class InteractionFormComponent implements OnInit {
   handleParams(): any {
     const params = this.activatedRoute.snapshot.params;
     if (params.id) {
-    //  this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+      //  this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
     }
   }
 

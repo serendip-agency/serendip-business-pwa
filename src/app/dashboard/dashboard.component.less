@@ -44,6 +44,7 @@ header {
     user-select: none;
     background: #D2AE6D;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    border-bottom: 4px solid #c5a76d;
     nav {
         padding: 15px 30px;
         padding-bottom: 0;
@@ -330,7 +331,6 @@ aside#explorer {
     overflow-x: hidden; // transition: width cubic-bezier(0.68, -0.55, 0.265, 1.55) .3s; //  transition: width linear .3s;
     // transition: width ease-in-out .25s; //  transition: width linear .3s;
     z-index: 300;
-  
     &:hover {
         overflow-y: scroll;
     }
@@ -521,13 +521,14 @@ aside#explorer {
                             .img {
                                 display: inline-block;
                                 background: rgb(153, 124, 70);
-                                width: 20px;
-                                height: 20px;
+                                width: 30px;
+                                height: 30px;
                                 border-radius: 100%;
                                 overflow: hidden;
                                 display: inline-block; // border: 1px solid #000;
                                 box-sizing: border-box;
                                 vertical-align: middle;
+                                padding: 2px;
                             }
                             img {
                                 filter: invert(1);
@@ -605,31 +606,36 @@ aside#explorer {
 
 #start {
     width: 100%;
-    height: calc(~"100vh - 50px");
+    min-height: calc(~"100vh - 50px");
+    height: auto;
     position: fixed;
     top: 50px;
     right: 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y:auto;
     background: rgba(255, 255, 255, 0.5);
     filter: grayscale(1);
     color: #fff;
     opacity: 0; // transition: opacity ease .3s;
     z-index: -1;
     .inner {
+        
         max-width: 420px;
         width: 100%;
         margin: 0 auto;
         background: #c3a265 url('/assets/graphics/auth/astro-small.svg') no-repeat center bottom;
         background-size: 64px;
-        height: 100%;
+        min-height: 100%;
         border-radius: 5px 5px 0 0;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         box-sizing: border-box;
         position: absolute;
-        bottom: 0;
+        top:0;
+     
         left: -600px;
         transition: left ease .5s;
         transition: none;
+
         &:after {
             position: absolute;
             width: 100%;
@@ -800,7 +806,7 @@ aside#explorer {
 @media(max-width:480px) {
     #start {
         top: 0;
-        height: 100%;
+        min-height: 100%;
         nav {
             ul {
                 margin: 0 auto;

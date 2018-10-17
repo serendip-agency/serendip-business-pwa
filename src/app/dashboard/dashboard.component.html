@@ -226,7 +226,7 @@
 
       <ul class="tabs-nav" *ngIf="container.tabs.length > 0" [class.showTabs]="container.showTabs" [id]="'nav-tab-' + c  "
         [class.full]="isNavTabFull('nav-tab-' + c )">
-        <li *ngFor="let tab of container.tabs;let i = index" [style.top]="container.showTabs ? ( i * 40 ) + 10 + 'px' : 'unset'"
+        <li *ngFor="let tab of definedItemsOfArray(container.tabs);let i = index" [style.top]="container.showTabs ? ( i * 40 ) + 10 + 'px' : 'unset'"
           [class.last-item]="i == container.tabs.length - 1" [style.z-index]="i" [style.left]="container.showTabs ? ( i * 10 )+ 10  + 'px' : 'unset'"
           [style.right]="container.showTabs ? ( i * 10 )+ 10  + 'px' : 'unset'" [id]="'tab-' + c + '-'+ i"
           [class.nextIsActive]="container.tabs[i + 1] && (container.tabs[i + 1].active )" [class.prevIsActive]="container.tabs[i - 1] && (container.tabs[i - 1].active )"
@@ -234,7 +234,8 @@
           [class.active]="tab.active" [class.hover]="tab.hover" (mouseenter)="tab.hover = !container.showTabs;"
           (mouseout)="tab.hover = false;" (click)="setTabActive(tab,container);container.showTabs = false;">
 
-          <a class="tab-handle" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'" [dndDraggable]="{ containerIndex : c,tabIndex : i}">
+          <a class="tab-handle" [title]="tab.title" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'"
+            [dndDraggable]="{ containerIndex : c,tabIndex : i}">
             <div class="tab-icon">
               <img [src]="'assets/icons/' + tab.icon + '.svg'" />
             </div>
@@ -271,10 +272,10 @@
 
       </ul>
 
-      <div *ngFor="let tab of container.tabs" [hidden]="!tab.active || container.showTabs">
+      <div *ngFor="let tab of container.tabs;let t = index" [hidden]="!tab.active || container.showTabs">
         <div class="widget-container" *ngFor="let widget of getTabWidgets(tab)" [hidden]="widget.screen && widget.screen != dashboardService.screen">
-          <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="{ widgetId : widget.id , tab : tab}"
-            [ndcDynamicOutputs]="{ widgetIdChange : widgetIdChange(widget) , widgetDataChange : widgetDataChange() }"
+          <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="extendObj( { widgetId : widget.id , tab : tab},widget.inputs || {})"
+            [ndcDynamicOutputs]="{ widgetCommand : widgetCommand(widget,tab,container) , widgetTabChange : widgetTabChange(c,t),  widgetIdChange : widgetIdChange(widget) , widgetDataChange : widgetDataChange() }"
             [ndcDynamicComponent]="getComponent(widget.component)"></ndc-dynamic>
         </div>
       </div>

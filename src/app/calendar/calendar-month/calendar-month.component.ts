@@ -68,10 +68,8 @@ export class CalendarMonthComponent implements OnInit {
 
   constructor(private changeRef: ChangeDetectorRef) {
 
-
     this.moment = MomentJalaali;
     this.moment.loadPersian({ dialect: 'persian-modern', usePersianDigits: false });
-
 
   }
 

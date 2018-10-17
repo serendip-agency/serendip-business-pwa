@@ -1,6 +1,6 @@
 import { DashboardService } from "./../../dashboard.service";
 import { ActivatedRoute, Router, NavigationEnd } from "@angular/router";
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, ChangeDetectorRef, Output, Input, EventEmitter } from "@angular/core";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { DataService } from "../../data.service";
 import { InsertMessage } from "../../messaging/InsertMessage";
@@ -9,6 +9,10 @@ import { Subscription } from "rxjs";
 import IranStates from "../../geo/IranStates";
 import * as _ from 'underscore';
 import { GmapsService } from "../../gmaps.service";
+import { MatSnackBar } from "@angular/material";
+import { widgetCommandInterface, tabInterface } from "src/app/models";
+import { IdbService } from "src/app/idb.service";
+import { WidgetService } from "src/app/widget.service";
 
 @Component({
   selector: "app-people-form",
@@ -17,6 +21,18 @@ import { GmapsService } from "../../gmaps.service";
 })
 export class PeopleFormComponent implements OnInit {
   peopleForm: FormGroup;
+
+  componentName: string = 'PeopleFormComponent';
+
+  @Input() widgetId: string;
+  @Input() documentId: string;
+  @Input() tab: any;
+
+  @Output() widgetIdChange = new EventEmitter<string>();
+  @Output() widgetDataChange = new EventEmitter<any>();
+  @Output() widgetCommand = new EventEmitter<widgetCommandInterface>();
+  @Output() widgetTabChange = new EventEmitter<tabInterface>();
+
 
   model: any = {
     socials: [],
@@ -40,9 +56,13 @@ export class PeopleFormComponent implements OnInit {
     public fb: FormBuilder,
     private dataService: DataService,
     private activatedRoute: ActivatedRoute,
+    public ref: ChangeDetectorRef,
     private router: Router,
+    private snackBar: MatSnackBar,
     private dashboardService: DashboardService,
-    public gmapsService: GmapsService
+    private idbService: IdbService,
+    private gmapsService: GmapsService,
+    private widgetService: WidgetService
   ) {
     this.iranStates = IranStates;
   }
@@ -67,12 +87,28 @@ export class PeopleFormComponent implements OnInit {
     })
   }
 
-  save() {
+  async save() {
+
     if (!this.peopleForm.value._id) {
-      this.dataService.insert("people", this.peopleForm.value);
+      var insertResponse = await this.dataService.insert("people", this.peopleForm.value);
+      this.documentId = insertResponse._id;
+      this.peopleForm.patchValue(insertResponse);
+      this.widgetTabChange.emit({ title: 'ویرایش شخص ' + this.peopleForm.value.firstName });
     } else {
       this.dataService.update("people", this.peopleForm.value);
     }
+
+    var stateDb = await this.idbService.userIDB("state");
+    var savedState = await stateDb.get(this.widgetId);
+
+    try {
+      savedState
+    } catch (error) {
+    }
+
+    if (savedState)
+      stateDb.delete(this.widgetId);
+
   }
 
   reset() {
@@ -102,7 +138,7 @@ export class PeopleFormComponent implements OnInit {
     // })
 
 
-    
+
 
   }
 
@@ -111,15 +147,6 @@ export class PeopleFormComponent implements OnInit {
   }
 
   async ngOnInit() {
-
-    // this.routerSubscription = this.router.events.subscribe(event => {
-    //   if (event instanceof NavigationEnd) {
-    //     this.handleParams();
-    //   }
-    // });
-
-    const params = this.activatedRoute.snapshot.params;
-
 
     this.peopleForm = this.fb.group({
       _id: [""],
@@ -131,13 +158,6 @@ export class PeopleFormComponent implements OnInit {
         state: [""],
         zip: [""]
       }),
-      // mobiles: this.fb.array([
-      //   this.fb.group({
-      //     type: [""],
-      //     value: [""]
-      //   })
-      // ]),
-
       mobiles: this.fb.array([this.fb.control("")]),
       emails: this.fb.array([this.fb.control("")]),
       socials: this.fb.array([
@@ -164,22 +184,35 @@ export class PeopleFormComponent implements OnInit {
       ])
     });
 
-    this.peopleForm.valueChanges.subscribe(data => { });
-
-    if (params.id) {
-      var model = await this.dataService.details('people', params.id);
-      console.log(model);
-      this.peopleForm.patchValue(model);
-     // this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
+    var stateDb = await this.idbService.userIDB("state");
+    var savedState;
+    try {
+      savedState = await stateDb.get(this.widgetId);
+    } catch (error) {
     }
 
+    if (savedState) {
+      this.peopleForm.patchValue(savedState.model);
+    } else
+      if (this.documentId) {
+        var model: any = await this.dataService.details('people', this.documentId);
+        this.peopleForm.patchValue(model);
+        this.widgetTabChange.emit({ title: 'ویرایش شخص ' + model.name })
+      }
+
+    this.peopleForm.valueChanges.subscribe(async (data: any) => {
+      this.widgetDataChange.emit(data);
+      var stateKey: string = this.widgetId;
+      if (!stateKey) {
+        this.widgetId = stateKey = this.componentName + '-' + Date.now() + '-' + Math.random().toString().split('.')[1];
+        this.widgetIdChange.emit(this.widgetId);
+        this.peopleForm.patchValue({ "_widgetId": this.widgetId });
+      }
+      await stateDb.set(stateKey, { id: stateKey, componentName: this.componentName, model: data, tab: this.tab });
+    });
+
   }
-  handleParams(): any {
-    const params = this.activatedRoute.snapshot.params;
-    if (params.id) {
-    //  this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
-    }
-  }
+
 
   addMobile() {
     (this.peopleForm.controls.mobiles as FormArray).push(

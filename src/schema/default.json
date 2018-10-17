@@ -5,9 +5,9 @@
     "icon": "dashboard-1",
     "tabs": [
       {
-        "name": "default",
+        "name": "UserActivityBySectionComponent",
         "title": "عملکرد کاربران",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "widgets": [
           {
             "inputs": {},
@@ -16,9 +16,9 @@
         ]
       },
       {
-        "name": "default",
+        "name": "OutcomeByCampaignComponent",
         "title": "حاصل کمپین ها",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "widgets": [
           {
             "inputs": {},
@@ -34,20 +34,9 @@
     "icon": "people-users-1",
     "tabs": [
       {
-        "name": "default",
-        "title": "داشبورد",
-        "icon": "plus-add-1",
-        "widgets": [
-          {
-            "inputs": {},
-            "component": "PeopleFormComponent"
-          }
-        ]
-      },
-      {
         "name": "new",
         "title": " فرد جدید",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "widgets": [
           {
             "inputs": {},
@@ -57,7 +46,7 @@
       },
       {
         "name": "data",
-        "title": "لیست",
+        "title": "لیست اشخاص",
         "icon": "information-data-1",
         "widgets": [
           {
@@ -82,7 +71,7 @@
       {
         "name": "new",
         "title": " شرکت جدید",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "widgets": [
           {
             "inputs": {},
@@ -93,7 +82,7 @@
       {
         "name": "data",
         "icon": "information-data-1",
-        "title": "لیست",
+        "title": "لیست شرکت ها",
         "widgets": [
           {
             "inputs": {},
@@ -115,23 +104,9 @@
     "icon": "integration-5",
     "tabs": [
       {
-        "name": "default",
-        "title": "داشبورد",
-        "widgets": []
-      },
-      {
         "name": "new",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "title": " تعامل جدید",
-        "widgets": [
-          {
-            "inputs": {},
-            "component": "InteractionFormComponent"
-          }
-        ]
-      },
-      {
-        "name": "edit",
         "widgets": [
           {
             "inputs": {},
@@ -142,7 +117,7 @@
       {
         "name": "data",
         "icon": "information-data-1",
-        "title": "لیست",
+        "title": "لیست تعاملات",
         "widgets": [
           {
             "inputs": {},
@@ -164,23 +139,9 @@
     "icon": "service",
     "tabs": [
       {
-        "name": "default",
-        "title": "داشبورد",
-        "widgets": []
-      },
-      {
         "name": "new",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "title": " خدمت جدید",
-        "widgets": [
-          {
-            "inputs": {},
-            "component": "ServiceFormComponent"
-          }
-        ]
-      },
-      {
-        "name": "edit",
         "widgets": [
           {
             "inputs": {},
@@ -191,7 +152,7 @@
       {
         "name": "data",
         "icon": "information-data-1",
-        "title": "لیست",
+        "title": "لیست خدمات",
         "widgets": [
           {
             "inputs": {},
@@ -213,13 +174,8 @@
     "icon": "complaints-customer-voice-2",
     "tabs": [
       {
-        "name": "default",
-        "title": "داشبورد",
-        "widgets": []
-      },
-      {
         "name": "new",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "title": " شکایت جدید",
         "widgets": [
           {
@@ -231,7 +187,7 @@
       {
         "name": "data",
         "icon": "information-data-1",
-        "title": "لیست",
+        "title": "لیست شکایات",
         "widgets": [
           {
             "inputs": {},
@@ -253,13 +209,8 @@
     "icon": "sell-money-expense-1",
     "tabs": [
       {
-        "name": "default",
-        "title": "داشبورد",
-        "widgets": []
-      },
-      {
         "name": "new",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "title": " پیش فاکتور",
         "widgets": [
           {
@@ -269,17 +220,8 @@
         ]
       },
       {
-        "name": "edit",
-        "widgets": [
-          {
-            "inputs": {},
-            "component": "SaleFormComponent"
-          }
-        ]
-      },
-      {
         "name": "data",
-        "title": "لیست",
+        "title": "لیست فروش",
         "icon": "information-data-1",
         "widgets": [
           {
@@ -308,17 +250,8 @@
       },
       {
         "name": "new",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "title": " کمپین جدید",
-        "widgets": [
-          {
-            "inputs": {},
-            "component": "CampaignFormComponent"
-          }
-        ]
-      },
-      {
-        "name": "edit",
         "widgets": [
           {
             "inputs": {},
@@ -329,7 +262,7 @@
       {
         "name": "data",
         "icon": "information-data-1",
-        "title": "لیست",
+        "title": "لیست کمپین ها",
         "widgets": [
           {
             "inputs": {},
@@ -346,28 +279,32 @@
     ]
   },
   {
+    "name": "targeting",
+    "title": "هدف‌‌‌گذاری",
+    "icon": "target-goal",
+    "tabs": []
+  },
+  {
+    "name": "pipeline",
+    "title": "قیف",
+    "icon": "filter-6",
+    "tabs": []
+  },
+  {
+    "name": "club",
+    "title": "باشگاه",
+    "icon": "club-1",
+    "tabs": []
+  },
+  {
     "name": "product",
     "title": "محصولات",
     "icon": "barcode-product-3",
     "tabs": [
       {
-        "name": "default",
-        "title": "داشبورد",
-        "widgets": []
-      },
-      {
         "name": "new",
-        "icon": "plus-add-1",
+        "icon": "plus-add-2",
         "title": "محصول جدید",
-        "widgets": [
-          {
-            "inputs": {},
-            "component": "ProductFormComponent"
-          }
-        ]
-      },
-      {
-        "name": "edit",
         "widgets": [
           {
             "inputs": {},
@@ -378,7 +315,7 @@
       {
         "name": "data",
         "icon": "information-data-1",
-        "title": "لیست",
+        "title": "لیست محصولا",
         "widgets": [
           {
             "inputs": {},
@@ -400,13 +337,24 @@
     "icon": "settings-1",
     "tabs": [
       {
-        "name": "default",
-        "icon": "account-profile-user-4",
-        "title": "پروفایل من",
+        "name": "service-types",
+        "icon": "service",
+        "title": "انواع خدمات مشتریان",
         "widgets": [
           {
             "inputs": {},
-            "component": "UserProfileComponent"
+            "component": "ServiceTypesComponent"
+          }
+        ]
+      },
+      {
+        "name": "product-categories",
+        "icon": "barcode-product-3",
+        "title": "دسته بندی محصولات",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "ProductCategoriesComponent"
           }
         ]
       }
@@ -414,14 +362,115 @@
   },
   {
     "name": "support",
-    "title": "‍‍پشتیبانی",
+    "title": "پشتیبانی",
     "icon": "support-1",
-    "tabs": []
+    "tabs": [
+      {
+        "name": "ticket-list",
+        "icon": "service-customer-support-online-chat",
+        "title": "لیست تیکت ها",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "TicketListComponent"
+          }
+        ]
+      },
+      {
+        "name": "ticket-form",
+        "icon": "plus-add-2",
+        "title": "ثبت تیکت جدید",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "TicketFormComponent"
+          }
+        ]
+      },
+      {
+        "name": "support-invoices",
+        "icon": "sell-buy-1",
+        "title": "فاکتور های پشتیبانی",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "InvoicesComponent"
+          }
+        ]
+      },
+      {
+        "name": "sms-service",
+        "icon": "sms-bold-1",
+        "title": "سرویس پیامک",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "SmsServiceComponent"
+          }
+        ]
+      },
+      {
+        "name": "email-service",
+        "icon": "email-bold",
+        "title": "سرویس ایمیل",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "EmailServiceComponent"
+          }
+        ]
+      },
+      {
+        "name": "fax-service",
+        "icon": "fax",
+        "title": "سرویس فکس",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "FaxServiceComponent"
+          }
+        ]
+      }
+    ]
   },
   {
-    "name": "support",
-    "title": "باشگاه",
-    "icon": "club-1",
-    "tabs": []
+    "name": "account",
+    "title": "اکانت",
+    "icon": "account-profile-user-4",
+    "tabs": [
+      {
+        "name": "account-profile",
+        "icon": "account-profile-user-4",
+        "title": "پروفایل من",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "AccountProfileComponent"
+          }
+        ]
+      },
+      {
+        "name": "account-password",
+        "icon": "key-2",
+        "title": "تغییر رمز عبور",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "AccountChangePasswordComponent"
+          }
+        ]
+      },
+      {
+        "name": "account-sessions",
+        "icon": "complaints-customize-customer-voice-3",
+        "title": "احراز هویت",
+        "widgets": [
+          {
+            "inputs": {},
+            "component": "AccountSessionsComponent"
+          }
+        ]
+      }
+    ]
   }
 ]

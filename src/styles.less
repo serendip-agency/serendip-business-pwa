@@ -66,6 +66,8 @@ This set of fonts are used in this project under the license: (.....)
 
 ::-webkit-scrollbar-thumb {
     background: #D2AE6D;
+    border-radius: 100% 0 0 100%;
+    opacity: .5;
 }
 
 input,
@@ -73,6 +75,76 @@ select,
 button,
 textarea {
     font-family: iranyekan;
+}
+
+section.list {
+    .inner {
+        padding: 10px 0;
+    }
+    .list-item {
+        display: block;
+        box-sizing: border-box;
+        background: rgb(240, 240, 240);
+
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+        >.list-item {
+            background: rgb(249, 249, 249);
+        }
+        .head {
+            line-height: 30px;
+            height: 30px;
+            &:after {
+                clear: both;
+                display: block;
+                content: ' ';
+            }
+            .title {
+                font-weight: bold;
+                float: right;
+                vertical-align: top;
+            }
+            .actions {
+                float: left;
+                vertical-align: top;
+                height: 30px;
+                img {
+                    width: 22px;
+                    height: 22px;
+                    display: inline-block;
+                    vertical-align: middle;
+                    margin: 0 2px;
+                    background: rgb(235, 235, 235);
+                    border-radius: 100%;
+                    padding: 2px;
+                    cursor: pointer;
+                }
+            }
+        }
+        .info {
+            line-height: 20px;
+            height: 20px;
+            &:after {
+                clear: both;
+                display: block;
+                content: ' ';
+            }
+            .desc {
+                float: right;
+                vertical-align: top;
+                font-weight: 500;
+                font-size: 11px;
+            }
+            .date {
+                vertical-align: top;
+                float: left;
+                font-weight: 100;
+                font-size: 10px;
+                text-align: left;
+            }
+        }
+    }
 }
 
 .nav-container {
@@ -88,6 +160,19 @@ ngx-charts-number-card .cell .trimmed-label {
     text-align: right !important;
 }
 
+.pull-left {
+    float: left;
+}
+
+.pull-right {
+    float: right;
+}
+
+.clearfix {
+    clear: both;
+    display: block;
+    content: ' ';
+}
 
 .chart-container {
     display: block;
@@ -180,7 +265,7 @@ body * {
 
 body {
     font-family: iranyekan;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 label {
@@ -220,18 +305,14 @@ label {
     display: block; //transition: width ease-in-out .1s;
     position: relative;
     height: calc(~"100vh - 60px");
-    overflow-x:hidden;
-    overflow-y:hidden;
-    
+    overflow-x: hidden;
+    overflow-y: hidden;
     white-space: nowrap;
     margin-right: auto;
-
     user-select: none;
-    
-    &:hover{
-        overflow-x:scroll;
+    &:hover {
+        overflow-x: scroll;
     }
-
     .tabs-container {
         overflow: hidden;
         white-space: normal;
@@ -242,15 +323,11 @@ label {
         min-width: 420px;
         min-height: calc(~"100vh - 90px");
         max-height: calc(~"100vh - 90px");
-
         transition: all ease .5s;
-
-
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
-      
         .placeholder {
             background: rgba(255, 255, 255, .5);
             border-radius: 10px;
@@ -271,9 +348,8 @@ label {
             user-select: none;
             height: 30px;
             white-space: nowrap;
-            overflow : hidden;
+            overflow: hidden;
             max-width: 420px;
-
             li.full-nav {
                 display: none;
             }
@@ -491,28 +567,30 @@ label {
             background: #fff;
             padding: 0 !important;
             max-width: 420px;
-
+            border-left: 5px solid rgb(235, 235, 235);
+            border-radius: 10px 0 10px 10px;
+            box-shadow: none !important;
+            border-bottom: 5px solid rgb(235, 235, 235);
+            overflow: hidden;
             .mat-card-content {
                 max-height: calc(~"100vh - 250px");
                 box-sizing: border-box;
                 overflow-x: hidden;
-                overflow-y:hidden;
+                overflow-y: hidden;
                 padding: 15px;
                 margin-bottom: 0;
                 padding-top: 0;
                 border-left: 6px solid transparent;
-
-                &:hover{
-                    overflow-y:scroll;
-                border-left: none;
-
-           
+                &:hover {
+                    overflow-y: scroll;
+                    border-left: none;
                 }
             }
-
-            &.table{
+            &.table {
                 max-width: 860px;
-
+                table {
+                    min-width: 700px;
+                }
             }
             &.chart {
                 max-height: calc(~"100vh - 130px");
@@ -548,6 +626,10 @@ label {
 @media(max-width:860px) {
     .grid-container .tabs-container {
         min-height: 100vh;
+        .tabs-nav {
+            width: 100%;
+            max-width: 100%;
+        }
     }
     aside#explorer {
         position: fixed;
@@ -575,6 +657,7 @@ label {
         }
         .tabs-container {
             padding: 5px 5px 0 0;
+            width: 100%;
         }
         &.explorer-show {
             width: calc(100% - 50px);
@@ -584,6 +667,12 @@ label {
         }
         .widget-container {
             .mat-card {
+                &,
+                &.chart {
+                    max-width: 100%;
+                    min-width: 100%;
+                    width: 100%;
+                }
                 .mat-card-content {}
                 &.chart,
                 .mat-card-content {
@@ -598,20 +687,17 @@ label {
     }
 }
 
-
 @media(max-width:480px) {
-
-    .grid-container{
-
-        .tabs-container{
-            width:100%;
+    .grid-container {
+        .tabs-container {
+            width: 100%;
             min-width: 100%;
             max-width: 100%;
             display: block;
         }
     }
-
 }
+
 div.timepicker {
     direction: ltr;
     &,
@@ -653,8 +739,7 @@ div.timepicker {
     font-family: tahoma !important;
     text-align: left;
     margin: 30px auto;
-    border-radius: 10px;
-    display: none;
+    border-radius: 10px; // display: none;
 }
 
 #start {
@@ -677,6 +762,10 @@ body {
     padding: 0;
     margin: 0;
     overflow-x: hidden;
+}
+
+body.hideScroll {
+    overflow-y: hidden;
 }
 
 [dir=rtl] {

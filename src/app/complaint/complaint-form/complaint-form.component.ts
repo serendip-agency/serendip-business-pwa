@@ -75,7 +75,6 @@ export class ComplaintFormComponent implements OnInit {
       person: [""],
       company: [""],
       type: ['', Validators.required],
-
     });
   }
 

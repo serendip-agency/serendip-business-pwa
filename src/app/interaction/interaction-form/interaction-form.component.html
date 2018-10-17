@@ -4,101 +4,16 @@
       <div mat-card-avatar>
         <img src="/assets/icons/employee-2.svg" />
       </div>
-      <mat-card-title>فرم افراد حقیقی</mat-card-title>
-      <mat-card-subtitle>ثبت فرد جدید</mat-card-subtitle>
+      <mat-card-title>فرم تعامل </mat-card-title>
+      <mat-card-subtitle>ثبت تعامل جدید</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content>
-<div class="logbox">
-  {{ interactionForm.value | json }}
-</div>
+      <div class="logbox">
+        {{ interactionForm.value | json }}
+      </div>
       <form [formGroup]="interactionForm" class="">
 
-        <mat-form-field>
-          <input matInput placeholder="نام" formControlName="firstName" />
-        </mat-form-field>
-
-        <mat-form-field>
-          <input matInput placeholder="نام‌خانوادگی" formControlName="lastName" />
-        </mat-form-field>
-
-        <div formArrayName="mobiles">
-
-          <div class="double-field" *ngFor="let social of getFormArray(interactionForm,'mobiles'); let i=index"
-            [formGroupName]="i">
-
-            <mat-form-field class="w-30">
-
-              <mat-select placeholder="نوع {{i == 0 ? '' :  rpd( i + 1)}}" formControlName="type">
-                <mat-option *ngFor="let type of ['منزل','موبایل','پشتیبان']" [value]="type">
-                  {{type}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field class="w-70">
-              <input matInput placeholder="موبایل {{i == 0 ? '' : rpd( i + 1)}}" formControlName="value" dir="ltr" />
-              <div class="plus" *ngIf="i == 0" matSuffix (click)="addMobile()">
-                <img src="/assets/icons/plus-add-2.svg" />
-              </div>
-              <div class="minus" *ngIf="i != 0" matSuffix (click)="removeMobile(i)">
-                <img src="/assets/icons/recycle-bin-trash.svg" />
-              </div>
-            </mat-form-field>
-
-          </div>
-        </div>
-
-        <div formArrayName="emails">
-          <mat-form-field *ngFor="let mobile of getFormArray(interactionForm,'emails'); let i=index">
-            <input matInput placeholder="ایمیل {{i == 0 ? '' : i + 1}}" [formControlName]="i" dir="ltr" />
-
-            <div class="plus" *ngIf="i == 0" matSuffix (click)="interactionForm.get('emails').push(fb.control(''))">
-              <img src="/assets/icons/plus-add-2.svg" />
-            </div>
-            <div class="minus" *ngIf="i != 0" matSuffix (click)="interactionForm.get('emails').removeAt(i)">
-              <img src="/assets/icons/recycle-bin-trash.svg" />
-            </div>
-          </mat-form-field>
-        </div>
-
-
-        <div formArrayName="socials">
-
-          <div class="double-field" *ngFor="let social of getFormArray(interactionForm,'socials'); let i=index"
-            [formGroupName]="i">
-
-            <mat-form-field class="w-40">
-
-              <mat-select placeholder="شبکه {{i == 0 ? '' :  rpd( i + 1)}}" formControlName="type">
-                <mat-option *ngFor="let type of ['اینستاگرام','توئیتر','فیسبوک']" [value]="type">
-                  {{type}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <mat-form-field class="w-60">
-              <input matInput placeholder="لینک {{i == 0 ? '' : rpd( i + 1)}}" formControlName="value" dir="ltr" />
-              <div class="plus" *ngIf="i == 0" matSuffix (click)="addSocial()">
-                <img src="/assets/icons/plus-add-2.svg" />
-              </div>
-              <div class="minus" *ngIf="i != 0" matSuffix (click)="removeSocial(i)">
-                <img src="/assets/icons/recycle-bin-trash.svg" />
-              </div>
-            </mat-form-field>
-
-          </div>
-        </div>
-
-        <div class="form-group">
-          <mat-label>
-            جنسیت:
-          </mat-label>
-          <mat-radio-group formControlName="gender">
-            <mat-radio-button value="male">مرد</mat-radio-button>
-            <mat-radio-button value="female">زن</mat-radio-button>
-          </mat-radio-group>
-        </div>
       </form>
 
     </mat-card-content>

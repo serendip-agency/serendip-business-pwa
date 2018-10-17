@@ -32,7 +32,6 @@ import { InteractionFormComponent } from "../interaction/interaction-form/intera
 import { InteractionTableComponent } from "../interaction/interaction-table/interaction-table.component";
 import { InteractionListComponent } from "../interaction/interaction-list/interaction-list.component";
 import { InteractionDeleteComponent } from "../interaction/interaction-delete/interaction-delete.component";
-import { UserProfileComponent } from "../settings/user-profile/user-profile.component";
 import { CrmService } from "../crm.service";
 import { GmapsService } from "../gmaps.service";
 import { DndDropEvent } from "ngx-drag-drop";
@@ -45,6 +44,31 @@ import * as moment from 'moment-jalaali';
 import { EventEmitter } from "@angular/core";
 import { UserActivityBySectionComponent } from "../charts/user-activity-by-section/user-activity-by-section.component";
 import { OutcomeByCampaignComponent } from "../charts/outcome-by-campaign/outcome-by-campaign.component";
+import { gridInterface, tabInterface, containerInterface, widgetInterface, widgetCommandInterface } from "../models";
+import { WidgetService } from "../widget.service";
+import { CalendarMonthComponent } from "../calendar/calendar-month/calendar-month.component";
+import { CalendarDayComponent } from "../calendar/calendar-day/calendar-day.component";
+import { CalendarScheduleComponent } from "../calendar/calendar-schedule/calendar-schedule.component";
+import { SaleFormComponent } from "../sale/sale-form/sale-form.component";
+import { SaleListComponent } from "../sale/sale-list/sale-list.component";
+import { CampaignFormComponent } from "../campaign/campaign-form/campaign-form.component";
+import { SaleTableComponent } from "../sale/sale-table/sale-table.component";
+import { CampaignListComponent } from "../campaign/campaign-list/campaign-list.component";
+import { CampaignTableComponent } from "../campaign/campaign-table/campaign-table.component";
+import { TicketFormComponent } from "../support/ticket-form/ticket-form.component";
+import { TicketListComponent } from "../support/ticket-list/ticket-list.component";
+import { InvoicesComponent } from "../support/invoices/invoices.component";
+import { SmsServiceComponent } from "../support/sms-service/sms-service.component";
+import { EmailServiceComponent } from "../support/email-service/email-service.component";
+import { FaxServiceComponent } from "../support/fax-service/fax-service.component";
+import { AccountProfileComponent } from "../account/account-profile/account-profile.component";
+import { AccountPasswordComponent } from "../account/account-password/account-password.component";
+import { AccountSessionsComponent } from "../account/account-sessions/account-sessions.component";
+import { ServiceTypesComponent } from "../settings/service-types/service-types.component";
+import { PiplineLeadComponent } from "../pipline/pipline-lead/pipline-lead.component";
+import { PiplineDealComponent } from "../pipline/pipline-deal/pipline-deal.component";
+import { PiplineSaleComponent } from "../pipline/pipline-sale/pipline-sale.component";
+import { ProductCategoriesComponent } from "../settings/product-categories/product-categories.component";
 
 polyfill({
   // use this to make use of the scroll behaviour
@@ -86,9 +110,31 @@ const dynamicComponents = {
   InteractionTableComponent,
   InteractionListComponent,
   InteractionDeleteComponent,
-  UserProfileComponent,
   UserActivityBySectionComponent,
-  OutcomeByCampaignComponent
+  OutcomeByCampaignComponent,
+  CalendarMonthComponent,
+  CalendarDayComponent,
+  CalendarScheduleComponent,
+  SaleFormComponent,
+  SaleListComponent,
+  SaleTableComponent,
+  CampaignFormComponent,
+  CampaignListComponent,
+  CampaignTableComponent,
+  TicketFormComponent,
+  TicketListComponent,
+  AccountProfileComponent,
+  AccountPasswordComponent,
+  AccountSessionsComponent,
+  InvoicesComponent,
+  SmsServiceComponent,
+  EmailServiceComponent,
+  FaxServiceComponent,
+  ServiceTypesComponent,
+  PiplineLeadComponent,
+  PiplineDealComponent,
+  PiplineSaleComponent,
+  ProductCategoriesComponent
 };
 
 @Component({
@@ -98,7 +144,7 @@ const dynamicComponents = {
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   openWidgets: any[] = [];
-  screen: string;
+  screen: 'mobile' | 'desktop';
 
 
   gridSizeChange = new EventEmitter();
@@ -159,7 +205,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   explorerVisible: boolean = false;
   explorerAnimDone: boolean = true;
 
-  gridLayout: { containers: { tabs: { active: boolean, widgets: { id: string }[] }[] }[] } = {
+  gridLayout: gridInterface = {
     containers: []
   };
 
@@ -169,7 +215,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private router: Router,
     public crmService: CrmService,
     private idbService: IdbService,
-    private changeRef: ChangeDetectorRef
+    private changeRef: ChangeDetectorRef,
+    private widgetService: WidgetService
   ) {
 
     moment.loadPersian({ dialect: 'persian-modern', usePersianDigits: false });
@@ -228,7 +275,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (layoutNumber > this.gridLayout.containers.length) {
       var toAdd = layoutNumber - this.gridLayout.containers.length;
-      console.log('containers to add', toAdd);
+
       for (let i = 1; i <= toAdd; i++)
         requestAnimationFrame(() => {
           this.addContainer();
@@ -275,7 +322,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (this.screen == "mobile")
       return;
-    //console.log("dragover",  event,containerIndex);
+
     var targetPosition = (event.target as HTMLElement).parentElement.getBoundingClientRect();
 
     var handlerPosition = { top: event.clientY, left: event.clientX };
@@ -292,14 +339,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         //if (this.gridLayout.containers.length < 3)
         if (notEmptyContainersCount - containerIndex == 1 && !this.gridLayout.containers[containerIndex + 1]) {
-          console.log('dragover container add');
+
           this.addContainer();
 
 
         }
 
         var grid = document.querySelector(".grid-container");
-        if (containerIndex > 3)
+        if (containerIndex > 1)
           grid.scroll({ left: grid.scrollLeft - 200, behavior: 'smooth' });
 
 
@@ -311,6 +358,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
+  definedItemsOfArray(array) {
+    return _.filter(array, (item: any) => {
+      return item != undefined;
+    });
+  }
 
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
 
@@ -373,27 +425,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       this.gridLayout.containers = [];
 
-      this.gridLayout.containers.push({ tabs: _.clone(this.dashboardService.currentSection.tabs) });
+      var tabsToAdd = _.clone(this.dashboardService.currentSection.tabs);
 
-      this.gridLayout.containers[0].tabs[0].active = true;
+      this.gridLayout.containers.push({ tabs: tabsToAdd });
+
+
+      if (this.gridLayout.containers[0].tabs[0])
+        this.gridLayout.containers[0].tabs[0].active = true;
 
 
       if (this.dashboardService.screen == "desktop") {
-        this.addContainer();
 
-        console.log('hello');
 
-        if (this.gridLayout.containers[0].tabs[1]) {
+        for (let i = 0; i < tabsToAdd.length - 1; i++) {
+          this.addContainer();
+        }
+        for (let i = tabsToAdd.length - 1; i >= 1; i--) {
 
-          this.onTabDrop({ data: { containerIndex: 0, tabIndex: 1, tab: this.gridLayout.containers[0].tabs[1] } }, 1)
-
+          this.onTabDrop({ data: { containerIndex: 0, tabIndex: i, tab: this.gridLayout.containers[0].tabs[i] } }, i)
         }
 
       }
 
     }
 
-    console.log("handleParams called.");
 
   }
 
@@ -407,7 +462,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  setTabActive(tab, container) {
+  setTabActive(tab: tabInterface, container: containerInterface) {
 
     _.forEach(container.tabs, (t: any) => {
       t.active = false;
@@ -417,13 +472,105 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   }
 
-  widgetIdChange(widget) {
+  extendObj(obj1, obj2) {
+    return _.extend({}, obj1, obj2);
+  }
+
+  widgetCommand(widget: widgetInterface, tab: tabInterface, container: containerInterface) {
+
+    return (options: widgetCommandInterface) => {
+
+      var containerIndex = this.gridLayout.containers.indexOf(container);
+
+      var tabToAdd: tabInterface = {
+        title: options.title,
+        active: true,
+        icon: options.icon,
+        widgets: [
+          {
+            component: options.component, inputs: { documentId: options.documentId }
+
+          }]
+      };
+
+      if (window.innerWidth > 860) {
+
+
+        var addedToCurrentContainers = false;
+        var containerModifiedId = 0;
+        for (let i = 0; i < this.gridLayout.containers.length; i++) {
+          if (this.gridLayout.containers[i])
+            if (this.gridLayout.containers[i].tabs.length == 0) {
+              this.gridLayout.containers[i].tabs.push(tabToAdd);
+              this.setTabActive(tabToAdd, this.gridLayout.containers[i]);
+              containerModifiedId = i;
+              addedToCurrentContainers = true;
+              break;
+            }
+        }
+
+        if (!addedToCurrentContainers) {
+          this.gridLayout.containers.push({ tabs: [tabToAdd] });
+          containerModifiedId = this.gridLayout.containers.length;
+        }
+
+
+
+
+        setTimeout(() => {
+          var gridElem = document.querySelector('.grid-container');
+
+          var navPassed = 0;
+          var widthToRightOfGrid = 0;
+          var tabContainers = document.querySelector('.grid-container').querySelectorAll(".tabs-container") as any;
+          tabContainers.forEach(tabContainer => {
+
+            if (navPassed >= containerModifiedId)
+              return;
+            else {
+              widthToRightOfGrid += tabContainer.getBoundingClientRect().width;
+              navPassed++;
+            }
+
+          });
+
+          gridElem.scroll({ left: gridElem.scrollWidth - widthToRightOfGrid - 440, behavior: 'smooth' });
+        }, 500);
+
+
+      } else {
+        this.gridLayout.containers[containerIndex].tabs.push(tabToAdd);
+        this.setTabActive(tabToAdd, container);
+
+      }
+
+
+
+    };
+
+  }
+
+  widgetTabChange(containerIndex: number, tabIndex: number) {
+
+    return (newTab: tabInterface) => {
+
+
+      this.gridLayout.containers[containerIndex].tabs[tabIndex] =
+        _.extend(this.gridLayout.containers[containerIndex].tabs[tabIndex], newTab);;
+      this.changeRef.detectChanges();
+
+
+    };
+
+  }
+
+  widgetIdChange(widget: widgetInterface) {
 
 
     return (newId) => {
 
-      console.log(newId);
       widget.id = newId;
+
     };
 
 
@@ -541,7 +688,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       headerElement.onmousemove = null;
       headerElement.ontouchmove = null;
 
-      console.log('header swipe right');
+
+
 
       if (document.querySelector("aside#explorer").classList.contains("hide")) {
         headerElement.querySelector(".shortcuts").classList.add("show");
@@ -552,7 +700,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     var swipeLeft = () => {
 
-      console.log('header swipe left');
+
+
 
       headerElement.onmousemove = null;
       headerElement.ontouchmove = null;
@@ -645,9 +794,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         return;
 
 
-      // console.log(move_ev);
 
-      // elem.classList.add("move");
       elem.setAttribute("style", `top:${destPos.y}px;left:${destPos.x}px;`);
       moved = true;
     };
@@ -658,8 +805,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         document.querySelector("body").removeAttribute("style");
 
         if (ev instanceof MouseEvent)
-          if (!moved) document.getElementById("start").classList.toggle("fadeIn");
-
+          if (!moved) {
+            document.getElementById("start").classList.toggle("fadeIn");
+            document.querySelector("body").classList.toggle("hideScroll");
+          }
       }
     };
 
@@ -685,7 +834,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     var gridRect = gridElem.getBoundingClientRect();
 
-    console.log('adjust layout ' + gridRect.width, Math.round(gridRect.width / 420));
+
 
     var count = Math.round(gridRect.width / 420);
 
@@ -733,16 +882,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     var start = { x: 0, y: 0 };
     var capture = false;
-    var grid = document.querySelector(".grid-container") as HTMLElement;
-
+    var lastCapture = 0;
+    var grid = document.querySelector(".grid-container") as any;
+    var last = { x: 0, y: 0 };
     var captureTimeout;
 
 
     grid.onmousewheel = (ev: MouseWheelEvent) => {
-      console.log(ev.deltaY);
-      var target = ev.target as HTMLElement;
-      if (target.classList.contains('grid-container') || target.classList.contains('tabs-container')) {
 
+
+      var target = ev.target as HTMLElement;
+      if (Date.now() - lastCapture < 500 || target.classList.contains('grid-container') || target.classList.contains('tabs-container')) {
+        lastCapture = Date.now();
         if (ev.deltaY > 0) {
           grid.scroll({ left: grid.scrollLeft - 100, behavior: 'instant' });
         } else {
@@ -750,9 +901,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       }
     };
+
+
     grid.onmousedown = (down_ev: MouseEvent) => {
-
-
 
       var target = down_ev.target as HTMLElement;
 
@@ -761,21 +912,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
         if (captureTimeout)
           clearTimeout(captureTimeout);
 
-        captureTimeout = setTimeout(() => {
-          capture = false;
-        }, 1000);
+
 
         capture = true;
-        start = { x: down_ev.clientX, y: down_ev.clientY };
-        console.log('mouse down', down_ev.clientX);
+        last = start = { x: down_ev.clientX, y: down_ev.clientY };
+
       }
     };
 
     grid.onmousemove = (move_ev: MouseEvent) => {
 
+
       if (capture) {
 
-        grid.scroll({ left: grid.scrollLeft - (move_ev.clientX - start.x) / 5, behavior: 'instant' });
+        grid.scroll({ left: grid.scrollLeft - (move_ev.clientX - last.x), behavior: 'instant' });
+        last = { x: move_ev.clientX, y: move_ev.clientY };
+
+
       } else {
 
 
@@ -787,6 +940,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     grid.onmouseup = (up_ev: MouseEvent) => {
 
       capture = false;
+      last = { x: 0, y: 0 };
     };
 
   }

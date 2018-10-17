@@ -1,0 +1,121 @@
+<div class="widget widget-5">
+
+
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar>
+        <img src="/assets/icons/barcode-product-3.svg" />
+      </div>
+      <mat-card-title>
+        تنظیمات دسته بندی محصولات </mat-card-title>
+      <mat-card-subtitle *ngIf="mode == 'list'"> لیست دسته بندی محصولات </mat-card-subtitle>
+      <mat-card-subtitle *ngIf="mode == 'form'"> ثبت دسته بندی محصولات </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+
+
+      <div class="logbox">
+        {{view | json}}
+      </div>
+
+
+      <section *ngIf="mode == 'list'" class="list">
+        <div class="inner">
+
+          <div *ngFor="let item of view" class="list-item">
+
+            <div class="head">
+              <div class="title">
+                {{item.master.name}}
+              </div>
+              <div class="actions">
+                <img src="/assets/icons/recycle-bin-trash-full.svg" alt="">
+                <img src="/assets/icons/office-paper-work-pen.svg" alt="">
+              </div>
+              <div class="clearfix"></div>
+            </div>
+
+            <div class="info">
+              <div class="date">
+                آخرین تغییر {{ rpd( moment( item.master._vdate ).fromNow()) }}
+              </div>
+              <div class="desc">
+                <span class="chip">
+
+                </span>
+              </div>
+            </div>
+
+            <div *ngFor="let subitem of item.items" class="list-item">
+
+
+              <div class="head">
+                <div class="title">
+                  {{subitem.name}}
+                </div>
+                <div class="actions">
+                  <img src="/assets/icons/recycle-bin-trash-full.svg" alt="">
+                  <img src="/assets/icons/office-paper-work-pen.svg" alt="">
+                </div>
+                <div class="clearfix"></div>
+              </div>
+
+              <div class="info">
+                <div class="date">
+                  آخرین تغییر {{ rpd( moment( subitem._vdate ).fromNow()) }}
+                </div>
+                <div class="desc">
+                  <span class="chip">
+
+                  </span>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+
+      <form *ngIf="mode == 'form'" [formGroup]="mainForm" class="">
+
+        <mat-form-field>
+          <input matInput placeholder="نام دسته بندی" formControlName="name" />
+        </mat-form-field>
+
+
+        <mat-form-field>
+          <mat-select placeholder="دسته بندی مادر" formControlName="master">
+            <mat-option *ngFor="let item of list" [value]="item._id">
+              {{item.name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
+      </form>
+
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="mode == 'form'">
+      <button mat-raised-button color="primary" (click)="save()">‌ذخیره</button>
+      <button mat-button type="reset" (click)="reset()">ریست</button>
+      <button mat-button class="pull-left" (click)="mode = 'list'">لیست
+        دسته بندی محصولات </button>
+      <div class="clearfix"></div>
+    </mat-card-actions>
+
+
+
+
+    <mat-card-actions *ngIf="mode == 'list'">
+      <button mat-button class="pull-left" (click)="mode = 'form'">
+        دسته بندی جدید </button>
+      <div class="clearfix"></div>
+    </mat-card-actions>
+
+  </mat-card>
+</div>

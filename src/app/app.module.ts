@@ -92,7 +92,6 @@ import { InteractionListComponent } from "./interaction/interaction-list/interac
 import { InteractionDeleteComponent } from "./interaction/interaction-delete/interaction-delete.component";
 import { CrmComponent } from './crm/crm.component';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
-import { UserProfileComponent } from './settings/user-profile/user-profile.component';
 import { MapComponent } from './map/map.component';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts'
@@ -104,6 +103,26 @@ import { OutcomeByCampaignComponent } from './charts/outcome-by-campaign/outcome
 import { CalendarMonthComponent } from './calendar/calendar-month/calendar-month.component';
 import { CalendarDayComponent } from './calendar/calendar-day/calendar-day.component';
 import { CalendarScheduleComponent } from './calendar/calendar-schedule/calendar-schedule.component';
+import { SaleFormComponent } from './sale/sale-form/sale-form.component';
+import { SaleListComponent } from './sale/sale-list/sale-list.component';
+import { SaleTableComponent } from './sale/sale-table/sale-table.component';
+import { CampaignFormComponent } from './campaign/campaign-form/campaign-form.component';
+import { CampaignListComponent } from './campaign/campaign-list/campaign-list.component';
+import { CampaignTableComponent } from './campaign/campaign-table/campaign-table.component';
+import { TicketFormComponent } from './support/ticket-form/ticket-form.component';
+import { TicketListComponent } from './support/ticket-list/ticket-list.component';
+import { InvoicesComponent } from './support/invoices/invoices.component';
+import { SmsServiceComponent } from './support/sms-service/sms-service.component';
+import { EmailServiceComponent } from './support/email-service/email-service.component';
+import { FaxServiceComponent } from './support/fax-service/fax-service.component';
+import { AccountPasswordComponent } from './account/account-password/account-password.component';
+import { AccountSessionsComponent } from './account/account-sessions/account-sessions.component';
+import { AccountProfileComponent } from "./account/account-profile/account-profile.component";
+import { ServiceTypesComponent } from './settings/service-types/service-types.component';
+import { PiplineLeadComponent } from './pipline/pipline-lead/pipline-lead.component';
+import { PiplineDealComponent } from './pipline/pipline-deal/pipline-deal.component';
+import { PiplineSaleComponent } from './pipline/pipline-sale/pipline-sale.component';
+import { ProductCategoriesComponent } from './settings/product-categories/product-categories.component';
 
 
 const dynamicComponents = [
@@ -135,19 +154,38 @@ const dynamicComponents = [
   InteractionTableComponent,
   InteractionListComponent,
   InteractionDeleteComponent,
-  UserProfileComponent,
   UserActivityBySectionComponent,
   OutcomeByCampaignComponent,
   CalendarMonthComponent,
   CalendarDayComponent,
-  CalendarScheduleComponent
+  CalendarScheduleComponent,
+  SaleFormComponent,
+  SaleListComponent,
+  SaleTableComponent,
+  CampaignFormComponent,
+  CampaignListComponent,
+  CampaignTableComponent,
+  TicketFormComponent,
+  TicketListComponent,
+  AccountProfileComponent,
+  AccountPasswordComponent,
+  AccountSessionsComponent,
+  InvoicesComponent,
+  SmsServiceComponent,
+  EmailServiceComponent,
+  FaxServiceComponent,
+  ServiceTypesComponent,
+  PiplineLeadComponent,
+  PiplineDealComponent,
+  PiplineSaleComponent,
+  ProductCategoriesComponent 
+
 ];
 
 var primaryComponents = [AppComponent,
   AuthComponent,
   DashboardComponent,
   CrmComponent,
-  UserProfileComponent,
   MapComponent,
   CalendarComponent];
 

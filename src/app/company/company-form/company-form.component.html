@@ -71,7 +71,7 @@
                     <img src="assets/icons/recycle-bin-trash.svg" alt="" />
                   </mat-icon>
                 </mat-chip>
-                <input placeholder="افزاد مرتبط" #peopleAutoInput (input)="filterPeople(peopleAutoInput.value,contact.get('peoples').value)"
+                <input placeholder="افراد مرتبط" #peopleAutoInput (input)="filterPeople(peopleAutoInput.value,contact.get('peoples').value)"
                   [matChipInputFor]="chipList" [matAutocomplete]="peopleAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                   [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="peopleAutoInput.value= ''">
               </mat-chip-list>

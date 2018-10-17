@@ -1,4 +1,4 @@
-<!-- <div class="widget widget-full">
+<div class="widget widget-full">
   <mat-card>
     <mat-card-header>
       <div mat-card-avatar>
@@ -19,23 +19,17 @@
         </mat-form-field>
 
         <div class="double-field">
-
-
-         
-
-
           <mat-form-field class="w-70">
             <input matInput type="number" placeholder="قیمت محصول" formControlName="price" />
           </mat-form-field>
 
           <mat-form-field class="w-30">
-              <mat-select placeholder="واحد پولی" formControlName="currency">
-                <mat-option *ngFor="let type of ['ریال','تومان','دلار','یورو','یوآن']" [value]="type">
-                  {{type}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
+            <mat-select placeholder="واحد پولی" formControlName="currency">
+              <mat-option *ngFor="let type of ['ریال','تومان','دلار','یورو','یوآن']" [value]="type">
+                {{type}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <mat-form-field>
@@ -67,4 +61,4 @@
       <button mat-button type="reset" (click)="reset()">ریست</button>
     </mat-card-actions>
   </mat-card>
-</div> -->
+</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, OnDestroy } from "@angular/core";
+import { Component, OnInit, ViewChild, OnDestroy, EventEmitter, Output } from "@angular/core";
 import {
   MatPaginator,
   MatTableDataSource,
@@ -13,6 +13,9 @@ import { InsertMessage } from "../../messaging/InsertMessage";
 import { MessagingService } from "../../messaging.service";
 import { CompanyDeleteComponent } from "../company-delete/company-delete.component";
 import { Router } from "@angular/router";
+import { widgetCommandInterface } from "src/app/models";
+import { WidgetService } from "src/app/widget.service";
+import { UpdateMessage } from "src/app/messaging/updateMessage";
 
 @Component({
   selector: "app-company-table",
@@ -20,6 +23,11 @@ import { Router } from "@angular/router";
   styleUrls: ["./company-table.component.css"]
 })
 export class CompanyTableComponent implements OnInit, OnDestroy {
+
+
+  @Output() widgetCommand = new EventEmitter<widgetCommandInterface>();
+
+
   @ViewChild(MatPaginator)
   paginator: MatPaginator;
 
@@ -40,6 +48,7 @@ export class CompanyTableComponent implements OnInit, OnDestroy {
   ];
 
   selection = new SelectionModel<any>(true, []);
+  updateItemSubscription: Subscription;
 
   constructor(
     private router: Router,
@@ -47,6 +56,7 @@ export class CompanyTableComponent implements OnInit, OnDestroy {
     private messagingService: MessagingService,
     private dataService: DataService,
     private sanitizer: DomSanitizer,
+    private widgetService: WidgetService,
     _matPaginatorIntl: MatPaginatorIntl
   ) {
     _matPaginatorIntl.firstPageLabel = "اولین صفحه";
@@ -71,9 +81,11 @@ export class CompanyTableComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.newItemSubscription.unsubscribe();
+    this.updateItemSubscription.unsubscribe();
   }
 
   async ngOnInit() {
+
     this.refresh();
 
     this.newItemSubscription = this.messagingService.listen(
@@ -85,6 +97,17 @@ export class CompanyTableComponent implements OnInit, OnDestroy {
         this.refresh();
       }
     );
+
+    this.updateItemSubscription = this.messagingService.listen(
+      {
+        type: UpdateMessage,
+        targets: ["company"]
+      },
+      msg => {
+        this.refresh();
+      }
+    );
+
   }
 
   async refresh() {
@@ -105,7 +128,15 @@ export class CompanyTableComponent implements OnInit, OnDestroy {
   }
 
   edit(model) {
-    this.router.navigate(["/dashboard", "company", "edit", model._id]);
+
+    this.selection.clear();
+    this.widgetCommand.emit({
+      command: 'openWidget',
+      documentId: model._id,
+      icon: 'office-paper-work-pen',
+      component: 'CompanyFormComponent'
+    });
+
   }
 
   delete(model) {

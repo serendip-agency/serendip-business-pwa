@@ -3,10 +3,16 @@
     background-position: center bottom;
     padding: 0;
     box-sizing: border-box;
-    background: #22223a;
+    background: #657AA9;
     height: 100vh;
     text-align: center;
-    
+    transition: background ease 3s;
+    background: #3E3C5F;
+
+    &.day {
+    background: #657AA9;
+
+    }
     &:before {
         background-size: 1200px;
         background: url("/assets/graphics/background/star-back.svg");
@@ -31,13 +37,12 @@
         transform: rotate(90deg);
     }
     .loading {
-        padding: 30px 0;
-        text-align: center;
         background: url("/assets/graphics/brand/serendip-circle.svg") no-repeat;
         background-position: center center;
         background-size: 80px;
-        transform: translateY(-50%);
-        margin-top: 50%;
+        display: block;
+        max-width: 100px;
+        margin: 0 auto;
         circle {
             stroke-width: 4px;
         }
@@ -62,13 +67,12 @@
         transform: translateY(-50%);
         vertical-align: middle;
         display: inline-block;
-
         img.logo {
-            max-width: 96px;
+            max-width: 80px;
             display: block;
             position: relative;
             z-index: 2;
-            margin: 5px auto;
+            margin: 10px auto;
         }
         form {
             border-radius: 5px;
@@ -144,15 +148,19 @@
         padding: 0;
         box-sizing: border-box;
         .moon {
-            margin:0;
+            margin: 0;
             transform: none;
-            top:0;
+            top: 0;
             width: 100%;
             border-radius: 0 0 0 100%;
             padding: 15px 0 0 0;
             background-image: none;
-            img.logo {
+            img.logo,
+            .loading {
                 margin: 0 15px;
+            }
+            img.logo {
+                margin: 10px 25px;
             }
             form {
                 max-width: 360px;
@@ -175,6 +183,9 @@
             background-image: none;
             height: auto;
             img.logo {
+                margin: 10px auto;
+            }
+            .loading {
                 margin: 0 auto;
             }
             form {

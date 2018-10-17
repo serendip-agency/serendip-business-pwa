@@ -14,6 +14,8 @@ import { MatChipInputEvent, MatAutocompleteSelectedEvent, MatChipInput, MatChipL
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { GmapsService } from "../../gmaps.service";
 import { IdbService } from "../../idb.service";
+import { tabInterface, widgetCommandInterface } from "src/app/models";
+import { WidgetService } from "src/app/widget.service";
 
 
 @Component({
@@ -32,8 +34,6 @@ export class CompanyFormComponent implements OnInit {
     emails: []
   };
 
-  routerSubscription: Subscription;
-
   iranStates: { "name": string; "Cities": { "name": string; }[]; }[];
 
   filteredPeople = [];
@@ -49,10 +49,10 @@ export class CompanyFormComponent implements OnInit {
   @Input() documentId: string;
   @Input() tab: any;
 
-
   @Output() widgetIdChange = new EventEmitter<string>();
   @Output() widgetDataChange = new EventEmitter<any>();
-
+  @Output() widgetCommand = new EventEmitter<widgetCommandInterface>();
+  @Output() widgetTabChange = new EventEmitter<tabInterface>();
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
 
@@ -77,7 +77,8 @@ export class CompanyFormComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dashboardService: DashboardService,
     private idbService: IdbService,
-    private gmapsService: GmapsService
+    private gmapsService: GmapsService,
+    private widgetService: WidgetService
   ) {
     this.iranStates = IranStates;
   }
@@ -143,12 +144,27 @@ export class CompanyFormComponent implements OnInit {
       });
 
   }
-  save() {
+  async save() {
+
     if (!this.companyForm.value._id) {
-      this.dataService.insert("company", this.companyForm.value);
+      var insertResponse = await this.dataService.insert("company", this.companyForm.value);
+      this.documentId = insertResponse._id;
+      this.companyForm.patchValue(insertResponse);
+      this.widgetTabChange.emit({ title: 'ویرایش شرکت ' + this.companyForm.value.name });
     } else {
       this.dataService.update("company", this.companyForm.value);
     }
+
+    var stateDb = await this.idbService.userIDB("state");
+    var savedState = await stateDb.get(this.widgetId);
+    try {
+      savedState
+    } catch (error) {
+    }
+
+    if (savedState)
+      stateDb.delete(this.widgetId);
+
   }
 
   reset() {
@@ -160,8 +176,6 @@ export class CompanyFormComponent implements OnInit {
   }
 
   async  setGeo(contact) {
-
-
 
     var defaultPositions = [];
 
@@ -195,15 +209,9 @@ export class CompanyFormComponent implements OnInit {
 
   async ngOnInit() {
 
-    // this.routerSubscription = this.router.events.subscribe(event => {
-    //   if (event instanceof NavigationEnd) {
-    //     this.handleParams();
-    //   }
-    // });
-
     this.companyForm = this.fb.group({
       _widgetId: [this.widgetId],
-      _id: [""],
+      _id: [this.documentId],
       name: ["", Validators.required],
       type: [[]],
       contacts: this.fb.array([
@@ -224,25 +232,8 @@ export class CompanyFormComponent implements OnInit {
         })
       ])
     });
+
     var stateDb = await this.idbService.userIDB("state");
-
-    //.push(this.fb.control(''))
-    this.companyForm.valueChanges.subscribe(async (data: any) => {
-
-      this.widgetDataChange.emit(data);
-
-      var stateKey: string = this.widgetId;
-      if (!stateKey) {
-        this.widgetId = stateKey = this.componentName + '-' + Date.now() + '-' + Math.random().toString().split('.')[1];
-        this.widgetIdChange.emit(this.widgetId);
-        this.companyForm.patchValue({ "_widgetId": this.widgetId });
-      }
-
-      await stateDb.set(stateKey, { id: stateKey, componentName: this.componentName, model: data, tab: this.tab });
-
-    });
-
-
     var savedState;
     try {
       savedState = await stateDb.get(this.widgetId);
@@ -251,21 +242,24 @@ export class CompanyFormComponent implements OnInit {
 
     if (savedState) {
       this.companyForm.patchValue(savedState.model);
-    } else {
-
+    } else
       if (this.documentId) {
-        var model = await this.dataService.details('company', this.documentId);
+        var model: any = await this.dataService.details('company', this.documentId);
         this.companyForm.patchValue(model);
+        this.widgetTabChange.emit({ title: 'ویرایش شرکت ' + model.name })
       }
-    }
 
+    this.companyForm.valueChanges.subscribe(async (data: any) => {
+      this.widgetDataChange.emit(data);
+      var stateKey: string = this.widgetId;
+      if (!stateKey) {
+        this.widgetId = stateKey = this.componentName + '-' + Date.now() + '-' + Math.random().toString().split('.')[1];
+        this.widgetIdChange.emit(this.widgetId);
+        this.companyForm.patchValue({ "_widgetId": this.widgetId });
+      }
+      await stateDb.set(stateKey, { id: stateKey, componentName: this.componentName, model: data, tab: this.tab });
+    });
   }
-  // handleParams(): any {
-  //   const params = this.activatedRoute.snapshot.params;
-  //   if (params.id) {
-  //     //this.dashboardService.setCurrentTab({ title: "ویرایش " + params.id });
-  //   }
-  // }
 
   addMobile() {
     (this.companyForm.controls.mobiles as FormArray).push(

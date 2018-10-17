@@ -8,11 +8,11 @@ import { MessagingService } from "../../messaging.service";
 import { Subscription } from "rxjs";
 
 @Component({
-  selector: "app-user-profle",
-  templateUrl: "./user-profile.component.html",
-  styleUrls: ["./user-profile.component.css"]
+  selector: "app-account-profle",
+  templateUrl: "./account-profile.component.html",
+  styleUrls: ["./account-profile.component.css"]
 })
-export class UserProfileComponent implements OnInit {
+export class AccountProfileComponent implements OnInit {
   userForm: FormGroup;
 
   model: any = {
