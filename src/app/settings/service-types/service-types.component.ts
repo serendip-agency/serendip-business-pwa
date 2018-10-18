@@ -74,6 +74,16 @@ export class ServiceTypesComponent implements OnInit {
 
   }
 
+  async edit(item) {
+
+    this.mainForm.reset();
+
+    this.mainForm.patchValue(item);
+
+    this.mode = "form";
+  }
+  
+
   getEmployee(_id) {
 
     if (this.cachedEmployees[_id])

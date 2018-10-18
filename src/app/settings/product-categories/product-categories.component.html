@@ -22,7 +22,6 @@
 
       <section *ngIf="mode == 'list'" class="list">
         <div class="inner">
-
           <div *ngFor="let item of view" class="list-item">
 
             <div class="head">
@@ -30,8 +29,7 @@
                 {{item.master.name}}
               </div>
               <div class="actions">
-                <img src="/assets/icons/recycle-bin-trash-full.svg" alt="">
-                <img src="/assets/icons/office-paper-work-pen.svg" alt="">
+                <img src="/assets/icons/office-paper-work-pen.svg" (click)="edit(item.master)" alt="">
               </div>
               <div class="clearfix"></div>
             </div>
@@ -55,8 +53,7 @@
                   {{subitem.name}}
                 </div>
                 <div class="actions">
-                  <img src="/assets/icons/recycle-bin-trash-full.svg" alt="">
-                  <img src="/assets/icons/office-paper-work-pen.svg" alt="">
+                  <img src="/assets/icons/office-paper-work-pen.svg" (click)="edit(subitem)" alt="">
                 </div>
                 <div class="clearfix"></div>
               </div>
@@ -102,7 +99,14 @@
 
     <mat-card-actions *ngIf="mode == 'form'">
       <button mat-raised-button color="primary" (click)="save()">‌ذخیره</button>
-      <button mat-button type="reset" (click)="reset()">ریست</button>
+
+      <!-- <button mat-button type="reset" (click)="reset()">ریست</button> -->
+
+      <button *ngIf="mainForm.value._id" mat-button>
+        حذف
+      </button>
+
+
       <button mat-button class="pull-left" (click)="mode = 'list'">لیست
         دسته بندی محصولات </button>
       <div class="clearfix"></div>

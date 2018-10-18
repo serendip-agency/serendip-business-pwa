@@ -197,7 +197,7 @@ export class PeopleFormComponent implements OnInit {
       if (this.documentId) {
         var model: any = await this.dataService.details('people', this.documentId);
         this.peopleForm.patchValue(model);
-        this.widgetTabChange.emit({ title: 'ویرایش شخص ' + model.name })
+        this.widgetTabChange.emit({ title: 'ویرایش شخص ' + model.firstName + ' ' + model.lastName })
       }
 
     this.peopleForm.valueChanges.subscribe(async (data: any) => {

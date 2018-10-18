@@ -68,6 +68,16 @@ export class ProductCategoriesComponent implements OnInit {
 
   }
 
+
+  async edit(item) {
+
+    this.mainForm.reset();
+
+    this.mainForm.patchValue(item);
+
+    this.mode = "form";
+  }
+
   async refresh() {
 
     this.list = await this.dataService.list('productCategory', 0, 1000);

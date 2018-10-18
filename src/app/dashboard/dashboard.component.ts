@@ -493,6 +493,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }]
       };
 
+      var existInGrid = _.chain(this.gridLayout.containers)
+        .map((c: containerInterface) => { return c.tabs })
+        .flatten()
+        .map((t: any) => { return t.widgets })
+        .flatten()
+        .any((w) => {
+          return w && w.inputs && w.inputs.documentId == options.documentId;
+        })
+        .value();
+ 
+
+      if (existInGrid) {
+
+        
+        console.log('widget already exist');
+        return;
+      }
+
       if (window.innerWidth > 860) {
 
 

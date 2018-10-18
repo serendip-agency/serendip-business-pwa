@@ -139,6 +139,23 @@ export class CompanyTableComponent implements OnInit, OnDestroy {
 
   }
 
+  bulkEdit(models) {
+    if (models)
+      if (models.length && models.length > 0) {
+        models.forEach(model => {
+
+          this.selection.clear();
+          this.widgetCommand.emit({
+            command: 'openWidget',
+            documentId: model._id,
+            icon: 'office-paper-work-pen',
+            component: 'CompanyFormComponent'
+          });
+
+        });
+      }
+  }
+
   delete(model) {
     this.bottomSheet.open(CompanyDeleteComponent, { data: { model } });
   }

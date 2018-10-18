@@ -24,8 +24,7 @@
               </div>
 
               <div class="actions">
-                <img src="/assets/icons/recycle-bin-trash.svg" alt="">
-                <img src="/assets/icons/office-paper-work-pen.svg" alt="">
+                <img src="/assets/icons/office-paper-work-pen.svg" (click)="edit(item)" alt="">
               </div>
 
             </div>
@@ -38,7 +37,9 @@
 
               <div class="desc">
                 <span class="chip">
-                  هزینه: {{rpd(120000)}} تومان
+                  هزینه:
+                  {{ item.price | split3 | rpd }}
+                  {{ item.priceCurrency }}
                 </span>
               </div>
             </div>
@@ -63,7 +64,8 @@
 
         <div class="double-field">
           <mat-form-field class="w-70">
-            <input matInput type="number" placeholder="هزینه سرویس" formControlName="price" />
+            <input matInput type="text" currencyMask [options]="{ prefix:  '', thousands: '،', precision : 0}"
+              placeholder="هزینه سرویس" formControlName="price" />
           </mat-form-field>
 
           <mat-form-field class="w-30">

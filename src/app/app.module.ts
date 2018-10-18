@@ -123,6 +123,12 @@ import { PiplineLeadComponent } from './pipline/pipline-lead/pipline-lead.compon
 import { PiplineDealComponent } from './pipline/pipline-deal/pipline-deal.component';
 import { PiplineSaleComponent } from './pipline/pipline-sale/pipline-sale.component';
 import { ProductCategoriesComponent } from './settings/product-categories/product-categories.component';
+import { RpdPipe } from './rpd.pipe';
+
+import { NgxMaskModule } from 'ngx-mask'
+
+import { NgxCurrencyModule } from "ngx-currency";
+import { Split3Pipe } from './split3.pipe';
 
 
 const dynamicComponents = [
@@ -178,7 +184,7 @@ const dynamicComponents = [
   PiplineLeadComponent,
   PiplineDealComponent,
   PiplineSaleComponent,
-  ProductCategoriesComponent 
+  ProductCategoriesComponent
 
 ];
 
@@ -193,10 +199,14 @@ var primaryComponents = [AppComponent,
   declarations: [
     ...primaryComponents,
     ...dynamicComponents,
+    RpdPipe,
+    Split3Pipe,
   ],
   entryComponents: [PeopleDeleteComponent],
   imports: [
     NgxMaterialTimepickerModule.forRoot(),
+    NgxMaskModule.forRoot(),
+    NgxCurrencyModule,
     DynamicModule.withComponents(dynamicComponents),
     BrowserModule,
     NgxChartsModule,
@@ -239,7 +249,6 @@ var primaryComponents = [AppComponent,
     MatPaginatorModule,
     MatMomentDateModule,
     MatBottomSheetModule,
-
     DpDatePickerModule
   ],
   providers: [
