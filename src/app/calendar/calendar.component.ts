@@ -16,10 +16,13 @@ export class CalendarComponent implements OnInit {
   moment: typeof Moment;
 
   monthView = [];
-
+  calendarView = "year";
   date;
 
   calendarType: "persian" | 'gregorian' = "persian";
+
+
+
   constructor(private changeRef: ChangeDetectorRef) {
 
   }
@@ -34,6 +37,9 @@ export class CalendarComponent implements OnInit {
     return input.toString().replace(/\d/g, convert);
   }
 
+  typeChange(){
+
+  }
 
   nextMonth() {
     this.date.add(1, 'month');
@@ -44,6 +50,20 @@ export class CalendarComponent implements OnInit {
     this.date.add(-1, 'month');
     this.changeRef.detectChanges();
   }
+
+
+  nextYear() {
+    this.date.add(1, 'year');
+    this.changeRef.detectChanges();
+  }
+
+  prevYear() {
+    this.date.add(-1, 'year');
+    this.changeRef.detectChanges();
+  }
+
+
+  
   ngOnInit() {
 
 

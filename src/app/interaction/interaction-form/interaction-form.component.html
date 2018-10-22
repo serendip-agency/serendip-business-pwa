@@ -10,9 +10,145 @@
 
     <mat-card-content>
       <div class="logbox">
-        {{ interactionForm.value | json }}
+        {{ mainForm.value | json }}
       </div>
-      <form [formGroup]="interactionForm" class="">
+      <form [formGroup]="mainForm" class="">
+
+        <div class="double-field">
+
+          <mat-form-field class="w-50">
+            <input dir="ltr" matInput placeholder="تاریخ   تعامل" required autocomplete="off" formControlName="__interactDate"
+              theme="dp-material" [dpDayPicker]="{}" />
+          </mat-form-field>
+
+          <mat-form-field class="w-50">
+            <input dir="ltr" matInput [ngxTimepicker]="__interactTimePicker" [format]="24" placeholder="ساعت   تعامل"
+              required autocomplete="off" formControlName="__interactTime" />
+            <ngx-material-timepicker #__interactTimePicker [cancelBtnTmpl]="timerCancelButton" [confirmBtnTmpl]="timerConfirmButton"></ngx-material-timepicker>
+
+          </mat-form-field>
+
+        </div>
+
+
+
+        <div class="double-field">
+
+          <mat-form-field class="w-50">
+            <input dir="ltr" matInput placeholder="تاریخ ثبت تعامل" required autocomplete="off" formControlName="__submitDate"
+              theme="dp-material" [dpDayPicker]="{}" />
+          </mat-form-field>
+
+          <mat-form-field class="w-50">
+            <input dir="ltr" matInput [ngxTimepicker]="picker" [format]="24" placeholder="ساعت ثبت تعامل" required
+              autocomplete="off" formControlName="__submitTime" />
+            <ngx-material-timepicker #picker [cancelBtnTmpl]="timerCancelButton" [confirmBtnTmpl]="timerConfirmButton"></ngx-material-timepicker>
+            <ng-template #timerConfirmButton>
+              <button mat-raised-button color="primary">انتخاب</button>
+            </ng-template>
+            <ng-template #timerCancelButton>
+              <button mat-raised-button color="secondary">انصراف</button>
+            </ng-template>
+          </mat-form-field>
+
+        </div>
+
+
+        <div class="form-group">
+          <label for="">نوع تعامل: </label>
+          <mat-radio-group formControlName="type">
+            <mat-radio-button value="email">ایمیل</mat-radio-button>
+            <mat-radio-button value="website">وبسایت</mat-radio-button>
+            <mat-radio-button value="call">تماس تلفنی</mat-radio-button>
+            <mat-radio-button value="sms">پیامک</mat-radio-button>
+
+          </mat-radio-group>
+        </div>
+
+
+        <div  class="form-group">
+          <label for="">مسیر تعامل: </label>
+          <mat-radio-group formControlName="path">
+            <mat-radio-button value="in">ورودی</mat-radio-button>
+            <mat-radio-button value="out">خروجی</mat-radio-button>
+          </mat-radio-group>
+        </div>
+
+
+
+
+        <div formGroupName="campaignTrees">
+
+          <mat-form-field>
+            <input matInput placeholder="نام کمپین" formControlName="campaign" />
+          </mat-form-field>
+
+
+          <mat-form-field>
+            <input matInput placeholder="منبع کمپین" formControlName="source" />
+          </mat-form-field>
+
+
+          <mat-form-field>
+            <input matInput placeholder="رسانه کمپین" formControlName="source" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <input matInput placeholder="محتوا رسانه کمپین" formControlName="content" />
+          </mat-form-field>
+
+        </div>
+
+
+
+        <mat-form-field>
+          <mat-chip-list #personChipList>
+            <mat-chip *ngFor="let item of mainForm.get('person').value ? [mainForm.get('person').value] : []" (click)="goEmployee(item)"
+              (removed)="mainForm.get('person').setValue('')">
+              {{ getEmployee(item)?.firstName }}
+              {{ getEmployee(item)?.lastName }}
+              <mat-icon matChipRemove>
+                <img src="assets/icons/recycle-bin-trash.svg" alt="" />
+              </mat-icon>
+            </mat-chip>
+            <input placeholder="فرد مرتبط" #peopleAutoInput (input)="filterPeople(peopleAutoInput.value)"
+              [matChipInputFor]="personChipList" [matAutocomplete]="peopleAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="peopleAutoInput.value= ''">
+          </mat-chip-list>
+          <mat-autocomplete #peopleAuto="matAutocomplete" (optionSelected)="selectEmployee($event);peopleAutoInput.value= ''">
+            <mat-option *ngFor="let item of filteredPeople" [value]="item._id">
+              {{item.firstName}}
+              {{item.lastName}}
+              {{ rpd(item.mobiles[0]?.value) }}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+
+
+        <mat-form-field>
+          <mat-chip-list #companyChipList>
+            <mat-chip *ngFor="let item of mainForm.get('company').value ? [mainForm.get('company').value] : []" (click)="goCompany(item)"
+              (removed)="mainForm.get('company').setValue('')">
+              {{ getCompany(item)?.name }}
+              <mat-icon matChipRemove>
+                <img src="assets/icons/recycle-bin-trash.svg" alt="" />
+              </mat-icon>
+            </mat-chip>
+            <input placeholder="شرکت مرتبط  " #companyAutoInput (input)="filterCompany(companyAutoInput.value)"
+              [matChipInputFor]="companyChipList" [matAutocomplete]="companyAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="companyAutoInput.value= ''">
+          </mat-chip-list>
+          <mat-autocomplete #companyAuto="matAutocomplete" (optionSelected)="selectCompany($event);companyAutoInput.value= ''">
+            <mat-option *ngFor="let item of filteredCompanies" [value]="item._id">
+              {{item.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </mat-form-field>
+
+
+
+
 
       </form>
 

@@ -95,12 +95,13 @@
     border: none;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-row-gap: 5px;
     .block,
     .weekday {
-        height: 40px;
+        height: 22px;
         font-size: 13px;
         line-height: 22px;
-        padding: 5px;
+        padding: 0;
         box-sizing: border-box;
         font-weight: 100;
         border: none;
@@ -117,14 +118,17 @@
     .weekday,
     .block {
         .day {
-            font-size: 13px;
+            font-size: 11px;
             color: rgba(0, 0, 0, 0.5);
-            width: 30px;
-            height: 30px;
-            line-height: 30px;
+            width: 22px;
+            height: 22px;
+            line-height: 22px;
             border-radius: 100%;
             box-sizing: border-box;
             background: rgba(245, 245, 245, 1);
+            &.holiday{
+                color:red;
+            }
         }
         &.today {
             .day {

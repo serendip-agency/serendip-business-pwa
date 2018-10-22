@@ -85,7 +85,6 @@ section.list {
         display: block;
         box-sizing: border-box;
         background: rgb(240, 240, 240);
-
         padding: 10px;
         border-radius: 5px;
         margin: 10px 0;
@@ -270,8 +269,9 @@ body {
 
 label {
     font-weight: 500;
-    color: #777;
+    color: #333;
     line-height: 30px;
+    display: block;
 }
 
 .file-upload {
@@ -771,12 +771,16 @@ body.hideScroll {
 
 [dir=rtl] {
     .mat-radio-label-content {
-        padding-left: 12px !important;
+        padding-left: 8px !important;
         padding-right: 4px !important;
     }
     th.mat-header-cell {
         text-align: right;
     }
+}
+
+.mat-radio-label {
+    font-size: 11px;
 }
 
 .clear {

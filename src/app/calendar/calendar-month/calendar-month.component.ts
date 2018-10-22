@@ -19,15 +19,34 @@ export class CalendarMonthComponent implements OnInit {
 
   @Input() size: "mini" | "large" = "large";
 
-  @Input() calendarType: "persian" | 'gregorian' = "persian";
+
+  private _calendarType: "persian" | 'gregorian' = "persian";
+
+  @Input() set calendarType(value: "persian" | 'gregorian') {
+
+    this._calendarType = value;
+    this.layoutDays();
+
+  }
+
+  get calendarType(): "persian" | 'gregorian' {
+
+    return this._calendarType;
+
+  }
+
 
 
   private _month: number;
 
   @Input() set month(value: number) {
 
-    this._month = value;
-    this.layoutDays();
+    if (!this._month) {
+      this._month = value;
+    } else {
+      this._month = value;
+      this.layoutDays();
+    }
 
   }
 
@@ -42,8 +61,12 @@ export class CalendarMonthComponent implements OnInit {
 
   @Input() set year(value: number) {
 
-    this._year = value;
-    this.layoutDays();
+    if (!this._year) {
+      this._year = value;
+    } else {
+      this._year = value;
+      this.layoutDays();
+    }
   }
 
   get year(): number {
@@ -77,12 +100,24 @@ export class CalendarMonthComponent implements OnInit {
     this.layoutDays();
   }
 
-  layoutDays() {
+  async layoutDays() {
+
+    if (!this.month || !this.calendarType)
+      return;
 
 
-    this.monthView = [];
+    var cacheKey = `cache-calendar-layoutDays-${this.calendarType}-${this.year}-${this.month}`;
+   var cache = localStorage.getItem(cacheKey);
+  //   var cache = false;
 
-    console.log("layoutDays", this.calendarType, this.month);
+    if (cache) {
+      this.monthView = JSON.parse(cache);
+      return;
+    }
+    else
+      this.monthView = [];
+
+    console.log("layoutDays", this.calendarType, this.year, this.month);
 
     // this.moment = MomentJalaali;
 
@@ -118,13 +153,13 @@ export class CalendarMonthComponent implements OnInit {
 
     var endOfMonthWeekday = moment(endOfMonth).weekday();
 
-    console.log(endOfMonthWeekday, moment.weekdays(true, endOfMonthWeekday));
+    //    console.log(endOfMonthWeekday, moment.weekdays(true, endOfMonthWeekday));
     //console.log(moment(startOfTheMonth).weekday(), daysInMonth);
 
     for (let i = startOfTheMonthWeekday; i > 0; i--) {
 
       this.monthView.push({
-        moment: moment(startOfTheMonth).add(i * -1, 'd'),
+        date: moment(startOfTheMonth).add(i * -1, 'd').toDate(),
         class: ['prevMonth']
       });
 
@@ -135,27 +170,48 @@ export class CalendarMonthComponent implements OnInit {
       var day = moment(startOfTheMonth).add(i, 'd');
       var dayEvents = this.findIranEvent(MomentJalaali(day).jYear(), MomentJalaali(day).jMonth() + 1, i + 1);
       this.monthView.push({
-        moment: day,
+        date: day.toDate(),
         events: dayEvents,
+        today: day.format('YYYY-MM-DD') == moment().format('YYYY-MM-DD'),
         holiday: _.where(dayEvents, { holiday: true }).length > 0,
         class: ['currentMonth']
       });
-
     }
 
 
     var ia = 0;
     for (let i = endOfMonthWeekday; i <= 6; i++) {
 
-      console.log(endOfMonthWeekday, ia)
+      ///console.log(endOfMonthWeekday, ia)
       this.monthView.push({
-        moment: moment(endOfMonth).add(ia, 'd'),
+        date: moment(endOfMonth).add(ia, 'd').toDate(),
         class: ['nextMonth']
       });
 
       ia++;
 
     }
+
+
+
+    this.monthView = _.map(this.monthView, (item) => {
+
+      item.formats = {};
+
+      ['DD', 'MMMM'].forEach((f) => {
+
+        if (this.calendarType == "persian")
+          f = 'j' + f;
+
+        item.formats[f] = moment(item.date).format(f);
+
+      });
+
+      return item;
+
+    });
+
+    localStorage.setItem(cacheKey, JSON.stringify(this.monthView));
 
     this.changeRef.detectChanges();
 
@@ -173,6 +229,7 @@ export class CalendarMonthComponent implements OnInit {
 
 
   ngOnInit() {
+
 
     this.layoutDays();
 

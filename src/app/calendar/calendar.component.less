@@ -26,6 +26,25 @@
         left: 5px;
         top: 75px;
         position: absolute;
+        .my-calendars {
+            padding: 15px 5px;
+
+            .title{
+                font-size: 17px;
+                line-height: 40px;
+                font-weight: 100;
+                color:#777;
+            }
+            ul {
+                margin: 0;
+                padding: 0;
+                li {
+                    padding: 0;
+                    margin: 10px 0;
+                    display: block;
+                }
+            }
+        }
     }
     .toolbar {
         position: absolute;
@@ -38,7 +57,7 @@
             display: inline-block;
             vertical-align: top;
         }
-        .month {
+        .month,.year {
             float: left;
             font-size: 20px;
             img {
@@ -52,7 +71,7 @@
                 cursor: pointer;
                 transition: all ease .3s;
                 &:hover {
-                    background: rgb(250, 250, 250);
+                    background: rgb(245, 245, 245);
                 }
             }
         }

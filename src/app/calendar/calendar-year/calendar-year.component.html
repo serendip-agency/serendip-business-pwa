@@ -1,0 +1,8 @@
+<section class="year-view {{size}}">
+  <div class="month-block" *ngFor="let month of  yearView;">
+    <div class="month-block-title">
+      {{month.label}}
+    </div>
+    <app-calendar-month [month]="month.number" [year]="year" [size]="'mini'" [calendarType]="calendarType"></app-calendar-month>
+  </div>
+</section>

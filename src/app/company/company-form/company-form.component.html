@@ -80,19 +80,12 @@
                 <mat-option *ngFor="let item of filteredPeople" [value]="item._id">
                   {{item.firstName}}
                   {{item.lastName}}
-                  {{
-                  rpd( item.mobiles[0]?.value)
-                  }}
+                  {{ rpd( item.mobiles[0]?.value) }}
                 </mat-option>
               </mat-autocomplete>
-
             </mat-form-field>
 
-
             <div formGroupName="address">
-
-
-
               <mat-form-field>
                 <input type="text" placeholder="استان" (change)="filterStates(contact.get('address').value.state).length == 0 ? contact.get('address').patchValue({state : ''}) : ''"
                   matInput formControlName="state" [matAutocomplete]="stateAuto">
@@ -102,8 +95,6 @@
                   </mat-option>
                 </mat-autocomplete>
               </mat-form-field>
-
-
 
               <mat-form-field>
                 <input type="text" placeholder="شهر" (change)="filterCities(contact.get('address').value.state,contact.get('address').value.city).length == 0 ? contact.get('address').patchValue({city : ''}) : ''"
@@ -116,9 +107,8 @@
                 </mat-autocomplete>
               </mat-form-field>
 
-
               <mat-form-field>
-                <input type="text" matInput placeholder="موقعیت مکانی"  dir="ltr" formControlName="geo" />
+                <input type="text" matInput placeholder="موقعیت مکانی" dir="ltr" formControlName="geo" />
                 <div class="location" (click)="setGeo(contact)" matSuffix>
                   <img src="/assets/icons/location-address-1.svg" />
                 </div>
@@ -128,7 +118,6 @@
                 </div>
               </mat-form-field>
 
-
               <mat-form-field>
                 <textarea matInput placeholder="آدرس پستی" formControlName="text"></textarea>
               </mat-form-field>
@@ -137,8 +126,6 @@
               </mat-form-field>
 
             </div>
-
-
           </div>
         </div>
       </form>

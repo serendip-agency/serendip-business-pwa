@@ -1,8 +1,50 @@
 <div id="calendar">
+
   <aside>
 
     <app-calendar-month [month]="calendarType == 'persian' ? date.jMonth() +1: date.month() +1" [year]="calendarType == 'persian' ? date.jYear()  : date.year() "
       [size]="'mini'" [calendarType]="calendarType"></app-calendar-month>
+
+
+
+    <div class="my-calendars">
+
+      <div class="title">
+        تقویم های من
+      </div>
+      <ul>
+        <li>
+          <mat-checkbox> خدمات </mat-checkbox>
+        </li>
+
+        <li>
+          <mat-checkbox> شکایات </mat-checkbox>
+        </li>
+
+        <li>
+          <mat-checkbox> شرکت ها </mat-checkbox>
+        </li>
+
+        <li>
+          <mat-checkbox> اشخاص </mat-checkbox>
+        </li>
+
+        <li>
+          <mat-checkbox> فروش </mat-checkbox>
+        </li>
+
+        <li>
+          <mat-checkbox> تعامل </mat-checkbox>
+        </li>
+
+        <li>
+          <mat-checkbox> تقویم ایران </mat-checkbox>
+        </li>
+
+
+      </ul>
+    </div>
+
 
   </aside>
 
@@ -23,20 +65,73 @@
 
           </mat-select>
         </mat-form-field>
+
       </div>
 
-      <div class="box month">
+
+      <div class="box view">
+
+        <mat-form-field>
+          <mat-select [(ngModel)]="calendarView" placeholder="نمایش">
+            <mat-option [value]="'year'">
+              سال
+            </mat-option>
+            <mat-option [value]="'month'">
+              ماه
+            </mat-option>
+
+            <mat-option [value]="'week'">
+              هفته
+            </mat-option>
+
+            <mat-option [value]="'day'">
+              روز
+            </mat-option>
+
+
+            <mat-option [value]="'calendars'">
+              تقویم های من
+            </mat-option>
+
+          </mat-select>
+        </mat-form-field>
+
+      </div>
+
+
+      <div class="box month" *ngIf="calendarView == 'month'">
         <img src="assets/icons/arrow-right-next-10.svg" (click)="prevMonth()" alt="" />
+
         {{ calendarType == 'persian' ? rpd( date.format("jMMMM jYYYY")) : rpd( date.format("MMMM YYYY")) }}
+
         <img src="assets/icons/arrow-left-back-10.svg" (click)="nextMonth()" alt="" />
       </div>
+
+
+
+      <div class="box year" *ngIf="calendarView == 'year'">
+        <img src="assets/icons/arrow-right-next-10.svg" (click)="prevYear()" alt="" />
+
+        {{ calendarType == 'persian' ? rpd( date.format("jYYYY")) : rpd( date.format("YYYY")) }}
+
+
+        <img src="assets/icons/arrow-left-back-10.svg" (click)="nextYear()" alt="" />
+      </div>
+
 
     </div>
 
   </div>
 
   <div class="big-calendar">
-    <app-calendar-month [month]="calendarType == 'persian' ? date.jMonth() +1 : date.month() +1 " [year]="calendarType == 'persian' ? date.jYear()  : date.year() "
-      [calendarType]="calendarType"></app-calendar-month>
+
+    <app-calendar-month *ngIf="calendarView == 'month'" [month]="calendarType == 'persian' ? date.jMonth() +1 : date.month() +1 "
+      [year]="calendarType == 'persian' ? date.jYear()  : date.year() " [calendarType]="calendarType"></app-calendar-month>
+
+    <app-calendar-year *ngIf="calendarView == 'year'" [year]="calendarType == 'persian' ? date.jYear()  : date.year() "
+      [calendarType]="calendarType"></app-calendar-year>
+
+
+
   </div>
 </div>

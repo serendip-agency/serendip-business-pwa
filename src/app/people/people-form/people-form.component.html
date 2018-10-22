@@ -51,6 +51,7 @@
 
         <div formArrayName="mobiles">
           <mat-form-field *ngFor="let mobile of getFormArray(peopleForm,'mobiles'); let i=index">
+            <!-- prefix="+98" mask="(000) 000 0000" -->
             <input matInput placeholder="موبایل {{i == 0 ? '' : rpd( i + 1)}}" [formControlName]="i" dir="ltr" />
 
             <div class="plus" *ngIf="i == 0" matSuffix (click)="peopleForm.get('mobiles').push(fb.control(''))">
@@ -115,8 +116,7 @@
 
         <div formArrayName="contacts">
 
-          <div class="contact" *ngFor="let contact of getFormArray(peopleForm,'contacts'); let i=index"
-            [formGroupName]="i">
+          <div class="contact" *ngFor="let contact of getFormArray(peopleForm,'contacts'); let i=index" [formGroupName]="i">
 
             <mat-form-field>
               <input matInput placeholder="اطلاعات تماس" formControlName="name" />
@@ -148,8 +148,8 @@
               </mat-form-field>
             </div>
 
-        
-            
+
+
 
             <div formGroupName="address">
 

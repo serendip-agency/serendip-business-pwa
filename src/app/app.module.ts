@@ -129,6 +129,9 @@ import { NgxMaskModule } from 'ngx-mask'
 
 import { NgxCurrencyModule } from "ngx-currency";
 import { Split3Pipe } from './split3.pipe';
+import { PeopleSelectSingleComponent } from './people/people-select-single/people-select-single.component';
+import { PeopleSelectMultipleComponent } from './people/people-select-multiple/people-select-multiple.component';
+import { CalendarYearComponent } from './calendar/calendar-year/calendar-year.component';
 
 
 const dynamicComponents = [
@@ -201,6 +204,9 @@ var primaryComponents = [AppComponent,
     ...dynamicComponents,
     RpdPipe,
     Split3Pipe,
+    PeopleSelectSingleComponent,
+    PeopleSelectMultipleComponent,
+    CalendarYearComponent,
   ],
   entryComponents: [PeopleDeleteComponent],
   imports: [

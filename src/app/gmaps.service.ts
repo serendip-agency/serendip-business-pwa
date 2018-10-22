@@ -76,31 +76,24 @@ export class GmapsService {
   public subscribeOnSelectSingle(mapId: string): Observable<{ lat: number, lng: number }[]> {
 
     return new Observable((obServer) => {
-
       this.eventEmitter.on("selectSingle", (event: { mapId: string, positions: any }) => {
-
         if (event.mapId == mapId)
           obServer.next(event.positions);
-
       });
-
     });
-  }
 
+  }
 
 
   public subscribeOnSetMode(mapId: string): Observable<string> {
 
     return new Observable((obServer) => {
-
       this.eventEmitter.on("setMode", (event: { mapId: string, mode: string }) => {
-
         if (event.mapId == mapId)
           obServer.next(event.mode);
-
       });
-
     });
+
   }
 
 

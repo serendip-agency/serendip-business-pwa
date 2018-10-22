@@ -29,10 +29,10 @@ export class CompanyFormComponent implements OnInit {
 
   companyForm: FormGroup;
 
-  model: any = {
-    socials: [],
-    emails: []
-  };
+  // model: any = {
+  //   socials: [],
+  //   emails: []
+  // };
 
   iranStates: { "name": string; "Cities": { "name": string; }[]; }[];
 
