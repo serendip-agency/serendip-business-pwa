@@ -4,14 +4,13 @@ section.year-view {
     grid-template-rows: 1fr 1fr;
     grid-row-gap: 30px;
     grid-column-gap: 15px;
+
+    overflow: auto;
+    
     .month-block {
         box-sizing: border-box;
         overflow: hidden;
+        min-width: 280px;
     }
-    .month-block-title {
-        line-height: 40px;
-        color: #999;
-        font-size: 17px;
-        font-weight: 100;
-    }
+   
 }

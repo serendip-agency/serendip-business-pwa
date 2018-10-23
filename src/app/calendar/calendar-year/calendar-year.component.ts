@@ -21,7 +21,7 @@ export class CalendarYearComponent implements OnInit {
   @Input() set month(value: number) {
 
     this._month = value;
-    this.layoutMonths();
+   // this.layoutMonths();
 
   }
 
@@ -37,7 +37,7 @@ export class CalendarYearComponent implements OnInit {
   @Input() set year(value: number) {
 
     this._year = value;
-    this.layoutMonths();
+   // this.layoutMonths();
   }
 
   get year(): number {
@@ -60,7 +60,7 @@ export class CalendarYearComponent implements OnInit {
   @Input() set calendarType(value: "persian" | 'gregorian') {
 
     this._calendarType = value;
-    this.layoutMonths();
+ //   this.layoutMonths();
 
   }
 
@@ -81,18 +81,18 @@ export class CalendarYearComponent implements OnInit {
     return input.toString().replace(/\d/g, convert);
   }
 
-  layoutMonths() {
+  // layoutMonths() {
 
-    this.yearView = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((number, index) => {
-      return { label: this.calendarType == "persian" ? MomentJalaali('1400/' + number + '/1', 'jYYYY/jM/jD').format('jMMMM') : Moment.months(index), number }
-    });
+  //   this.yearView = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((number, index) => {
+  //     return { label: this.calendarType == "persian" ? MomentJalaali('1400/' + number + '/1', 'jYYYY/jM/jD').format('jMMMM') :  Moment.months(index),number }
+  //   });
 
-  }
+  // }
 
 
   ngOnInit() {
 
-    this.layoutMonths();
+ //  this.layoutMonths();
 
   }
 

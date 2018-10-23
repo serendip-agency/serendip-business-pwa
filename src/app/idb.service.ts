@@ -74,7 +74,7 @@ export class IdbService {
     console.log('IdbService constructed ...');
   }
 
-  async syncIDB(store:  "pull" | "push") {
+  async syncIDB(store: "pull" | "push") {
     return new Idb(idb.default.open("SYNC", 1, (db) => {
       db.createObjectStore("pull");
       db.createObjectStore("push");
@@ -87,8 +87,13 @@ export class IdbService {
     }), store);
   }
 
+  async cacheIDB() {
+    return new Idb(idb.default.open("CACHE", 1, (db) => {
+      db.createObjectStore("cache");
+    }), "cache");
+  }
 
-  async dataIDB(store: string | "company" | "person" | "product") {
+  async dataIDB(store: string | "cache" | "interaction" | "complaint" | "service" | "company" | "person" | "product") {
     return new Idb(idb.default.open("DB", 1, (db) => {
       db.createObjectStore("company");
       db.createObjectStore("person");

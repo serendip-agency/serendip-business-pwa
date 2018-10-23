@@ -1,10 +1,29 @@
 .month-view {
     box-sizing: border-box;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 0.5fr 1fr 1fr 1fr 1fr 1fr;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     border-left: 1px solid rgba(0, 0, 0, 0.1);
-    display: grid;
+    transition: none;
+    border-radius: 15px;
+    opacity: 0;
+    &.fadeIn {
+        opacity: 1;
+        transition: opacity ease .3s;
+    }
+
+    
+    .month-view-title {
+        line-height: 40px;
+        color: #999;
+        font-size: 17px;
+        font-weight: 100;
+        width: 265px;
+        margin: 0 auto;
+    }
+    .grid {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+        grid-template-rows: 0.5fr 1fr 1fr 1fr 1fr 1fr;
+        display: grid;
+    }
     .block,
     .weekday {
         font-size: 13px;
@@ -34,9 +53,8 @@
             font-size: 26px;
             color: rgba(0, 0, 0, 0.30);
             line-height: 34px;
-
-            &.holiday{
-                color:red;
+            &.holiday {
+                color: red;
             }
         }
         .events {
@@ -54,7 +72,6 @@
                 text-overflow: ellipsis;
                 overflow: hidden;
                 max-width: 100px;
-              
             }
         }
         .month {
@@ -67,7 +84,7 @@
         &.today {
             .day {
                 width: 40px;
-                background: rgb(211, 182, 53);
+                background: #A6B7DE;
                 border-radius: 10px;
                 color: #000;
                 text-align: center;
@@ -96,12 +113,14 @@
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-row-gap: 5px;
+    width: 280px;
+    margin: 0 auto;
     .block,
     .weekday {
-        height: 22px;
         font-size: 13px;
-        line-height: 22px;
+        min-width: 28px;
         padding: 0;
+        height: 30px;
         box-sizing: border-box;
         font-weight: 100;
         border: none;
@@ -118,21 +137,22 @@
     .weekday,
     .block {
         .day {
-            font-size: 11px;
+            font-size: 13px;
             color: rgba(0, 0, 0, 0.5);
-            width: 22px;
-            height: 22px;
-            line-height: 22px;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            margin: 0 auto;
             border-radius: 100%;
             box-sizing: border-box;
             background: rgba(245, 245, 245, 1);
-            &.holiday{
-                color:red;
+            &.holiday {
+                color: red;
             }
         }
         &.today {
             .day {
-                background: rgb(224, 203, 184);
+                background: #A6B7DE;
             }
         }
         &.prevMonth,

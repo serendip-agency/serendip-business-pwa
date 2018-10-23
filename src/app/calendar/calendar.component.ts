@@ -43,23 +43,19 @@ export class CalendarComponent implements OnInit {
 
   nextMonth() {
     this.date.add(1, 'month');
-    this.changeRef.detectChanges();
   }
 
   prevMonth() {
     this.date.add(-1, 'month');
-    this.changeRef.detectChanges();
   }
 
 
   nextYear() {
     this.date.add(1, 'year');
-    this.changeRef.detectChanges();
   }
 
   prevYear() {
     this.date.add(-1, 'year');
-    this.changeRef.detectChanges();
   }
 
 
