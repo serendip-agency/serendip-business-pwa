@@ -43,7 +43,6 @@ import { MatPaginatorModule } from "@angular/material/paginator";
 
 import { MatMomentDateModule } from "@angular/material-moment-adapter";
 
-import { DpDatePickerModule } from "ng2-jalali-date-picker";
 import { AuthComponent } from "./auth/auth.component";
 import { DataService } from "./data.service";
 import { AuthService, AuthGuard } from "./auth.service";
@@ -141,6 +140,8 @@ import { FaxesInputComponent } from './contact/faxes-input/faxes-input.component
 import { PostalcodeInputComponent } from './contact/postalcode-input/postalcode-input.component';
 import { AddressTextInputComponent } from './contact/address-text-input/address-text-input.component';
 import { ContactComponent } from './contact/contact.component';
+import { CalendarInputComponent } from './calendar/calendar-input/calendar-input.component';
+import { CompanySelectComponent } from './company/company-select/company-select.component';
 
 
 const dynamicComponents = [
@@ -205,26 +206,29 @@ var primaryComponents = [AppComponent,
   DashboardComponent,
   CrmComponent,
   MapComponent,
-  CalendarComponent];
+  CalendarComponent,
+  RpdPipe,
+  Split3Pipe,
+  PeopleSelectComponent,
+  CalendarYearComponent,
+  GeoSelectComponent,
+  CitySelectComponent,
+  StateSelectComponent,
+  CountrySelectComponent,
+  CompanyTypeSelectComponent,
+  TelephonesInputComponent,
+  FaxesInputComponent,
+  PostalcodeInputComponent,
+  AddressTextInputComponent,
+  ContactComponent];
 
 @NgModule({
   declarations: [
     ...primaryComponents,
     ...dynamicComponents,
-    RpdPipe,
-    Split3Pipe,
-    PeopleSelectComponent,
-    CalendarYearComponent,
-    GeoSelectComponent,
-    CitySelectComponent,
-    StateSelectComponent,
-    CountrySelectComponent,
-    CompanyTypeSelectComponent,
-    TelephonesInputComponent,
-    FaxesInputComponent,
-    PostalcodeInputComponent,
-    AddressTextInputComponent,
-    ContactComponent,
+    CalendarInputComponent,
+    CompanySelectComponent,
+
   ],
   entryComponents: [PeopleDeleteComponent],
   imports: [
@@ -273,7 +277,6 @@ var primaryComponents = [AppComponent,
     MatPaginatorModule,
     MatMomentDateModule,
     MatBottomSheetModule,
-    DpDatePickerModule
   ],
   providers: [
     DataService,

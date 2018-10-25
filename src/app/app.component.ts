@@ -1,7 +1,6 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 
 import * as _moment from 'moment-jalaali';
-import { DatePickerComponent } from 'ng2-jalali-date-picker';
 import { AuthService } from './auth.service';
 import { SyncService } from './sync.service';
 import { MatSnackBar } from '@angular/material';
@@ -18,7 +17,6 @@ import * as html2canvas from 'html2canvas';
   styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  @ViewChild('dayPicker') datePicker: DatePickerComponent;
 
   moment: any;
   authService: AuthService;

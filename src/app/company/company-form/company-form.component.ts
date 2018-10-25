@@ -5,7 +5,7 @@ import { DataService } from "../../data.service";
 import * as _ from 'underscore';
 import { IdbService } from "../../idb.service";
 import { tabInterface, widgetCommandInterface } from "src/app/models";
-
+import { CompanyModel } from 'serendip-crm-model'
 
 @Component({
   selector: 'app-company-form',
@@ -28,7 +28,7 @@ export class CompanyFormComponent implements OnInit {
 
   cachedEmployees = [];
 
-  model: { _widgetId: string; _id: string; name: string; type: string; contacts: { name: string; faxes: any[]; telephones: any[]; peoples: any[]; address: { text: string; city: string; state: string; country: string; postalCode: string; geo: string; }; }[]; };
+  model: CompanyModel;
 
 
   log(ev) {
@@ -81,28 +81,8 @@ export class CompanyFormComponent implements OnInit {
   }
 
   reset() {
-    this.model = {
-      _widgetId: this.widgetId,
-      _id: '',
-      name: '',
-      type: '',
-      contacts: [
-        {
-          name: "اطلاعات تماس اصلی",
-          faxes: [''],
-          telephones: [''],
-          peoples: [],
-          address: {
-            text: '',
-            city: '',
-            state: '',
-            country: '',
-            postalCode: '',
-            geo: ''
-          }
-        }
-      ]
-    };
+    this.model = new CompanyModel();
+    this.model.contacts[0].name = "اطلاعات تماس اصلی";
   }
 
 
@@ -118,15 +98,15 @@ export class CompanyFormComponent implements OnInit {
     }
 
     if (savedState) {
-      this.model = savedState.model;
+      this.model = new CompanyModel(savedState.model);
     } else
       if (this.documentId) {
         var model: any = await this.dataService.details('company', this.documentId);
 
 
-        this.model = model;
+        this.model = new CompanyModel(model);
 
-        this.widgetTabChange.emit({ title: 'ویرایش شرکت ' + model.name })
+        this.widgetTabChange.emit({ title: 'ویرایش شرکت ' + this.model.name })
       }
 
     // this.companyForm.valueChanges.subscribe(async (data: any) => {

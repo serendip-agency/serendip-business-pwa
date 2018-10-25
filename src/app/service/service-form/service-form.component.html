@@ -11,72 +11,30 @@
     <mat-card-content>
 
       <div class="logbox">
-        {{ serviceForm.value | json }}
+        {{ model | json }}
       </div>
 
-      <form [formGroup]="serviceForm" class="">
+      <form class="">
+
+        <app-calendar-input [label]="'تاریخ درخواست خدمت'" [model]="model.receivedDate" [calendarType]="'persian'"
+          (modelChange)="model.receivedDate = $event"></app-calendar-input>
 
 
-        <div class="double-field">
 
-          <mat-form-field>
-            <input dir="ltr" matInput placeholder="تاریخ درخواست خدمت " required autocomplete="off" formControlName="receivedDate"
-              theme="dp-material" [dpDayPicker]="{}" />
-          </mat-form-field>
-          <mat-form-field>
-            <input dir="ltr" matInput [ngxTimepicker]="receivedTimePicker" [format]="24" placeholder="ساعت دریافت شکایت"
-              required autocomplete="off" formControlName="receivedTime" />
-            <ngx-material-timepicker #receivedTimePicker [cancelBtnTmpl]="receivedTimeCancelButton" [confirmBtnTmpl]="receivedTimeConfirmButton"></ngx-material-timepicker>
-            <ng-template #receivedTimeConfirmButton>
-              <button mat-raised-button color="primary">انتخاب</button>
-            </ng-template>
-            <ng-template #receivedTimeCancelButton>
-              <button mat-raised-button color="secondary">انصراف</button>
-            </ng-template>
-          </mat-form-field>
-        </div>
+        <app-calendar-input [label]="'تاریخ مهلت انجام'" [model]="model.dueDate" [calendarType]="'persian'"
+          (modelChange)="model.dueDate = $event"></app-calendar-input>
 
-        <div class="double-field">
-          <mat-form-field>
-            <input dir="ltr" matInput placeholder="تاریخ مهلت انجام " required autocomplete="off" formControlName="dueDate"
-              theme="dp-material" [dpDayPicker]="{}" />
-          </mat-form-field>
-          <mat-form-field>
-            <input dir="ltr" matInput [ngxTimepicker]="dueTimePicker" [format]="24" placeholder="ساعت مهلت انجام"
-              required autocomplete="off" formControlName="dueTime" />
-            <ngx-material-timepicker #dueTimePicker [cancelBtnTmpl]="dueTimeCancelButton" [confirmBtnTmpl]="dueTimeConfirmButton"></ngx-material-timepicker>
-            <ng-template #dueTimeConfirmButton>
-              <button mat-raised-button color="primary">انتخاب</button>
-            </ng-template>
-            <ng-template #dueTimeCancelButton>
-              <button mat-raised-button color="secondary">انصراف</button>
-            </ng-template>
-          </mat-form-field>
-        </div>
+
 
 
         <div>
-          <mat-slide-toggle formControlName="isDone">خدمت انجام شده است.</mat-slide-toggle>
+          <mat-slide-toggle>خدمت انجام شده است.</mat-slide-toggle>
         </div>
 
-        <div class="double-field" *ngIf="serviceForm.get('isDone').value">
 
-          <mat-form-field>
-            <input dir="ltr" matInput placeholder="تاریخ انجام" required autocomplete="off" formControlName="doneDate"
-              theme="dp-material" [dpDayPicker]="{}" />
-          </mat-form-field>
-          <mat-form-field>
-            <input dir="ltr" matInput [ngxTimepicker]="doneTimePicker" [format]="24" placeholder="ساعت انجام"
-              required autocomplete="off" formControlName="doneTime" />
-            <ngx-material-timepicker #doneTimePicker [cancelBtnTmpl]="doneTimeCancelButton" [confirmBtnTmpl]="doneTimeConfirmButton"></ngx-material-timepicker>
-            <ng-template #doneTimeConfirmButton>
-              <button mat-raised-button color="primary">انتخاب</button>
-            </ng-template>
-            <ng-template #doneTimeCancelButton>
-              <button mat-raised-button color="secondary">انصراف</button>
-            </ng-template>
-          </mat-form-field>
-        </div>
+
+        <app-calendar-input [label]="'تاریخ   انجام'" [model]="model.doneDate" [calendarType]="'persian'" (modelChange)="model.doneDate = $event"></app-calendar-input>
+
 
 
 

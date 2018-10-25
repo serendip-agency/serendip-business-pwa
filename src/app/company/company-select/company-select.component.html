@@ -1,0 +1,21 @@
+<mat-form-field>
+  <mat-chip-list #chipList>
+    <mat-chip *ngFor="let item of  model" (removed)="removeCompany(item)">
+      <span (click)="goCompany(item)">
+        {{ getCompany(item)?.name }}
+      </span>
+      <mat-icon matChipRemove>
+        <img src="assets/icons/recycle-bin-trash.svg" alt="" />
+      </mat-icon>
+    </mat-chip>
+    <input placeholder="شرکت مرتبط" #companyAutoInput (input)="filterCompanies(companyAutoInput.value,model)"
+      [matChipInputFor]="chipList" [matAutocomplete]="companyAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="companyAutoInput.value= ''">
+  </mat-chip-list>
+
+  <mat-autocomplete #companyAuto="matAutocomplete" (optionSelected)="selectCompany(  $event);companyAutoInput.value= ''">
+    <mat-option *ngFor="let item of filteredCompanies" [value]="item._id">
+      {{ item.name }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
