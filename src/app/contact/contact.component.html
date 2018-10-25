@@ -1,0 +1,26 @@
+<div class="contact" *ngFor="let contact of  model; let i=index;trackBy:trackByFn">
+
+  <mat-form-field>
+    <input matInput placeholder="اطلاعات تماس" [(ngModel)]="contact.name" (keydown)="inputsChange()" [name]="'contact_' + i + '_name'" />
+  </mat-form-field>
+
+  <app-telephones-input [model]="contact.telephones" (modelChange)="inputsChange();contact.telephones = $event"></app-telephones-input>
+
+  <app-faxes-input [model]="contact.faxes" (modelChange)="inputsChange();contact.faxes = $event"></app-faxes-input>
+
+  <app-people-select [selectType]="'multiple'" [model]="contact.peoples" (modelChange)="inputsChange();contact.peoples = $event"></app-people-select>
+
+  <app-state-select [model]="contact.address.state" (modelChange)="inputsChange();contact.address.state = $event"></app-state-select>
+
+  <app-city-select [model]="contact.address.city" [state]="contact.address.state" (modelChange)="inputsChange();contact.address.city = $event"></app-city-select>
+
+  <app-geo-select [model]="contact.address.geo" [city]="contact.address.city" [state]="contact.address.state"
+    (modelChange)="inputsChange();contact.address.geo = $event"></app-geo-select>
+
+
+  <app-address-text-input [model]="contact.address.text" (modelChange)="inputsChange();contact.address.text = $event"></app-address-text-input>
+
+
+  <app-postalcode-input [model]="contact.address.postalCode" (modelChange)="inputsChange();contact.address.postalCode = $event"></app-postalcode-input>
+
+</div>

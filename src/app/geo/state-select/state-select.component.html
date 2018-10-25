@@ -1,0 +1,9 @@
+<mat-form-field>
+  <input type="text" [id]="SelectId" placeholder="استان" (keyup)="filterStates()" (change)="onBlur($event)" matInput [(ngModel)]="model"
+    [matAutocomplete]="stateAuto">
+  <mat-autocomplete #stateAuto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+    <mat-option *ngFor="let option of filteredStates" [value]="option.name">
+      {{option.name}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

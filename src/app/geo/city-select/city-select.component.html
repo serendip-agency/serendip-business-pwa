@@ -1,0 +1,8 @@
+<mat-form-field>
+  <input type="text" [id]="SelectId" placeholder="شهر" (keyup)="filterCities()" (change)="onBlur()" matInput [(ngModel)]="model" [matAutocomplete]="cityAuto">
+  <mat-autocomplete #cityAuto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+    <mat-option *ngFor="let option of filteredCities" [value]="option.name">
+      {{option.name}}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>

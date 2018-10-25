@@ -129,9 +129,18 @@ import { NgxMaskModule } from 'ngx-mask'
 
 import { NgxCurrencyModule } from "ngx-currency";
 import { Split3Pipe } from './split3.pipe';
-import { PeopleSelectSingleComponent } from './people/people-select-single/people-select-single.component';
-import { PeopleSelectMultipleComponent } from './people/people-select-multiple/people-select-multiple.component';
 import { CalendarYearComponent } from './calendar/calendar-year/calendar-year.component';
+import { PeopleSelectComponent } from "./people/people-select/people-select.component";
+import { GeoSelectComponent } from './geo/geo-select/geo-select.component';
+import { CitySelectComponent } from './geo/city-select/city-select.component';
+import { StateSelectComponent } from './geo/state-select/state-select.component';
+import { CountrySelectComponent } from './geo/country-select/country-select.component';
+import { CompanyTypeSelectComponent } from './company/company-type-select/company-type-select.component';
+import { TelephonesInputComponent } from './contact/telephones-input/telephones-input.component';
+import { FaxesInputComponent } from './contact/faxes-input/faxes-input.component';
+import { PostalcodeInputComponent } from './contact/postalcode-input/postalcode-input.component';
+import { AddressTextInputComponent } from './contact/address-text-input/address-text-input.component';
+import { ContactComponent } from './contact/contact.component';
 
 
 const dynamicComponents = [
@@ -204,9 +213,18 @@ var primaryComponents = [AppComponent,
     ...dynamicComponents,
     RpdPipe,
     Split3Pipe,
-    PeopleSelectSingleComponent,
-    PeopleSelectMultipleComponent,
+    PeopleSelectComponent,
     CalendarYearComponent,
+    GeoSelectComponent,
+    CitySelectComponent,
+    StateSelectComponent,
+    CountrySelectComponent,
+    CompanyTypeSelectComponent,
+    TelephonesInputComponent,
+    FaxesInputComponent,
+    PostalcodeInputComponent,
+    AddressTextInputComponent,
+    ContactComponent,
   ],
   entryComponents: [PeopleDeleteComponent],
   imports: [

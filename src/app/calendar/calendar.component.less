@@ -21,7 +21,7 @@
         overflow: auto;
     }
     aside {
-        padding: 5px;
+        padding: 0;
         overflow: hidden;
         width: 310px;
         box-sizing: border-box;
@@ -29,13 +29,14 @@
         top: 75px;
         position: absolute;
         .my-calendars {
-            padding: 15px 5px;
-
-            .title{
+            margin: 15px auto;
+            max-width: 280px;
+            padding: 0 15px;
+            .title {
                 font-size: 17px;
                 line-height: 40px;
                 font-weight: 100;
-                color:#777;
+                color: #777;
             }
             ul {
                 margin: 0;
@@ -47,6 +48,7 @@
                 }
             }
         }
+        
     }
     .toolbar {
         position: absolute;
@@ -59,7 +61,8 @@
             display: inline-block;
             vertical-align: top;
         }
-        .month,.year {
+        .month,
+        .year {
             float: left;
             font-size: 20px;
             img {

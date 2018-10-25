@@ -1,15 +1,20 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import * as Moment from 'moment';
 import * as MomentJalaali from 'moment-jalaali';
 import IranCalendarEvents from './calendar/calendar.iran.events';
 import * as _ from 'underscore'
 import { IdbService, Idb } from './idb.service';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CalendarService {
 
+
+
+
+  CalendarsToShow: string[];
 
   weekDays = {
     persian: MomentJalaali.weekdays(true),
@@ -24,6 +29,26 @@ export class CalendarService {
   memCache = {};
   irEventsCache = {};
   idbCache: Idb;
+  private eventsChangeEventEmitter: EventEmitter<{}>;
+
+
+
+  subscribeToEventsChange(viewId) {
+
+    return new Observable((obServer) => {
+      this.eventsChangeEventEmitter.subscribe(() => {
+        obServer.next();
+      });
+    });
+
+
+  }
+
+
+  emitCalendarsChange() {
+    this.eventsChangeEventEmitter.emit();
+  }
+
 
   constructor(private idbService: IdbService) {
 
@@ -36,6 +61,9 @@ export class CalendarService {
     // Promise.all(promises).then((months) => {
     //   //this.downloadObjectAsJson(months,"calendar.cache.json")
     // }); 
+
+    this.eventsChangeEventEmitter = new EventEmitter(true);
+
 
     IranCalendarEvents.forEach((ymRec) => {
 
@@ -54,9 +82,6 @@ export class CalendarService {
       });
 
     });
-
-    console.log(this.irEventsCache);
-
 
 
     new Promise(async (resolve, reject) => {
@@ -91,7 +116,12 @@ export class CalendarService {
 
   async findEvents(YYYYMMDD, jYYYYjMMjDD) {
 
-    return this.irEventsCache[jYYYYjMMjDD];
+    var eventsModel = [];
+
+    if (this.CalendarsToShow.indexOf("iran") != -1)
+      eventsModel = eventsModel.concat(...this.irEventsCache[jYYYYjMMjDD]);
+
+    return eventsModel;
 
   }
 

@@ -21,7 +21,7 @@ export class CalendarMonthComponent implements OnInit {
   layoutTimeout;
 
   @Input() size: "mini" | "large" = "large";
-
+  @Input() showYearTitle: boolean;
 
   private _calendarType: "persian" | 'gregorian' = "persian";
 
@@ -121,10 +121,16 @@ export class CalendarMonthComponent implements OnInit {
 
     setTimeout(() => {
       document.getElementById(this.viewId).classList.add("fadeIn");
-    }, this.fadeInDelay || 100 + 70 * this.month);
+    }, this.size == 'mini' ? this.fadeInDelay || 100 + 70 * this.month : 10);
+
+    this.layoutEvents().then(() => { }).catch(() => { });
+
+
+  }
+
+  async layoutEvents() {
 
     this.monthView.forEach(element => {
-
       if (element.class.indexOf("currentMonth") != -1)
         this.calendarService.findEvents(element.formats["YYYY/MM/DD"], element.formats["jYYYY/jMM/jDD"]).then((events) => {
 
@@ -133,17 +139,31 @@ export class CalendarMonthComponent implements OnInit {
           element.holiday = _.findWhere(events, { holiday: true });
 
         });
-
     });
 
   }
-
 
 
   async ngOnInit() {
 
     this.viewId = `month-view-${Math.random().toString().split('.')[1]}`;
 
+    this.calendarService.subscribeToEventsChange(this.viewId).subscribe(() => {
+
+      this.layoutEvents().then(() => { }).catch(() => { });
+
+    });
+
+  }
+
+  rpd(input) {
+    if (!input) {
+      input = "";
+    }
+    const convert = a => {
+      return ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"][a];
+    };
+    return input.toString().replace(/\d/g, convert);
   }
 
 }

@@ -4,6 +4,7 @@ import * as MomentJalaali from 'moment-jalaali'
 
 import * as sUtil from 'serendip-utility';
 import * as _ from 'underscore'
+import { CalendarService } from '../calendar.service';
 
 
 @Component({
@@ -15,18 +16,39 @@ export class CalendarComponent implements OnInit {
 
   moment: typeof Moment;
 
+  calendarsToShow = {};
+
   monthView = [];
   calendarView = "year";
   date;
 
   calendarType: "persian" | 'gregorian' = "persian";
 
+  calendars = [
+    { label: 'خدمات', value: 'service' },
+    { label: 'شکایات', value: 'complaint' },
+    { label: 'شرکت ها', value: 'company' },
+    { label: 'اشخاص', value: 'people' },
+    { label: 'فروش', value: 'sale' },
+    { label: 'تعاملات', value: 'interaction' },
+    { label: 'تقویم ایران', value: 'iran' }
+  ];
 
+  constructor(private changeRef: ChangeDetectorRef, private calendarService: CalendarService) {
 
-  constructor(private changeRef: ChangeDetectorRef) {
 
   }
 
+  calendarsToShowChange() {
+
+    this.calendarService.CalendarsToShow = _.without(_.map(Object.keys(this.calendarsToShow), (key) => {
+      if (this.calendarsToShow[key])
+        return key;
+    }), undefined);
+
+    this.calendarService.emitCalendarsChange();
+
+  }
   rpd(input) {
     if (!input) {
       input = "";
@@ -37,7 +59,7 @@ export class CalendarComponent implements OnInit {
     return input.toString().replace(/\d/g, convert);
   }
 
-  typeChange(){
+  typeChange() {
 
   }
 
@@ -59,8 +81,11 @@ export class CalendarComponent implements OnInit {
   }
 
 
-  
+
   ngOnInit() {
+
+    this.calendarsToShow = { iran: true };
+    this.calendarsToShowChange();
 
 
     this.moment = MomentJalaali;

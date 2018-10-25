@@ -1,6 +1,13 @@
 <section class="month-view {{size}}" [id]="viewId">
   <div class="month-view-title" *ngIf="size == 'mini'">
     {{getMonthName(month)}}
+    <span *ngIf="showYearTitle && calendarType == 'persian'">
+      {{ rpd(year) }}
+    </span>
+
+    <span class="en" *ngIf="showYearTitle && calendarType != 'persian'">
+      {{ year }}
+    </span>
   </div>
 
   <div class="grid">
