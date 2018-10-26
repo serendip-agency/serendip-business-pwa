@@ -14,3 +14,9 @@ pipelines:
           - npm install -g @angular/cli
           - npm install
           - ng build --prod
+    - step:
+        name: Deploy to test
+        deployment: test   # can be test, staging or production.
+        # trigger: manual  # Uncomment to make this a manual deployment.
+        script:
+          - echo "Deploying to test environment"
