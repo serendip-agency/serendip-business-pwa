@@ -32,26 +32,7 @@
           </mat-form-field>
         </div>
 
-        <mat-form-field>
-          <mat-chip-list #companyChipList>
-            <mat-chip *ngFor="let item of productForm.get('company').value ? [productForm.get('company').value] : []"
-              (click)="goCompany(item)" (removed)="productForm.get('company').setValue('')">
-              {{ getCompany(item)?.name }}
-              <mat-icon matChipRemove>
-                <img src="assets/icons/recycle-bin-trash.svg" alt="" />
-              </mat-icon>
-            </mat-chip>
-            <input placeholder="شرکت تامین کننده" #companyAutoInput (input)="filterCompany(companyAutoInput.value)"
-              [matChipInputFor]="companyChipList" [matAutocomplete]="companyAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="companyAutoInput.value= ''">
-          </mat-chip-list>
-          <mat-autocomplete #companyAuto="matAutocomplete" (optionSelected)="selectCompany($event);companyAutoInput.value= ''">
-            <mat-option *ngFor="let item of filteredCompanies" [value]="item._id">
-              {{item.name}}
-            </mat-option>
-          </mat-autocomplete>
-        </mat-form-field>
-
+        <app-company-select></app-company-select>
 
       </form>
 

@@ -90,7 +90,7 @@ import { InteractionTableComponent } from "./interaction/interaction-table/inter
 import { InteractionListComponent } from "./interaction/interaction-list/interaction-list.component";
 import { InteractionDeleteComponent } from "./interaction/interaction-delete/interaction-delete.component";
 import { CrmComponent } from './crm/crm.component';
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
+ 
 import { MapComponent } from './map/map.component';
 
 import { NgxChartsModule } from '@swimlane/ngx-charts'
@@ -232,7 +232,6 @@ var primaryComponents = [AppComponent,
   ],
   entryComponents: [PeopleDeleteComponent],
   imports: [
-    NgxMaterialTimepickerModule.forRoot(),
     NgxMaskModule.forRoot(),
     NgxCurrencyModule,
     DynamicModule.withComponents(dynamicComponents),

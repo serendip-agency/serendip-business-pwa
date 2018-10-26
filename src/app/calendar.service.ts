@@ -143,7 +143,7 @@ export class CalendarService {
 
       var monthView = [];
 
-      var moment: typeof Moment;
+      var moment: typeof Moment | typeof MomentJalaali;
 
       if (calendarType == "persian") {
         moment = MomentJalaali;

@@ -7,8 +7,8 @@ import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router, NavigationEnd, NavigationCancel } from '@angular/router';
 import { CrmService } from './crm.service';
 import { Subscription } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
-import * as html2canvas from 'html2canvas';
 
 
 @Component({
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
   routerSubscription: Subscription;
 
 
-  constructor(private crmService: CrmService, private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
+  constructor(private crmService: CrmService, private httpClient: HttpClient, private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
     this.snackBar = _snackBar;
     this.moment = _moment;
     this.authService = _authService;
@@ -60,14 +60,49 @@ export class AppComponent implements OnInit, OnDestroy {
     this.routerSubscription.unsubscribe();
 
   }
+
+
+  currentPwa = 'serendip-crm-pwa-v0.04';
+
+  updatePwa() {
+    navigator.serviceWorker.getRegistration().then(function (registration) {
+
+      caches.delete("cache-from-zip");
+
+      if (registration) registration.unregister();
+
+      location.reload();
+
+    });
+  }
+
   ngOnInit() {
 
+    console.log(this.currentPwa);
+
+    this.httpClient.get('versions.json?v=' + Math.random().toString().split('.')[1]).toPromise().then((versions) => {
+
+
+      console.log('pwa versions', versions);
+
+      if (versions[0] != this.currentPwa) {
+        this.updatePwa();
+      }
+    }).catch(() => { });
+    // if (localStorage.getItem("pwa-app-version")) {
+
+    //   if (localStorage.getItem("pwa-app-version") != this.currentPwa)
+    //     this.updatePwa();
+
+    // } else {
+    //   localStorage.setItem("pwa-app-version", this.currentPwa);
+    // }
     // setTimeout(() => {
     //   html2canvas(document.getElementsByClassName("grid-container")[0]).then(canvas => {
     //     document.body.appendChild(canvas)
     //   });
     // }, 2000);
-    
+
     this.routerSubscription = this.router.events.subscribe(async (event: any) => {
 
       this.routerLoading = true;

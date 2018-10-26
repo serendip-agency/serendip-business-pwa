@@ -14,7 +14,7 @@ import { CalendarService } from '../calendar.service';
 })
 export class CalendarComponent implements OnInit {
 
-  moment: typeof Moment;
+  moment: typeof Moment | typeof MomentJalaali;
 
   calendarsToShow = {};
 

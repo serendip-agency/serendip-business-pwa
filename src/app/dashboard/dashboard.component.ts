@@ -150,6 +150,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   gridSizeChange = new EventEmitter();
 
 
+  showCalendar = false;
+
   rpd(input) {
     if (!input) {
       input = "";
@@ -176,6 +178,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     "dddd D MMMM YYYY",
     "jYYYY/jMM/jDD",
     "YYYY/MM/DD"];
+
 
 
   dashboardDateTimeTick() {
@@ -223,7 +226,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   }
-
+  
 
   clickOnStartWrapper(event: MouseEvent) {
     if ((event.target as HTMLElement).getAttribute('id') === 'start')
@@ -502,11 +505,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
           return w && w.inputs && w.inputs.documentId == options.documentId;
         })
         .value();
- 
+
 
       if (existInGrid) {
 
-        
+
         console.log('widget already exist');
         return;
       }

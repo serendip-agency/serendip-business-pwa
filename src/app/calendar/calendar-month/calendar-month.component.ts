@@ -92,7 +92,7 @@ export class CalendarMonthComponent implements OnInit {
   }
 
 
-  constructor(private calendarService: CalendarService, private changeRef: ChangeDetectorRef) {
+  constructor(public calendarService: CalendarService, private changeRef: ChangeDetectorRef) {
 
   }
 
