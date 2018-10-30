@@ -1,5 +1,4 @@
 export interface widgetInterface {
-
     id?: string;
     component: string;
     inputs?: any;
@@ -10,11 +9,11 @@ export interface tabInterface {
     widgets?: widgetInterface[];
     icon?: string;
     title?: string;
-
 }
 
 export interface containerInterface {
 
+    showTabs?: boolean;
     tabs: tabInterface[];
 }
 
@@ -27,6 +26,7 @@ export interface gridInterface {
 
 
 export interface widgetCommandInterface {
+
     command: 'openWidget' | 'refreshWidget';
     documentId?: string;
     icon?: string;

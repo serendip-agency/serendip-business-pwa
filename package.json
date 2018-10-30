@@ -1,5 +1,5 @@
 {
-  "name": "serendip-crm-pwa",
+  "name": "serendip-business-pwa",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -38,7 +38,7 @@
     "ngx-drag-drop": "^1.1.0",
     "ngx-mask": "^6.5.18",
     "rxjs": "^6.0.0",
-    "serendip-crm-model": "^1.0.0",
+    "serendip-business-model": "^1.0.1",
     "serendip-utility": "^1.0.0",
     "stream": "0.0.2",
     "underscore": "^1.9.1",

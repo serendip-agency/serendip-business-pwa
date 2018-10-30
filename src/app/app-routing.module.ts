@@ -1,4 +1,4 @@
-import { CrmComponent } from './crm/crm.component';
+import { BusinessComponent } from './business/business.component';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -15,8 +15,8 @@ const routes: Routes = [
   { path: 'dashboard/:section', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'dashboard/:section/:tab', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'dashboard/:section/:tab/:id', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'crm', component: CrmComponent},
-  { path: 'crm/:tab', component: CrmComponent },
+  { path: 'business', component: BusinessComponent},
+  { path: 'business/:tab', component: BusinessComponent },
   { path: 'auth', component: AuthComponent },
   { path: 'auth/:tab', component: AuthComponent },
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' }

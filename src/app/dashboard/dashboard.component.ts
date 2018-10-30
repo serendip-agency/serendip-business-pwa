@@ -4,35 +4,7 @@ import { Router, ActivatedRoute, NavigationEnd, NavigationCancel } from "@angula
 import { Subscription } from "rxjs";
 import * as _ from "underscore";
 
-import { PeopleTableComponent } from "../people/people-table/people-table.component";
-import { PeopleSearchComponent } from "../people/people-search/people-search.component";
-import { PeopleFormComponent } from "../people/people-form/people-form.component";
-import { PeopleDeleteComponent } from "../people/people-delete/people-delete.component";
-import { PeopleListComponent } from "../people/people-list/people-list.component";
-import { CompanyDeleteComponent } from "../company/company-delete/company-delete.component";
-import { CompanyListComponent } from "../company/company-list/company-list.component";
-import { CompanyTableComponent } from "../company/company-table/company-table.component";
-import { CompanyFormComponent } from "../company/company-form/company-form.component";
-import { ComplaintDeleteComponent } from "../complaint/complaint-delete/complaint-delete.component";
-import { ComplaintFormComponent } from "../complaint/complaint-form/complaint-form.component";
-import { ComplaintTableComponent } from "../complaint/complaint-table/complaint-table.component";
-import { ComplaintListComponent } from "../complaint/complaint-list/complaint-list.component";
-import { ServiceDeleteComponent } from "../service/service-delete/service-delete.component";
-import { ServiceTableComponent } from "../service/service-table/service-table.component";
-import { ServiceListComponent } from "../service/service-list/service-list.component";
-import { ServiceFormComponent } from "../service/service-form/service-form.component";
-import { ProductDeleteComponent } from "../product/product-delete/product-delete.component";
-import { ProductListComponent } from "../product/product-list/product-list.component";
-import { ProductFormComponent } from "../product/product-form/product-form.component";
-import { ProductTableComponent } from "../product/product-table/product-table.component";
-import { CompanySearchComponent } from "../company/company-search/company-search.component";
-import { ComplaintSearchComponent } from "../complaint/complaint-search/complaint-search.component";
-import { ProductSearchComponent } from "../product/product-search/product-search.component";
-import { InteractionFormComponent } from "../interaction/interaction-form/interaction-form.component";
-import { InteractionTableComponent } from "../interaction/interaction-table/interaction-table.component";
-import { InteractionListComponent } from "../interaction/interaction-list/interaction-list.component";
-import { InteractionDeleteComponent } from "../interaction/interaction-delete/interaction-delete.component";
-import { CrmService } from "../crm.service";
+import { BusinessService } from "../business.service";
 import { GmapsService } from "../gmaps.service";
 import { DndDropEvent } from "ngx-drag-drop";
 import { polyfill } from 'mobile-drag-drop';
@@ -42,19 +14,11 @@ import { IdbService } from "../idb.service";
 
 import * as moment from 'moment-jalaali';
 import { EventEmitter } from "@angular/core";
-import { UserActivityBySectionComponent } from "../charts/user-activity-by-section/user-activity-by-section.component";
-import { OutcomeByCampaignComponent } from "../charts/outcome-by-campaign/outcome-by-campaign.component";
 import { gridInterface, tabInterface, containerInterface, widgetInterface, widgetCommandInterface } from "../models";
 import { WidgetService } from "../widget.service";
 import { CalendarMonthComponent } from "../calendar/calendar-month/calendar-month.component";
 import { CalendarDayComponent } from "../calendar/calendar-day/calendar-day.component";
 import { CalendarScheduleComponent } from "../calendar/calendar-schedule/calendar-schedule.component";
-import { SaleFormComponent } from "../sale/sale-form/sale-form.component";
-import { SaleListComponent } from "../sale/sale-list/sale-list.component";
-import { CampaignFormComponent } from "../campaign/campaign-form/campaign-form.component";
-import { SaleTableComponent } from "../sale/sale-table/sale-table.component";
-import { CampaignListComponent } from "../campaign/campaign-list/campaign-list.component";
-import { CampaignTableComponent } from "../campaign/campaign-table/campaign-table.component";
 import { TicketFormComponent } from "../support/ticket-form/ticket-form.component";
 import { TicketListComponent } from "../support/ticket-list/ticket-list.component";
 import { InvoicesComponent } from "../support/invoices/invoices.component";
@@ -64,11 +28,10 @@ import { FaxServiceComponent } from "../support/fax-service/fax-service.componen
 import { AccountProfileComponent } from "../account/account-profile/account-profile.component";
 import { AccountPasswordComponent } from "../account/account-password/account-password.component";
 import { AccountSessionsComponent } from "../account/account-sessions/account-sessions.component";
-import { ServiceTypesComponent } from "../settings/service-types/service-types.component";
-import { PiplineLeadComponent } from "../pipline/pipline-lead/pipline-lead.component";
-import { PiplineDealComponent } from "../pipline/pipline-deal/pipline-deal.component";
-import { PiplineSaleComponent } from "../pipline/pipline-sale/pipline-sale.component";
-import { ProductCategoriesComponent } from "../settings/product-categories/product-categories.component";
+import { FormComponent } from "../base/form/form.component";
+import { ListComponent } from "../base/list/list.component";
+import { ReportComponent } from "../base/report/report.component";
+
 
 polyfill({
   // use this to make use of the scroll behaviour
@@ -82,59 +45,8 @@ try {
 catch (e) { }
 
 const dynamicComponents = {
-  PeopleFormComponent,
-  PeopleTableComponent,
-  PeopleSearchComponent,
-  PeopleDeleteComponent,
-  PeopleListComponent,
-  CompanyDeleteComponent,
-  CompanyListComponent,
-  CompanyTableComponent,
-  CompanyFormComponent,
-  ComplaintDeleteComponent,
-  ComplaintFormComponent,
-  ComplaintTableComponent,
-  ComplaintListComponent,
-  ServiceDeleteComponent,
-  ServiceTableComponent,
-  ServiceListComponent,
-  ServiceFormComponent,
-  ProductDeleteComponent,
-  ProductListComponent,
-  ProductFormComponent,
-  ProductTableComponent,
-  CompanySearchComponent,
-  ComplaintSearchComponent,
-  ProductSearchComponent,
-  InteractionFormComponent,
-  InteractionTableComponent,
-  InteractionListComponent,
-  InteractionDeleteComponent,
-  UserActivityBySectionComponent,
-  OutcomeByCampaignComponent,
-  CalendarMonthComponent,
-  CalendarDayComponent,
-  CalendarScheduleComponent,
-  SaleFormComponent,
-  SaleListComponent,
-  SaleTableComponent,
-  CampaignFormComponent,
-  CampaignListComponent,
-  CampaignTableComponent,
-  TicketFormComponent,
-  TicketListComponent,
-  AccountProfileComponent,
-  AccountPasswordComponent,
-  AccountSessionsComponent,
-  InvoicesComponent,
-  SmsServiceComponent,
-  EmailServiceComponent,
-  FaxServiceComponent,
-  ServiceTypesComponent,
-  PiplineLeadComponent,
-  PiplineDealComponent,
-  PiplineSaleComponent,
-  ProductCategoriesComponent
+  FormComponent,
+  ReportComponent
 };
 
 @Component({
@@ -216,7 +128,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    public crmService: CrmService,
+    public businessService: BusinessService,
     private idbService: IdbService,
     private changeRef: ChangeDetectorRef,
     private widgetService: WidgetService
@@ -226,7 +138,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   }
-  
+
 
   clickOnStartWrapper(event: MouseEvent) {
     if ((event.target as HTMLElement).getAttribute('id') === 'start')
@@ -479,6 +391,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return _.extend({}, obj1, obj2);
   }
 
+  // it will be passed to each dynamic component and grab the output from component @output() eventEmitter
   widgetCommand(widget: widgetInterface, tab: tabInterface, container: containerInterface) {
 
     return (options: widgetCommandInterface) => {

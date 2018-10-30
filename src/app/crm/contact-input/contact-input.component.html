@@ -1,0 +1,11 @@
+<div *ngFor="let contact of model">
+
+  <app-form-text-input [model]="contact.name" [label]="'نام اطلاعات تماس'" (modelChange)="contact.name = $event;inputsChange()"></app-form-text-input>
+
+  <app-form-state-input [model]="contact.address.state" (modelChange)="contact.address.state = $event;inputsChange()"></app-form-state-input>
+
+  <app-form-city-input [state]="contact.address.state" [model]="contact.address.city" (modelChange)="contact.address.city = $event;inputsChange()"></app-form-city-input>
+
+  <app-form-latlng-input [model]="contact.address.geo" (modelChange)="contact.address.geo = $event;inputsChange()"></app-form-latlng-input>
+
+</div>

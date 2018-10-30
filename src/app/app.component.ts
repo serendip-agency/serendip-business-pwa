@@ -5,7 +5,7 @@ import { AuthService } from './auth.service';
 import { SyncService } from './sync.service';
 import { MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router, NavigationEnd, NavigationCancel } from '@angular/router';
-import { CrmService } from './crm.service';
+import { BusinessService } from './business.service';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
@@ -27,7 +27,7 @@ export class AppComponent implements OnInit, OnDestroy {
   routerSubscription: Subscription;
 
 
-  constructor(private crmService: CrmService, private httpClient: HttpClient, private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
+  constructor(private crmService: BusinessService, private httpClient: HttpClient, private _authService: AuthService, _activatedRoute: ActivatedRoute, _router: Router, _syncService: SyncService, _snackBar: MatSnackBar) {
     this.snackBar = _snackBar;
     this.moment = _moment;
     this.authService = _authService;
@@ -62,7 +62,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
 
-  currentPwa = 'serendip-crm-pwa-v0.04';
+  currentPwa = 'v0.05';
 
   updatePwa() {
     navigator.serviceWorker.getRegistration().then(function (registration) {
@@ -112,7 +112,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
     });
 
-    if (this.crmService.getActiveCrmId() && this.authService.loggedIn)
+    if (this.crmService.getActiveBusinessId() && this.authService.loggedIn)
       setTimeout(() => {
         this.snackBar.open('همگام سازی شروع شد ...', '', { duration: 1000 });
         var syncStart = Date.now();

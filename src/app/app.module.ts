@@ -53,61 +53,31 @@ import { AppRoutingModule } from "./app-routing.module";
 
 import { DynamicModule } from "ng-dynamic-component";
 
-import { IdbService } from "./idb.service";
-import { SyncService } from "./sync.service";
-import { MessagingService } from "./messaging.service";
 
 import * as _ from "underscore";
 
 
 
-import { PeopleTableComponent } from "./people/people-table/people-table.component";
-import { PeopleSearchComponent } from "./people/people-search/people-search.component";
-import { PeopleFormComponent } from "./people/people-form/people-form.component";
-import { PeopleDeleteComponent } from "./people/people-delete/people-delete.component";
-import { PeopleListComponent } from "./people/people-list/people-list.component";
-import { CompanyDeleteComponent } from "./company/company-delete/company-delete.component";
-import { CompanyListComponent } from "./company/company-list/company-list.component";
-import { CompanyTableComponent } from "./company/company-table/company-table.component";
-import { CompanyFormComponent } from "./company/company-form/company-form.component";
-import { ComplaintDeleteComponent } from "./complaint/complaint-delete/complaint-delete.component";
-import { ComplaintFormComponent } from "./complaint/complaint-form/complaint-form.component";
-import { ComplaintTableComponent } from "./complaint/complaint-table/complaint-table.component";
-import { ComplaintListComponent } from "./complaint/complaint-list/complaint-list.component";
-import { ServiceDeleteComponent } from "./service/service-delete/service-delete.component";
-import { ServiceTableComponent } from "./service/service-table/service-table.component";
-import { ServiceListComponent } from "./service/service-list/service-list.component";
-import { ServiceFormComponent } from "./service/service-form/service-form.component";
-import { ProductDeleteComponent } from "./product/product-delete/product-delete.component";
-import { ProductListComponent } from "./product/product-list/product-list.component";
-import { ProductFormComponent } from "./product/product-form/product-form.component";
-import { ProductTableComponent } from "./product/product-table/product-table.component";
-import { CompanySearchComponent } from "./company/company-search/company-search.component";
-import { ComplaintSearchComponent } from "./complaint/complaint-search/complaint-search.component";
-import { ProductSearchComponent } from "./product/product-search/product-search.component";
-import { InteractionFormComponent } from "./interaction/interaction-form/interaction-form.component";
-import { InteractionTableComponent } from "./interaction/interaction-table/interaction-table.component";
-import { InteractionListComponent } from "./interaction/interaction-list/interaction-list.component";
-import { InteractionDeleteComponent } from "./interaction/interaction-delete/interaction-delete.component";
-import { CrmComponent } from './crm/crm.component';
- 
-import { MapComponent } from './map/map.component';
-
 import { NgxChartsModule } from '@swimlane/ngx-charts'
 
 import { DndModule } from 'ngx-drag-drop';
+
+
+import { IdbService } from "./idb.service";
+import { SyncService } from "./sync.service";
+import { MessagingService } from "./messaging.service";
+
+
+import { BusinessComponent } from './business/business.component';
+
+import { MapComponent } from './map/map.component';
+
 import { CalendarComponent } from './calendar/calendar.component';
-import { UserActivityBySectionComponent } from './charts/user-activity-by-section/user-activity-by-section.component';
-import { OutcomeByCampaignComponent } from './charts/outcome-by-campaign/outcome-by-campaign.component';
 import { CalendarMonthComponent } from './calendar/calendar-month/calendar-month.component';
 import { CalendarDayComponent } from './calendar/calendar-day/calendar-day.component';
 import { CalendarScheduleComponent } from './calendar/calendar-schedule/calendar-schedule.component';
-import { SaleFormComponent } from './sale/sale-form/sale-form.component';
-import { SaleListComponent } from './sale/sale-list/sale-list.component';
-import { SaleTableComponent } from './sale/sale-table/sale-table.component';
-import { CampaignFormComponent } from './campaign/campaign-form/campaign-form.component';
-import { CampaignListComponent } from './campaign/campaign-list/campaign-list.component';
-import { CampaignTableComponent } from './campaign/campaign-table/campaign-table.component';
+import { CalendarYearComponent } from './calendar/calendar-year/calendar-year.component';
+
 import { TicketFormComponent } from './support/ticket-form/ticket-form.component';
 import { TicketListComponent } from './support/ticket-list/ticket-list.component';
 import { InvoicesComponent } from './support/invoices/invoices.component';
@@ -117,73 +87,47 @@ import { FaxServiceComponent } from './support/fax-service/fax-service.component
 import { AccountPasswordComponent } from './account/account-password/account-password.component';
 import { AccountSessionsComponent } from './account/account-sessions/account-sessions.component';
 import { AccountProfileComponent } from "./account/account-profile/account-profile.component";
-import { ServiceTypesComponent } from './settings/service-types/service-types.component';
-import { PiplineLeadComponent } from './pipline/pipline-lead/pipline-lead.component';
-import { PiplineDealComponent } from './pipline/pipline-deal/pipline-deal.component';
-import { PiplineSaleComponent } from './pipline/pipline-sale/pipline-sale.component';
-import { ProductCategoriesComponent } from './settings/product-categories/product-categories.component';
+
 import { RpdPipe } from './rpd.pipe';
 
 import { NgxMaskModule } from 'ngx-mask'
 
 import { NgxCurrencyModule } from "ngx-currency";
 import { Split3Pipe } from './split3.pipe';
-import { CalendarYearComponent } from './calendar/calendar-year/calendar-year.component';
-import { PeopleSelectComponent } from "./people/people-select/people-select.component";
-import { GeoSelectComponent } from './geo/geo-select/geo-select.component';
-import { CitySelectComponent } from './geo/city-select/city-select.component';
-import { StateSelectComponent } from './geo/state-select/state-select.component';
-import { CountrySelectComponent } from './geo/country-select/country-select.component';
-import { CompanyTypeSelectComponent } from './company/company-type-select/company-type-select.component';
-import { TelephonesInputComponent } from './contact/telephones-input/telephones-input.component';
-import { FaxesInputComponent } from './contact/faxes-input/faxes-input.component';
-import { PostalcodeInputComponent } from './contact/postalcode-input/postalcode-input.component';
-import { AddressTextInputComponent } from './contact/address-text-input/address-text-input.component';
-import { ContactComponent } from './contact/contact.component';
-import { CalendarInputComponent } from './calendar/calendar-input/calendar-input.component';
-import { CompanySelectComponent } from './company/company-select/company-select.component';
+import { FormTextInputComponent } from "./base/form/form-text-input/form-text-input.component";
+import { FormPriceInputComponent } from "./base/form/form-price-input/form-price-input.component";
+import { FormMobileInputComponent } from "./base/form/form-mobile-input/form-mobile-input.component";
+import { FormTelephoneInputComponent } from "./base/form/form-telephone-input/form-telephone-input.component";
+import { FormCalendarInputComponent } from "./base/form/form-calendar-input/form-calendar-input.component";
+import { FormCityInputComponent } from "./base/form/form-city-input/form-city-input.component";
+import { FormCountryInputComponent } from "./base/form/form-country-input/form-country-input.component";
+import { FormStateInputComponent } from "./base/form/form-state-input/form-state-input.component";
+import { FormLatlngInputComponent } from "./base/form/form-latlng-input/form-latlng-input.component";
+import { FormChipsInputComponent } from "./base/form/form-chips-input/form-chips-input.component";
+import { FormSelectInputComponent } from "./base/form/form-select-input/form-select-input.component";
+import { FormCheckboxInputComponent } from "./base/form/form-checkbox-input/form-checkbox-input.component";
+import { FormRadioInputComponent } from "./base/form/form-radio-input/form-radio-input.component";
+import { FormAutoCompleteInputComponent } from "./base/form/form-auto-complete-input/form-auto-complete-input.component";
+import { FormToggleInputComponent } from "./base/form/form-toggle-input/form-toggle-input.component";
+import { FormMultipleTextInputComponent } from "./base/form/form-multiple-text-input/form-multiple-text-input.component";
+import { FormComponent } from "./base/form/form.component";
+import { ContactInputComponent } from './crm/contact-input/contact-input.component';
+import { CompanyViewComponent } from './crm/company-view/company-view.component';
+import { ListComponent } from "./base/list/list.component";
+import { ObjectidViewComponent } from './base/report/objectid-view/objectid-view.component';
+import { ShortTextViewComponent } from './base/report/short-text-view/short-text-view.component';
+import { LongTextViewComponent } from './base/report/long-text-view/long-text-view.component';
+import { StarRatingViewComponent } from './base/report/star-rating-view/star-rating-view.component';
+import { ClubRatingViewComponent } from "./crm/club-rating-view/club-rating-view.component";
+import { ReportComponent } from "./base/report/report.component";
+import { ContactViewComponent } from './crm/contact-view/contact-view.component';
 
 
-const dynamicComponents = [
-  PeopleFormComponent,
-  PeopleTableComponent,
-  PeopleSearchComponent,
-  PeopleDeleteComponent,
-  PeopleListComponent,
-  CompanyDeleteComponent,
-  CompanyListComponent,
-  CompanyTableComponent,
-  CompanyFormComponent,
-  ComplaintDeleteComponent,
-  ComplaintFormComponent,
-  ComplaintTableComponent,
-  ComplaintListComponent,
-  ServiceDeleteComponent,
-  ServiceTableComponent,
-  ServiceListComponent,
-  ServiceFormComponent,
-  ProductDeleteComponent,
-  ProductListComponent,
-  ProductFormComponent,
-  ProductTableComponent,
-  CompanySearchComponent,
-  ComplaintSearchComponent,
-  ProductSearchComponent,
-  InteractionFormComponent,
-  InteractionTableComponent,
-  InteractionListComponent,
-  InteractionDeleteComponent,
-  UserActivityBySectionComponent,
-  OutcomeByCampaignComponent,
+export const dynamicComponents = [
+
   CalendarMonthComponent,
   CalendarDayComponent,
   CalendarScheduleComponent,
-  SaleFormComponent,
-  SaleListComponent,
-  SaleTableComponent,
-  CampaignFormComponent,
-  CampaignListComponent,
-  CampaignTableComponent,
   TicketFormComponent,
   TicketListComponent,
   AccountProfileComponent,
@@ -193,44 +137,77 @@ const dynamicComponents = [
   SmsServiceComponent,
   EmailServiceComponent,
   FaxServiceComponent,
-  ServiceTypesComponent,
-  PiplineLeadComponent,
-  PiplineDealComponent,
-  PiplineSaleComponent,
-  ProductCategoriesComponent
+
+  // Base components
+
+  FormComponent,
+  ReportComponent,
+
+  // views
+
+  CompanyViewComponent,
+
+
+  // Form Parts
+
+  FormTextInputComponent,
+  FormMultipleTextInputComponent,
+  FormPriceInputComponent,
+  FormMobileInputComponent,
+  FormTelephoneInputComponent,
+  FormCalendarInputComponent,
+  FormCityInputComponent,
+  FormCountryInputComponent,
+  FormStateInputComponent,
+  FormLatlngInputComponent,
+  FormChipsInputComponent,
+  FormSelectInputComponent,
+  FormCheckboxInputComponent,
+  FormRadioInputComponent,
+  FormToggleInputComponent,
+  FormAutoCompleteInputComponent,
+
+
+  // Business related form parts
+
+  ContactInputComponent,
+
+
+
+
+
+  // report views
+
+  ObjectidViewComponent,
+  ShortTextViewComponent,
+  LongTextViewComponent,
+  StarRatingViewComponent,
+
+  // Business related  report views
+  ClubRatingViewComponent,
 
 ];
 
-var primaryComponents = [AppComponent,
+export const primaryComponents = [AppComponent,
   AuthComponent,
   DashboardComponent,
-  CrmComponent,
+  BusinessComponent,
   MapComponent,
   CalendarComponent,
   RpdPipe,
   Split3Pipe,
-  PeopleSelectComponent,
   CalendarYearComponent,
-  GeoSelectComponent,
-  CitySelectComponent,
-  StateSelectComponent,
-  CountrySelectComponent,
-  CompanyTypeSelectComponent,
-  TelephonesInputComponent,
-  FaxesInputComponent,
-  PostalcodeInputComponent,
-  AddressTextInputComponent,
-  ContactComponent];
+];
 
 @NgModule({
   declarations: [
     ...primaryComponents,
     ...dynamicComponents,
-    CalendarInputComponent,
-    CompanySelectComponent,
+    ContactViewComponent,
+
 
   ],
-  entryComponents: [PeopleDeleteComponent],
+  entryComponents: [],
   imports: [
     NgxMaskModule.forRoot(),
     NgxCurrencyModule,

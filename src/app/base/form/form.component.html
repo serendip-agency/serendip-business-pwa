@@ -1,0 +1,64 @@
+<div class="widget">
+  <mat-card>
+    <mat-card-header>
+      <div mat-card-avatar>
+        <img [src]="'/assets/icons/' + entityIcon  +'.svg'" />
+      </div>
+      <mat-card-title>فرم اطلاعات
+        {{entityLabel}}
+      </mat-card-title>
+      <mat-card-subtitle *ngIf="!model._id">
+        ثبت
+        {{entityLabel}}
+        جدید
+      </mat-card-subtitle>
+
+      <mat-card-subtitle *ngIf="model._id">
+        ویرایش
+        {{entityLabel}}
+
+      </mat-card-subtitle>
+
+
+    </mat-card-header>
+    <mat-card-content>
+
+      <div class="logbox">
+        {{model | json}}
+      </div>
+      <form class="">
+
+        <div class="dynamic-form-part" *ngFor="let part of parts">
+
+
+          <ndc-dynamic *ngIf="part.componentName" [ndcDynamicInputs]="extendObj( { model : model[part.property]},part.inputs || {})"
+            [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.property)  }" [ndcDynamicComponent]="getDynamicPart(part.componentName)"></ndc-dynamic>
+
+          <div *ngIf="part.formName && part.propertyType == 'array'">
+
+            <div class="dynamic-sub-form" *ngFor="let subModel of model[part.property];let subModelIndex = index;trackBy:trackByFn">
+
+              <div class="dynamic-form-part" *ngFor="let _part of predefinedForms[part.formName].parts">
+
+                <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : subModel[_part.property]},_part.inputs || {})"
+                  [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.property,_part.property,subModelIndex)  }"
+                  [ndcDynamicComponent]="getDynamicPart(_part.componentName)"></ndc-dynamic>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </form>
+
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-raised-button color="primary" (click)="save()">ثبت</button>
+      <button mat-button type="reset" (click)="reset()">ریست</button>
+    </mat-card-actions>
+
+
+  </mat-card>
+</div>

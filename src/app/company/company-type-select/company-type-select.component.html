@@ -1,7 +1,0 @@
-<mat-form-field>
-  <mat-select placeholder="نوع شرکت" multiple [(ngModel)]="model" (selectionChange)="modelChange.emit(model)" name="type">
-    <mat-option *ngFor="let type of ['شریک تجاری','شرکت پخش','تامین کننده']" [value]="type">
-      {{type}}
-    </mat-option>
-  </mat-select>
-</mat-form-field>

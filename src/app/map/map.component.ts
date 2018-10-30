@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Input, ChangeDetectorRef } from '@angular/core';
 import { DashboardService } from '../dashboard.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CrmService } from '../crm.service';
+import { BusinessService } from '../business.service';
 import { GmapsService } from '../gmaps.service';
 import * as _ from 'underscore'
 import { Subscription } from 'rxjs';
@@ -31,7 +31,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private changeRef: ChangeDetectorRef,
-    public crmService: CrmService,
+    public businessService: BusinessService,
     public gmapsService: GmapsService,
   ) {
 

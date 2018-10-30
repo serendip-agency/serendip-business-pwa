@@ -8,7 +8,7 @@ import * as _ from "underscore";
   providedIn: "root"
 })
 export class DashboardService {
-  
+
 
   schema: any;
   currentSection: any = null;
@@ -32,7 +32,7 @@ export class DashboardService {
   }
 
   async setDefaultSchema() {
-    var model = await this.httpClient.get("schema/default.json").toPromise();
+    var model = await this.httpClient.get("schema/dashboard.json").toPromise();
     this.schema = model;
     localStorage.setItem(
       "schema",

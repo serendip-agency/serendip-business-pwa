@@ -1,0 +1,42 @@
+[
+    {
+        "name": "dashboard",
+        "title": "داشبورد",
+        "icon": "dashboard-1",
+        "tabs": [
+            {
+                "name": "crm-people-form-tab",
+                "title": "لیست شرکت ها",
+                "icon": "plus-add-2",
+                "widgets": [
+                    {
+                        "component": "ReportComponent",
+                        "inputs": {
+                            "entityLabelSingular": "شرکت",
+                            "entityLabelPlural": "شرکت ها",
+                            "title": "لیست شرکت ها",
+                            "subtitle": "گزارش, جست و جو و عملیات های دست جمعی",
+                            "entityName": "company",
+                            "listId" : "company-default"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "crm-company-form-tab",
+                "title": "فرم اطلاعات شرکت",
+                "icon": "plus-add-2",
+                "widgets": [
+                    {
+                        "component": "FormComponent",
+                        "inputs": {
+                            "formName": "crm-company-form",
+                            "entityName": "company",
+                            "entityLabel": "شرکت"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

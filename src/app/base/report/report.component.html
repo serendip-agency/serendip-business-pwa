@@ -1,0 +1,65 @@
+<div class="widget">
+  <mat-card class="table">
+    <mat-card-header>
+      <div mat-card-avatar>
+        <img [src]="'/assets/icons/' + icon  +'.svg'" />
+      </div>
+      <mat-card-title>
+        {{title}}
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        {{subtitle}}
+      </mat-card-subtitle>
+
+
+    </mat-card-header>
+    <mat-card-content>
+
+
+      <div class="report-model">
+
+
+      </div>
+
+
+      <div class="report-result" *ngIf="result">
+        {{ result.data.length}}
+
+        <div class="record" *ngFor="let record of result.data">
+
+          <div class="select">
+            <mat-checkbox></mat-checkbox>
+          </div>
+
+          <div class="field" *ngFor="let field of report.fields">
+
+            <div class="json" *ngIf="field.template == 'json'">
+              {{record[field.name] | json}}
+
+            </div>
+
+            <div class="raw" *ngIf="!field.template">
+              {{record[field.name]}}
+            </div>
+
+            <ndc-dynamic *ngIf="field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { model : record[field.name] },field.templateInputs || {})"
+              [ndcDynamicOutputs]="{  widgetCommand : widgetCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
+          </div>
+
+        </div>
+
+      </div>
+
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button class="pull-left">{{ entityLabelSingular }} جدید </button>
+
+
+      <div class="clearfix"></div>
+    </mat-card-actions>
+
+
+  </mat-card>
+</div>

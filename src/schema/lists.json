@@ -1,0 +1,27 @@
+{
+    "company-default": {
+        "report": {
+            "entity": "company",
+            "fields": [
+                {
+                    "name": "_id",
+                    "template": "ObjectidViewComponent"
+                },
+                {
+                    "name": "name",
+                    "template": "ShortTextViewComponent"
+                },
+                {
+                    "name": "contacts",
+                    "template": "json"
+                },
+                {
+                    "name": "__products",
+                    "method": "companyProducts",
+                    "template": "company-products"
+                }
+            ],
+            "queries": []
+        }
+    }
+}

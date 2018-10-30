@@ -1,4 +1,4 @@
-import { CrmService } from "./crm.service";
+import { BusinessService } from "./business.service";
 import { Injectable } from "@angular/core";
 import {
   CanActivate,
@@ -161,7 +161,7 @@ export class AuthService {
 export class AuthGuard implements CanActivate {
   constructor(
     private authService: AuthService,
-    private crmService: CrmService,
+    private businessService: BusinessService,
     private router: Router
   ) {}
 
@@ -171,7 +171,7 @@ export class AuthGuard implements CanActivate {
   ): boolean {
     const url: string = state.url;
 
-    if (this.authService.loggedIn && this.crmService.getActiveCrmId()) {
+    if (this.authService.loggedIn && this.businessService.getActiveBusinessId()) {
       return true;
     } else {
       if (!this.authService.loggedIn) {
@@ -182,9 +182,9 @@ export class AuthGuard implements CanActivate {
         return false;
       }
 
-      if (!this.crmService.getActiveCrmId()) {
+      if (!this.businessService.getActiveBusinessId()) {
         // Navigate to the login page with extras
-        this.router.navigate(["/crm"]);
+        this.router.navigate(["/business"]);
         return false;
       }
     }

@@ -1,0 +1,59 @@
+{
+  "crm-people-form": {
+    "parts": [
+      {
+        "componentName": "FormTextInputComponent",
+        "property": "firstName",
+        "propertyType": "string",
+        "inputs": {
+          "label": "نام "
+        }
+      }
+    ]
+  },
+  "crm-company-form": {
+    "parts": [
+      {
+        "componentName": "FormTextInputComponent",
+        "property": "name",
+        "propertyType": "string",
+        "inputs": {
+          "label": "نام شرکت"
+        }
+      },
+      {
+        "componentName": "FormSelectInputComponent",
+        "property": "type",
+        "propertyType": "string",
+        "inputs": {
+          "selectType": "multiple",
+          "label": "نوع شرکت",
+          "data": [
+            "شریک تجاری",
+            "شرکت پخش",
+            "تامین کننده"
+          ]
+        }
+      },
+      {
+        "property": "contacts",
+        "propertyType": "array",
+        "componentName": "ContactInputComponent"
+      }
+    ],
+    "defaultModel": {
+      "name": "",
+      "contacts": [
+        {
+          "telephones": [
+            ""
+          ],
+          "faxes": [
+            ""
+          ],
+          "address": {}
+        }
+      ]
+    }
+  }
+}

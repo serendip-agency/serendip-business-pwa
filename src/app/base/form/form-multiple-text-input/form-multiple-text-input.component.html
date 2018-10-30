@@ -1,0 +1,16 @@
+<mat-form-field *ngFor="let fax of  model; let b=index;trackBy:trackByFn">
+  <input *ngIf="type == 'single-line'" matInput [placeholder]="label + ' ' + rpd(b == 0 ? '' : b + 1) " [(ngModel)]="model[b]"
+    (change)="modelChange.emit(model)" [name]="SelectId + '_' + b" dir="ltr" />
+
+
+  <textarea *ngIf="type == 'multi-line'" matInput [placeholder]="label + ' ' + rpd(b == 0 ? '' : b + 1) " [name]="SelectId + '_' + b"
+    [(ngModel)]="model" (change)="modelChange.emit(model)"></textarea>
+
+
+  <div class="plus" *ngIf="b == 0" matSuffix (click)="model.push('');modelChange.emit(model);">
+    <img src="/assets/icons/plus-add-2.svg" />
+  </div>
+  <div class="minus" *ngIf="b != 0" matSuffix (click)="model.splice(b,1);modelChange.emit(model);">
+    <img src="/assets/icons/recycle-bin-trash.svg" />
+  </div>
+</mat-form-field>

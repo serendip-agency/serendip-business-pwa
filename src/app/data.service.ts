@@ -1,4 +1,4 @@
-import { CrmService } from "./crm.service";
+import { BusinessService } from "./business.service";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../environments/environment";
@@ -13,6 +13,7 @@ import { MessagingService } from "./messaging.service";
 import { UpdateMessage } from "./messaging/updateMessage";
 import { InsertMessage } from "./messaging/InsertMessage";
 import { DeleteMessage } from "./messaging/DeleteMessage";
+import { ReportQueryInterface, ReportFieldInterface, ReportModel } from "serendip-business-model";
 
 export interface DataRequestInterface {
   method: string;
@@ -21,6 +22,7 @@ export interface DataRequestInterface {
   raw?: boolean;
   retry?: boolean;
   host?: string;
+  modelName?: string;
 }
 
 @Injectable()
@@ -32,7 +34,7 @@ export class DataService {
     private http: HttpClient,
     private authService: AuthService,
     private idbService: IdbService,
-    private crmService: CrmService
+    private businessService: BusinessService
   ) { }
 
   private async requestError(opts: DataRequestInterface, error) {
@@ -68,11 +70,11 @@ export class DataService {
     try {
       const token = await this.authService.token();
 
-      if (!opts.model.crm) {
-        if (this.crmService.getActiveCrmId()) {
-          opts.model.crm = this.crmService.getActiveCrmId();
+      if (!opts.model._business) {
+        if (this.businessService.getActiveBusinessId()) {
+          opts.model._business = this.businessService.getActiveBusinessId();
         } else {
-          throw new Error("no crm set");
+          throw new Error("no business set");
         }
       }
 
@@ -118,7 +120,7 @@ export class DataService {
   ): Promise<A[]> {
     const res: any = await this.request({
       method: "POST",
-      path: `/api/crm/${controller}/zip`,
+      path: `/api/entity/${controller}/zip`,
       model: {
         from: from,
         to: to
@@ -158,13 +160,84 @@ export class DataService {
     } else {
       return this.request({
         method: "POST",
-        path: `/api/crm/${controller}/list`,
+        path: `/api/entity/${controller}/list`,
         model: {
           skip: skip,
           limit: limit
         }
       });
     }
+  }
+
+  async cacheReport(reportId: string) {
+
+    var report = this.request({
+      method: "POST",
+      path: `/api/entity/report`,
+      model: {
+        reportId: reportId,
+        zip: true
+      }
+    });
+
+  }
+
+
+  async report<A>(opts:
+    {
+      entity: string,
+      skip?: number,
+      limit?: number,
+      zip?: boolean,
+      fields?: ReportFieldInterface[],
+      queries?: ReportQueryInterface[],
+      reportId?: string,
+      reportName?: string,
+      reportSave?: boolean
+    }
+  ): Promise<ReportModel> {
+
+    if (opts.reportId) {
+      var cacheStore = await this.idbService.cacheIDB();
+      var cache = await cacheStore.get('report-' + opts.reportId);
+
+      if (cache)
+        return cache;
+    }
+
+    var requestOpts: DataRequestInterface = {
+      method: "POST",
+      path: `/api/entity/report`,
+      model: opts
+    };
+
+    if (opts.zip)
+      requestOpts.raw = true;
+
+    var requestResult = await this.request(requestOpts);
+
+    if (opts.zip) {
+
+      const data = requestResult.body;
+      if (!data) {
+        return null;
+      }
+
+      const zip = await JsZip.loadAsync(data, {
+        base64: false,
+        checkCRC32: true
+      });
+
+      const unzippedText: any = await zip.file("data.json").async("text");
+
+      const unzippedArray = JSON.parse(unzippedText);
+
+      return unzippedArray;
+
+    } else {
+      return requestResult;
+    }
+
   }
 
   async search<A>(
@@ -199,7 +272,7 @@ export class DataService {
     } else {
       return this.request({
         method: "POST",
-        path: `/api/crm/${controller}/search`,
+        path: `/api/entity/${controller}/search`,
         model: {
           take: take,
           query: query
@@ -216,7 +289,7 @@ export class DataService {
     } else {
       return this.request({
         method: "POST",
-        path: `/api/crm/${controller}/count`
+        path: `/api/entity/${controller}/count`
       });
     }
   }
@@ -230,7 +303,7 @@ export class DataService {
     } else {
       return this.request({
         method: "POST",
-        path: `/api/crm/${controller}/details`,
+        path: `/api/entity/${controller}/details`,
         model: model
       });
     }
@@ -250,24 +323,25 @@ export class DataService {
 
     return this.request({
       method: "POST",
-      path: `/api/crm/${controller}/changes`,
+      path: `/api/entity/${controller}/changes`,
       model: model
     });
   }
 
-  async insert<A>(controller: string, model: A): Promise<A> {
+  async insert<A>(controller: string, model: A, modelName?: string): Promise<A> {
 
     this.messagingService.publish(new InsertMessage(model), [controller]);
 
     return this.request({
       method: "POST",
-      path: `/api/crm/${controller}/insert`,
+      path: `/api/entity/${controller}/insert`,
       model: model,
+      modelName: modelName,
       retry: true
     });
   }
 
-  async update<A>(controller: string, model: A): Promise<A> {
+  async update<A>(controller: string, model: A, modelName?: string): Promise<A> {
     const store = await this.idbService.dataIDB(controller);
     store.set((model as any)._id, model);
 
@@ -275,8 +349,9 @@ export class DataService {
 
     return this.request({
       method: "POST",
-      path: `/api/crm/${controller}/update`,
+      path: `/api/entity/${controller}/update`,
       model: model,
+      modelName: modelName,
       retry: true
     });
   }
@@ -288,7 +363,7 @@ export class DataService {
 
     return this.request({
       method: "POST",
-      path: `/api/crm/${controller}/delete`,
+      path: `/api/entity/${controller}/delete`,
       model: model,
       retry: true
     });
