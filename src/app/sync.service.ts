@@ -16,7 +16,6 @@ export class SyncService {
 
 
   private collections: string[] = [
-    "people",
     "company"
   ]
 
@@ -37,7 +36,7 @@ export class SyncService {
     var lastSync: number;
 
     try {
-      var syncKeys = _.filter(await historyStore.keys(), (item : string) => {
+      var syncKeys = _.filter(await historyStore.keys(), (item: string) => {
         return item.toString().indexOf(collection) == 0
       }).reverse();
 
@@ -121,9 +120,9 @@ export class SyncService {
 
       if (pushes.length > 0)
         runInSeries(0);
-        else
+      else
         resolve();
-        
+
 
     });
 
@@ -170,9 +169,23 @@ export class SyncService {
 
   public async start(opts: syncOptions) {
 
-    await this.push(opts);
-    console.log('push done');
-    await this.pull(opts);
+    console.log('push start');
+    try {
+      await this.push(opts);
+      console.log('push done');
+    } catch (error) {
+      console.log('push fail');
+    }
+
+
+    console.log('pull start');
+    try {
+      await this.pull(opts);
+      console.log('pull done');
+    } catch (error) {
+      console.log('pull fail');
+
+    }
 
   }
 

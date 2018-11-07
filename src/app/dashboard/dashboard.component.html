@@ -1,6 +1,6 @@
 <app-calendar *ngIf="showCalendar"></app-calendar>
 
-<div class="dashboard-wrapper">
+<div class="dashboard-wrapper" [class.ready]="dashboardReady">
   <header id="header">
 
     <div class="shortcuts">
@@ -115,7 +115,7 @@
       </div>
 
 
-      <!-- 
+      <!--
       <div class="container-add" (click)="addContainer()">
         <img [src]='"/assets/icons/plus-add-2.svg"' />
       </div> -->
@@ -129,12 +129,12 @@
 
 
     </div>
-    <!-- 
+    <!--
     <nav>
       <a *ngFor="let item of dashboardService.getActiveTabs();trackBy:item?.title" [routerLink]="['/dashboard',dashboardService.currentSection.name,item.name]"
         routerLinkActive="active-link">
         <img [src]="item.icon ? '/assets/icons/' + item.icon + '.svg' : '/assets/icons/tabs/' + item.name + '.svg'" />
-  
+
         <span>
           {{item.title}}
         </span>
@@ -148,7 +148,7 @@
   <aside id="explorer" [class.hide]="!explorerVisible">
 
     <div class="explorer-inner">
-
+      <!--
       <div class="splitter">
         ابزار های فعال
       </div>
@@ -174,13 +174,13 @@
         </li>
 
 
-      </ul>
+      </ul> -->
 
       <div class="splitter">
         مدیریت مشتری
       </div>
       <ul class="crm">
-        <li *ngFor="let section of  getExplorerSections(dashboardService.schema)">
+        <li *ngFor="let section of  getExplorerSections(dashboardService.schema? dashboardService.schema.dashboard:[])">
           <a (click)="section.toggleUl = !section.toggleUl">
             <img [src]="'assets/icons/' + section.icon + '.svg'" />
             <span>
@@ -211,11 +211,11 @@
 
   </aside>
 
-  <div class="grid-container" [ngClass]="'f' + gridLayout.containers.length" [class.explorer-show]="explorerVisible"
+  <div class="grid-container" [ngClass]="'f' + grid.containers.length" [class.explorer-show]="explorerVisible"
     [class.go-back]="!explorerAnimDone">
 
     <div class="tabs-container" dndDropzone (dndDragover)="onTabDragover($event,c)" (dndDrop)="onTabDrop($event,c)"
-      *ngFor="let container of gridLayout.containers;let c = index">
+      *ngFor="let container of grid.containers;let c = index">
 
       <!--optional placeholder element for dropzone-->
       <!--will be removed from DOM on init-->
@@ -232,7 +232,7 @@
           [class.nextIsActive]="container.tabs[i + 1] && (container.tabs[i + 1].active )" [class.prevIsActive]="container.tabs[i - 1] && (container.tabs[i - 1].active )"
           [class.nextIsHover]="container.tabs[i + 1] && (container.tabs[i + 1].hover)" [class.prevIsHover]="container.tabs[i - 1] && (container.tabs[i - 1].hover)"
           [class.active]="tab.active" [class.hover]="tab.hover" (mouseenter)="tab.hover = !container.showTabs;"
-          (mouseout)="tab.hover = false;" (click)="setTabActive(tab,container);container.showTabs = false;">
+          (mouseout)="tab.hover = false;" (click)="setActive(tab,container);container.showTabs = false;">
 
           <a class="tab-handle" [title]="tab.title" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'"
             [dndDraggable]="{ containerIndex : c,tabIndex : i}">
@@ -251,7 +251,7 @@
 
         <li class="full-nav prevIsActive" (click)="container.showTabs = true">
 
-          <a class="tab-handle" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'" [dndDraggable]="{ containerIndex : c,tabIndex : i}">
+          <a class="tab-handle">
             <div class="tab-icon">
               {{ rpd(container.tabs.length)}}
             </div>
@@ -273,9 +273,9 @@
       </ul>
 
       <div *ngFor="let tab of container.tabs;let t = index" [hidden]="!tab.active || container.showTabs">
-        <div class="widget-container" *ngFor="let widget of getTabWidgets(tab)" [hidden]="widget.screen && widget.screen != dashboardService.screen">
+        <div class="widget-container" *ngFor="let widget of getWidgets(tab);let w = index" [hidden]="widget.screen && widget.screen != dashboardService.screen">
           <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="extendObj( { widgetId : widget.id , tab : tab},widget.inputs || {})"
-            [ndcDynamicOutputs]="{ widgetCommand : widgetCommand(widget,tab,container) , widgetTabChange : widgetTabChange(c,t),  widgetIdChange : widgetIdChange(widget) , widgetDataChange : widgetDataChange() }"
+            [ndcDynamicOutputs]="{ DashboardCommand : dashboardCommand(c,t,w) , TabChange : tabChange(c,t,w),  WidgetChange : widgetChange(c,t,w) }"
             [ndcDynamicComponent]="getComponent(widget.component)"></ndc-dynamic>
         </div>
       </div>
@@ -299,7 +299,7 @@
       </div>
       <nav>
         <ul>
-          <li *ngFor="let item of dashboardService.schema">
+          <li *ngFor="let item of dashboardService.schema ? dashboardService.schema.dashboard : []">
             <a [routerLink]="item.name == 'dashboard' ? ['/dashboard'] : ['/dashboard',item.name]">
               <img [src]="'assets/icons/' + item.icon + '.svg'" />
               <span>

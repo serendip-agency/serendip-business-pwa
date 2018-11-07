@@ -9,6 +9,7 @@ export class FormMultipleTextInputComponent implements OnInit {
   SelectId = `multiple-text-${Math.random().toString().split('.')[1]}`
 
 
+  @Input() label : string;
   @Input() type: 'single-line' | 'multi-line';
 
   constructor() { }

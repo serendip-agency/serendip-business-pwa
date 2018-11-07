@@ -150,13 +150,16 @@ export class DataService {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB(storeName);
 
-      const keys = await store.keys();
+      // const keys = _.take(_.rest(await store.keys(), skip), limit);
 
-      return Promise.all(
-        _.map(_.first(_.rest(keys, skip), limit), key => {
-          return store.get(key);
-        })
-      );
+      // console.log(keys);
+
+      // return Promise.all(
+      //   _.map(keys, key => {
+      //     return store.get(key);
+      //   })
+      // );
+      return store.list(skip,limit);
     } else {
       return this.request({
         method: "POST",
@@ -269,6 +272,7 @@ export class DataService {
       );
 
       return _.take(result, take);
+
     } else {
       return this.request({
         method: "POST",

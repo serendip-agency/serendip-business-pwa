@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { widgetCommandInterface } from 'src/app/models';
+import { WidgetCommandInterface } from 'src/app/models';
 
 @Component({
   selector: 'app-short-text-view',
@@ -8,8 +8,11 @@ import { widgetCommandInterface } from 'src/app/models';
 })
 export class ShortTextViewComponent implements OnInit {
 
-  @Output() widgetCommand: EventEmitter<widgetCommandInterface> = new EventEmitter<widgetCommandInterface>();
+  @Output() widgetCommand: EventEmitter<WidgetCommandInterface> = new EventEmitter<WidgetCommandInterface>();
   @Input() model: any;
+  @Input() label: any;
+  @Input() viewType: string;
+
   constructor() { }
 
   ngOnInit() {

@@ -1,0 +1,15 @@
+<div class="view">
+  <div class="label" *ngIf="viewType == 'label'">
+    {{label}}
+  </div>
+
+  <div class="cell" *ngIf="viewType != 'label'">
+    <div *ngIf="model[0]">
+      تلفن: <span class="en" [title]="model[0].telephones"> {{model[0].telephones || ' - '}}</span>
+      <br>
+      آدرس: <span [title]="model[0].address?.text "> {{ model[0].address?.text || ' - '}}</span>
+
+    </div>
+  </div>
+
+</div>

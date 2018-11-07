@@ -1,9 +1,13 @@
 <div class="widget">
   <mat-card class="table">
     <mat-card-header>
-      <div mat-card-avatar>
+
+
+
+      <div mat-card-avatar class="pull-right">
         <img [src]="'/assets/icons/' + icon  +'.svg'" />
       </div>
+
       <mat-card-title>
         {{title}}
       </mat-card-title>
@@ -12,49 +16,142 @@
         {{subtitle}}
       </mat-card-subtitle>
 
+      <div class="menu">
+        <img [src]="'/assets/icons/' + 'office-paper-work-bag'  +'.svg'" />
+      </div>
+
+      <div class="search" [class.active]="mode == 'report'" (click)="mode = mode == 'report' ? 'data':'report'">
+        <img [src]="'/assets/icons/' + 'search'  +'.svg'" />
+      </div>
+
 
     </mat-card-header>
     <mat-card-content>
 
+      <!-- <textarea class="logbox">{{ report | json}}</textarea> -->
 
-      <div class="report-model">
+      <div class="report-model" *ngIf="mode == 'report' && report">
 
+        <div class="fields">
 
-      </div>
+          <app-form-text-input [label]="'نام گزارش'" [model]="report.name || 'گزارش پیش فرض ' + entityLabelPlural"></app-form-text-input>
 
+          <div class="field" *ngFor="let field of objectKeys( fields)">
 
-      <div class="report-result" *ngIf="result">
-        {{ result.data.length}}
+            <div class="field-name">
+              <mat-checkbox [checked]="_.findWhere(report.fields, {name : field })" (change)="reportFieldChange(field,$event)">
+                {{fields[field].label}}
+              </mat-checkbox>
+            </div>
+            <div class="template-inputs" *ngIf="fields[field].templateInputsForm && _.findWhere(report.fields, {name : field })">
 
-        <div class="record" *ngFor="let record of result.data">
-
-          <div class="select">
-            <mat-checkbox></mat-checkbox>
-          </div>
-
-          <div class="field" *ngFor="let field of report.fields">
-
-            <div class="json" *ngIf="field.template == 'json'">
-              {{record[field.name] | json}}
-
+              <label for="">نحوه نمایش:</label>
+              <app-form [defaultModel]="fields[field].templateInputs" (widgetDataChange)="reportFieldInputsChange(field,$event)"
+                [formType]="'inline'" [name]="fields[field].templateInputsForm"></app-form>
             </div>
 
-            <div class="raw" *ngIf="!field.template">
-              {{record[field.name]}}
+
+            <div class="property-query" *ngIf=" _.findWhere(report.fields, {name : field })">
+              <label for="">فیلتر ها</label>
+              <app-form-select-input [data]="fields[field].queries" [model]="[]"></app-form-select-input>
             </div>
 
-            <ndc-dynamic *ngIf="field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { model : record[field.name] },field.templateInputs || {})"
-              [ndcDynamicOutputs]="{  widgetCommand : widgetCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
+            <div class="property-query" *ngFor="let query of _.findWhere(report.fields, {name : field }) ? fields[field].queries : []">
+
+              <label for="">
+                {{query.label}}
+              </label>
+
+              <app-form [formType]="'inline'" [defaultModel]="" [name]="'report-query-' + query.value"></app-form>
+            </div>
+
+
+
+
           </div>
+
 
         </div>
 
       </div>
 
+
+      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'" *ngIf="result && mode == 'data'">
+
+        <div class="report-header">
+
+          <div class="select">
+            <mat-checkbox></mat-checkbox>
+          </div>
+          <div class="field-label" *ngFor="let field of report.fields">
+            <ndc-dynamic *ngIf="fields[field.name].template && fields[field.name].template != 'json'"
+              [ndcDynamicInputs]="extendObj( { label : fields[field.name].label , viewType : 'label' } )"
+              [ndcDynamicOutputs]="{  widgetCommand : widgetCommand.emit   }" [ndcDynamicComponent]="getViewComponent(fields[field.name].template)"></ndc-dynamic>
+          </div>
+        </div>
+
+        <mat-progress-bar *ngIf="resultLoading" [color]="'warn'"  [mode]="'indeterminate'">
+        </mat-progress-bar>
+
+        <div class="records" *ngIf="!resultLoading">
+          <div class="record" *ngFor="let record of result.data;trackBy: trackByFn">
+
+            <div class="select">
+              <mat-checkbox></mat-checkbox>
+            </div>
+
+            <div class="field" *ngFor="let field of report.fields">
+
+              <div class="json" *ngIf="fields[field.name].template == 'json'">
+                {{record[field.name] | json}}
+              </div>
+
+              <div class="raw" *ngIf="!fields[field.name].template">
+                {{record[field.name]}}
+              </div>
+
+              <ndc-dynamic *ngIf="fields[field.name].template && fields[field.name].template != 'json'"
+                [ndcDynamicInputs]="extendObj( { label : fields[field.name].label , model : record[field.name] }, field.templateInputs ||  fields[field.name].templateInputs || {})"
+                [ndcDynamicOutputs]="{  widgetCommand : widgetCommand.emit   }" [ndcDynamicComponent]="getViewComponent(fields[field.name].template)"></ndc-dynamic>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
     </mat-card-content>
 
-    <mat-card-actions>
-      <button mat-button class="pull-left">{{ entityLabelSingular }} جدید </button>
+    <mat-card-actions *ngIf="mode == 'report'">
+      <button mat-raised-button [color]="'primary'" (click)="mode = 'data';refresh()">
+        <img src="assets/icons/seen-visible-1.svg" />
+        مشاهده نتیجه </button>
+
+      <button mat-button class="pull-left">
+        <img src="assets/icons/save-backup-1.svg" />
+        ذخیره آفلاین
+      </button>
+      <div class="clearfix"></div>
+    </mat-card-actions>
+
+
+    <mat-card-actions *ngIf="mode == 'data'">
+
+      <button mat-button>{{ entityLabelSingular }} جدید </button>
+
+      <div class="paginator pull-left" *ngIf="result && result.count">
+
+        <div class="next" (click)="nextPage()">
+          <img src="assets/icons/arrow-left-back-10.svg" />
+        </div>
+        <div class="current">
+          {{ pageIndex + 1 | rpd }}
+          -
+          {{ pageCount | rpd }}
+        </div>
+        <div class="prev" (click)="prevPage()">
+          <img src="assets/icons/arrow-right-next-10.svg" />
+        </div>
+      </div>
 
 
       <div class="clearfix"></div>

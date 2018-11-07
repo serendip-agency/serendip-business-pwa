@@ -112,27 +112,27 @@ export class AppComponent implements OnInit, OnDestroy {
 
     });
 
-    if (this.crmService.getActiveBusinessId() && this.authService.loggedIn)
+    if (this.crmService.getActiveBusinessId())
       setTimeout(() => {
         this.snackBar.open('همگام سازی شروع شد ...', '', { duration: 1000 });
         var syncStart = Date.now();
-        // this.syncService
-        //   .start({
-        //     onCollectionSync: (collection) => {
-        //       this.collectionSynced.unshift(collection);
-        //       console.log(collection + ' synced');
-        //     }
-        //   }
-        //   )
-        //   .then(() => {
+        this.syncService
+          .start({
+            onCollectionSync: (collection) => {
+              this.collectionSynced.unshift(collection);
+              console.log(collection + ' synced');
+            }
+          }
+          )
+          .then(() => {
 
-        //     this.snackBar.open(`همگام سازی در ${this.rpd(((Date.now() - syncStart) / 1000).toFixed(1))} ثانیه انجام شد.`, '', { duration: 10000 });
-        //     //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
-        //   }).catch((e) => {
-        //     this.snackBar.open('همگام سازی با خطا مواجه شد.', '', { duration: 3000 });
-        //     console.error(e);
-        //   });
-      }, 3000);
+            this.snackBar.open(`همگام سازی در ${this.rpd(((Date.now() - syncStart) / 1000).toFixed(1))} ثانیه انجام شد.`, '', { duration: 10000 });
+            //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
+          }).catch((e) => {
+            this.snackBar.open('همگام سازی با خطا مواجه شد.', '', { duration: 3000 });
+            console.error(e);
+          });
+      }, 1000);
 
 
   }

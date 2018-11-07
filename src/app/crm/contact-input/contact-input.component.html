@@ -1,6 +1,9 @@
 <div *ngFor="let contact of model">
-
   <app-form-text-input [model]="contact.name" [label]="'نام اطلاعات تماس'" (modelChange)="contact.name = $event;inputsChange()"></app-form-text-input>
+
+  <app-form-multiple-text-input [model]="contact.telephones" [label]="'شماره تلفن'" (modelChange)="contact.telephones = $event;inputsChange()"></app-form-multiple-text-input>
+
+  <app-form-multiple-text-input [model]="contact.faxes" [label]="'شماره فکس'" (modelChange)="contact.faxes = $event;inputsChange()"></app-form-multiple-text-input>
 
   <app-form-state-input [model]="contact.address.state" (modelChange)="contact.address.state = $event;inputsChange()"></app-form-state-input>
 

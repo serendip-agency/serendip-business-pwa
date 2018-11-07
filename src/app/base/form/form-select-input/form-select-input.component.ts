@@ -24,13 +24,13 @@ export class FormSelectInputComponent implements OnInit {
 
   @Output() modelChange = new EventEmitter<any>();
 
-  private _model: string;
+  private _model: any;
 
-  @Input() set model(value: string) {
+  @Input() set model(value: any) {
     this._model = value;
   }
 
-  get model(): string {
+  get model(): any {
     return this._model;
   }
 

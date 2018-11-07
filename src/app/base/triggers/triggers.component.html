@@ -1,0 +1,187 @@
+<mat-card class="table">
+  <mat-card-header>
+
+    <div mat-card-avatar class="pull-right">
+      <img [src]="'/assets/icons/' + 'complaints-customize-customer-voice-3'  +'.svg'" />
+    </div>
+
+    <mat-card-title>
+      روال‌های کاری برای {{ label }}
+    </mat-card-title>
+
+    <mat-card-subtitle>
+      اعلان، وظایف ،عملیات‌ها و یکپارچه سازی
+    </mat-card-subtitle>
+
+
+    <div class="search" [class.active]="mode == 'model'" (click)="mode = mode == 'model' ? 'data':'model'">
+      <img [src]="'/assets/icons/' + 'plus-add-3'  +'.svg'" />
+    </div>
+
+
+  </mat-card-header>
+  <mat-card-content>
+
+    <!-- <textarea class="logbox"> {{model | json}} </textarea> -->
+    <!-- <textarea class="logbox">{{ report | json}}</textarea> -->
+
+    <form class="trigger-model" *ngIf="mode == 'model' ">
+
+      <div>
+        <app-form-text-input [label]="'نام روال'" [model]="model.name" (modelChange)="model.name = $event"></app-form-text-input>
+      </div>
+      <div>
+        <app-form-select-input [model]="model.on || 'create'" [selectType]="'single'" [label]="'زمان اجرا'" [data]="[{ value : 'create',label:'هنگام ساخت'},{ value : 'update',label:'هنگام تغییر'},{ value : 'delete',label:'هنگام حذف'}]"></app-form-select-input>
+      </div>
+
+      <div>
+        <label for="">گیره‌های اینترنتی</label>
+        <p>برای ارسال اطلاعات به
+          <span class="en">API</span>
+          دیگر نرم‌افزارها</p>
+
+        <div class="double-field">
+          <div class="w-60">
+            <app-form-text-input dir="ltr" [label]="'آدرس اینترنتی'" [model]="model.name" (modelChange)="model.name = $event"></app-form-text-input>
+          </div>
+          <div class="w-40">
+
+            <app-form-chips-input [label]="'فیلدهایی که ارسال خواهند شد'" [selectType]="'multiple'"></app-form-chips-input>
+          </div>
+        </div>
+      </div>
+
+
+      <div>
+        <label for="">اعلان‌ها</label>
+        <div class="double-field">
+
+          <div class="w-60">
+            <app-form-text-input [label]="'موضوع اعلان'" [model]="model.name" (modelChange)="model.name = $event"></app-form-text-input>
+          </div>
+
+          <div class="w-40">
+            <app-form-select-input [model]="model.on || ['sms','fax','push','email']" [selectType]="'multiple'" [label]="'نوع اعلان'" [data]="notificationTypes"></app-form-select-input>
+          </div>
+
+
+        </div>
+
+        <div class="double-field">
+
+          <div class="w-50">
+            <app-form-select-input [label]="'قالب اعلان'"></app-form-select-input>
+          </div>
+
+          <div class="w-50">
+            <app-form-select-input [label]="'اشخاص دریافت کننده'"></app-form-select-input>
+          </div>
+
+          <div class="w-50">
+            <app-form-select-input [label]="'گروه‌های کاربری دریافت کننده'"></app-form-select-input>
+          </div>
+
+          <div class="w-50">
+            <app-form-select-input [label]="'کاربران دریافت کننده'"></app-form-select-input>
+          </div>
+        </div>
+
+      </div>
+
+
+      <div>
+        <label for="">وظایف</label>
+        <p>با استفاده از این بخش می‌توانید پس از اجرا شدن هر روال، وظایفی را به کاربران خود محول کنید.</p>
+        <div class="double-field">
+
+          <div class="w-50">
+            <app-form-text-input [label]="'عنوان وظیفه'" [model]="model.name" (modelChange)="model.name = $event"></app-form-text-input>
+          </div>
+
+          <div class="w-50">
+            <app-form-text-input [type]="'multi-line'" [label]="'شرح وظیفه'"></app-form-text-input>
+          </div>
+
+          <div class="w-50">
+            <app-form-select-input [label]="'گروه‌های کاربری دریافت کننده'"></app-form-select-input>
+          </div>
+
+          <div class="w-50">
+            <app-form-select-input [label]="'کاربران دریافت کننده'"></app-form-select-input>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!--</div>
+      <div class="fields">
+
+        <app-form-text-input [label]="'نام گزارش'" [model]="report.name || 'گزارش پیش فرض ' + entityLabelPlural"></app-form-text-input>
+
+        <div class="field" *ngFor="let field of objectKeys( fields)">
+
+          <div class="field-name">
+            <mat-checkbox [checked]="_.findWhere(report.fields, {name : field })" (change)="reportFieldChange(field,$event)">
+              {{fields[field].label}}
+            </mat-checkbox>
+          </div>
+          <div class="template-inputs" *ngIf="fields[field].templateInputsForm && _.findWhere(report.fields, {name : field })">
+
+            <label for="">نحوه نمایش:</label>
+            <app-form [defaultModel]="fields[field].templateInputs" (widgetDataChange)="reportFieldInputsChange(field,$event)"
+              [formType]="'inline'" [name]="fields[field].templateInputsForm"></app-form>
+          </div>
+
+
+          <div class="property-query" *ngIf=" _.findWhere(report.fields, {name : field })">
+            <label for="">فیلتر ها</label>
+            <app-form-select-input [data]="fields[field].queries" [model]="[]"></app-form-select-input>
+          </div>
+
+          <div class="property-query" *ngFor="let query of _.findWhere(report.fields, {name : field }) ? fields[field].queries : []">
+
+            <label for="">
+              {{query.label}}
+            </label>
+
+            <app-form [formType]="'inline'" [defaultModel]="" [name]="'report-query-' + query.value"></app-form>
+          </div>
+
+
+
+
+        </div>
+
+
+      </div> -->
+
+    </form>
+
+
+    <div class="trigger-list" *ngIf="  mode == 'list'">
+
+
+    </div>
+
+  </mat-card-content>
+
+
+  <mat-card-actions *ngIf="mode == 'model'">
+
+    <button mat-button> ذخیره </button>
+
+    <div class="clearfix"></div>
+
+  </mat-card-actions>
+
+  <mat-card-actions *ngIf="mode == 'list'">
+
+    <button mat-button>روال جدید </button>
+
+
+    <div class="clearfix"></div>
+  </mat-card-actions>
+
+
+</mat-card>

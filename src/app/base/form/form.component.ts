@@ -1,17 +1,19 @@
-
-
-
-import { Component, OnInit, ChangeDetectorRef, Input, EventEmitter, Output } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  Input,
+  EventEmitter,
+  Output
+} from "@angular/core";
 import { DataService } from "../../data.service";
-import * as _ from 'underscore';
+import * as _ from "underscore";
 import { IdbService, Idb } from "../../idb.service";
-import { tabInterface, widgetCommandInterface } from "src/app/models";
 
 import { FormTextInputComponent } from "./form-text-input/form-text-input.component";
 import { FormPriceInputComponent } from "./form-price-input/form-price-input.component";
 import { FormMobileInputComponent } from "./form-mobile-input/form-mobile-input.component";
 import { FormTelephoneInputComponent } from "./form-telephone-input/form-telephone-input.component";
-import { FormCalendarInputComponent } from "./form-calendar-input/form-calendar-input.component";
 import { FormCityInputComponent } from "./form-city-input/form-city-input.component";
 import { FormCountryInputComponent } from "./form-country-input/form-country-input.component";
 import { FormStateInputComponent } from "./form-state-input/form-state-input.component";
@@ -24,188 +26,171 @@ import { FormAutoCompleteInputComponent } from "./form-auto-complete-input/form-
 import { FormToggleInputComponent } from "./form-toggle-input/form-toggle-input.component";
 import { FormMultipleTextInputComponent } from "./form-multiple-text-input/form-multiple-text-input.component";
 import { HttpClient } from "@angular/common/http";
-import { FormsService } from "src/app/forms.service";
 import { ContactInputComponent } from "src/app/crm/contact-input/contact-input.component";
-
-
+import { DashboardService } from "src/app/dashboard.service";
+import { FormDateInputComponent } from "./form-date-input/form-date-input.component";
+import { FormRelativeDateInputComponent } from "./form-relative-date-input/form-relative-date-input.component";
+import { WidgetCommandInterface } from "src/app/models";
+import {
+  DashboardTabInterface,
+  DashboardWidgetInterface,
+  FormPartInterface,
+  FormInterface
+} from "src/app/schema";
 
 @Component({
-    selector: 'app-form',
-    templateUrl: './form.component.html',
-    styleUrls: ['./form.component.less']
+  selector: "app-form",
+  templateUrl: "./form.component.html",
+  styleUrls: ["./form.component.less"]
 })
 export class FormComponent implements OnInit {
-    predefinedForms: any;
+  constructor(
+    public dataService: DataService,
+    public httpClient: HttpClient,
+    public ref: ChangeDetectorRef,
+    private dashboardService: DashboardService,
+    public idbService: IdbService
+  ) {}
 
+  _ = _;
 
-    constructor(public dataService: DataService,
-        public httpClient: HttpClient,
-        public formsService: FormsService,
-        public ref: ChangeDetectorRef,
-        public idbService: IdbService) {
+  @Input()
+  model: any = false;
 
-    }
+  @Input()
+  formSchema: FormInterface;
+  @Input()
+  formsSchema: FormInterface[];
 
+  @Input()
+  entityName: string;
+  @Input()
+  entityModelName: string;
+  @Input()
+  entityLabel: string;
+  @Input()
+  entityIcon: string = "folder-archive-open";
+  @Input()
+  saveState: boolean;
 
-    model: any = {};
+  @Input()
+  defaultModel: any = {};
+  @Input()
+  mode: "form" | "triggers" = "form";
 
-    @Input() entityName: string;
-    @Input() entityModelName: string;
-    @Input() entityLabel: string;
-    @Input() entityIcon: string = 'folder-archive-open';
+  @Input()
+  documentId: string;
 
-    @Input() defaultModel: any = {};
+  @Input()
+  formType: string;
 
+  @Output()
+  WidgetChange = new EventEmitter<DashboardWidgetInterface>();
 
+  @Output()
+  DashboardCommand = new EventEmitter<WidgetCommandInterface>();
 
-    /**
-     * unique identifier for this widget. using for state management
-     */
-    @Input() widgetId: string;
-    @Input() documentId: string;
-    @Input() tab: any;
+  @Output()
+  TabChange = new EventEmitter<DashboardTabInterface>();
 
-    @Output() widgetIdChange = new EventEmitter<string>();
-    @Output() widgetDataChange = new EventEmitter<any>();
-    @Output() widgetCommand = new EventEmitter<widgetCommandInterface>();
-    @Output() widgetTabChange = new EventEmitter<tabInterface>();
+  @Input()
+  parts: FormPartInterface[];
 
+  @Input()
+  name: string;
 
-    @Input() parts: { formName?: string, propertyType?: string, componentName?: string, property: string, inputs?: {} }[];
+  stateDb: Idb;
+  async save() {
+    if (!this.model._id) {
+      var insertResponse = await this.dataService.insert(
+        this.entityName,
+        this.model,
+        this.entityModelName
+      );
+      this.documentId = insertResponse._id;
+      this.model = insertResponse;
+      this.TabChange.emit({
+        title: "ویرایش  " + this.entityLabel + " " + this.model.name
+      });
+    } else
+      this.dataService.update(
+        this.entityName,
+        this.model,
+        this.entityModelName
+      );
+  }
 
-    @Input() formName: string;
+  reset() {
+    if (Object.keys(this.defaultModel).length > 0)
+      this.model = this.defaultModel;
+    else this.model = this.formSchema.defaultModel;
 
+    this.ref.detectChanges();
+  }
 
-    stateDb: Idb;
-    async save() {
+  async detectChange() {
+    this.ref.detectChanges();
 
-        if (!this.model._id) {
-            var insertResponse = await this.dataService.insert(this.entityName, this.model,this.entityModelName);
-            this.documentId = insertResponse._id;
-            this.model = insertResponse;
-            this.widgetTabChange.emit({ title: 'ویرایش  ' + this.entityLabel + ' ' + this.model.name });
-        } else
-            this.dataService.update(this.entityName, this.model,this.entityModelName);
+    this.WidgetChange.emit({ inputs: { model: this.model } });
+  }
+  trackByFn(index: any, item: any) {
+    return index;
+  }
 
+  findFormInSchema(formName): FormInterface {
+    return _.findWhere(this.formsSchema, { name: formName });
+  }
 
-        var stateDb = await this.idbService.userIDB("state");
-        var savedState = await stateDb.get(this.widgetId);
+  async ngOnInit() {
+    //this.ref.detach();
 
-        if (savedState)
-            stateDb.delete(this.widgetId);
+    if (!this.formsSchema && !this.formSchema)
+      this.formsSchema = this.dashboardService.schema.forms;
 
-    }
+    if (!this.formSchema)
+      this.formSchema = _.findWhere(this.formsSchema, { name: this.name });
 
-    reset() {
-        if (this.defaultModel)
-            this.model = _.clone(this.defaultModel);
-        else
-            this.model = {};
+    if (!this.model) this.reset();
 
-        this.ref.detectChanges();
+    this.ref.detectChanges();
+  }
 
-    }
+  private DynamicParts = {
+    FormTextInputComponent,
+    FormMultipleTextInputComponent,
+    FormPriceInputComponent,
+    FormMobileInputComponent,
+    FormTelephoneInputComponent,
+    FormCityInputComponent,
+    FormCountryInputComponent,
+    FormStateInputComponent,
+    FormLatlngInputComponent,
+    FormChipsInputComponent,
+    FormSelectInputComponent,
+    FormCheckboxInputComponent,
+    FormRadioInputComponent,
+    FormToggleInputComponent,
+    FormAutoCompleteInputComponent,
+    ContactInputComponent,
+    FormDateInputComponent,
+    FormRelativeDateInputComponent
+  };
 
-    async detectChange() {
+  getDynamicPart(componentName) {
+    return this.DynamicParts[componentName];
+  }
 
-        this.ref.detectChanges();
+  extendObj(obj1, obj2) {
+    return _.extend({}, obj1, obj2);
+  }
 
-        this.widgetDataChange.emit(this.model);
-        var stateKey: string = this.widgetId;
-        if (!stateKey) {
-            this.widgetId = stateKey = 'form' + '-' + Date.now() + '-' + Math.random().toString().split('.')[1];
-            this.widgetIdChange.emit(this.widgetId);
-            this.model._widgetId = this.widgetId;
-        }
-        await this.stateDb.set(stateKey, { id: stateKey, componentName: 'form', model: this.model, tab: this.tab });
+  dynamicPartModelChange(property) {
+    return newSubModel => {
+      console.log("form property change", property, newSubModel);
 
-    }
-    trackByFn(index: any, item: any) { return index; }
+      this.model[property] = newSubModel;
 
-    async ngOnInit() {
-
-        //this.ref.detach();
-
-        this.predefinedForms = await this.formsService.predefinedForms();
-
-
-        if (this.formName) {
-            this.parts = this.predefinedForms[this.formName].parts;
-            this.defaultModel = this.predefinedForms[this.formName].defaultModel;
-        }
-
-
-        this.reset();
-
-        this.stateDb = await this.idbService.userIDB("state");
-        var savedState;
-
-        try {
-            savedState = await this.stateDb.get(this.widgetId);
-        } catch (error) { }
-
-        if (savedState)
-            this.model = savedState.model;
-        else
-            if (this.documentId) {
-                var model: any = await this.dataService.details(this.entityName, this.documentId);
-
-                this.model = model;
-
-                this.widgetTabChange.emit({ title: 'ویرایش  ' + this.entityLabel + ' ' + this.model.name })
-            }
-
-        this.ref.detectChanges();
-    }
-
-
-    private DynamicFormParts = {
-
-        FormTextInputComponent,
-        FormMultipleTextInputComponent,
-        FormPriceInputComponent,
-        FormMobileInputComponent,
-        FormTelephoneInputComponent,
-        FormCalendarInputComponent,
-        FormCityInputComponent,
-        FormCountryInputComponent,
-        FormStateInputComponent,
-        FormLatlngInputComponent,
-        FormChipsInputComponent,
-        FormSelectInputComponent,
-        FormCheckboxInputComponent,
-        FormRadioInputComponent,
-        FormToggleInputComponent,
-        FormAutoCompleteInputComponent,
-        ContactInputComponent
-    }
-
-
-
-    getDynamicPart(componentName) {
-        return this.DynamicFormParts[componentName];
-
-    }
-
-    extendObj(obj1, obj2) {
-        return _.extend({}, obj1, obj2);
-    }
-
-    dynamicPartModelChange(property, subProperty, subModelIndex) {
-
-        return (newSubModel) => {
-
-            console.log(property, subModelIndex, subProperty, newSubModel);
-
-            if (property && !subProperty)
-                this.model[property] = newSubModel;
-
-            if (property && subProperty)
-                this.model[property][subModelIndex][subProperty] = newSubModel;
-
-
-            this.detectChange();
-        };
-
-    }
+      this.detectChange();
+    };
+  }
 }

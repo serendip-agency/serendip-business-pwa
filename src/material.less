@@ -14,6 +14,64 @@
     stroke-width: 4px !important;
 }
 
+.mat-card-header {
+    display: block !important;
+    .mat-card-header-text {
+        float: right;
+    }
+    .mat-card-avatar {
+        float: right;
+    }
+    &:after {
+        clear: both;
+        display: block;
+        content: ' ';
+    }
+}
+
+.mat-card-header {
+    .menu,
+    .action,
+    .search {
+        float: left;
+        width: 50px;
+        height: 50px;
+        border-radius: 100%;
+        margin-right: 5px;
+        transition: all e ase .5s;
+        img {
+            width: 100%;
+            height: 100%;
+            padding: 4px;
+            box-sizing: border-box;
+            opacity: .7;
+        }
+    }
+    .search:hover,
+    .search.active {
+        background: #DBE8FF;
+    }
+    .menu:hover,
+    .menu.active {
+        background: #F3E0C2;
+    }
+
+    .action:hover,
+    .action.active {
+        background: #F3E0C2;
+    }
+}
+
+.mat-button,
+.mat-raised-button {
+    img {
+        width: 24px;
+        height: 24px;
+        display: inline-block;
+        vertical-align: baseline;
+    }
+}
+
 .mat-simple-snackbar,
 .mat-tab-label,
 .mat-card,
@@ -50,7 +108,7 @@
 .toggle-field {
     margin: 10px 0;
 }
-
+textarea{min-height: 100px;}
 .double-field {
     &:after {
         clear: both;
@@ -62,25 +120,32 @@
         width: 50%;
         float: right;
     }
-    .w-20 , .mat-form-field.w-20 {
+    .w-20,
+    .mat-form-field.w-20 {
         width: 20%;
     }
-    .w-30 , .mat-form-field.w-30 {
+    .w-30,
+    .mat-form-field.w-30 {
         width: 30%;
     }
-    .w-40 , .mat-form-field.w-40 {
+    .w-40,
+    .mat-form-field.w-40 {
         width: 40%;
     }
-    .w-50 , .mat-form-field.w-50 {
+    .w-50,
+    .mat-form-field.w-50 {
         width: 50%;
     }
-    .w-60, .mat-form-field.w-60 {
+    .w-60,
+    .mat-form-field.w-60 {
         width: 60%;
     }
-    .w-70 , .mat-form-field.w-70 {
+    .w-70,
+    .mat-form-field.w-70 {
         width: 70%;
     }
-    .w-80 , .mat-form-field.w-80 {
+    .w-80,
+    .mat-form-field.w-80 {
         width: 80%;
     }
 }
@@ -95,9 +160,10 @@
     }
 }
 
-.mat-slider-horizontal{
-    width:100%;
+.mat-slider-horizontal {
+    width: 100%;
 }
+
 input[dir=ltr] {
     text-align: left;
     direction: ltr;

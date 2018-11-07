@@ -1,21 +1,134 @@
-.report-model {}
+
+
+.report-model {
+    border-top: 4px solid rgb(240, 240, 240);
+    border-right: 4px solid rgb(240, 240, 240);
+    border-radius: 0 15px 0 0;
+    padding: 5px 10px;
+    margin-bottom: 30px;
+
+    
+    label {
+        padding: 0;
+        margin: 0;
+        line-height: 30px;
+        font-size: 13px;
+        font-weight: 100;
+    }
+    .template-inputs,
+    .property-query {
+        border-top: 2px solid rgb(240, 240, 240);
+        border-right: 2px solid rgb(240, 240, 240);
+        border-radius: 0;
+        padding: 5px;
+        margin: 0;
+        max-width: 240px;
+        display: inline-block;
+        vertical-align: top;
+        font-size: 11px;
+        .label {
+            font-size: 12px;
+        }
+    }
+    .field-name {
+        display: inline-block;
+        width: 120px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        border-bottom: 2px solid rgb(240, 240, 240);
+        line-height: 36px;
+    }
+    .fields {
+        .field {
+            margin: 10px;
+            font-size: 12px;
+        }
+    }
+}
 
 .report-result {
-    .record {
+    width: 100%;
+    
+    position: relative;
+    padding-top: 60px;
+    overflow-x: scroll;
+
+    .records{
+        
+    }
+    .record,
+    .report-header {
         white-space: nowrap;
         box-sizing: border-box;
-        border-bottom: 1px solid #777;
-        padding: 5px 0;
+        padding: 0;
+        &:after {
+            clear: both;
+            display: block;
+            content: ' ';
+        }
         .field,
+        .field-label,
         .select {
             display: inline-block;
+            border-top: 1px solid #ccc;
+            border-bottom: 2px solid #eee;
             vertical-align: top;
             line-height: 30px;
-            padding: 0 10px;
+            padding: 0 5px;
         }
         .select {
             line-height: 60px;
             padding: 0;
         }
+        .label {
+            font-weight: bold;
+        }
+    }
+    .report-header {
+        position: absolute;
+        top: 0;
+        right:0;
+        width: 100%;
+
+        .field,
+        .field-label,
+        .select {
+            border-top: none;
+
+        }
+    }
+}
+
+.paginator {
+    direction: ltr;
+    user-select: none;
+    .next,
+    .current,
+    .prev {
+        display: inline-block;
+        vertical-align: middle;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        text-align: center;
+        img {
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+        }
+    }
+    .next,
+    .prev {
+        cursor: pointer;
+        transition: all ease .3s;
+        border-radius: 100%;
+        &:hover {
+            background: #ddd;
+        }
+    }
+    .current {
+        font-size: 17px;
+        font-weight: bold;
+        width: auto;
     }
 }

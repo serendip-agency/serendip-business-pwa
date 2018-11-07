@@ -1,6 +1,12 @@
 <div class="view">
-  <div class="cell">
-  {{model}}
 
+
+  <div class="label" *ngIf="viewType == 'label'">
+    {{label}}
+  </div>
+
+
+  <div class="cell" *ngIf="viewType != 'label'">
+    {{model}}
   </div>
 </div>

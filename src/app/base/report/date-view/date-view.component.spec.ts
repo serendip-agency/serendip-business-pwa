@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FormCalendarInputComponent } from './form-calendar-input.component';
+import { DateViewComponent } from './date-view.component';
 
-describe('FormCalendarInputComponent', () => {
-  let component: FormCalendarInputComponent;
-  let fixture: ComponentFixture<FormCalendarInputComponent>;
+describe('DateViewComponent', () => {
+  let component: DateViewComponent;
+  let fixture: ComponentFixture<DateViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ FormCalendarInputComponent ]
+      declarations: [ DateViewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(FormCalendarInputComponent);
+    fixture = TestBed.createComponent(DateViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

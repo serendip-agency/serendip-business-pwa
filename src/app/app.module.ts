@@ -5,7 +5,6 @@ import { NgModule } from "@angular/core";
 import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
-
 import {
   MatCheckboxModule,
   MatNativeDateModule,
@@ -53,52 +52,46 @@ import { AppRoutingModule } from "./app-routing.module";
 
 import { DynamicModule } from "ng-dynamic-component";
 
-
 import * as _ from "underscore";
 
+import { NgxChartsModule } from "@swimlane/ngx-charts";
 
-
-import { NgxChartsModule } from '@swimlane/ngx-charts'
-
-import { DndModule } from 'ngx-drag-drop';
-
+import { DndModule } from "ngx-drag-drop";
 
 import { IdbService } from "./idb.service";
 import { SyncService } from "./sync.service";
 import { MessagingService } from "./messaging.service";
 
+import { BusinessComponent } from "./business/business.component";
 
-import { BusinessComponent } from './business/business.component';
+import { MapComponent } from "./map/map.component";
 
-import { MapComponent } from './map/map.component';
+import { CalendarComponent } from "./calendar/calendar.component";
+import { CalendarMonthComponent } from "./calendar/calendar-month/calendar-month.component";
+import { CalendarDayComponent } from "./calendar/calendar-day/calendar-day.component";
+import { CalendarScheduleComponent } from "./calendar/calendar-schedule/calendar-schedule.component";
+import { CalendarYearComponent } from "./calendar/calendar-year/calendar-year.component";
 
-import { CalendarComponent } from './calendar/calendar.component';
-import { CalendarMonthComponent } from './calendar/calendar-month/calendar-month.component';
-import { CalendarDayComponent } from './calendar/calendar-day/calendar-day.component';
-import { CalendarScheduleComponent } from './calendar/calendar-schedule/calendar-schedule.component';
-import { CalendarYearComponent } from './calendar/calendar-year/calendar-year.component';
-
-import { TicketFormComponent } from './support/ticket-form/ticket-form.component';
-import { TicketListComponent } from './support/ticket-list/ticket-list.component';
-import { InvoicesComponent } from './support/invoices/invoices.component';
-import { SmsServiceComponent } from './support/sms-service/sms-service.component';
-import { EmailServiceComponent } from './support/email-service/email-service.component';
-import { FaxServiceComponent } from './support/fax-service/fax-service.component';
-import { AccountPasswordComponent } from './account/account-password/account-password.component';
-import { AccountSessionsComponent } from './account/account-sessions/account-sessions.component';
+import { TicketFormComponent } from "./support/ticket-form/ticket-form.component";
+import { TicketListComponent } from "./support/ticket-list/ticket-list.component";
+import { InvoicesComponent } from "./support/invoices/invoices.component";
+import { SmsServiceComponent } from "./support/sms-service/sms-service.component";
+import { EmailServiceComponent } from "./support/email-service/email-service.component";
+import { FaxServiceComponent } from "./support/fax-service/fax-service.component";
+import { AccountPasswordComponent } from "./account/account-password/account-password.component";
+import { AccountSessionsComponent } from "./account/account-sessions/account-sessions.component";
 import { AccountProfileComponent } from "./account/account-profile/account-profile.component";
 
-import { RpdPipe } from './rpd.pipe';
+import { RpdPipe } from "./rpd.pipe";
 
-import { NgxMaskModule } from 'ngx-mask'
+import { NgxMaskModule } from "ngx-mask";
 
 import { NgxCurrencyModule } from "ngx-currency";
-import { Split3Pipe } from './split3.pipe';
+import { Split3Pipe } from "./split3.pipe";
 import { FormTextInputComponent } from "./base/form/form-text-input/form-text-input.component";
 import { FormPriceInputComponent } from "./base/form/form-price-input/form-price-input.component";
 import { FormMobileInputComponent } from "./base/form/form-mobile-input/form-mobile-input.component";
 import { FormTelephoneInputComponent } from "./base/form/form-telephone-input/form-telephone-input.component";
-import { FormCalendarInputComponent } from "./base/form/form-calendar-input/form-calendar-input.component";
 import { FormCityInputComponent } from "./base/form/form-city-input/form-city-input.component";
 import { FormCountryInputComponent } from "./base/form/form-country-input/form-country-input.component";
 import { FormStateInputComponent } from "./base/form/form-state-input/form-state-input.component";
@@ -111,20 +104,23 @@ import { FormAutoCompleteInputComponent } from "./base/form/form-auto-complete-i
 import { FormToggleInputComponent } from "./base/form/form-toggle-input/form-toggle-input.component";
 import { FormMultipleTextInputComponent } from "./base/form/form-multiple-text-input/form-multiple-text-input.component";
 import { FormComponent } from "./base/form/form.component";
-import { ContactInputComponent } from './crm/contact-input/contact-input.component';
-import { CompanyViewComponent } from './crm/company-view/company-view.component';
-import { ListComponent } from "./base/list/list.component";
-import { ObjectidViewComponent } from './base/report/objectid-view/objectid-view.component';
-import { ShortTextViewComponent } from './base/report/short-text-view/short-text-view.component';
-import { LongTextViewComponent } from './base/report/long-text-view/long-text-view.component';
-import { StarRatingViewComponent } from './base/report/star-rating-view/star-rating-view.component';
+import { ContactInputComponent } from "./crm/contact-input/contact-input.component";
+import { CompanyViewComponent } from "./crm/company-view/company-view.component";
+import { ObjectidViewComponent } from "./base/report/objectid-view/objectid-view.component";
+import { ShortTextViewComponent } from "./base/report/short-text-view/short-text-view.component";
+import { LongTextViewComponent } from "./base/report/long-text-view/long-text-view.component";
+import { StarRatingViewComponent } from "./base/report/star-rating-view/star-rating-view.component";
 import { ClubRatingViewComponent } from "./crm/club-rating-view/club-rating-view.component";
 import { ReportComponent } from "./base/report/report.component";
-import { ContactViewComponent } from './crm/contact-view/contact-view.component';
-
+import { ContactViewComponent } from "./crm/contact-view/contact-view.component";
+import { ContactsViewComponent } from "./crm/contacts-view/contacts-view.component";
+import { DateViewComponent } from "./base/report/date-view/date-view.component";
+import { CurrencyViewComponent } from "./base/report/currency-view/currency-view.component";
+import { TriggersComponent } from "./base/triggers/triggers.component";
+import { FormDateInputComponent } from "./base/form/form-date-input/form-date-input.component";
+import { FormRelativeDateInputComponent } from "./base/form/form-relative-date-input/form-relative-date-input.component";
 
 export const dynamicComponents = [
-
   CalendarMonthComponent,
   CalendarDayComponent,
   CalendarScheduleComponent,
@@ -139,14 +135,13 @@ export const dynamicComponents = [
   FaxServiceComponent,
 
   // Base components
-
+  TriggersComponent,
   FormComponent,
   ReportComponent,
 
   // views
 
   CompanyViewComponent,
-
 
   // Form Parts
 
@@ -155,7 +150,6 @@ export const dynamicComponents = [
   FormPriceInputComponent,
   FormMobileInputComponent,
   FormTelephoneInputComponent,
-  FormCalendarInputComponent,
   FormCityInputComponent,
   FormCountryInputComponent,
   FormStateInputComponent,
@@ -166,15 +160,12 @@ export const dynamicComponents = [
   FormRadioInputComponent,
   FormToggleInputComponent,
   FormAutoCompleteInputComponent,
-
+  FormDateInputComponent,
+  FormRelativeDateInputComponent,
 
   // Business related form parts
 
   ContactInputComponent,
-
-
-
-
 
   // report views
 
@@ -182,13 +173,16 @@ export const dynamicComponents = [
   ShortTextViewComponent,
   LongTextViewComponent,
   StarRatingViewComponent,
-
+  DateViewComponent,
+  CurrencyViewComponent,
   // Business related  report views
   ClubRatingViewComponent,
-
+  ContactViewComponent,
+  ContactsViewComponent
 ];
 
-export const primaryComponents = [AppComponent,
+export const primaryComponents = [
+  AppComponent,
   AuthComponent,
   DashboardComponent,
   BusinessComponent,
@@ -196,17 +190,11 @@ export const primaryComponents = [AppComponent,
   CalendarComponent,
   RpdPipe,
   Split3Pipe,
-  CalendarYearComponent,
+  CalendarYearComponent
 ];
 
 @NgModule({
-  declarations: [
-    ...primaryComponents,
-    ...dynamicComponents,
-    ContactViewComponent,
-
-
-  ],
+  declarations: [...primaryComponents, ...dynamicComponents],
   entryComponents: [],
   imports: [
     NgxMaskModule.forRoot(),
@@ -252,7 +240,7 @@ export const primaryComponents = [AppComponent,
     MatSortModule,
     MatPaginatorModule,
     MatMomentDateModule,
-    MatBottomSheetModule,
+    MatBottomSheetModule
   ],
   providers: [
     DataService,
@@ -266,4 +254,4 @@ export const primaryComponents = [AppComponent,
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

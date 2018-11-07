@@ -34,8 +34,9 @@ export class FormChipsInputComponent implements OnInit {
   @Input() selectType: 'single' | 'multiple' = 'multiple';
 
   @Input() entityName: string;
+  @Input() label: string;
 
-  private _model: string[];
+  private _model: string[] = [];
 
 
   @Input() set model(value: string[]) {

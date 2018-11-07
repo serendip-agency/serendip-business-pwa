@@ -1,4 +1,4 @@
-<div class="widget">
+<div class="widget" *ngIf="formType != 'inline'">
   <mat-card>
     <mat-card-header>
       <div mat-card-avatar>
@@ -19,38 +19,22 @@
 
       </mat-card-subtitle>
 
+      <div class="action" [class.active]="mode == 'triggers'" (click)="mode = mode == 'triggers' ? 'form':'triggers'">
+        <img [src]="'/assets/icons/' + 'complaints-customize-customer-voice-3'  +'.svg'" />
+      </div>
 
     </mat-card-header>
-    <mat-card-content>
+    <mat-card-content *ngIf="mode == 'form'">
 
-      <div class="logbox">
-        {{model | json}}
-      </div>
-      <form class="">
+      <!-- <textarea  class="logbox">{{model | json}}</textarea> -->
 
-        <div class="dynamic-form-part" *ngFor="let part of parts">
+      <ng-container *ngTemplateOutlet="form"></ng-container>
+
+    </mat-card-content>
+
+    <mat-card-content *ngIf="mode == 'triggers'">
 
 
-          <ndc-dynamic *ngIf="part.componentName" [ndcDynamicInputs]="extendObj( { model : model[part.property]},part.inputs || {})"
-            [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.property)  }" [ndcDynamicComponent]="getDynamicPart(part.componentName)"></ndc-dynamic>
-
-          <div *ngIf="part.formName && part.propertyType == 'array'">
-
-            <div class="dynamic-sub-form" *ngFor="let subModel of model[part.property];let subModelIndex = index;trackBy:trackByFn">
-
-              <div class="dynamic-form-part" *ngFor="let _part of predefinedForms[part.formName].parts">
-
-                <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : subModel[_part.property]},_part.inputs || {})"
-                  [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.property,_part.property,subModelIndex)  }"
-                  [ndcDynamicComponent]="getDynamicPart(_part.componentName)"></ndc-dynamic>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-
-      </form>
 
     </mat-card-content>
 
@@ -62,3 +46,21 @@
 
   </mat-card>
 </div>
+
+<div class="inline-form" *ngIf="formType =='inline'">
+  <ng-container *ngTemplateOutlet="form"></ng-container>
+</div>
+
+
+<ng-template #form>
+  <form class="">
+
+    <div class="dynamic-form-part" *ngFor="let part of formSchema.parts">
+
+      <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : model[part.propertyName]},part.inputs || {})"
+        [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.propertyName)  }" [ndcDynamicComponent]="getDynamicPart(part.componentName)"></ndc-dynamic>
+
+    </div>
+
+  </form>
+</ng-template>

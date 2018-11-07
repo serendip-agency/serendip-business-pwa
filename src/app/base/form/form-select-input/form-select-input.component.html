@@ -1,8 +1,8 @@
 <mat-form-field>
-  <mat-select [placeholder]="label" [multiple]="selectType" [(ngModel)]="model" (selectionChange)="modelChange.emit(model)"
+  <mat-select [placeholder]="label" [multiple]="selectType == 'multiple'" [(ngModel)]="model" (selectionChange)="modelChange.emit( model.value ||  model)"
     name="type">
-    <mat-option *ngFor="let type of data" [value]="type">
-      {{type}}
+    <mat-option *ngFor="let type of data" [value]="type.value || type">
+      {{type.label || type}}
     </mat-option>
   </mat-select>
 </mat-form-field>

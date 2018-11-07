@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CalendarInputComponent } from './calendar-input.component';
+import { ContactsViewComponent } from './contacts-view.component';
 
-describe('CalendarInputComponent', () => {
-  let component: CalendarInputComponent;
-  let fixture: ComponentFixture<CalendarInputComponent>;
+describe('ContactsViewComponent', () => {
+  let component: ContactsViewComponent;
+  let fixture: ComponentFixture<ContactsViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ CalendarInputComponent ]
+      declarations: [ ContactsViewComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CalendarInputComponent);
+    fixture = TestBed.createComponent(ContactsViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

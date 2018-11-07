@@ -32,9 +32,50 @@ export class Idb {
         cursor.continue();
       });
 
-      return tx.complete.then(() => keys);
+      return tx.complete.then(() => { console.log('keys done'); return keys; });
     });
+
   };
+
+  list(skip, limit) {
+
+
+    return this.dbPromise.then(db => {
+
+      var tx = db.transaction(this.store);
+      var records = [];
+      var ostore = tx.objectStore(this.store);
+
+      var recordSkipped = 0;
+
+      // This would be this.store.getAllKeys(), but it isn't supported by Edge or Safari.
+      // openKeyCursor isn't supported by Safari, so we fall back
+
+     
+      ostore.iterateCursor((cursor) => {
+
+        if (!cursor) return;
+
+        console.log(cursor);
+
+        if (recordSkipped >= skip)
+          records.push(cursor.value);
+        else
+          recordSkipped++;
+
+        if (records.length == limit)
+          return;
+
+        cursor.continue();
+
+      });
+
+      return tx.complete.then(() => { return records; });
+
+    });
+
+
+  }
 
   get(key) {
     return this.dbPromise.then(db => {

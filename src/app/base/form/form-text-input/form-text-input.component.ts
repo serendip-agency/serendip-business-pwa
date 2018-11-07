@@ -14,7 +14,19 @@ export class FormTextInputComponent implements OnInit {
 
   @Input() type: 'single-line' | 'multi-line';
 
+
+  private _model: string;
+
+  @Input() set model(value: string) {
+    this._model = value;
+  }
+
+  get model(): string {
+    return this._model;
+  }
+
   @Input() label: string;
+  @Output() modelChange = new EventEmitter<any>();
 
   constructor() { }
 
@@ -29,17 +41,7 @@ export class FormTextInputComponent implements OnInit {
     this.modelChange.emit(this.model);
   }
 
-  @Output() modelChange = new EventEmitter<any>();
 
-  private _model: string;
-
-  @Input() set model(value: string) {
-    this._model = value;
-  }
-
-  get model(): string {
-    return this._model;
-  }
 
   rpd(input) {
     if (!input) { input = ""; }

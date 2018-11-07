@@ -50,8 +50,8 @@ This set of fonts are used in this project under the license: (.....)
     url('assets/fonts/iranyekanwebregular.woff') format('woff'), /* FF3.6+, IE9, Chrome6+, Saf5.1+*/
     url('assets/fonts/iranyekanwebregular.ttf') format('truetype');
 }
-  @import url('https://fonts.googleapis.com/css?family=Roboto');
 
+// @import url('https://fonts.googleapis.com/css?family=Roboto');
 // * {
 //     transition: none !important;
 // }
@@ -70,11 +70,11 @@ This set of fonts are used in this project under the license: (.....)
     opacity: .5;
 }
 
-
-.en , .en *{
-    font-family: 'Roboto', sans-serif!important;
-
+.en,
+.en * {
+    font-family: 'Roboto', sans-serif !important;
 }
+
 input,
 select,
 button,
@@ -165,11 +165,11 @@ ngx-charts-number-card .cell .trimmed-label {
 }
 
 .pull-left {
-    float: left;
+    float: left !important;
 }
 
 .pull-right {
-    float: right;
+    float: right !important;
 }
 
 .clearfix {
@@ -592,10 +592,8 @@ label {
                 }
             }
             &.table {
-                max-width: 860px;
-                table {
-                    min-width: 700px;
-                }
+                max-width: 900px;
+                min-width: 900px;
             }
             &.chart {
                 max-height: calc(~"100vh - 130px");
@@ -630,6 +628,7 @@ label {
 
 @media(max-width:860px) {
     .grid-container .tabs-container {
+        max-height: unset;
         min-height: 100vh;
         .tabs-nav {
             width: 100%;
@@ -678,6 +677,7 @@ label {
                     min-width: 100%;
                     width: 100%;
                 }
+                &.table {}
                 .mat-card-content {}
                 &.chart,
                 .mat-card-content {
@@ -698,6 +698,7 @@ label {
             width: 100%;
             min-width: 100%;
             max-width: 100%;
+            max-height: unset;
             display: block;
         }
     }
@@ -738,14 +739,14 @@ div.timepicker {
     background: #444;
     color: chartreuse;
     direction: ltr;
-    padding: 13px;
+    padding: 5px;
     box-sizing: border-box;
     font-size: 11px;
-    font-family: tahoma !important;
+    font-family: 'Roboto' !important;
     text-align: left;
-    margin: 30px auto;
-    border-radius: 10px; // display: none;
-    // display: none;
+    margin: 0 auto; // display: none;
+    width: 100%;
+    min-height: 300px; // display: none;
 }
 
 #start {
@@ -793,14 +794,13 @@ body.hideScroll {
     content: ' ';
 }
 
-.widget {
-    form .mat-form-field,
-    table {
-        width: 100%;
-    }
-    form {
-        margin-top: 0;
-    }
+.mat-form-field,
+table {
+    width: 100% !important;
+}
+
+form {
+    margin-top: 0;
 }
 
 .form-group {

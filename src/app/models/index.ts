@@ -1,31 +1,7 @@
-export interface widgetInterface {
-    id?: string;
-    component: string;
-    inputs?: any;
-}
-
-export interface tabInterface {
-    active?: boolean;
-    widgets?: widgetInterface[];
-    icon?: string;
-    title?: string;
-}
-
-export interface containerInterface {
-
-    showTabs?: boolean;
-    tabs: tabInterface[];
-}
 
 
-export interface gridInterface {
 
-    containers: containerInterface[]
-
-}
-
-
-export interface widgetCommandInterface {
+export interface WidgetCommandInterface {
 
     command: 'openWidget' | 'refreshWidget';
     documentId?: string;

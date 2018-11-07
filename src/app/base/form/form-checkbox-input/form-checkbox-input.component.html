@@ -1,3 +1,23 @@
-<p>
-  form-checkbox-input works!
-</p>
+
+<mat-checkbox *ngIf="!data"
+class="example-margin"
+[color]="color"
+[checked]="model"
+(change)="modelChange.emit($event.checked)"
+[disabled]="disabled">
+ {{label}}
+</mat-checkbox>
+
+
+
+<div  *ngFor="let item of data || []; let b=index;trackBy:trackByFn">
+<mat-checkbox
+class="example-margin"
+[color]="color"
+[checked]="model.indexOf(item.value || item) !== -1"
+[value]="item.value || item"
+(change)="checkboxInArrayChange($event,item,b)"
+[disabled]="disabled">
+ {{item.label || item}} {{ item.value || item}}
+</mat-checkbox>
+</div>
