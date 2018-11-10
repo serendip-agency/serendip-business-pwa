@@ -13,10 +13,15 @@ import { MessagingService } from "./messaging.service";
 import { UpdateMessage } from "./messaging/updateMessage";
 import { InsertMessage } from "./messaging/InsertMessage";
 import { DeleteMessage } from "./messaging/DeleteMessage";
-import { ReportQueryInterface, ReportFieldInterface, ReportModel } from "serendip-business-model";
+import {
+  ReportFieldQueryInterface,
+  ReportFieldInterface,
+  ReportModel,
+  ReportInterface
+} from "serendip-business-model";
 
 export interface DataRequestInterface {
-  method: string;
+  method: string | "POST" | "GET";
   path: string;
   model?: any;
   raw?: boolean;
@@ -35,7 +40,7 @@ export class DataService {
     private authService: AuthService,
     private idbService: IdbService,
     private businessService: BusinessService
-  ) { }
+  ) {}
 
   private async requestError(opts: DataRequestInterface, error) {
     if (error.status === 401) {
@@ -44,12 +49,12 @@ export class DataService {
 
     console.error(error, opts);
 
-    if (error.status !== 400)
+    if (error.status !== 400) {
       if (opts.retry) {
         const store = await this.idbService.syncIDB("push");
         store.set(Date.now(), { opts: opts, error: error.toString() });
       }
-
+    }
   }
 
   public async request(opts: DataRequestInterface): Promise<any> {
@@ -100,9 +105,9 @@ export class DataService {
         result = await this.http
           .get(
             opts.host +
-            opts.path +
-            "?" +
-            utils.querystring.fromObject(opts.model),
+              opts.path +
+              "?" +
+              utils.querystring.fromObject(opts.model),
             options
           )
           .toPromise();
@@ -150,16 +155,7 @@ export class DataService {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB(storeName);
 
-      // const keys = _.take(_.rest(await store.keys(), skip), limit);
-
-      // console.log(keys);
-
-      // return Promise.all(
-      //   _.map(keys, key => {
-      //     return store.get(key);
-      //   })
-      // );
-      return store.list(skip,limit);
+      return store.list(skip, limit);
     } else {
       return this.request({
         method: "POST",
@@ -173,54 +169,44 @@ export class DataService {
   }
 
   async cacheReport(reportId: string) {
-
-    var report = this.request({
-      method: "POST",
-      path: `/api/entity/report`,
-      model: {
-        reportId: reportId,
-        zip: true
-      }
-    });
-
+    const reportStore = await this.idbService.reportIDB();
+    await reportStore.set(
+      reportId,
+      await this.request({
+        method: "POST",
+        path: `/api/entity/report`,
+        model: {
+          reportId: reportId,
+          zip: true
+        }
+      })
+    );
   }
 
-
-  async report<A>(opts:
-    {
-      entity: string,
-      skip?: number,
-      limit?: number,
-      zip?: boolean,
-      fields?: ReportFieldInterface[],
-      queries?: ReportQueryInterface[],
-      reportId?: string,
-      reportName?: string,
-      reportSave?: boolean
-    }
-  ): Promise<ReportModel> {
-
-    if (opts.reportId) {
-      var cacheStore = await this.idbService.cacheIDB();
-      var cache = await cacheStore.get('report-' + opts.reportId);
-
-      if (cache)
-        return cache;
-    }
-
-    var requestOpts: DataRequestInterface = {
+  async reports() {
+    return this.request({ path: "/api/entity/reports", method: "POST" });
+  }
+  async report<A>(opts: {
+    entity: string;
+    skip?: number;
+    limit?: number;
+    zip?: boolean;
+    save?: boolean;
+    report: ReportInterface;
+  }): Promise<ReportModel> {
+    const requestOpts: DataRequestInterface = {
       method: "POST",
       path: `/api/entity/report`,
       model: opts
     };
 
-    if (opts.zip)
+    if (opts.zip) {
       requestOpts.raw = true;
+    }
 
-    var requestResult = await this.request(requestOpts);
+    const requestResult = await this.request(requestOpts);
 
     if (opts.zip) {
-
       const data = requestResult.body;
       if (!data) {
         return null;
@@ -236,11 +222,9 @@ export class DataService {
       const unzippedArray = JSON.parse(unzippedText);
 
       return unzippedArray;
-
     } else {
       return requestResult;
     }
-
   }
 
   async search<A>(
@@ -272,7 +256,6 @@ export class DataService {
       );
 
       return _.take(result, take);
-
     } else {
       return this.request({
         method: "POST",
@@ -332,8 +315,11 @@ export class DataService {
     });
   }
 
-  async insert<A>(controller: string, model: A, modelName?: string): Promise<A> {
-
+  async insert<A>(
+    controller: string,
+    model: A,
+    modelName?: string
+  ): Promise<A> {
     this.messagingService.publish(new InsertMessage(model), [controller]);
 
     return this.request({
@@ -345,7 +331,11 @@ export class DataService {
     });
   }
 
-  async update<A>(controller: string, model: A, modelName?: string): Promise<A> {
+  async update<A>(
+    controller: string,
+    model: A,
+    modelName?: string
+  ): Promise<A> {
     const store = await this.idbService.dataIDB(controller);
     store.set((model as any)._id, model);
 

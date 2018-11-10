@@ -1,41 +1,21 @@
-export interface ReportFieldQueryInterface {
-  method: "eq" | "neq" | "lt" | "lte" | "gt" | "gte" | "in" | "nin";
-  label: string;
-}
-
-export interface ReportFieldInterface {
-  name?: string;
-  label?: string;
-  template?: string;
-  templateInputs?: any;
-  templateInputsForm?: string;
-  fieldQueries?: ReportFieldQueryInterface[];
-}
-
-export interface ReportInterface {
-  reportName: string;
-  reportEnityName: string;
-  reportFields: ReportFieldInterface[];
-}
+import { ReportInterface } from "serendip-business-model";
 
 export const ReportsSchema: ReportInterface[] = [
-  {
-    reportName: "company-default",
-    reportEnityName: "company",
 
-    reportFields: [
+  {
+    name: "company-default",
+    entityName: "company",
+    label: "",
+    fields: [
       {
+        enabled: true,
         name: "_id",
         label: "شناسه سند",
         template: "ObjectidViewComponent",
-        fieldQueries: [
-          {
-            method: "eq",
-            label: "برابر باشد با"
-          }
-        ]
+        queries: [{ label: "برابر باشد با", method: "eq" }]
       },
       {
+        enabled: true,
         name: "_cdate",
         label: "تاریخ ثبت",
         template: "DateViewComponent",
@@ -45,6 +25,7 @@ export const ReportsSchema: ReportInterface[] = [
         }
       },
       {
+        enabled: true,
         name: "_vdate",
         label: "تاریخ ورژن",
         template: "DateViewComponent",
@@ -53,11 +34,13 @@ export const ReportsSchema: ReportInterface[] = [
         }
       },
       {
+        enabled: true,
         name: "name",
         label: "نام شرکت",
         template: "ShortTextViewComponent"
       },
       {
+        enabled: true,
         name: "contacts",
         label: "اطلاعات تماس",
         template: "ContactsViewComponent"

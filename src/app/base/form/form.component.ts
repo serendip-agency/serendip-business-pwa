@@ -36,7 +36,7 @@ import {
   DashboardWidgetInterface,
   FormPartInterface,
   FormInterface
-} from "src/app/schema";
+} from "serendip-business-model";
 
 @Component({
   selector: "app-form",
@@ -44,6 +44,27 @@ import {
   styleUrls: ["./form.component.less"]
 })
 export class FormComponent implements OnInit {
+  private DynamicParts = {
+    FormTextInputComponent,
+    FormMultipleTextInputComponent,
+    FormPriceInputComponent,
+    FormMobileInputComponent,
+    FormTelephoneInputComponent,
+    FormCityInputComponent,
+    FormCountryInputComponent,
+    FormStateInputComponent,
+    FormLatlngInputComponent,
+    FormChipsInputComponent,
+    FormSelectInputComponent,
+    FormCheckboxInputComponent,
+    FormRadioInputComponent,
+    FormToggleInputComponent,
+    FormAutoCompleteInputComponent,
+    ContactInputComponent,
+    FormDateInputComponent,
+    FormRelativeDateInputComponent
+  };
+
   constructor(
     public dataService: DataService,
     public httpClient: HttpClient,
@@ -69,14 +90,24 @@ export class FormComponent implements OnInit {
   @Input()
   entityLabel: string;
   @Input()
-  entityIcon: string = "folder-archive-open";
+  entityIcon = "folder-archive-open";
   @Input()
   saveState: boolean;
 
   @Input()
   defaultModel: any = {};
   @Input()
-  mode: "form" | "triggers" = "form";
+  private _mode: "form" | "triggers" = "form";
+  public get mode(): "form" | "triggers" {
+    return this._mode;
+  }
+  public set mode(value: "form" | "triggers") {
+    if (this._mode !== value) {
+      this.WidgetChange.emit({ inputs: { mode: value } });
+    }
+
+    this._mode = value;
+  }
 
   @Input()
   documentId: string;
@@ -102,7 +133,7 @@ export class FormComponent implements OnInit {
   stateDb: Idb;
   async save() {
     if (!this.model._id) {
-      var insertResponse = await this.dataService.insert(
+      const insertResponse = await this.dataService.insert(
         this.entityName,
         this.model,
         this.entityModelName
@@ -112,18 +143,21 @@ export class FormComponent implements OnInit {
       this.TabChange.emit({
         title: "ویرایش  " + this.entityLabel + " " + this.model.name
       });
-    } else
+    } else {
       this.dataService.update(
         this.entityName,
         this.model,
         this.entityModelName
       );
+    }
   }
 
   reset() {
-    if (Object.keys(this.defaultModel).length > 0)
+    if (Object.keys(this.defaultModel).length > 0) {
       this.model = this.defaultModel;
-    else this.model = this.formSchema.defaultModel;
+    } else {
+      this.model = this.formSchema.defaultModel;
+    }
 
     this.ref.detectChanges();
   }
@@ -142,39 +176,22 @@ export class FormComponent implements OnInit {
   }
 
   async ngOnInit() {
-    //this.ref.detach();
+    // this.ref.detach();
 
-    if (!this.formsSchema && !this.formSchema)
+    if (!this.formsSchema && !this.formSchema) {
       this.formsSchema = this.dashboardService.schema.forms;
+    }
 
-    if (!this.formSchema)
+    if (!this.formSchema) {
       this.formSchema = _.findWhere(this.formsSchema, { name: this.name });
+    }
 
-    if (!this.model) this.reset();
+    if (!this.model) {
+      this.reset();
+    }
 
     this.ref.detectChanges();
   }
-
-  private DynamicParts = {
-    FormTextInputComponent,
-    FormMultipleTextInputComponent,
-    FormPriceInputComponent,
-    FormMobileInputComponent,
-    FormTelephoneInputComponent,
-    FormCityInputComponent,
-    FormCountryInputComponent,
-    FormStateInputComponent,
-    FormLatlngInputComponent,
-    FormChipsInputComponent,
-    FormSelectInputComponent,
-    FormCheckboxInputComponent,
-    FormRadioInputComponent,
-    FormToggleInputComponent,
-    FormAutoCompleteInputComponent,
-    ContactInputComponent,
-    FormDateInputComponent,
-    FormRelativeDateInputComponent
-  };
 
   getDynamicPart(componentName) {
     return this.DynamicParts[componentName];

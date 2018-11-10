@@ -1,5 +1,5 @@
-export * from './dashboard'
+export * from "./dashboard";
 
-export * from './forms'
+export * from "./forms";
 
-export * from './lists'
+export * from "./reports";

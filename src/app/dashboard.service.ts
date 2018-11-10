@@ -11,7 +11,7 @@ import {
   ReportInterface,
   DashboardSectionInterface,
   FormInterface
-} from "./schema";
+} from "serendip-business-model";
 import { WsService } from "./ws.service";
 
 @Injectable({
@@ -50,10 +50,17 @@ export class DashboardService {
       reports: BusinessSchema.ReportsSchema
     };
 
-    if (this.schema) return;
+    this.currentSection = _.findWhere(this.schema.dashboard, {
+      name: "dashboard"
+    });
 
-    if (!this.schema && localStorage.getItem("schema"))
+    if (this.schema) {
+      return;
+    }
+
+    if (!this.schema && localStorage.getItem("schema")) {
       return (this.schema = JSON.parse(localStorage.getItem("schema")));
+    }
 
     this.schema = await this.dataService.request({
       path:

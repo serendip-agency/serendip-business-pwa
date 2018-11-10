@@ -3,77 +3,6 @@
 <div class="dashboard-wrapper" [class.ready]="dashboardReady">
   <header id="header">
 
-    <div class="shortcuts">
-      <ul>
-
-        <li>
-          <a>
-            <img src="/assets/icon-crm-header/icons-crm-header-note.svg" alt="">
-          </a>
-        </li>
-
-        <li>
-          <a (click)="showCalendar = !showCalendar">
-            <img src="/assets/icon-crm-header/icons-crm-header-calendar.svg" alt="">
-          </a>
-        </li>
-
-        <li>
-          <a>
-            <img src="/assets/icon-crm-header/icons-crm-header-map.svg" alt="">
-          </a>
-        </li>
-
-        <li>
-          <a>
-            <img src="/assets/icon-crm-header/icons-crm-header-weather.svg" alt="">
-          </a>
-        </li>
-
-        <li>
-          <a>
-            <img src="/assets/icon-crm-header/icons-crm-header-cal.svg" alt="">
-          </a>
-        </li>
-
-        <li class="capture">
-          <a>
-            <img src="/assets/icon-crm-header/icons-crm-header-capture-1.svg" alt="">
-          </a>
-        </li>
-
-        <li>
-          <a>
-            <img src="/assets/icon-crm-header/icons-crm-header-clock-2.svg" alt="">
-          </a>
-        </li>
-
-
-        <li>
-          <a>
-            <img src="/assets/icon-crm-header/icons-crm-header-colors.svg" alt="">
-          </a>
-        </li>
-
-
-
-
-
-        <li>
-          <a>
-            <img src="/assets/icon-crm-header/icons-crm-header-air.svg" alt="">
-          </a>
-        </li>
-
-
-
-
-
-
-
-      </ul>
-    </div>
-
 
     <div class="inner">
       <div class="logo">
@@ -108,10 +37,38 @@
 
 
 
-
-
       <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible">
         <img [src]='"/assets/icons/arrow-right-next-2.svg"' />
+      </div>
+
+      <div class="shortcuts">
+        <ul>
+
+          <li>
+            <a>
+              <img src="/assets/icon-crm-header/icons-crm-header-note.svg" alt="">
+            </a>
+          </li>
+
+          <li>
+            <a (click)="showCalendar = !showCalendar">
+              <img src="/assets/icon-crm-header/icons-crm-header-calendar.svg" alt="">
+            </a>
+          </li>
+
+          <li>
+            <a>
+              <img src="/assets/icon-crm-header/icons-crm-header-map.svg" alt="">
+            </a>
+          </li>
+
+          <li>
+            <a>
+              <img src="/assets/icon-crm-header/icons-crm-header-weather.svg" alt="">
+            </a>
+          </li>
+
+        </ul>
       </div>
 
 
@@ -300,7 +257,7 @@
       <nav>
         <ul>
           <li *ngFor="let item of dashboardService.schema ? dashboardService.schema.dashboard : []">
-            <a [routerLink]="item.name == 'dashboard' ? ['/dashboard'] : ['/dashboard',item.name]">
+            <a (click)="initGrid(item.tabs)">
               <img [src]="'assets/icons/' + item.icon + '.svg'" />
               <span>
                 {{item.title}}

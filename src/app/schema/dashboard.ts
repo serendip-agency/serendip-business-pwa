@@ -1,34 +1,31 @@
-export interface DashboardContainerInterface {
-  showTabs?: boolean;
-  tabs: DashboardTabInterface[];
-}
-
-export interface DashboardGridInterface {
-  containers: DashboardContainerInterface[];
-  version?: number;
-}
-
-export interface DashboardWidgetInterface {
-  component?: string;
-  inputs?: any;
-}
-
-export interface DashboardTabInterface {
-  title?: string;
-  icon?: string;
-  active?: boolean;
-  widgets?: DashboardWidgetInterface[];
-}
-
-export interface DashboardSectionInterface {
-  name?: string;
-  title?: string;
-  icon?: string;
-  tabs?: DashboardTabInterface[];
-  toggleUl?: boolean;
-}
+import { DashboardSectionInterface } from "serendip-business-model";
 
 export const DashboardSchema: DashboardSectionInterface[] = [
+  {
+    name: "dashboard",
+    title: "داشبورد",
+    icon: "people-users-customers-club-2",
+    tabs: [
+      {
+        title: "اطلاعات شرکت ها",
+        icon: "plus-add-2",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              entityLabelSingular: "شرکت",
+              entityLabelPlural: "شرکت ها",
+              title: "اطلاعات شرکت ها",
+              subtitle: "گزارش, جست و جو و عملیات ها  ",
+              reportName: "company-default",
+              entityName: "company",
+              pageSize: 10
+            }
+          }
+        ]
+      }
+    ]
+  },
   {
     name: "people",
     title: "اشخاص",
@@ -64,7 +61,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
             inputs: {
               name: "crm-company-form",
               entityName: "company",
-              entityLabel: "شرکت"
+              entityLabel: "شرکت",
+              mode: "triggers"
             }
           }
         ]
@@ -78,24 +76,6 @@ export const DashboardSchema: DashboardSectionInterface[] = [
             inputs: {
               label: "اطلاعات شرکت‌ها",
               entity: "company"
-            }
-          }
-        ]
-      },
-      {
-        title: "اطلاعات شرکت ها",
-        icon: "plus-add-2",
-        widgets: [
-          {
-            component: "ReportComponent",
-            inputs: {
-              entityLabelSingular: "شرکت",
-              entityLabelPlural: "شرکت ها",
-              title: "اطلاعات شرکت ها",
-              subtitle: "گزارش, جست و جو و عملیات ها  ",
-              entityName: "company",
-              listId: "company-default",
-              pageSize: 10
             }
           }
         ]

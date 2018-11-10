@@ -28,44 +28,46 @@
     </mat-card-header>
     <mat-card-content>
 
-      <!-- <textarea class="logbox">{{ report | json}}</textarea> -->
-
       <div class="report-model" *ngIf="mode == 'report' && report">
 
         <div class="fields">
+          {{report._id}}
+          <app-form-select-input [data]="reports" [selectType]="'single'" [label]="'انتخاب از گزارشات ذخیره شده'"
+            (modelChange)="changeReport($event)" [model]="report._id"></app-form-select-input>
 
-          <app-form-text-input [label]="'نام گزارش'" [model]="report.name || 'گزارش پیش فرض ' + entityLabelPlural"></app-form-text-input>
+          <app-form-text-input *ngIf="!report._id" [label]="'نام گزارش جدید'" (modelChange)="report.label = $event"
+            [model]="report.label"></app-form-text-input>
 
-          <div class="field" *ngFor="let field of objectKeys( fields)">
+          <div class="field" *ngFor="let field of report.fields">
 
             <div class="field-name">
-              <mat-checkbox [checked]="_.findWhere(report.fields, {name : field })" (change)="reportFieldChange(field,$event)">
-                {{fields[field].label}}
+              <mat-checkbox [(ngModel)]="field.enabled" (change)="modelChange()">
+                {{field.label}}
               </mat-checkbox>
             </div>
-            <div class="template-inputs" *ngIf="fields[field].templateInputsForm && _.findWhere(report.fields, {name : field })">
+            <div class="template-inputs" *ngIf="field.templateInputsForm && field.enabled">
 
               <label for="">نحوه نمایش:</label>
-              <app-form [defaultModel]="fields[field].templateInputs" (widgetDataChange)="reportFieldInputsChange(field,$event)"
-                [formType]="'inline'" [name]="fields[field].templateInputsForm"></app-form>
+              <app-form [defaultModel]="field.templateInputs" (widgetDataChange)="reportFieldInputsChange(field,$event)"
+                [formType]="'inline'" [name]="field.templateInputsForm"></app-form>
             </div>
 
 
-            <div class="property-query" *ngIf=" _.findWhere(report.fields, {name : field })">
-              <label for="">فیلتر ها</label>
-              <app-form-select-input [data]="fields[field].queries" [model]="[]"></app-form-select-input>
+            <div class="property-query" *ngIf="field.enabled">
+
+
+              <app-form-select-input [data]="field.queries" [selectType]="'single'" [model]="[]"></app-form-select-input>
             </div>
 
-            <div class="property-query" *ngFor="let query of _.findWhere(report.fields, {name : field }) ? fields[field].queries : []">
+            <div class="property-query" *ngFor="let query of !field.enabled ? [] : _.findWhere(report.queries, {fieldName : field.name }) ">
 
               <label for="">
                 {{query.label}}
               </label>
 
               <app-form [formType]="'inline'" [defaultModel]="" [name]="'report-query-' + query.value"></app-form>
+
             </div>
-
-
 
 
           </div>
@@ -76,43 +78,41 @@
       </div>
 
 
-      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'" *ngIf="result && mode == 'data'">
+      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'" *ngIf="report && mode == 'data'">
 
         <div class="report-header">
 
           <div class="select">
             <mat-checkbox></mat-checkbox>
           </div>
-          <div class="field-label" *ngFor="let field of report.fields">
-            <ndc-dynamic *ngIf="fields[field.name].template && fields[field.name].template != 'json'"
-              [ndcDynamicInputs]="extendObj( { label : fields[field.name].label , viewType : 'label' } )"
-              [ndcDynamicOutputs]="{  widgetCommand : widgetCommand.emit   }" [ndcDynamicComponent]="getViewComponent(fields[field.name].template)"></ndc-dynamic>
+          <div class="field-label" *ngFor="let field of  _.where( report.fields,{enabled : true})">
+            <ndc-dynamic *ngIf="  field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , viewType : 'label' } )"
+              [ndcDynamicOutputs]="{  widgetCommand : DashboardCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
           </div>
         </div>
 
-        <mat-progress-bar *ngIf="resultLoading" [color]="'warn'"  [mode]="'indeterminate'">
+        <mat-progress-bar *ngIf="resultLoading" [color]="'warn'" [mode]="'indeterminate'">
         </mat-progress-bar>
 
         <div class="records" *ngIf="!resultLoading">
-          <div class="record" *ngFor="let record of result.data;trackBy: trackByFn">
+          <div class="record" *ngFor="let record of page;trackBy: trackByFn">
 
             <div class="select">
               <mat-checkbox></mat-checkbox>
             </div>
 
-            <div class="field" *ngFor="let field of report.fields">
+            <div class="field" *ngFor="let field of _.where( report.fields,{enabled : true})">
 
-              <div class="json" *ngIf="fields[field.name].template == 'json'">
+              <div class="json" *ngIf="field.template == 'json'">
                 {{record[field.name] | json}}
               </div>
 
-              <div class="raw" *ngIf="!fields[field.name].template">
+              <div class="raw" *ngIf="!field.template">
                 {{record[field.name]}}
               </div>
 
-              <ndc-dynamic *ngIf="fields[field.name].template && fields[field.name].template != 'json'"
-                [ndcDynamicInputs]="extendObj( { label : fields[field.name].label , model : record[field.name] }, field.templateInputs ||  fields[field.name].templateInputs || {})"
-                [ndcDynamicOutputs]="{  widgetCommand : widgetCommand.emit   }" [ndcDynamicComponent]="getViewComponent(fields[field.name].template)"></ndc-dynamic>
+              <ndc-dynamic *ngIf="field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , model : record[field.name] }, field.templateInputs ||  field.templateInputs || {})"
+                [ndcDynamicOutputs]="{  widgetCommand : DashboardCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
             </div>
 
           </div>
@@ -121,26 +121,23 @@
 
     </mat-card-content>
 
-    <mat-card-actions *ngIf="mode == 'report'">
+    <mat-card-actions *ngIf="report && mode == 'report'">
       <button mat-raised-button [color]="'primary'" (click)="mode = 'data';refresh()">
         <img src="assets/icons/seen-visible-1.svg" />
         مشاهده نتیجه </button>
 
-      <button mat-button class="pull-left">
-        <img src="assets/icons/save-backup-1.svg" />
-        ذخیره آفلاین
-      </button>
+
       <div class="clearfix"></div>
     </mat-card-actions>
 
 
-    <mat-card-actions *ngIf="mode == 'data'">
+    <mat-card-actions  *ngIf="report && mode == 'data'">
 
       <button mat-button>{{ entityLabelSingular }} جدید </button>
 
-      <div class="paginator pull-left" *ngIf="result && result.count">
+      <div class="paginator pull-left" *ngIf="report && report.count">
 
-        <div class="next" (click)="nextPage()">
+        <div class="next" *ngIf="pageIndex < pageCount" (click)="changePage(1)">
           <img src="assets/icons/arrow-left-back-10.svg" />
         </div>
         <div class="current">
@@ -148,11 +145,22 @@
           -
           {{ pageCount | rpd }}
         </div>
-        <div class="prev" (click)="prevPage()">
+        <div class="prev" *ngIf="pageIndex >= 1" (click)="changePage(-1)">
           <img src="assets/icons/arrow-right-next-10.svg" />
         </div>
       </div>
 
+      <button mat-button class="pull-left" *ngIf="!report._id" (click)="saveReport()">
+        <img src="assets/icons/save-backup-1.svg" *ngIf="!report.offline" />
+        <img src="assets/icons/check-9.svg" *ngIf="report.offline" />
+        ذخیره
+      </button>
+
+      <button mat-button class="pull-left" *ngIf="report._id" (click)="report.offline ? deleteOffline() : saveOffline()">
+        <img src="assets/icons/save-backup-1.svg" *ngIf="!report.offline" />
+        <img src="assets/icons/check-9.svg" *ngIf="report.offline" />
+        آفلاین
+      </button>
 
       <div class="clearfix"></div>
     </mat-card-actions>

@@ -1,16 +1,4 @@
-export interface FormPartInterface {
-  componentName: string;
-  propertyName: string;
-  propertyType?: "string" | "boolean" | "number" | "array";
-  inputs?: any;
-}
-
-export interface FormInterface {
-  name: string;
-  parts: FormPartInterface[];
-  entityName?: string;
-  defaultModel?: any;
-}
+import { FormInterface } from "serendip-business-model";
 
 export const FormsSchema: FormInterface[] = [
   {
