@@ -37,6 +37,7 @@ import {
   FormPartInterface,
   FormInterface
 } from "serendip-business-model";
+import { FormDateRangeInputComponent } from "./form-date-range-input/form-date-range-input.component";
 
 @Component({
   selector: "app-form",
@@ -62,7 +63,8 @@ export class FormComponent implements OnInit {
     FormAutoCompleteInputComponent,
     ContactInputComponent,
     FormDateInputComponent,
-    FormRelativeDateInputComponent
+    FormRelativeDateInputComponent,
+    FormDateRangeInputComponent
   };
 
   constructor(
@@ -153,11 +155,13 @@ export class FormComponent implements OnInit {
   }
 
   reset() {
-    if (Object.keys(this.defaultModel).length > 0) {
+    if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
       this.model = this.defaultModel;
     } else {
       this.model = this.formSchema.defaultModel;
     }
+
+    if (!this.model) this.model = {};
 
     this.ref.detectChanges();
   }

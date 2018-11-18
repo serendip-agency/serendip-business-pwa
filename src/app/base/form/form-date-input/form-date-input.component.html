@@ -1,3 +1,112 @@
-<p>
-  form-date-input works!
-</p>
+<div class="double-field" (mouseleave)="dateHelpers = timeHelpers = false">
+
+  <div class="w-50">
+    <mat-form-field>
+
+      <input dir="ltr" matInput [placeholder]="label" type="text" (change)="_model.date = $event.target.value;inputsChange($event)"
+        mask="0000/00/00" [value]="_model.date" [showMaskTyped]="true" (focus)="timeHelpers = false;dateHelpers = true"
+        (mousemove)="timeHelpers = false;dateHelpers = true" autocomplete="off" />
+    </mat-form-field>
+  </div>
+  <div class="w-50">
+
+    <mat-form-field>
+      <input dir="ltr" matInput placeholder="ساعت" [showMaskTyped]="true" (focus)="dateHelpers=false;timeHelpers = true"
+        (mousemove)="dateHelpers=false;timeHelpers = true" mask="00:00:00" type="text" (change)="_model.time = $event.target.value;inputsChange($event)"
+        autocomplete="off" [value]="_model.time" />
+
+    </mat-form-field>
+  </div>
+
+  <div class="helpers-container">
+
+    <div class="helpers" [class.fadeIn]="dateHelpers">
+
+      <ul>
+        <li>
+          <span (click)="model = moment().toDate();inputsChange(); ">
+            هم اکنون
+          </span>
+        </li>
+
+        <li>
+          <span (click)="model = moment().add(-1,'day').toDate();inputsChange(); ">
+            دیروز
+          </span>
+        </li>
+
+
+        <li>
+          <span (click)="model = moment().add( 1,'day').toDate();inputsChange(); ">
+            فردا
+          </span>
+
+        </li>
+
+        <li>
+
+          <span (click)="model = moment().add( 2,'day').toDate();inputsChange(); ">
+            پس فردا
+          </span>
+
+
+        </li>
+
+        <li>
+          <span>
+            تقویم
+          </span>
+        </li>
+
+      </ul>
+
+    </div>
+
+
+    <div class="helpers" [class.fadeIn]="timeHelpers">
+      <ul>
+        <li>
+          <span (click)="timeHelperClick(); model = moment(model).add(-1,'hour').toDate();inputsChange(); ">
+            -{{ 1 | rpd}} ساعت
+          </span>
+        </li>
+
+        <li>
+          <span (click)="timeHelperClick();model = moment(model).add( 1,'hour').toDate();inputsChange(); ">
+            +{{ 1 | rpd}} ساعت
+          </span>
+        </li>
+
+        <li>
+          <span (click)="timeHelperClick();model = moment(model).add( -15,'minute').toDate();inputsChange(); ">
+            -{{ 15 | rpd}} دقیقه
+          </span>
+
+        </li>
+
+        <li>
+          <span (click)="timeHelperClick();model = moment(model).add(  15,'minute').toDate();inputsChange(); ">
+            +{{ 15 | rpd}} دقیقه
+          </span>
+
+        </li>
+
+        <li>
+          <span (click)="timeHelperClick();model = moment(model).add(  30,'minute').toDate();inputsChange(); ">
+            +{{ 30 | rpd}} دقیقه
+          </span>
+
+        </li>
+
+
+      </ul>
+
+    </div>
+
+
+  </div>
+
+
+  <div class="clearfix"></div>
+
+</div>

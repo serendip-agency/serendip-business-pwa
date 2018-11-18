@@ -18,7 +18,7 @@ export class TriggersComponent implements OnInit {
   ];
 
   @Input() label = 'نمونه';
-  @Input() mode: 'list' | 'model' = 'model'
+  @Input() mode: 'list' | 'model' = 'list'
 
 
   @Input() model: TriggerModel | any = {};

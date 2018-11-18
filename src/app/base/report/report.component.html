@@ -2,8 +2,6 @@
   <mat-card class="table">
     <mat-card-header>
 
-
-
       <div mat-card-avatar class="pull-right">
         <img [src]="'/assets/icons/' + icon  +'.svg'" />
       </div>
@@ -24,14 +22,15 @@
         <img [src]="'/assets/icons/' + 'search'  +'.svg'" />
       </div>
 
-
     </mat-card-header>
     <mat-card-content>
 
       <div class="report-model" *ngIf="mode == 'report' && report">
 
+
+        <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
         <div class="fields">
-          {{report._id}}
+
           <app-form-select-input [data]="reports" [selectType]="'single'" [label]="'انتخاب از گزارشات ذخیره شده'"
             (modelChange)="changeReport($event)" [model]="report._id"></app-form-select-input>
 
@@ -41,33 +40,44 @@
           <div class="field" *ngFor="let field of report.fields">
 
             <div class="field-name">
-              <mat-checkbox [(ngModel)]="field.enabled" (change)="modelChange()">
+              <mat-slide-toggle [(ngModel)]="field.enabled" (change)="modelChange()">
                 {{field.label}}
-              </mat-checkbox>
+              </mat-slide-toggle>
             </div>
-            <div class="template-inputs" *ngIf="field.templateInputsForm && field.enabled">
 
-              <label for="">نحوه نمایش:</label>
-              <app-form [defaultModel]="field.templateInputs" (widgetDataChange)="reportFieldInputsChange(field,$event)"
+            <div class="template-inputs" *ngIf="field.templateInputsForm && field.enabled">
+              <app-form [defaultModel]="field.templateInputs || {}" (WidgetChange)="field.templateInputs = $event.inputs.model "
                 [formType]="'inline'" [name]="field.templateInputsForm"></app-form>
             </div>
+            <div class="property-query" *ngIf="field.enabled && field.queries && field.queries.length > 0">
+
+              <div class="double-field">
+                <app-form-select-input [class.w-100]="findEnabledFieldQuery(field)" [class.w-80]="findEnabledFieldQuery(field)"
+                  [data]="field.queries" [label]="findEnabledFieldQuery(field) ? '' : 'انتخاب از فیلترها'" [selectType]="'single'"
+                  [model]="findEnabledFieldQuery(field)" (modelChange)="fieldQuerySelect(field,$event)"></app-form-select-input>
+                <div class="reset-query w-20">
+                  <img *ngIf="findEnabledFieldQuery(field)" (click)="findEnabledFieldQuery(field).enabled = false"
+                    class="" src="assets/icons/close-4.svg" />
+                </div>
+              </div>
 
 
-            <div class="property-query" *ngIf="field.enabled">
+              <app-form *ngIf="findEnabledFieldQuery(field)" [formType]="'inline'" [defaultModel]="findEnabledFieldQuery(field).methodInput || {}"
+                (WidgetChange)="findEnabledFieldQuery(field).methodInput = $event.inputs.model " [name]="findEnabledFieldQuery(field).methodInputForm"></app-form>
 
-
-              <app-form-select-input [data]="field.queries" [selectType]="'single'" [model]="[]"></app-form-select-input>
             </div>
+            <!--
+            <div class="property-query" *ngFor="let query of !field.enabled ? [] : field.queries ">
 
-            <div class="property-query" *ngFor="let query of !field.enabled ? [] : _.findWhere(report.queries, {fieldName : field.name }) ">
-
+              {{query.methodInputForm}}
               <label for="">
                 {{query.label}}
               </label>
 
-              <app-form [formType]="'inline'" [defaultModel]="" [name]="'report-query-' + query.value"></app-form>
+              <app-form [formType]="'inline'" [defaultModel]="query.methodInput || {}" (WidgetChange)="query.methodInput = $event.inputs.model "
+                [name]="query.methodInputForm"></app-form>
 
-            </div>
+            </div> -->
 
 
           </div>
@@ -85,7 +95,7 @@
           <div class="select">
             <mat-checkbox></mat-checkbox>
           </div>
-          <div class="field-label" *ngFor="let field of  _.where( report.fields,{enabled : true})">
+          <div class="field-label" *ngFor="let field of  enabledReportFields()">
             <ndc-dynamic *ngIf="  field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , viewType : 'label' } )"
               [ndcDynamicOutputs]="{  widgetCommand : DashboardCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
           </div>
@@ -101,7 +111,7 @@
               <mat-checkbox></mat-checkbox>
             </div>
 
-            <div class="field" *ngFor="let field of _.where( report.fields,{enabled : true})">
+            <div class="field" *ngFor="let field of enabledReportFields()">
 
               <div class="json" *ngIf="field.template == 'json'">
                 {{record[field.name] | json}}
@@ -131,7 +141,7 @@
     </mat-card-actions>
 
 
-    <mat-card-actions  *ngIf="report && mode == 'data'">
+    <mat-card-actions *ngIf="report && mode == 'data'">
 
       <button mat-button>{{ entityLabelSingular }} جدید </button>
 

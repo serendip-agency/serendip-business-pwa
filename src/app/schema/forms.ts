@@ -2,6 +2,36 @@ import { FormInterface } from "serendip-business-model";
 
 export const FormsSchema: FormInterface[] = [
   {
+    name: "serendip-base-inputs",
+    parts: [
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "value",
+        propertyType: "string",
+        inputs: {
+          label: "مقدار"
+        }
+      },
+      {
+        componentName: "FormDateInputComponent",
+        propertyName: "jdate",
+        propertyType: "string",
+        inputs: {
+          label: "تاریخ جلالی",
+          calendarType : "persian"
+        }
+      },
+      {
+        componentName: "FormDateInputComponent",
+        propertyName: "date",
+        propertyType: "string",
+        inputs: {
+          label: "تاریخ میلادی",
+        }
+      }
+    ]
+  },
+  {
     name: "report-query-eq",
 
     parts: [
@@ -15,6 +45,7 @@ export const FormsSchema: FormInterface[] = [
       }
     ]
   },
+
   {
     name: "report-field-date",
     parts: [
@@ -23,7 +54,7 @@ export const FormsSchema: FormInterface[] = [
         propertyName: "format",
         inputs: {
           selectType: "single",
-          label: "",
+          label: "نحوه نمایش زمان",
           data: [
             {
               label: "روز/ماه/سال میلادی",
@@ -69,6 +100,26 @@ export const FormsSchema: FormInterface[] = [
         }
       ]
     }
+  },
+  {
+    name: "crm-service-form",
+    entityName: "service",
+    parts:[]
+  },
+  {
+    name: "crm-complaint-form",
+    entityName: "complaint",
+    parts:[]
+  },
+  {
+    name: "crm-sale-form",
+    entityName: "company",
+    parts:[]
+  },
+  {
+    name: "crm-sale-form",
+    entityName: "sale",
+    parts:[]
   },
   {
     name: "crm-company-form",

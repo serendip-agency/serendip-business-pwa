@@ -34,6 +34,10 @@ import {
 import { WidgetService } from "../widget.service";
 import { WsService } from "../ws.service";
 import { DashboardService } from "./../dashboard.service";
+import { CalendarService } from "../calendar.service";
+import { WeatherService } from "../weather.service";
+import { GmapsService } from "../gmaps.service";
+import { DataService } from "../data.service";
 
 // optional import of scroll behavior
 polyfill({
@@ -66,6 +70,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dashboardDate = "";
   dashboardTime = "";
 
+  mapVisible = false;
   dashboardDateTimeInterval;
   dashboardDateTimeFormats = [
     "dddd jD jMMMM jYYYY",
@@ -91,7 +96,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   fullNavTabs = [];
 
   dashboardReady = false;
-  showCalendar = false;
 
   explorerAnimInTimeout = null;
   explorerAnimOutTimeout = null;
@@ -136,7 +140,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private idbService: IdbService,
     private changeRef: ChangeDetectorRef,
     private widgetService: WidgetService,
-    private wsService: WsService
+    private wsService: WsService,
+    public calendarService: CalendarService,
+    public weatherService: WeatherService,
+    public gmapsService: GmapsService,
+    public dataService: DataService
   ) {
     moment.loadPersian({ dialect: "persian-modern", usePersianDigits: false });
   }
@@ -265,6 +273,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  toggleCalendar() {
+    this.weatherService.weatherVisible = false;
+    this.hideStart();
+    this.hideMap();
+    this.calendarService.calendarVisible = !this.calendarService
+      .calendarVisible;
+  }
+  toggleWeather() {
+    this.calendarService.calendarVisible = false;
+    this.hideStart();
+    this.hideMap();
+    this.weatherService.weatherVisible = !this.weatherService.weatherVisible;
+  }
+
+  toggleMap() {
+    this.calendarService.calendarVisible = false;
+    this.weatherService.weatherVisible = false;
+    this.hideStart();
+    this.mapVisible = !this.mapVisible;
+    this.gmapsService.emitSetMode({ mapId: "dashboard", mode: "explorer" });
+    this.gmapsService.emitSetVisible({
+      mapId: "dashboard",
+      visible: this.mapVisible
+    });
+  }
+
+  hideTools() {
+    this.hideStart();
+    this.hideMap();
+    this.weatherService.weatherVisible = false;
+    this.calendarService.calendarVisible = false;
+  }
+
+  hideMap() {
+    this.mapVisible = false;
+    this.gmapsService.emitSetVisible({
+      mapId: "dashboard",
+      visible: this.mapVisible
+    });
+  }
   definedItemsOfArray(array) {
     return _.filter(array, (item: any) => {
       return item !== undefined;
@@ -339,6 +387,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async initGrid(tabs: DashboardTabInterface[]) {
+
+    console.log("initGrid");
     const tabsToAdd = _.clone(tabs);
 
     this.grid = { containers: [{ tabs: tabsToAdd }] };
@@ -364,8 +414,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         );
       }
     }
-
-    this.syncGrid();
   }
 
   addContainer() {
@@ -484,6 +532,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.grid.containers[containerIndex].tabs[tabIndex],
         newTab
       );
+      this.syncGrid();
       this.changeRef.detectChanges();
     };
   }
@@ -506,8 +555,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       await this.newDashboardSocket();
     }
 
+    localStorage.setItem(
+      "grid-" + this.dashboardService.currentSection.name,
+      JSON.stringify({
+        section: this.dashboardService.currentSection.name,
+        grid: this.grid,
+        version: Date.now()
+      })
+    );
+
     this.dashboardSocket.send(
-      JSON.stringify({ command: "sync_grid", data: JSON.stringify(this.grid) })
+      JSON.stringify({
+        command: "sync_grid",
+        data: JSON.stringify({
+          section: this.dashboardService.currentSection.name,
+          grid: this.grid
+        })
+      })
     );
   }
 
@@ -641,6 +705,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
 
+  hideStart() {
+    document.getElementById("start").classList.remove("fadeIn");
+  }
+
+  showStart() {
+    document.getElementById("start").classList.add("fadeIn");
+  }
   isNavTabFull(navTabId) {
     return this.fullNavTabs.indexOf(navTabId) !== -1;
   }
@@ -751,32 +822,111 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardSocket = await this.wsService.newSocket("/dashboard", true);
 
     this.dashboardSocket.onmessage = (ev: MessageEvent) => {
-      const msg: { command: "change_grid"; data: any } = JSON.parse(ev.data);
+      const msg: {
+        command: "change_grid";
+        data: {
+          version: number;
+          section: string;
+          grid: DashboardGridInterface;
+        };
+      } = JSON.parse(ev.data);
 
-      msg.data = JSON.parse(msg.data);
+      msg.data = JSON.parse(msg.data as any);
 
       if (
         msg.command === "change_grid" &&
         msg.data.version > this.grid.version
       ) {
+        localStorage.setItem(
+          "grid-" + msg.data.section,
+          JSON.stringify(msg.data)
+        );
         console.log("should chang grid");
-        this.grid = msg.data;
+        if (this.dashboardService.currentSection === msg.data.section) {
+          this.grid = msg.data.grid;
+        }
         this.changeRef.markForCheck();
       }
       console.log(msg);
     };
   }
 
+  async handleParams(params) {
+
+    console.log('handleParams',params);
+
+    this.dashboardService.currentSection = _.findWhere(
+      this.dashboardService.schema.dashboard,
+      {
+        name: params.section || "dashboard"
+      }
+    );
+
+    var localGrid: any = localStorage.getItem("grid" + params.section);
+    if (localGrid) localGrid = JSON.parse(localGrid);
+
+    var remoteGrid;
+    try {
+      remoteGrid = await this.dataService.request({
+        method: "post",
+        path: "/api/business/grid",
+        model: { section: params.section },
+        retry: false
+      });
+    } catch (error) {}
+
+
+    console.log("remoteGrid", remoteGrid, "localGrid",localGrid);
+    if (localGrid && localGrid.version) {
+      if (remoteGrid) {
+        if (localGrid.version > remoteGrid.version) {
+          this.grid = localGrid.grid;
+          this.changeRef.detectChanges();
+
+          return;
+        }
+      } else {
+        this.grid = localGrid.grid;
+        this.changeRef.detectChanges();
+
+        return;
+      }
+    }
+
+    if (remoteGrid && remoteGrid.version) {
+      if (!localGrid) {
+        this.grid = remoteGrid.grid;
+        this.changeRef.detectChanges();
+
+        return;
+      } else {
+        if (localGrid.version < remoteGrid.version) {
+          this.grid = remoteGrid.grid;
+          this.changeRef.detectChanges();
+          return;
+        }
+      }
+    }
+
+    await this.initGrid(this.dashboardService.currentSection.tabs);
+  }
   async ngOnInit() {
     this.newDashboardSocket()
       .then(() => {})
       .catch(() => {});
 
     await this.dashboardService.setDefaultSchema();
-    await this.initGrid(this.dashboardService.currentSection.tabs);
 
     this.gridSizeChange.subscribe(() => {
       this.adjustLayout();
+    });
+
+    this.handleParams(this.activatedRoute.snapshot.params);
+
+    this.router.events.subscribe((event: any) => {
+      if (event instanceof NavigationEnd) {
+        this.handleParams(this.activatedRoute.snapshot.params);
+      }
     });
 
     window.onresize = () => {

@@ -1,10 +1,9 @@
-<div id="calendar">
+<div id="calendar" [hidden]="!calendarService.calendarVisible">
 
   <aside>
 
-    <app-calendar-month [showYearTitle]="true" [fadeInDelay]="1" [month]="calendarType == 'persian' ? moment().jMonth() +1 : moment().month() +1"
+    <app-calendar-month [showYearTitle]="true" [fadeInDelay]="0" [month]="calendarType == 'persian' ? moment().jMonth() +1 : moment().month() +1"
       [year]="calendarType == 'persian' ? moment().jYear()  : moment().year() " [size]="'mini'" [calendarType]="calendarType"></app-calendar-month>
-
 
 
     <div class="my-calendars">

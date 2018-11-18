@@ -23,12 +23,14 @@ export class BusinessComponent implements OnInit, OnDestroy {
   list: any[] = [];
   token: userToken;
 
-  constructor(private fb: FormBuilder,
+  constructor(
+    private fb: FormBuilder,
     public authService: AuthService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     public businessService: BusinessService,
-    private httpClient: HttpClient) { }
+    private httpClient: HttpClient
+  ) {}
 
   addMember(event: MatChipInputEvent): void {
     const input = event.input;
@@ -60,75 +62,69 @@ export class BusinessComponent implements OnInit, OnDestroy {
     this.router.navigate(["/dashboard"]);
   }
   async saveBusiness() {
-
-
-    await this.httpClient.post<any>(environment.api + "/api/business/saveBusiness", this.businessForm.value, {
-      headers: {
-        Authorization: "Bearer " + this.token.access_token,
-        clientid: environment.clientId
-      }
-    })
+    await this.httpClient
+      .post<any>(
+        environment.api + "/api/business/saveBusiness",
+        this.businessForm.value,
+        {
+          headers: {
+            Authorization: "Bearer " + this.token.access_token,
+            clientid: environment.clientId
+          }
+        }
+      )
       .toPromise();
 
-    this.router.navigate(['/business', 'choose']);
+    this.router.navigate(["/business", "choose"]);
   }
 
   async refresh() {
-
-    this.list = await this.httpClient.get(environment.api + "/api/business/list", {
-      headers: {
-        Authorization: "Bearer " + this.token.access_token,
-        clientid: environment.clientId
-      }
-    }).toPromise() as any;
+    this.list = (await this.httpClient
+      .get(environment.api + "/api/business/list", {
+        headers: {
+          Authorization: "Bearer " + this.token.access_token,
+          clientid: environment.clientId
+        }
+      })
+      .toPromise()
+      .catch(e => {
+        // FIXME:
+        if (e.code == 401) localStorage.clear();
+      })) as any;
   }
 
   async handleParams() {
-
-
     await this.refresh();
 
-    this.tab = this.activatedRoute.snapshot.params.tab || 'list';
+    this.tab = this.activatedRoute.snapshot.params.tab || "list";
 
-    if (this.tab == 'choose')
+    if (this.tab == "choose")
       if (this.list.length == 1) {
         localStorage.setItem("business", this.list[0]._id);
-
       }
-
   }
   ngOnDestroy() {
     this.routerSubscription.unsubscribe();
   }
   async ngOnInit() {
-
     this.businessForm = this.fb.group({
       title: ["", Validators.required],
       members: this.fb.array([])
     });
 
-
-
     try {
       this.token = await this.authService.token();
       await this.handleParams();
-
     } catch (error) {
-      this.router.navigate(['/auth']);
+      this.router.navigate(["/auth"]);
     }
 
-
-
-
-
-    this.routerSubscription = this.routerSubscription = this.router.events.subscribe((event: any) => {
-      if (event instanceof NavigationEnd)
-        this.handleParams();
-    });
-
+    this.routerSubscription = this.routerSubscription = this.router.events.subscribe(
+      (event: any) => {
+        if (event instanceof NavigationEnd) this.handleParams();
+      }
+    );
   }
-
-
 
   /**
    * get default business
@@ -151,5 +147,4 @@ export class BusinessComponent implements OnInit, OnDestroy {
   //     return businessList[0];
   //   } else { return null; }
   // }
-
 }

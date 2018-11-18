@@ -1,15 +1,11 @@
 import { DashboardService } from "./dashboard.service";
 import { BrowserModule } from "@angular/platform-browser";
 import { NgModule } from "@angular/core";
-
+import { QuillModule } from "ngx-quill";
 import { AppComponent } from "./app.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
-import {
-  MatCheckboxModule,
-  MatNativeDateModule,
-  MatBottomSheetModule
-} from "@angular/material";
+import { MatCheckboxModule, MatBottomSheetModule } from "@angular/material";
 import { MatButtonModule } from "@angular/material";
 import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -119,6 +115,8 @@ import { CurrencyViewComponent } from "./base/report/currency-view/currency-view
 import { TriggersComponent } from "./base/triggers/triggers.component";
 import { FormDateInputComponent } from "./base/form/form-date-input/form-date-input.component";
 import { FormRelativeDateInputComponent } from "./base/form/form-relative-date-input/form-relative-date-input.component";
+import { FormDateRangeInputComponent } from './base/form/form-date-range-input/form-date-range-input.component';
+import { WeatherComponent } from './weather/weather.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -162,7 +160,7 @@ export const dynamicComponents = [
   FormAutoCompleteInputComponent,
   FormDateInputComponent,
   FormRelativeDateInputComponent,
-
+  FormDateRangeInputComponent,
   // Business related form parts
 
   ContactInputComponent,
@@ -194,9 +192,10 @@ export const primaryComponents = [
 ];
 
 @NgModule({
-  declarations: [...primaryComponents, ...dynamicComponents],
+  declarations: [...primaryComponents, ...dynamicComponents, WeatherComponent],
   entryComponents: [],
   imports: [
+    QuillModule,
     NgxMaskModule.forRoot(),
     NgxCurrencyModule,
     DynamicModule.withComponents(dynamicComponents),

@@ -62,6 +62,8 @@ export class AuthService {
       localStorage.removeItem("token");
     }
 
+    // console.log('token()',token);
+
     if (token && token.access_token) {
       this.loggedIn = true;
       return token;
@@ -84,6 +86,14 @@ export class AuthService {
   async sendVerify(mobile: string): Promise<any> {
     return this.http
       .post(this.apiUrl + "/api/auth/sendVerifySms", {
+        mobile: mobile
+      })
+      .toPromise();
+  }
+
+  async sendOneTimePassword(mobile: string): Promise<any> {
+    return this.http
+      .post(this.apiUrl + "/api/auth/oneTimePassword", {
         mobile: mobile
       })
       .toPromise();
@@ -122,22 +132,37 @@ export class AuthService {
       .toPromise();
   }
 
-  async login(username: string, password: string): Promise<userToken> {
-    const newToken = await this.http
-      .post<userToken>(this.apiUrl + "/api/auth/token", {
-        username: username,
-        password: password,
-        grant_type: "password"
-      })
-      .toPromise();
+  async login(
+    mobile: string,
+    password: string,
+    oneTimePassword: string
+  ): Promise<userToken> {
+    try {
+      const newToken = await this.http
+        .post<userToken>(this.apiUrl + "/api/auth/token", {
+          mobile,
+          password,
+          oneTimePassword,
+          grant_type: "password"
+        })
+        .toPromise();
 
-    this.loggedIn = true;
+      if (!newToken) {
+        throw new Error("empty token");
+      }
 
-    localStorage.setItem("token", JSON.stringify(newToken));
+      // console.log("newToken", newToken);
 
-    this.router.navigate(["/dashboard"]);
+      this.loggedIn = true;
 
-    return newToken;
+      localStorage.setItem("token", JSON.stringify(newToken));
+
+      this.router.navigate(["/dashboard"]);
+      return newToken;
+    } catch (error) {
+      console.error("newToken", error);
+      return;
+    }
   }
 
   async refreshToken(token: userToken): Promise<userToken> {
@@ -171,7 +196,10 @@ export class AuthGuard implements CanActivate {
   ): boolean {
     const url: string = state.url;
 
-    if (this.authService.loggedIn && this.businessService.getActiveBusinessId()) {
+    if (
+      this.authService.loggedIn &&
+      this.businessService.getActiveBusinessId()
+    ) {
       return true;
     } else {
       if (!this.authService.loggedIn) {

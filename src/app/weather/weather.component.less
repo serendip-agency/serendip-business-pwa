@@ -1,0 +1,138 @@
+#weather {
+  position: fixed;
+  height: calc(~"100vh - 50px");
+  width: 100%;
+  background: #fff;
+  top: 50px;
+  left: 0;
+  z-index: 400;
+
+  .box {
+    padding:0 15px;
+    box-sizing: border-box;
+    max-width: 480px;
+    margin: 15px auto;
+  }
+  .today {
+    color: #333;
+    direction: ltr;
+    margin-bottom: 10px;
+
+    .icon-degree {
+      display: inline-block;
+    }
+    .icon {
+      width: 100px;
+      display: inline-block;
+      vertical-align: bottom;
+      height: 100px;
+      img {
+        vertical-align: middle;
+        width: 100%;
+        height: 100%;
+        padding: 5px;
+        box-sizing: border-box;
+      }
+    }
+
+    .info {
+      display: inline-block;
+      vertical-align: top;
+      padding: 0 15px;
+
+      padding-top: 15px;
+      .location,
+      .last-update {
+        img {
+          height: 25px;
+          width: 25px;
+          display: inline-block;
+          vertical-align: top;
+        }
+      }
+      .location {
+        font-weight: 900;
+        font-size: 15px;
+        line-height: 30px;
+      }
+      .last-update {
+        line-height: 20px;
+        font-size: 11px;
+        font-weight: 100;
+        img{
+          width:17px;
+          height:17px;
+          margin:0 4px;
+          vertical-align: middle;
+        }
+      }
+    }
+    .degree {
+      height: 40px;
+      line-height: 50px;
+      font-size: 30px;
+      display: inline-block;
+      vertical-align: bottom;
+      margin-left: -40px;
+      img {
+        width: 24px;
+        height: 24px;
+        float: right;
+      }
+    }
+  }
+  ul.forecast {
+    margin: 0;
+    padding: 0;
+
+    &:after {
+      clear: both;
+      display: block;
+      content: " ";
+    }
+    li {
+      list-style: none;
+      width: 20%;
+      float: left;
+      text-align: center;
+      line-height: 20px;
+      margin: 0;
+      padding: 0;
+      .low,
+      .high {
+        font-size: 13px;
+
+        img {
+          width: 14px;
+          height: 14px;
+          display: inline-block;
+          vertical-align: top;
+        }
+      }
+      .day {
+        line-height: 20px;
+        .weekday {
+          font-size: 13px;
+          font-weight: 500;
+        }
+
+        .day-month {
+          font-size: 12px;
+          font-weight: 100;
+        }
+      }
+      .icon {
+        height: 40px;
+        width: 40px;
+        line-height: 40px;
+        margin: 0 auto;
+        img {
+          display: inline-block;
+          vertical-align: middle;
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+}

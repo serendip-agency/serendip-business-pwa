@@ -26,7 +26,7 @@
     </mat-card-header>
     <mat-card-content *ngIf="mode == 'form'">
 
-      <!-- <textarea  class="logbox">{{model | json}}</textarea> -->
+      <textarea  class="logbox">{{model | json}}</textarea>
 
       <ng-container *ngTemplateOutlet="form"></ng-container>
 
@@ -57,7 +57,7 @@
 
     <div class="dynamic-form-part" *ngFor="let part of formSchema.parts">
 
-      <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : model[part.propertyName]},part.inputs || {})"
+      <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : model[part.propertyName] || (part.propertyType == 'string' ? '' : {}) } , part.inputs || {} )"
         [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.propertyName)  }" [ndcDynamicComponent]="getDynamicPart(part.componentName)"></ndc-dynamic>
 
     </div>

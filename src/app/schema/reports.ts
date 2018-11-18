@@ -1,7 +1,6 @@
 import { ReportInterface } from "serendip-business-model";
 
 export const ReportsSchema: ReportInterface[] = [
-
   {
     name: "company-default",
     entityName: "company",
@@ -12,7 +11,18 @@ export const ReportsSchema: ReportInterface[] = [
         name: "_id",
         label: "شناسه سند",
         template: "ObjectidViewComponent",
-        queries: [{ label: "برابر باشد با", method: "eq" }]
+        queries: [
+          {
+            label: "برابر باشد با",
+            method: "eq",
+            methodInputForm: "report-query-eq"
+          },
+          {
+            label: "برابر نباشد با",
+            method: "neq",
+            methodInputForm: "report-query-eq"
+          }
+        ]
       },
       {
         enabled: true,
@@ -22,7 +32,19 @@ export const ReportsSchema: ReportInterface[] = [
         templateInputsForm: "report-field-date",
         templateInputs: {
           format: "jYYYY/jMM/jDD HH:mm:ss"
-        }
+        },
+        queries: [
+          {
+            label: "در این بازه زمانی باشد",
+            method: "range",
+            methodInputForm: "report-query-eq"
+          },
+          {
+            label: "در این بازه زمانی نباشد",
+            method: "range",
+            methodInputForm: "report-query-eq"
+          }
+        ]
       },
       {
         enabled: true,

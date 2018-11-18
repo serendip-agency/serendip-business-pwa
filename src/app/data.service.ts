@@ -28,6 +28,8 @@ export interface DataRequestInterface {
   retry?: boolean;
   host?: string;
   modelName?: string;
+
+  timeout?: number;
 }
 
 @Injectable()
@@ -57,65 +59,74 @@ export class DataService {
     }
   }
 
-  public async request(opts: DataRequestInterface): Promise<any> {
-    opts.method = opts.method.trim().toUpperCase();
+  public request(opts: DataRequestInterface): Promise<any> {
+    return new Promise(async (resolve, reject) => {
+      setTimeout(() => {
+        reject("timeout");
+      }, opts.timeout || 10000);
+      opts.method = opts.method.trim().toUpperCase();
 
-    console.log("AJAX", opts.path);
+      let result = {};
 
-    let result = {};
+      if (!opts.model) {
+        opts.model = {};
+      }
 
-    if (!opts.model) {
-      opts.model = {};
-    }
+      if (!opts.host) {
+        opts.host = environment.api;
+      }
 
-    if (!opts.host) {
-      opts.host = environment.api;
-    }
+      try {
+        const token = await this.authService.token();
 
-    try {
-      const token = await this.authService.token();
-
-      if (!opts.model._business) {
-        if (this.businessService.getActiveBusinessId()) {
-          opts.model._business = this.businessService.getActiveBusinessId();
-        } else {
-          throw new Error("no business set");
+        if (!opts.model._business) {
+          if (this.businessService.getActiveBusinessId()) {
+            opts.model._business = this.businessService.getActiveBusinessId();
+          } else {
+            throw new Error("no business set");
+          }
         }
-      }
 
-      const options: any = {
-        headers: {
-          Authorization: "Bearer " + token.access_token,
-          clientid: environment.clientId
+        const options: any = {
+          headers: {
+            Authorization: "Bearer " + token.access_token,
+            clientid: environment.clientId
+          }
+        };
+
+        if (opts.raw) {
+          options.responseType = "blob";
+          options.observe = "response";
         }
-      };
 
-      if (opts.raw) {
-        options.responseType = "blob";
-        options.observe = "response";
-      }
+        console.log(
+          "HTTP " + opts.method.toUpperCase() + " Request to",
+          opts.host,
+          opts.path
+        );
 
-      if (opts.method.toUpperCase() === "POST") {
-        result = await this.http
-          .post(opts.host + opts.path, opts.model, options)
-          .toPromise();
-      }
+        if (opts.method.toUpperCase() === "POST") {
+          result = await this.http
+            .post(opts.host + opts.path, opts.model, options)
+            .toPromise();
+        }
 
-      if (opts.method.toUpperCase() === "GET") {
-        result = await this.http
-          .get(
-            opts.host +
-              opts.path +
-              "?" +
-              utils.querystring.fromObject(opts.model),
-            options
-          )
-          .toPromise();
+        if (opts.method.toUpperCase() === "GET") {
+          result = await this.http
+            .get(
+              opts.host +
+                opts.path +
+                "?" +
+                utils.querystring.fromObject(opts.model),
+              options
+            )
+            .toPromise();
+        }
+      } catch (error) {
+        this.requestError(opts, error);
       }
-    } catch (error) {
-      this.requestError(opts, error);
-    }
-    return result;
+      resolve(result);
+    });
   }
 
   public async zip<A>(

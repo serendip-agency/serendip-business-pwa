@@ -1,290 +1,107 @@
-<div id="auth" [class.day]="day" *ngIf="!authService.loggedIn" >
+<div id="auth" [class.day]="day" *ngIf="!authService.loggedIn">
 
   <div class="moon" (mouseover)="day = true" (mouseout)="day = false">
-    <img *ngIf="!loading" class="logo" src='assets/graphics/brand/serendip-circle.svg' />
+    <a href="https://serendip.agency" target="_blank"> <img *ngIf="!loading" class="logo" src='assets/graphics/brand/serendip-circle.svg' />
+    </a>
     <div class="loading" *ngIf="loading">
       <mat-spinner></mat-spinner>
     </div>
-    <div class="activate" *ngIf="tab =='activate'">
 
-      <form (ngSubmit)="activate(model)" #activateForm="ngForm">
-
+    <div class="wizard">
+      <form *ngIf="tab =='login'" class="form-mobile">
         <div class="title">
-          فعال سازی حساب کاربری
-        </div>
-        <mat-form-field>
-          <input matInput type="text" dir="auto" required [(ngModel)]="model.mobile" dir=ltr name="mobile" #mobile="ngModel"
-            placeholder="شماره موبایل" />
-        </mat-form-field>
-        <mat-form-field>
-          <input matInput type="text" dir="auto" [(ngModel)]="model.code" dir=ltr name="code" #code="ngModel"
-            placeholder="کد فعال سازی" />
-        </mat-form-field>
-
-        <div class="validation" *ngIf="activationMessage" [innerHtml]="replacePersianDigits(activationMessage)">
+          شماره تماس خود را وارد کنید
         </div>
 
+        <mat-form-field>
+          <input type="text" matInput dir="ltr" prefix="+98 " [showMaskTyped]="true" mask="(000) 000 0000" required
+            [(ngModel)]="model.mobile" dir=ltr autofocus name="mobile" #mobile="ngModel" />
 
-        <div class="buttons">
 
-          <button type="submit" mat-raised-button color="primary" [disabled]="!activateForm.form.valid">
-            فعال سازی حساب
-          </button>
-          <button type="button" mat-raised-button color="secondary" (click)="sendVerify(model)" [disabled]="!activateForm.form.valid">
-            ارسال مجدد کد
+        </mat-form-field>
+
+        <!-- <mat-form-field>
+          <input matInput type="password" dir="auto" required [(ngModel)]="model.password" dir=ltr name="password"
+            #username="ngModel" placeholder="رمز عبور" />
+        </mat-form-field> -->
+
+        <div class="submit">
+          <button (click)="sendOneTimePassword()" mat-raised-button color="secondary">
+            ادامه
           </button>
 
-
-
-
         </div>
-
-        <ul class="links">
-          <li>
-            <a [routerLink]="['/auth','login']">
-              ورود به حساب کاربری
-            </a>
-
-          </li>
-
-          <li>
-            <a [routerLink]="['/auth','forgot']">
-              فراموشی رمزعبور
-            </a>
-          </li>
-
-
-
-          <li>
-            <a [routerLink]="['/auth','activate']">
-              فعال سازی حساب
-            </a>
-          </li>
-
-        </ul>
-
       </form>
 
 
-    </div>
 
-
-    <div class="login" *ngIf="tab =='login'">
-
-      <form (ngSubmit)="login(model)" #loginForm="ngForm">
+      <form *ngIf="tab =='code'" class="form-code">
         <div class="title">
-          ورود به حساب کاربری
+          کد دریافت شده از طریق پیامک را وارد کنید
         </div>
+
         <mat-form-field>
-          <input matInput type="text" dir="auto" required [(ngModel)]="model.username" dir=ltr name="username"
-            #username="ngModel" placeholder="شماره موبایل" />
+          <input type="text" matInput dir="ltr" [showMaskTyped]="true" mask="0 0 0 0 0 0" required [(ngModel)]="model.oneTimePassword"
+            autofocus dir=ltr name="oneTimePassword" #oneTimePassword="ngModel" />
+          <mat-hint>
+            دریافت شده توسط {{model.mobile | rpd }}
+          </mat-hint>
         </mat-form-field>
-        <mat-form-field>
+
+        <!-- <mat-form-field>
           <input matInput type="password" dir="auto" required [(ngModel)]="model.password" dir=ltr name="password"
             #username="ngModel" placeholder="رمز عبور" />
-        </mat-form-field>
+        </mat-form-field> -->
 
         <div class="submit">
-          <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.form.valid">
-            ورود
+          <button (click)="login()" mat-raised-button color="secondary">
+            ادامه
+          </button>
+        </div>
+      </form>
+
+      <form *ngIf="tab =='password'" class="form-password">
+        <div class="title">
+          رمز عبور حساب خود را وارد کنید
+        </div>
+
+        <mat-form-field>
+          <input type="text" matInput dir="ltr" [showMaskTyped]="true" mask="0 0 0 0 0 0" required [(ngModel)]="model.oneTimePassword"
+            autofocus dir=ltr name="password" #oneTimePassword="ngModel" />
+          <mat-hint>
+            در حال ورود با {{model.mobile | rpd }}
+          </mat-hint>
+        </mat-form-field>
+        <!-- <mat-form-field>
+          <input matInput type="password" dir="auto" required [(ngModel)]="model.password" dir=ltr name="password"
+            #username="ngModel" placeholder="رمز عبور" />
+        </mat-form-field> -->
+
+        <div class="submit">
+          <button (click)="login()" mat-raised-button color="secondary">
+            ادامه
           </button>
 
         </div>
+      </form>
 
+      <ul class="links">
+        <li>
+          <a target="_blank" href="https://serendip.agency">
+            وبسایت سرندیپ </a>
+        </li>
+      </ul>
 
-
-        <ul class="links">
-          <li>
-            حساب کاربری ندارید؟
-            <a type="button" [routerLink]="['/auth','register']">
-              ثبت‌نام
-            </a>
-            کنید.
-          </li>
-
-          <li>
-
-            <a type="button" [routerLink]="['/auth','register']">
-              فراموشی رمزعبور
-            </a>
-          </li>
-
-          <li>
-            <a [routerLink]="['/auth','activate']">
-              فعال‌سازی حساب
-            </a>
-          </li>
-        </ul>
-
-        <!-- <button mat-button type="button" [routerLink]="['/auth','forgot']">
+      <!-- <button mat-button type="button" [routerLink]="['/auth','forgot']">
           فراموشی رمز
         </button>
         <button mat-button type="button" [routerLink]="['/auth','activate']">
           کد فعال‌سازی
         </button> -->
 
-      </form>
-
 
     </div>
 
 
-    <div class="register" *ngIf="tab =='register'">
-
-
-      <form (ngSubmit)="register(model)" #registerForm="ngForm">
-        <div class="title">
-          ایجاد حساب کاربری
-        </div>
-        <mat-form-field>
-          <input matInput type="text" dir="auto" required [(ngModel)]="model.username" dir=ltr name="username"
-            #username="ngModel" placeholder="شماره موبایل" />
-
-          <mat-hint>کد تایید به شماره موبایل شما ارسال خواهد شد.</mat-hint>
-        </mat-form-field>
-
-
-        <mat-form-field>
-          <input matInput type="password" dir="auto" required [(ngModel)]="model.password" dir=ltr name="password"
-            #username="ngModel" placeholder="رمز عبور" />
-          <mat-hint>
-            حداقل طول رمز عبور 6 کارکتر می باشد.
-          </mat-hint>
-
-        </mat-form-field>
-
-
-        <mat-form-field>
-          <input matInput type="password" dir="auto" required [(ngModel)]="model.passwordConfirm" dir=ltr name="passwordConfirm"
-            #passwordConfirm="ngModel" placeholder="تکرار رمز عبور" />
-        </mat-form-field>
-
-
-        <div class="validation" *ngIf="validateRegister(model)" [innerHtml]="replacePersianDigits(validateRegister(model))">
-        </div>
-
-
-        <div class="submit">
-
-          <button mat-raised-button color="primary" type="submit" [disabled]="!registerForm.form.valid">
-            ثبت نام
-          </button>
-        </div>
-
-        <ul class="links">
-          <li>
-            <a [routerLink]="['/auth','login']">
-              ورود به حساب کاربری
-            </a>
-
-          </li>
-
-          <li>
-            <a [routerLink]="['/auth','forgot']">
-              فراموشی رمزعبور
-            </a>
-          </li>
-
-
-
-          <li>
-            <a [routerLink]="['/auth','activate']">
-              فعال سازی حساب
-            </a>
-          </li>
-
-        </ul>
-
-      </form>
-
-    </div>
-
-
-    <div class="forgot" *ngIf="tab =='forgot'">
-
-      <form (ngSubmit)="sendResetPasswordToken(model)" #forgotForm="ngForm">
-
-        <div class="title">
-          فراموشی رمز عبور
-        </div>
-
-        <mat-form-field>
-          <input matInput type="text" dir="auto" required [(ngModel)]="model.mobile" dir=ltr name="mobile" #mobile="ngModel"
-            placeholder="شماره موبایل" />
-
-          <mat-hint>
-            کد تغییر رمز به شماره موبایل شما ارسال خواهد شد.
-          </mat-hint>
-        </mat-form-field>
-
-
-        <div class="buttons">
-          <button mat-raised-button color="primary" type="submit" [disabled]="!forgotForm.form.valid">
-            ارسال کد
-          </button>
-
-          <button mat-raised-button color="secondary" type="button" [routerLink]="['/auth','reset']">
-            کد دارم.
-          </button>
-        </div>
-
-        <ul class="links">
-          <li>
-            <a [routerLink]="['/auth','login']">
-              ورود به حساب کاربری
-            </a>
-          </li>
-        </ul>
-
-      </form>
-
-    </div>
-
-    <div class="reset" *ngIf="tab =='reset'">
-      <form (ngSubmit)="resetPassword(model)" #resetForm="ngForm">
-        <div class="title">
-          تغییر رمز با کد
-        </div>
-        <mat-form-field>
-          <input matInput type="text" dir="auto" required [(ngModel)]="model.mobile" dir=ltr name="mobile" #mobile="ngModel"
-            placeholder="شماره موبایل" />
-        </mat-form-field>
-
-        <mat-form-field>
-          <input matInput type="text" dir="auto" [(ngModel)]="model.code" dir=ltr name="code" #code="ngModel"
-            placeholder="کد دریافت شده" />
-        </mat-form-field>
-
-        <mat-form-field>
-          <input matInput type="password" dir="auto" required [(ngModel)]="model.password" dir=ltr name="password"
-            #username="ngModel" placeholder="رمز عبور" />
-        </mat-form-field>
-
-        <mat-form-field>
-          <input matInput type="password" dir="auto" required [(ngModel)]="model.passwordConfirm" dir=ltr name="passwordConfirm"
-            #passwordConfirm="ngModel" placeholder="تکرار رمز عبور" />
-        </mat-form-field>
-        <div class="validation" *ngIf="activationMessage" [innerHtml]="replacePersianDigits(activationMessage)">
-        </div>
-
-        <div class="buttons">
-          <button mat-raised-button color="primary" type="submit" [disabled]="!resetForm.form.valid">
-            تغییر رمز
-          </button>
-          <button mat-raised-button color="secondary" type="button" [routerLink]="['/auth','reset']">
-            کد تعییر رمز ندارم
-          </button>
-        </div>
-        <ul class="links">
-          <li>
-            <a [routerLink]="['/auth','login']">
-              ورود به حساب کاربری
-            </a>
-          </li>
-
-        </ul>
-      </form>
-
-    </div>
   </div>
 </div>

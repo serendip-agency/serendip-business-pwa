@@ -8,7 +8,11 @@ import {
   Output
 } from "@angular/core";
 import { PageEvent } from "@angular/material";
-import { ReportModel, ReportFieldInterface } from "serendip-business-model";
+import {
+  ReportModel,
+  ReportFieldInterface,
+  ReportFieldQueryInterface
+} from "serendip-business-model";
 import * as sUtils from "serendip-utility";
 import { ClubRatingViewComponent } from "src/app/crm/club-rating-view/club-rating-view.component";
 import { ContactViewComponent } from "src/app/crm/contact-view/contact-view.component";
@@ -28,7 +32,12 @@ import {
   DashboardWidgetInterface,
   DashboardTabInterface
 } from "serendip-business-model";
+
 import { IdbService, Idb } from "src/app/idb.service";
+
+import * as Moment from "moment";
+import * as MomentJalaali from "moment-jalaali";
+import * as sUtil from "serendip-utility";
 
 @Component({
   selector: "app-report",
@@ -58,7 +67,7 @@ export class ReportComponent implements OnInit {
   @Input() pageSize = 20;
   @Input() pageIndex = 0;
 
-  _mode: "report" | "data" = "report";
+  _mode: "report" | "data" = "data";
   reportStore: Idb;
   page: any[] = [];
   reports: { label: string; value: string }[];
@@ -71,6 +80,9 @@ export class ReportComponent implements OnInit {
     return this._mode;
   }
   _ = _;
+
+  moment: typeof Moment = MomentJalaali;
+
   pageCount = 1;
 
   @Input()
@@ -125,7 +137,7 @@ export class ReportComponent implements OnInit {
       !this.report._id &&
       (!this.report.label ||
         (this.report.label.indexOf("_فیلدها: ") === 0 &&
-          this.report.label.endsWith(" _ ")))
+          this.report.label.endsWith("_")))
     ) {
       this.report.label =
         "_فیلدها: " +
@@ -136,8 +148,9 @@ export class ReportComponent implements OnInit {
           .map(item => {
             return item.label;
           })
-          .join(", ") +
-        " _ ";
+          .join(", ")
+          .trim() +
+        "_";
 
       console.log(this.report.label);
     }
@@ -179,12 +192,31 @@ export class ReportComponent implements OnInit {
     );
   }
 
+  enabledReportFields(): ReportFieldInterface[] {
+    return _.where(this.report.fields, { enabled: true });
+  }
   extendObj(obj1, obj2) {
     return _.extend({}, obj1, obj2);
   }
 
   getViewComponent(name) {
     return this.viewComponents[name];
+  }
+
+  fieldQuerySelect(
+    field: ReportFieldInterface,
+    selectedQuery: ReportFieldQueryInterface
+  ) {
+    field.queries = _.map(field.queries, q => {
+      q.enabled = false;
+      return q;
+    });
+
+    selectedQuery.enabled = true;
+  }
+
+  findEnabledFieldQuery(field: ReportFieldInterface) {
+    return _.findWhere(field.queries, { enabled: true });
   }
 
   async deleteReport() {
@@ -249,7 +281,6 @@ export class ReportComponent implements OnInit {
 
     this.resultLoading = false;
 
-    this.changeRef.detectChanges();
   }
 
   async deleteOffline() {
@@ -301,7 +332,15 @@ export class ReportComponent implements OnInit {
   async refreshReports() {
     this.reports = _.chain(await this.dataService.reports())
       .map(item => {
-        return { label: item.label, value: item._id };
+        return {
+          label:
+            item.label.trim() +
+            " | " +
+            sUtil.text.replaceEnglishDigitsWithPersian(
+              this.moment(item.createDate).fromNow()
+            ),
+          value: item._id
+        };
       })
       .value();
   }

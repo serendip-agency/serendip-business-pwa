@@ -24,7 +24,7 @@ export class DashboardService {
     dashboard: DashboardSectionInterface[];
   };
 
-  currentSection: DashboardSectionInterface = null;
+  currentSection: DashboardSectionInterface = { name: "", tabs: [] };
   screen: "desktop" | "mobile" = "desktop";
 
   constructor(
@@ -49,10 +49,6 @@ export class DashboardService {
       dashboard: BusinessSchema.DashboardSchema,
       reports: BusinessSchema.ReportsSchema
     };
-
-    this.currentSection = _.findWhere(this.schema.dashboard, {
-      name: "dashboard"
-    });
 
     if (this.schema) {
       return;

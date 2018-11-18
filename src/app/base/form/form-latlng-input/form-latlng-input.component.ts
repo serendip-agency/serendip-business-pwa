@@ -1,28 +1,37 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
-import * as _ from 'underscore';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef
+} from "@angular/core";
+import * as _ from "underscore";
 
-import IranStates from '../../../geo/IranStates';
-import { MatAutocompleteSelectedEvent } from '@angular/material';
-import { GmapsService } from 'src/app/gmaps.service';
-
+import IranStates from "../../../geo/IranStates";
+import { MatAutocompleteSelectedEvent } from "@angular/material";
+import { GmapsService } from "src/app/gmaps.service";
 
 @Component({
-  selector: 'app-form-latlng-input',
-  templateUrl: './form-latlng-input.component.html',
-  styleUrls: ['./form-latlng-input.component.css']
+  selector: "app-form-latlng-input",
+  templateUrl: "./form-latlng-input.component.html",
+  styleUrls: ["./form-latlng-input.component.css"]
 })
 export class FormLatlngInputComponent implements OnInit {
-
   @Output() modelChange = new EventEmitter<any>();
-  SelectId = `geo-select-${Math.random().toString().split('.')[1]}`
+  SelectId = `geo-select-${
+    Math.random()
+      .toString()
+      .split(".")[1]
+  }`;
   mapId = `gmap-${Date.now()}`;
 
   private _model: string;
 
-  iranStates: { "name": string; "Cities": { "name": string; }[]; }[] = IranStates;
+  iranStates: { name: string; Cities: { name: string }[] }[] = IranStates;
 
-
-  @Input() set model(value: string) {
+  @Input()
+  set model(value: string) {
     this._model = value;
   }
 
@@ -30,10 +39,10 @@ export class FormLatlngInputComponent implements OnInit {
     return this._model;
   }
 
-
   _state: string;
-  @Input() set state(value: string) {
-    if (this._state != value) {
+  @Input()
+  set state(value: string) {
+    if (this._state !== value) {
       this._state = value;
     }
   }
@@ -43,8 +52,9 @@ export class FormLatlngInputComponent implements OnInit {
   }
 
   _city: string;
-  @Input() set city(value: string) {
-    if (this._city != value) {
+  @Input()
+  set city(value: string) {
+    if (this._city !== value) {
       this._city = value;
     }
   }
@@ -53,34 +63,30 @@ export class FormLatlngInputComponent implements OnInit {
     return this._city;
   }
 
+  constructor(
+    private changeRef: ChangeDetectorRef,
+    private gmapsService: GmapsService
+  ) {}
 
+  ngOnInit() {}
 
-  constructor(private changeRef: ChangeDetectorRef,
-    private gmapsService: GmapsService) { }
+  async setGeo() {
+    const defaultPositions = [];
 
-  ngOnInit() {
-
-  }
-
-
-  async  setGeo() {
-
-    var defaultPositions = [];
-
-    var lastValue = this.model;
+    const lastValue = this.model;
 
     if (lastValue) {
-
-      defaultPositions.push({ lat: parseFloat(lastValue.split(',')[0]), lng: parseFloat(lastValue.split(',')[1]) });
-
+      defaultPositions.push({
+        lat: parseFloat(lastValue.split(",")[0]),
+        lng: parseFloat(lastValue.split(",")[1])
+      });
     }
 
     this.gmapsService.selectSingle(this.mapId, defaultPositions);
 
-    var positions = await this.gmapsService.onSelectDone(this.mapId);
+    const positions = await this.gmapsService.onSelectDone(this.mapId);
 
-
-    this.model = positions[0].lat + ',' + positions[0].lng;
+    this.model = positions[0].lat + "," + positions[0].lng;
 
     this.modelChange.emit(this.model);
 
@@ -93,7 +99,9 @@ export class FormLatlngInputComponent implements OnInit {
   }
 
   goGeo() {
-    window.open(`https://www.google.com/maps/@${this.model},16z?hl=fa`, '_blank');
+    window.open(
+      `https://www.google.com/maps/@${this.model},16z?hl=fa`,
+      "_blank"
+    );
   }
-
 }
