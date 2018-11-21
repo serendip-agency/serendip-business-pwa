@@ -23,7 +23,7 @@ import { ReportComponent } from "../base/report/report.component";
 import { TriggersComponent } from "../base/triggers/triggers.component";
 import { BusinessService } from "../business.service";
 import { IdbService } from "../idb.service";
-import { WidgetCommandInterface } from "../models";
+
 import {
   DashboardContainerInterface,
   DashboardGridInterface,
@@ -38,6 +38,7 @@ import { CalendarService } from "../calendar.service";
 import { WeatherService } from "../weather.service";
 import { GmapsService } from "../gmaps.service";
 import { DataService } from "../data.service";
+import { AuthService } from "../auth.service";
 
 // optional import of scroll behavior
 polyfill({
@@ -143,6 +144,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private wsService: WsService,
     public calendarService: CalendarService,
     public weatherService: WeatherService,
+    public authService: AuthService,
     public gmapsService: GmapsService,
     public dataService: DataService
   ) {
@@ -291,7 +293,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.calendarService.calendarVisible = false;
     this.weatherService.weatherVisible = false;
     this.hideStart();
-    this.mapVisible = !this.mapVisible;
+    this.gmapsService.dashboardMapVisible = this.gmapsService.dashboardMapVisible;
     this.gmapsService.emitSetMode({ mapId: "dashboard", mode: "explorer" });
     this.gmapsService.emitSetVisible({
       mapId: "dashboard",
@@ -387,7 +389,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async initGrid(tabs: DashboardTabInterface[]) {
-
     console.log("initGrid");
     const tabsToAdd = _.clone(tabs);
 
@@ -445,30 +446,22 @@ export class DashboardComponent implements OnInit, OnDestroy {
     tabIndex: number,
     widgetIndex: number
   ) {
-    return (options: WidgetCommandInterface) => {
-      const tabToAdd: DashboardTabInterface = {
-        title: options.title,
-        active: true,
-        icon: options.icon,
-        widgets: [
-          {
-            component: options.component,
-            inputs: { documentId: options.documentId }
-          }
-        ]
-      };
-
+    return (options: { command: "open-tab"; tab: DashboardTabInterface }) => {
       const existInGrid = _.chain(this.grid.containers)
         .map((c: DashboardContainerInterface) => {
           return c.tabs;
         })
         .flatten()
-        .map((t: any) => {
+        .map((t: DashboardTabInterface) => {
           return t.widgets;
         })
         .flatten()
         .any(w => {
-          return w && w.inputs && w.inputs.documentId === options.documentId;
+          return (
+            w &&
+            w.inputs &&
+            w.inputs.documentId === options.tab.widgets[0].inputs.documentId
+          );
         })
         .value();
 
@@ -483,8 +476,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         for (let i = 0; i < this.grid.containers.length; i++) {
           if (this.grid.containers[i]) {
             if (this.grid.containers[i].tabs.length === 0) {
-              this.grid.containers[i].tabs.push(tabToAdd);
-              this.setActive(tabToAdd, this.grid.containers[i]);
+              this.grid.containers[i].tabs.push(options.tab);
+              this.setActive(options.tab, this.grid.containers[i]);
               containerModifiedId = i;
               addedToCurrentContainers = true;
               break;
@@ -493,7 +486,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
 
         if (!addedToCurrentContainers) {
-          this.grid.containers.push({ tabs: [tabToAdd] });
+          this.grid.containers.push({ tabs: [options.tab] });
           containerModifiedId = this.grid.containers.length;
         }
 
@@ -520,8 +513,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
           });
         }, 500);
       } else {
-        this.grid.containers[containerIndex].tabs.push(tabToAdd);
-        this.setActive(tabToAdd, this.grid.containers[containerIndex]);
+        this.grid.containers[containerIndex].tabs.push(options.tab);
+        this.setActive(options.tab, this.grid.containers[containerIndex]);
       }
     };
   }
@@ -736,6 +729,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     setInterval(() => {
       _.forEach(document.querySelectorAll("ul.tabs-nav"), navTab => {
         const navTabId = navTab.getAttribute("id");
+
         const container = this.grid.containers[
           parseInt(navTabId.split("-").reverse()[0], 10)
         ];
@@ -743,8 +737,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
           return;
         }
 
+        let listItemsWith = 0;
+
+        document
+          .querySelectorAll("#" + navTabId + " li")
+          .forEach((item: HTMLElement) => {
+            if (!item.classList.contains("full-nav")) {
+              listItemsWith += item.getBoundingClientRect().width;
+            }
+          });
+
         const isFull =
-          navTab.getBoundingClientRect().width / container.tabs.length < 150;
+          navTab.getBoundingClientRect().width - listItemsWith < 10;
+
+        console.log(
+          listItemsWith,
+          navTab.getBoundingClientRect().width,
+          isFull
+        );
         // var isFull = navTab.getBoundingClientRect().width <= _.reduceRight(navTab.querySelectorAll("li"), (memo, item: HTMLElement) => {
         //   return memo + item.getBoundingClientRect().width;
         // }, 0);
@@ -761,7 +771,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }
       });
-    }, 1000);
+    }, 100);
   }
 
   handleGridMouseDragScroll() {
@@ -778,7 +788,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         target.classList.contains("tabs-container")
       ) {
         lastCapture = Date.now();
-        if (ev.deltaY > 0) {
+        if (ev.deltaY < 0) {
           grid.scroll({ left: grid.scrollLeft - 100, behavior: "instant" });
         } else {
           grid.scroll({ left: grid.scrollLeft + 100, behavior: "instant" });
@@ -802,6 +812,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
 
+    let gridEdgeTimeout;
+    let gridEdgeScrollInterval;
     grid.onmousemove = (move_ev: MouseEvent) => {
       if (capture) {
         grid.scroll({
@@ -812,6 +824,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
 
+    grid.onmouseover = grid.touchstart = ev => {
+      if (gridEdgeScrollInterval) { clearInterval(gridEdgeScrollInterval); }
+
+      if (gridEdgeTimeout) { clearTimeout(gridEdgeTimeout); }
+      const mousePosition = { x: ev.clientX, y: ev.clientY };
+      if (mousePosition.x < 50) {
+        gridEdgeTimeout = setTimeout(() => {
+          gridEdgeScrollInterval = setInterval(() => {
+            grid.scroll({ left: grid.scrollLeft - 150, behavior: "smooth" });
+          }, 500);
+        }, 500);
+      }
+
+      if (window.innerWidth - mousePosition.x < 100) {
+        gridEdgeTimeout = setTimeout(() => {
+          gridEdgeScrollInterval = setInterval(() => {
+            grid.scroll({ left: grid.scrollLeft + 150, behavior: "smooth" });
+          }, 500);
+        }, 500);
+      }
+    };
     grid.onmouseup = (up_ev: MouseEvent) => {
       capture = false;
       last = { x: 0, y: 0 };
@@ -852,8 +885,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async handleParams(params) {
-
-    console.log('handleParams',params);
+    console.log("handleParams", params);
 
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
@@ -862,21 +894,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     );
 
-    var localGrid: any = localStorage.getItem("grid" + params.section);
-    if (localGrid) localGrid = JSON.parse(localGrid);
+    let localGrid: any = localStorage.getItem("grid" + params.section);
+    if (localGrid) {
+      localGrid = JSON.parse(localGrid);
+    }
 
-    var remoteGrid;
+    let remoteGrid;
     try {
       remoteGrid = await this.dataService.request({
         method: "post",
         path: "/api/business/grid",
         model: { section: params.section },
+        timeout: 100,
         retry: false
       });
     } catch (error) {}
 
-
-    console.log("remoteGrid", remoteGrid, "localGrid",localGrid);
+    console.log("remoteGrid", remoteGrid, "localGrid", localGrid);
     if (localGrid && localGrid.version) {
       if (remoteGrid) {
         if (localGrid.version > remoteGrid.version) {

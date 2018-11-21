@@ -21,6 +21,7 @@ export class GmapsService {
 
   scriptLoaded: boolean = false;
 
+  dashboardMapVisible = false;
   private addScripts(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!document.querySelectorAll(`[src="${this.scriptUrl}"]`).length) {
@@ -76,6 +77,7 @@ export class GmapsService {
     mapId: string,
     positions: { lat: number; lng: number }[]
   ) {
+    this.emitSetVisible({ mapId, visible: true });
     this.eventEmitter.emit("selectSingle", { mapId, positions });
   }
 

@@ -26,7 +26,7 @@
     </mat-card-header>
     <mat-card-content *ngIf="mode == 'form'">
 
-      <textarea  class="logbox">{{model | json}}</textarea>
+      <!-- <textarea  class="logbox">{{model | json}}</textarea> -->
 
       <ng-container *ngTemplateOutlet="form"></ng-container>
 
@@ -53,14 +53,18 @@
 
 
 <ng-template #form>
-  <form class="">
+  <form class="" *ngIf="formSchema">
 
     <div class="dynamic-form-part" *ngFor="let part of formSchema.parts">
 
-      <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : model[part.propertyName] || (part.propertyType == 'string' ? '' : {}) } , part.inputs || {} )"
+      <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : model[part.propertyName]  } , part.inputs || {} )"
         [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.propertyName)  }" [ndcDynamicComponent]="getDynamicPart(part.componentName)"></ndc-dynamic>
 
     </div>
 
   </form>
+
+  <div *ngIf="!formSchema" class="logbox">
+Form schema for {{ name }} not found. put them in schema/forms.json
+  </div>
 </ng-template>

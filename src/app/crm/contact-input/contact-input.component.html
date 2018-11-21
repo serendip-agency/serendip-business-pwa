@@ -5,6 +5,9 @@
 
   <app-form-multiple-text-input [model]="contact.faxes" [label]="'شماره فکس'" (modelChange)="contact.faxes = $event;inputsChange()"></app-form-multiple-text-input>
 
+
+  <app-form-multiple-text-input [model]="contact.emails" [label]="'آدرس ایمیل'" (modelChange)="contact.emails = $event;inputsChange()"></app-form-multiple-text-input>
+
   <app-form-state-input [model]="contact.address.state" (modelChange)="contact.address.state = $event;inputsChange()"></app-form-state-input>
 
   <app-form-city-input [state]="contact.address.state" [model]="contact.address.city" (modelChange)="contact.address.city = $event;inputsChange()"></app-form-city-input>

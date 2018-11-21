@@ -108,11 +108,11 @@ export class IdbService {
     console.log("IdbService constructed ...");
   }
 
-  async syncIDB(store: "pull" | "push") {
+  async syncIDB(store: "pull" ) {
     return new Idb(
       idb.default.open("SYNC", 1, db => {
         db.createObjectStore("pull");
-        db.createObjectStore("push");
+    //    db.createObjectStore("push");
       }),
       store
     );

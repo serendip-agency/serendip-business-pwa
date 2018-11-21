@@ -1,4 +1,4 @@
-<app-calendar></app-calendar>
+<!-- <app-calendar></app-calendar> -->
 <app-weather></app-weather>
 <app-map [mapId]="'dashboard'"></app-map>
 
@@ -12,10 +12,7 @@
       <div class="quick" (click)="toggleDashboardDateTimeFormat()">
         <div class="datetime">
           <span class="time">
-            <img
-              *ngFor="let w of dashboardTime.split('')"
-              [src]="'/assets/digital-numbers/' + w + '.svg'"
-            />
+            <img *ngFor="let w of dashboardTime.split('')" [src]="'/assets/digital-numbers/' + w + '.svg'" />
           </span>
 
           <span class="date"> {{ rpd(dashboardDate) }} </span>
@@ -23,21 +20,15 @@
       </div>
       <div class="title" *ngIf="dashboardService.currentSection">
         <div class="icon">
-          <img
-            [src]="
+          <img [src]="
               '/assets/icons/' + dashboardService.currentSection.icon + '.svg'
-            "
-          />
+            " />
         </div>
 
         {{ dashboardService.currentSection.title }}
       </div>
 
-      <div
-        class="explorer-toggle"
-        (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()"
-        [class.active]="explorerVisible"
-      >
+      <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible">
         <img [src]="'/assets/icons/arrow-right-next-2.svg'" />
       </div>
 
@@ -105,22 +96,16 @@
 
       <div class="splitter">مدیریت مشتری</div>
       <ul class="crm">
-        <li
-          *ngFor="
+        <li *ngFor="
             let section of getExplorerSections(
               dashboardService.schema ? dashboardService.schema.dashboard : []
             )
-          "
-        >
+          ">
           <a (click)="section.toggleUl = !section.toggleUl">
             <img [src]="'assets/icons/' + section.icon + '.svg'" />
             <span> {{ section.title }} </span>
 
-            <img
-              class="toggle-ul"
-              [class.active]="section.toggleUl"
-              [src]="'/assets/icons/arrow-right-next-8.svg'"
-            />
+            <img class="toggle-ul" [class.active]="section.toggleUl" [src]="'/assets/icons/arrow-right-next-8.svg'" />
           </a>
 
           <ul [class.show]="section.toggleUl">
@@ -134,42 +119,30 @@
             </li>
           </ul>
         </li>
+
+        <li class="logout">
+          <a (click)="authService.logout()">
+            <img [src]="'assets/icons/off-1.svg'" />
+            <span>خروج</span>
+          </a>
+        </li>
       </ul>
     </div>
   </aside>
 
-  <div
-    class="grid-container"
-    [ngClass]="'f' + grid.containers.length"
-    [class.explorer-show]="explorerVisible"
-    [class.go-back]="!explorerAnimDone"
-  >
-    <div
-      class="tabs-container"
-      dndDropzone
-      (dndDragover)="onTabDragover($event, c)"
-      (dndDrop)="onTabDrop($event, c)"
-      *ngFor="let container of grid.containers; let c = index"
-    >
+  <div class="grid-container" [ngClass]="'f' + grid.containers.length" [class.explorer-show]="explorerVisible"
+    [class.go-back]="!explorerAnimDone">
+    <div class="tabs-container" dndDropzone (dndDragover)="onTabDragover($event, c)" (dndDrop)="onTabDrop($event, c)"
+      *ngFor="let container of grid.containers; let c = index">
       <!-- optional placeholder element for dropzone -->
       <!-- will be removed from DOM on init -->
       <div class="placeholder" dndPlaceholderRef></div>
 
-      <ul
-        class="tabs-nav"
-        *ngIf="container.tabs.length > 0"
-        [class.showTabs]="container.showTabs"
-        [id]="'nav-tab-' + c"
-        [class.full]="isNavTabFull('nav-tab-' + c)"
-      >
-        <li
-          *ngFor="let tab of definedItemsOfArray(container.tabs); let i = index"
-          [style.top]="container.showTabs ? i * 40 + 10 + 'px' : 'unset'"
-          [class.last-item]="i == container.tabs.length - 1"
-          [style.z-index]="i"
-          [style.left]="container.showTabs ? i * 10 + 10 + 'px' : 'unset'"
-          [style.right]="container.showTabs ? i * 10 + 10 + 'px' : 'unset'"
-          [id]="'tab-' + c + '-' + i"
+      <ul class="tabs-nav" *ngIf="container.tabs.length > 0" [class.showTabs]="container.showTabs" [id]="'nav-tab-' + c"
+        [class.full]="isNavTabFull('nav-tab-' + c)">
+        <li *ngFor="let tab of definedItemsOfArray(container.tabs); let i = index" [style.top]="container.showTabs ? i * 40 + 10 + 'px' : 'unset'"
+          [class.last-item]="i == container.tabs.length - 1" [style.z-index]="i" [style.left]="container.showTabs ? 10 + 'px' : 'unset'"
+          [style.right]="container.showTabs ? 10 + 'px' : 'unset'" [id]="'tab-' + c + '-' + i"
           [class.nextIsActive]="
             container.tabs[i + 1] && container.tabs[i + 1].active
           "
@@ -182,19 +155,10 @@
           [class.prevIsHover]="
             container.tabs[i - 1] && container.tabs[i - 1].hover
           "
-          [class.active]="tab.active"
-          [class.hover]="tab.hover"
-          (mouseenter)="tab.hover = !container.showTabs"
-          (mouseout)="tab.hover = false"
-          (click)="setActive(tab, container); container.showTabs = false"
-        >
-          <a
-            class="tab-handle"
-            [title]="tab.title"
-            [dndDisableIf]="screen == 'mobile'"
-            [dndEffectAllowed]="'all'"
-            [dndDraggable]="{ containerIndex: c, tabIndex: i }"
-          >
+          [class.active]="tab.active" [class.hover]="tab.hover" (mouseenter)="tab.hover = !container.showTabs"
+          (mouseout)="tab.hover = false" (click)="isNavTabFull('nav-tab-' + c) && !container.showTabs ? '' : setActive(tab, container); container.showTabs = false">
+          <a class="tab-handle" [title]="tab.title" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'"
+            [dndDraggable]="{ containerIndex: c, tabIndex: i }">
             <div class="tab-icon">
               <img [src]="'assets/icons/location-pin.svg'" />
               <!-- <img [src]="'assets/icons/' + tab.icon + '.svg'" /> -->
@@ -213,32 +177,21 @@
           </a>
         </li>
 
-        <li
-          [class.prevIsActive]="
+        <li [class.prevIsActive]="
             container.tabs[container.tabs.length - 1] &&
             container.tabs[container.tabs.length - 1].active
           "
           [class.prevIsHover]="
             container.tabs[container.tabs.length - 1] &&
             container.tabs[container.tabs.length - 1].hover
-          "
-        >
+          ">
           <a class="tab-handle"> &nbsp; </a>
         </li>
       </ul>
 
-      <div
-        *ngFor="let tab of container.tabs; let t = index"
-        [hidden]="!tab.active || container.showTabs"
-      >
-        <div
-          class="widget-container"
-          *ngFor="let widget of getWidgets(tab); let w = index"
-          [hidden]="widget.screen && widget.screen != dashboardService.screen"
-        >
-          <ndc-dynamic
-            *ngIf="!widget.screen || widget.screen == dashboardService.screen"
-            [ndcDynamicInputs]="
+      <div *ngFor="let tab of container.tabs; let t = index" [hidden]="!tab.active || container.showTabs">
+        <div class="widget-container" *ngFor="let widget of getWidgets(tab); let w = index" [hidden]="widget.screen && widget.screen != dashboardService.screen">
+          <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="
               extendObj({ widgetId: widget.id, tab: tab }, widget.inputs || {})
             "
             [ndcDynamicOutputs]="{
@@ -246,18 +199,14 @@
               TabChange: tabChange(c, t, w),
               WidgetChange: widgetChange(c, t, w)
             }"
-            [ndcDynamicComponent]="getComponent(widget.component)"
-          ></ndc-dynamic>
+            [ndcDynamicComponent]="getComponent(widget.component)"></ndc-dynamic>
         </div>
       </div>
     </div>
   </div>
 
   <div *ngIf="businessService.getActiveBusinessId()" id="start-button">
-    <img
-      src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg"
-      alt=""
-    />
+    <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="" />
   </div>
 
   <div id="start" (click)="clickOnStartWrapper($event)">
@@ -265,14 +214,12 @@
       <ng-container *ngTemplateOutlet="shortcuts"></ng-container>
       <nav>
         <ul>
-          <li
-            *ngFor="
+          <li *ngFor="
               let item of dashboardService.schema
                 ? dashboardService.schema.dashboard
                 : []
             "
-            [class.active]="dashboardService.currentSection.name == item.name"
-          >
+            [class.active]="dashboardService.currentSection.name == item.name">
             <a [routerLink]="['/dashboard', item.name == 'dashboard' ? '' : item.name]" (click)="hideStart()">
               <img [src]="'assets/icons/' + item.icon + '.svg'" />
               <span> {{ item.title }} </span>
@@ -302,51 +249,32 @@
   <div class="shortcuts">
     <div class="search">
       <div class="search-inner">
-        <input
-          type="text"
-          [(ngModel)]="search.text"
-          placeholder="جست‌و‌جو ..."
-        />
+        <input type="text" [(ngModel)]="search.text" placeholder="جست‌و‌جو ..." />
         <img src="assets/icons/search.svg" />
       </div>
     </div>
     <ul>
       <li>
         <a>
-          <img
-            src="/assets/icon-crm-header/icons-crm-header-note-2.svg"
-            alt=""
-          />
+          <img src="/assets/icon-crm-header/icons-crm-header-note-2.svg" alt="" />
         </a>
       </li>
 
       <li>
-        <a
-          (click)="toggleCalendar()"
-          [class.active]="calendarService.calendarVisible"
-        >
-          <img
-            src="/assets/icon-crm-header/icons-crm-header-calendar.svg"
-            alt=""
-          />
+        <a (click)="toggleCalendar()" [class.active]="calendarService.calendarVisible">
+          <img src="/assets/icon-crm-header/icons-crm-header-calendar.svg" alt="" />
         </a>
       </li>
 
       <li>
-        <a (click)="toggleMap()" [class.active]="mapVisible">
+        <a (click)="toggleMap()" [class.active]="gmapsService.dashboardMapVisible">
           <img src="/assets/icon-crm-header/icons-crm-header-map.svg" alt="" />
         </a>
       </li>
 
       <li>
-        <a
-          (click)="toggleWeather()"
-          [class.active]="weatherService.weatherVisible"
-        >
-          <img
-            src="/assets/icon-crm-header/icons-crm-header-weather.svg"
-            alt=""
-          />
+        <a (click)="toggleWeather()" [class.active]="weatherService.weatherVisible">
+          <img src="/assets/icon-crm-header/icons-crm-header-weather.svg" alt="" />
         </a>
       </li>
     </ul>

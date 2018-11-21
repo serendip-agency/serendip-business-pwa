@@ -56,7 +56,7 @@ import { DndModule } from "ngx-drag-drop";
 
 import { IdbService } from "./idb.service";
 import { SyncService } from "./sync.service";
-import { MessagingService } from "./messaging.service";
+import { ObService } from "./ob.service";
 
 import { BusinessComponent } from "./business/business.component";
 
@@ -117,6 +117,9 @@ import { FormDateInputComponent } from "./base/form/form-date-input/form-date-in
 import { FormRelativeDateInputComponent } from "./base/form/form-relative-date-input/form-relative-date-input.component";
 import { FormDateRangeInputComponent } from './base/form/form-date-range-input/form-date-range-input.component';
 import { WeatherComponent } from './weather/weather.component';
+import { EmailComponent } from './email/email.component';
+import { SmsComponent } from './sms/sms.component';
+import { FaxComponent } from './fax/fax.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -192,7 +195,7 @@ export const primaryComponents = [
 ];
 
 @NgModule({
-  declarations: [...primaryComponents, ...dynamicComponents, WeatherComponent],
+  declarations: [...primaryComponents, ...dynamicComponents, WeatherComponent, EmailComponent, SmsComponent, FaxComponent],
   entryComponents: [],
   imports: [
     QuillModule,
@@ -248,7 +251,7 @@ export const primaryComponents = [
     FormBuilder,
     IdbService,
     SyncService,
-    MessagingService,
+    ObService,
     DashboardService
   ],
   bootstrap: [AppComponent]

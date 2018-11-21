@@ -83,17 +83,22 @@ export class MapComponent implements OnInit, OnDestroy {
     });
 
     this.mapVisible = false;
+    this.changeRef.detectChanges();
+
   }
 
   public selectCancel() {
     this.mapVisible = false;
     this.gmapsService.emitSelectCancel({ mapId: this.mapId });
+    this.changeRef.detectChanges();
   }
 
   async wait(timeout: number) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve();
+    this.changeRef.detectChanges();
+
       }, timeout);
     });
   }
@@ -107,6 +112,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
         this.addMarker(e.latLng);
         this._map.panTo(e.latLng);
+    this.changeRef.detectChanges();
+
       }
     });
   }
@@ -120,6 +127,8 @@ export class MapComponent implements OnInit, OnDestroy {
       this.bindMapEvents(this._map);
     }
 
+    this.changeRef.detectChanges();
+
     return this._map;
   }
 
@@ -129,6 +138,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
 
     this.changeRef.detach();
+
 
     console.log(`${this.mapId} being initialized.`);
 
@@ -183,6 +193,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
 
       });
+    this.changeRef.detectChanges();
+
   }
 
   async initExplorer() {

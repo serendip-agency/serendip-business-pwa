@@ -1,16 +1,7 @@
 
 
 
-export interface WidgetCommandInterface {
 
-    command: 'openWidget' | 'refreshWidget';
-    documentId?: string;
-    icon?: string;
-    component?: string;
-    title?: string;
-    screen?: 'desktop' | 'mobile';
-
-}
 
 
 export let periodUnits = [

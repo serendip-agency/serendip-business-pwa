@@ -13,7 +13,7 @@ import {
 import { BusinessService } from "./business.service";
 import { Subscription } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-
+import swal from "sweetalert2";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -84,6 +84,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     console.log(this.currentPwa);
+
+    swal.setDefaults({
+      buttonsStyling: false,
+      cancelButtonText: "انصراف",
+      confirmButtonText: "بسیار خب"
+    });
+
 
     this.httpClient
       .get(

@@ -18,7 +18,7 @@ export const FormsSchema: FormInterface[] = [
         propertyType: "string",
         inputs: {
           label: "تاریخ جلالی",
-          calendarType : "persian"
+          calendarType: "persian"
         }
       },
       {
@@ -26,7 +26,7 @@ export const FormsSchema: FormInterface[] = [
         propertyName: "date",
         propertyType: "string",
         inputs: {
-          label: "تاریخ میلادی",
+          label: "تاریخ میلادی"
         }
       }
     ]
@@ -84,17 +84,39 @@ export const FormsSchema: FormInterface[] = [
           label: "نام"
         }
       },
-
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "lastName",
+        inputs: {
+          label: "نام خانوادگی"
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "email",
+        inputs: {
+          label: "آدرس ایمیل"
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "mobile",
+        inputs: {
+          label: "شماره موبایل"
+        }
+      },
       {
         propertyName: "contacts",
         componentName: "ContactInputComponent"
       }
     ],
     defaultModel: {
-      firstName: "22",
+      firstName: "",
+      lastName: "",
       contacts: [
         {
-          telephones: ["0912", "0935"],
+          name: "اطلاعات تماس اصلی",
+          telephones: [""],
           faxes: [""],
           address: {}
         }
@@ -104,22 +126,22 @@ export const FormsSchema: FormInterface[] = [
   {
     name: "crm-service-form",
     entityName: "service",
-    parts:[]
+    parts: []
   },
   {
     name: "crm-complaint-form",
     entityName: "complaint",
-    parts:[]
+    parts: []
   },
   {
     name: "crm-sale-form",
     entityName: "company",
-    parts:[]
+    parts: []
   },
   {
     name: "crm-sale-form",
     entityName: "sale",
-    parts:[]
+    parts: []
   },
   {
     name: "crm-company-form",
@@ -140,7 +162,7 @@ export const FormsSchema: FormInterface[] = [
         inputs: {
           selectType: "multiple",
           label: "نوع شرکت",
-          data: ["شریک تجاری", "شرکت پخش", "تامین کننده"]
+          data: ["شریک تجاری", "شرکت پخش", "شرکت رقیب", "تامین کننده"]
         }
       },
 
@@ -151,11 +173,12 @@ export const FormsSchema: FormInterface[] = [
       }
     ],
     defaultModel: {
-      name: "22",
-      bad: ["تامین کننده"],
+      name: "",
       contacts: [
         {
-          telephones: ["dd"],
+          name: "اطلاعات تماس اصلی",
+          emails: [""],
+          telephones: [""],
           faxes: [""],
           address: {}
         }

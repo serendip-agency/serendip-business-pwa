@@ -9,7 +9,7 @@ import { IdbService } from "./idb.service";
 import * as JsZip from "jszip";
 
 import * as utils from "serendip-utility";
-import { MessagingService } from "./messaging.service";
+import { ObService } from "./ob.service";
 import { UpdateMessage } from "./messaging/updateMessage";
 import { InsertMessage } from "./messaging/InsertMessage";
 import { DeleteMessage } from "./messaging/DeleteMessage";
@@ -37,7 +37,7 @@ export class DataService {
   public static synced: string[] = [];
 
   constructor(
-    private messagingService: MessagingService,
+    private obService: ObService,
     private http: HttpClient,
     private authService: AuthService,
     private idbService: IdbService,
@@ -50,13 +50,6 @@ export class DataService {
     }
 
     console.error(error, opts);
-
-    if (error.status !== 400) {
-      if (opts.retry) {
-        const store = await this.idbService.syncIDB("push");
-        store.set(Date.now(), { opts: opts, error: error.toString() });
-      }
-    }
   }
 
   public request(opts: DataRequestInterface): Promise<any> {
@@ -64,6 +57,7 @@ export class DataService {
       setTimeout(() => {
         reject("timeout");
       }, opts.timeout || 10000);
+
       opts.method = opts.method.trim().toUpperCase();
 
       let result = {};
@@ -123,7 +117,12 @@ export class DataService {
             .toPromise();
         }
       } catch (error) {
-        this.requestError(opts, error);
+        await this.requestError(opts, error);
+        throw error;
+      }
+
+      if (opts.modelName) {
+        this.obService.publish(opts.modelName, result);
       }
       resolve(result);
     });
@@ -331,8 +330,6 @@ export class DataService {
     model: A,
     modelName?: string
   ): Promise<A> {
-    this.messagingService.publish(new InsertMessage(model), [controller]);
-
     return this.request({
       method: "POST",
       path: `/api/entity/${controller}/insert`,
@@ -350,8 +347,6 @@ export class DataService {
     const store = await this.idbService.dataIDB(controller);
     store.set((model as any)._id, model);
 
-    this.messagingService.publish(new UpdateMessage(model), [controller]);
-
     return this.request({
       method: "POST",
       path: `/api/entity/${controller}/update`,
@@ -363,8 +358,6 @@ export class DataService {
 
   delete<A>(controller: string, _id: string): Promise<A> {
     const model = { _id: _id };
-
-    this.messagingService.publish(new DeleteMessage(model), [controller]);
 
     return this.request({
       method: "POST",

@@ -19,7 +19,6 @@ import { ContactViewComponent } from "src/app/crm/contact-view/contact-view.comp
 import { ContactsViewComponent } from "src/app/crm/contacts-view/contacts-view.component";
 import { DashboardService } from "src/app/dashboard.service";
 import { DataService } from "src/app/data.service";
-import { WidgetCommandInterface } from "src/app/models";
 import * as _ from "underscore";
 
 import { LongTextViewComponent } from "../report/long-text-view/long-text-view.component";
@@ -38,6 +37,7 @@ import { IdbService, Idb } from "src/app/idb.service";
 import * as Moment from "moment";
 import * as MomentJalaali from "moment-jalaali";
 import * as sUtil from "serendip-utility";
+import { ObService } from "src/app/ob.service";
 
 @Component({
   selector: "app-report",
@@ -49,7 +49,10 @@ export class ReportComponent implements OnInit {
   WidgetChange = new EventEmitter<DashboardWidgetInterface>();
 
   @Output()
-  DashboardCommand = new EventEmitter<WidgetCommandInterface>();
+  DashboardCommand = new EventEmitter<{
+    command: "open-tab";
+    tab: DashboardTabInterface;
+  }>();
 
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
@@ -66,6 +69,8 @@ export class ReportComponent implements OnInit {
 
   @Input() pageSize = 20;
   @Input() pageIndex = 0;
+
+  @Input() selected = [];
 
   _mode: "report" | "data" = "data";
   reportStore: Idb;
@@ -120,9 +125,13 @@ export class ReportComponent implements OnInit {
     private dashboardService: DashboardService,
     private dataService: DataService,
     private idbService: IdbService,
-    private changeRef: ChangeDetectorRef
+    private changeRef: ChangeDetectorRef,
+    private obService: ObService
   ) {}
 
+  allSelected() {
+    return this.selected.length === this.pageSize;
+  }
   modelChange() {
     this.report._id = null;
     this.report.label = null;
@@ -280,7 +289,6 @@ export class ReportComponent implements OnInit {
     this.pageCount = Math.floor(this.report.count / this.pageSize);
 
     this.resultLoading = false;
-
   }
 
   async deleteOffline() {
@@ -382,6 +390,11 @@ export class ReportComponent implements OnInit {
     await this.changePage(0);
     this.checkLabel();
 
+    this.obService.listen(this.entityName).subscribe(model => {
+      if (!this.report.offline) {
+        this.refresh();
+      }
+    });
     // setInterval(() => {
     //   this.WidgetChange.emit({
     //     inputs: { mode: this.mode, report: _.omit(this.report, ["data"]) }
@@ -389,15 +402,68 @@ export class ReportComponent implements OnInit {
     // }, 1000);
   }
 
+  recordSelectChange(_id: string, event: { checked: boolean }) {
+    if (event.checked) {
+      if (this.selected.indexOf(_id) === -1) {
+        this.selected.push(_id);
+      }
+    } else {
+      if (this.selected.indexOf(_id) !== -1) {
+        this.selected.splice(this.selected.indexOf(_id), 1);
+      }
+    }
+  }
+
+  allSelectChange($event) {
+    if ($event.checked) {
+      this.selected = this.getPage().map(item => {
+        return item._id;
+      });
+    } else {
+      this.selected = [];
+    }
+  }
+
+  edit() {
+    this.selected.forEach(_id => {
+      this.DashboardCommand.emit({
+        command: "open-tab",
+        tab: {
+          title: "ویرایش " + this.entityLabelSingular,
+          active: true,
+          icon: "office-paper-work-pen",
+          widgets: [
+            {
+              component: "FormComponent",
+              inputs: {
+                name: "crm-" + this.entityName + "-form",
+                documentId: _id,
+                entityName: this.entityName,
+                entityLabel: this.entityLabelSingular,
+                entityIcon: this.icon
+              }
+            }
+          ]
+        }
+      });
+    });
+  }
+
+  getPage() {
+    return _.take(
+      _.rest(this.report.data, this.pageSize * this.pageIndex),
+      this.pageSize
+    );
+  }
   async changePage(iterate: number) {
     this.pageIndex += iterate;
 
+    if (iterate !== 0) {
+      this.selected = [];
+    }
     if (this.report && this.report.offline) {
       this.pageCount = Math.floor(this.report.count / this.pageSize);
-      this.page = _.take(
-        _.rest(this.report.data, this.pageSize * this.pageIndex),
-        this.pageSize
-      );
+      this.page = this.getPage();
 
       this.resultLoading = false;
     } else {

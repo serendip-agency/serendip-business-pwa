@@ -30,7 +30,6 @@ import { ContactInputComponent } from "src/app/crm/contact-input/contact-input.c
 import { DashboardService } from "src/app/dashboard.service";
 import { FormDateInputComponent } from "./form-date-input/form-date-input.component";
 import { FormRelativeDateInputComponent } from "./form-relative-date-input/form-relative-date-input.component";
-import { WidgetCommandInterface } from "src/app/models";
 import {
   DashboardTabInterface,
   DashboardWidgetInterface,
@@ -74,6 +73,12 @@ export class FormComponent implements OnInit {
     private dashboardService: DashboardService,
     public idbService: IdbService
   ) {}
+
+  @Output()
+  DashboardCommand = new EventEmitter<{
+    command: "open-tab";
+    tab: DashboardTabInterface;
+  }>();
 
   _ = _;
 
@@ -120,8 +125,6 @@ export class FormComponent implements OnInit {
   @Output()
   WidgetChange = new EventEmitter<DashboardWidgetInterface>();
 
-  @Output()
-  DashboardCommand = new EventEmitter<WidgetCommandInterface>();
 
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
@@ -138,7 +141,7 @@ export class FormComponent implements OnInit {
       const insertResponse = await this.dataService.insert(
         this.entityName,
         this.model,
-        this.entityModelName
+        this.entityName
       );
       this.documentId = insertResponse._id;
       this.model = insertResponse;
@@ -146,10 +149,10 @@ export class FormComponent implements OnInit {
         title: "ویرایش  " + this.entityLabel + " " + this.model.name
       });
     } else {
-      this.dataService.update(
+      await this.dataService.update(
         this.entityName,
         this.model,
-        this.entityModelName
+        this.entityName
       );
     }
   }
@@ -161,7 +164,11 @@ export class FormComponent implements OnInit {
       this.model = this.formSchema.defaultModel;
     }
 
-    if (!this.model) this.model = {};
+    console.log("reset form", this.model);
+
+    if (!this.model) {
+      this.model = {};
+    }
 
     this.ref.detectChanges();
   }
@@ -190,6 +197,12 @@ export class FormComponent implements OnInit {
       this.formSchema = _.findWhere(this.formsSchema, { name: this.name });
     }
 
+    if (this.documentId) {
+      this.model = await this.dataService.details(
+        this.entityName,
+        this.documentId
+      );
+    }
     if (!this.model) {
       this.reset();
     }

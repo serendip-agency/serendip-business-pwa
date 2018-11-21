@@ -29,14 +29,17 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: [
       {
         title: "فرم اطلاعات اشخاص",
-        icon: "plus-add-2",
+        icon: "people-users-5",
         widgets: [
           {
             component: "FormComponent",
+
             inputs: {
               name: "crm-people-form",
               entityName: "people",
-              entityLabel: "شخص"
+              entityLabel: "شخص",
+              entityIcon : 'people-users-5'
+
             }
           }
         ]
@@ -50,14 +53,16 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: [
       {
         title: "فرم اطلاعات شرکت",
-        icon: "plus-add-2",
+        icon: "building-company-1",
         widgets: [
           {
             component: "FormComponent",
             inputs: {
               name: "crm-company-form",
               entityName: "company",
-              entityLabel: "شرکت"
+              entityLabel: "شرکت",
+              entityIcon : 'building-company-1'
+
             }
           }
         ]
@@ -71,6 +76,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
             inputs: {
               reportName: "company-default",
               entityName: "company",
+              entityLabelSingular : "شرکت",
+              entityLabelPlural : "شرکت‌ها",
               subtitle: "'گزارش، جست‌وجو و عمیات‌ها'",
               title: "اطلاعات شرکت‌ها"
             }

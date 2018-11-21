@@ -93,7 +93,7 @@
         <div class="report-header">
 
           <div class="select">
-            <mat-checkbox></mat-checkbox>
+            <mat-checkbox (change)="allSelectChange($event)" [checked]="allSelected()"></mat-checkbox>
           </div>
           <div class="field-label" *ngFor="let field of  enabledReportFields()">
             <ndc-dynamic *ngIf="  field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , viewType : 'label' } )"
@@ -108,7 +108,7 @@
           <div class="record" *ngFor="let record of page;trackBy: trackByFn">
 
             <div class="select">
-              <mat-checkbox></mat-checkbox>
+              <mat-checkbox [checked]="selected.indexOf(record._id) != -1" (change)="recordSelectChange(record._id,$event)"></mat-checkbox>
             </div>
 
             <div class="field" *ngFor="let field of enabledReportFields()">
@@ -144,6 +144,11 @@
     <mat-card-actions *ngIf="report && mode == 'data'">
 
       <button mat-button>{{ entityLabelSingular }} جدید </button>
+      <button (click)="edit()" *ngIf="selected.length > 0" mat-button>
+
+         ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }}  انتخاب‌شده
+
+        </button>
 
       <div class="paginator pull-left" *ngIf="report && report.count">
 
