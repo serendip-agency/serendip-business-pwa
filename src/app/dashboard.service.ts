@@ -13,6 +13,7 @@ import {
   FormInterface
 } from "serendip-business-model";
 import { WsService } from "./ws.service";
+import { EventEmitter } from "events";
 
 @Injectable({
   providedIn: "root"
@@ -26,6 +27,8 @@ export class DashboardService {
 
   currentSection: DashboardSectionInterface = { name: "", tabs: [] };
   screen: "desktop" | "mobile" = "desktop";
+
+  dashboardCommand = new EventEmitter();
 
   constructor(
     private businessService: BusinessService,

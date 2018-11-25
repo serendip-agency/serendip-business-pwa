@@ -1,9 +1,13 @@
-<mat-form-field>
+<mat-form-field *ngIf="selectType == 'multiple'">
   <mat-chip-list #chipList>
-    <mat-chip *ngFor="let item of  model" (removed)="removeEntity(item)">
-      <span (click)="goEntity(item)">
-        {{ getEntity(item)?.name }}
+    <mat-chip *ngFor="let item of  model " (removed)="removeEntity(item)">
+      <span (click)="goEntity(item)" *ngIf="getEntity(item)">
+        <span *ngFor="let prop of propertiesToSearch"> {{ getEntity(item)[prop] | rpd }} </span>
       </span>
+      <span (click)="goEntity(item)" *ngIf="!getEntity(item)">
+        {{ item | json}}
+      </span>
+
       <mat-icon matChipRemove>
         <img src="assets/icons/recycle-bin-trash.svg" alt="" />
       </mat-icon>
@@ -12,10 +16,51 @@
       [matChipInputFor]="chipList" [matAutocomplete]="entityAuto" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
       [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="entityAutoInput.value= ''">
   </mat-chip-list>
-
-  <mat-autocomplete #entityAuto="matAutocomplete" (optionSelected)="selectEntity(  $event);entityAutoInput.value= ''">
-    <mat-option *ngFor="let item of filteredEntities" [value]="item._id">
-      {{ item.name }}
-    </mat-option>
-  </mat-autocomplete>
 </mat-form-field>
+
+<div *ngIf="selectType == 'single'">
+  <div class="single-chip" *ngIf="model">
+    <div class="text">
+      <span (click)="goEntity(model)" *ngIf="getEntity(model)">
+        <span *ngFor="let prop of propertiesToSearch"> {{ cachedEntities[model][prop] | rpd }} </span>
+      </span>
+      <span (click)="goEntity(model)" *ngIf="!getEntity(model)">
+        {{ model | json}}
+      </span>
+    </div>
+    <div class="icon" (click)="model = null; modelChange.emit(null)">
+      <img src="assets/icons/recycle-bin-trash.svg" alt="" />
+    </div>
+
+  </div>
+
+  <div class="single-chip" *ngIf="creatingEntity">
+    <div class="text">
+      در انتظار برای ثبت رکورد جدید ...
+    </div>
+    <div class="icon" (click)="creatingEntity= false">
+      <img src="assets/icons/close-5.svg" alt="" />
+    </div>
+
+  </div>
+
+  <mat-form-field *ngIf="!model && !creatingEntity">
+    <input matInput [placeholder]="label" #entitySingleAutoInput (input)="filterEntities(entitySingleAutoInput.value,[model])"
+      [matAutocomplete]="entityAuto" (matChipInputTokenEnd)="entitySingleAutoInput.value= ''">
+  </mat-form-field>
+
+
+</div>
+
+<mat-autocomplete #entityAuto="matAutocomplete" (optionSelected)="selectEntity(  $event);selectType == 'multiple' ? entityAutoInput.value= '': ''">
+
+  <mat-option value="new">
+    <img src="assets/icons/plus-add-1.svg" alt="" />
+    ثبت {{label}} جدید
+  </mat-option>
+  <mat-option *ngFor="let item of filteredEntities" [value]="item._id">
+
+    <span *ngFor="let prop of propertiesToSearch"> {{ item[prop] | rpd }} </span>
+
+  </mat-option>
+</mat-autocomplete>

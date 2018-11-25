@@ -1,12 +1,12 @@
 <div class="view">
 
   <div class="label" *ngIf="viewType == 'label'">
-    {{label}}
+    {{label | rpd}}
   </div>
 
 
   <div class="cell" *ngIf="viewType != 'label'">
-    {{model}}
+    {{replace[model] || model | rpd}}
   </div>
 
 </div>

@@ -101,6 +101,8 @@ export class FormComponent implements OnInit {
   @Input()
   saveState: boolean;
 
+  loading = false;
+
   @Input()
   defaultModel: any = {};
   @Input()
@@ -125,7 +127,6 @@ export class FormComponent implements OnInit {
   @Output()
   WidgetChange = new EventEmitter<DashboardWidgetInterface>();
 
-
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
 
@@ -138,16 +139,19 @@ export class FormComponent implements OnInit {
   stateDb: Idb;
   async save() {
     if (!this.model._id) {
-      const insertResponse = await this.dataService.insert(
+      console.log("going to insert");
+      const insertedResponse = await this.dataService.insert(
         this.entityName,
         this.model,
         this.entityName
       );
-      this.documentId = insertResponse._id;
-      this.model = insertResponse;
-      this.TabChange.emit({
-        title: "ویرایش  " + this.entityLabel + " " + this.model.name
-      });
+      this.documentId = insertedResponse._id;
+      this.model = insertedResponse;
+
+      console.log(insertedResponse);
+
+
+      this.detectChange();
     } else {
       await this.dataService.update(
         this.entityName,
@@ -188,6 +192,7 @@ export class FormComponent implements OnInit {
 
   async ngOnInit() {
     // this.ref.detach();
+    this.loading = true;
 
     if (!this.formsSchema && !this.formSchema) {
       this.formsSchema = this.dashboardService.schema.forms;
@@ -200,13 +205,15 @@ export class FormComponent implements OnInit {
     if (this.documentId) {
       this.model = await this.dataService.details(
         this.entityName,
-        this.documentId
+        this.documentId,
+        true
       );
     }
     if (!this.model) {
       this.reset();
     }
 
+    this.loading = false;
     this.ref.detectChanges();
   }
 
@@ -218,12 +225,26 @@ export class FormComponent implements OnInit {
     return _.extend({}, obj1, obj2);
   }
 
-  dynamicPartModelChange(property) {
-    return newSubModel => {
-      console.log("form property change", property, newSubModel);
+  dynamicPartModelChange(property, subProperty, subPropertyIndexInArray) {
+    return newValue => {
+      console.log("form property change", property, subProperty, newValue);
 
-      this.model[property] = newSubModel;
+      if (!subProperty) {
+        this.model[property] = newValue;
+      } else {
+        if (subProperty && typeof subPropertyIndexInArray == "undefined") {
+          if (!this.model[property]) {
+            this.model[property] = {};
+          }
+          this.model[property][subProperty] = newValue;
+        } else {
+          if (!this.model[property]) {
+            this.model[property] = [];
+          }
 
+          this.model[property][subPropertyIndexInArray][subProperty] = newValue;
+        }
+      }
       this.detectChange();
     };
   }

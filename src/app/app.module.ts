@@ -55,7 +55,6 @@ import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { DndModule } from "ngx-drag-drop";
 
 import { IdbService } from "./idb.service";
-import { SyncService } from "./sync.service";
 import { ObService } from "./ob.service";
 
 import { BusinessComponent } from "./business/business.component";
@@ -108,7 +107,6 @@ import { LongTextViewComponent } from "./base/report/long-text-view/long-text-vi
 import { StarRatingViewComponent } from "./base/report/star-rating-view/star-rating-view.component";
 import { ClubRatingViewComponent } from "./crm/club-rating-view/club-rating-view.component";
 import { ReportComponent } from "./base/report/report.component";
-import { ContactViewComponent } from "./crm/contact-view/contact-view.component";
 import { ContactsViewComponent } from "./crm/contacts-view/contacts-view.component";
 import { DateViewComponent } from "./base/report/date-view/date-view.component";
 import { CurrencyViewComponent } from "./base/report/currency-view/currency-view.component";
@@ -120,6 +118,10 @@ import { WeatherComponent } from './weather/weather.component';
 import { EmailComponent } from './email/email.component';
 import { SmsComponent } from './sms/sms.component';
 import { FaxComponent } from './fax/fax.component';
+import { FormAutoAndSelectComponent } from './base/form/form-auto-and-select/form-auto-and-select.component';
+import { FormSelectAndSelectComponent } from './base/form/form-select-and-select/form-select-and-select.component';
+import { FormTextAndSelectComponent } from './base/form/form-text-and-select/form-text-and-select.component';
+import { FormToggleAndSelectComponent } from './base/form/form-toggle-and-select/form-toggle-and-select.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -178,7 +180,6 @@ export const dynamicComponents = [
   CurrencyViewComponent,
   // Business related  report views
   ClubRatingViewComponent,
-  ContactViewComponent,
   ContactsViewComponent
 ];
 
@@ -195,7 +196,7 @@ export const primaryComponents = [
 ];
 
 @NgModule({
-  declarations: [...primaryComponents, ...dynamicComponents, WeatherComponent, EmailComponent, SmsComponent, FaxComponent],
+  declarations: [...primaryComponents, ...dynamicComponents, WeatherComponent, EmailComponent, SmsComponent, FaxComponent, FormAutoAndSelectComponent, FormSelectAndSelectComponent, FormTextAndSelectComponent, FormToggleAndSelectComponent],
   entryComponents: [],
   imports: [
     QuillModule,
@@ -250,7 +251,6 @@ export const primaryComponents = [
     AuthGuard,
     FormBuilder,
     IdbService,
-    SyncService,
     ObService,
     DashboardService
   ],

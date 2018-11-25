@@ -23,6 +23,7 @@
       </div>
 
     </mat-card-header>
+    <mat-progress-bar *ngIf="resultLoading" mode="indeterminate"></mat-progress-bar>
     <mat-card-content>
 
       <div class="report-model" *ngIf="mode == 'report' && report">
@@ -36,37 +37,41 @@
 
           <app-form-text-input *ngIf="!report._id" [label]="'نام گزارش جدید'" (modelChange)="report.label = $event"
             [model]="report.label"></app-form-text-input>
+          <div dndDropzone (dndDrop)="reportFieldDrop($event)">
+            <div class="field" dndEffectAllowed="all" [dndDraggable]="{field : field , index : fieldIndex}" (dndStart)="reportFieldDragStart(field,$event)"
+              *ngFor="let field of report.fields;let fieldIndex = index ">
+              <img dndHandle class="drag-handle" src="assets/icons/menu-6.svg" alt="">
 
-          <div class="field" *ngFor="let field of report.fields">
+              <div class="field-name">
 
-            <div class="field-name">
-              <mat-slide-toggle [(ngModel)]="field.enabled" (change)="modelChange()">
-                {{field.label}}
-              </mat-slide-toggle>
-            </div>
 
-            <div class="template-inputs" *ngIf="field.templateInputsForm && field.enabled">
-              <app-form [defaultModel]="field.templateInputs || {}" (WidgetChange)="field.templateInputs = $event.inputs.model "
-                [formType]="'inline'" [name]="field.templateInputsForm"></app-form>
-            </div>
-            <div class="property-query" *ngIf="field.enabled && field.queries && field.queries.length > 0">
-
-              <div class="double-field">
-                <app-form-select-input [class.w-100]="findEnabledFieldQuery(field)" [class.w-80]="findEnabledFieldQuery(field)"
-                  [data]="field.queries" [label]="findEnabledFieldQuery(field) ? '' : 'انتخاب از فیلترها'" [selectType]="'single'"
-                  [model]="findEnabledFieldQuery(field)" (modelChange)="fieldQuerySelect(field,$event)"></app-form-select-input>
-                <div class="reset-query w-20">
-                  <img *ngIf="findEnabledFieldQuery(field)" (click)="findEnabledFieldQuery(field).enabled = false"
-                    class="" src="assets/icons/close-4.svg" />
-                </div>
+                <mat-slide-toggle [(ngModel)]="field.enabled" (change)="modelChange()">
+                  {{field.label}}
+                </mat-slide-toggle>
               </div>
 
+              <div class="template-inputs" *ngIf="field.templateInputsForm && field.enabled">
+                <app-form [defaultModel]="field.templateInputs || {}" (WidgetChange)="field.templateInputs = $event.inputs.model "
+                  [formType]="'inline'" [name]="field.templateInputsForm"></app-form>
+              </div>
+              <div class="property-query" *ngIf="field.enabled && field.queries && field.queries.length > 0">
 
-              <app-form *ngIf="findEnabledFieldQuery(field)" [formType]="'inline'" [defaultModel]="findEnabledFieldQuery(field).methodInput || {}"
-                (WidgetChange)="findEnabledFieldQuery(field).methodInput = $event.inputs.model " [name]="findEnabledFieldQuery(field).methodInputForm"></app-form>
+                <div class="double-field">
+                  <app-form-select-input [class.w-100]="findEnabledFieldQuery(field)" [class.w-80]="findEnabledFieldQuery(field)"
+                    [data]="field.queries" [label]="findEnabledFieldQuery(field) ? '' : 'انتخاب از فیلترها'"
+                    [selectType]="'single'" [model]="findEnabledFieldQuery(field)" (modelChange)="fieldQuerySelect(field,$event)"></app-form-select-input>
+                  <div class="reset-query w-20">
+                    <img *ngIf="findEnabledFieldQuery(field)" (click)="findEnabledFieldQuery(field).enabled = false"
+                      class="" src="assets/icons/close-4.svg" />
+                  </div>
+                </div>
 
-            </div>
-            <!--
+
+                <app-form *ngIf="findEnabledFieldQuery(field)" [formType]="'inline'" [defaultModel]="findEnabledFieldQuery(field).methodInput || {}"
+                  (WidgetChange)="findEnabledFieldQuery(field).methodInput = $event.inputs.model " [name]="findEnabledFieldQuery(field).methodInputForm"></app-form>
+
+              </div>
+              <!--
             <div class="property-query" *ngFor="let query of !field.enabled ? [] : field.queries ">
 
               {{query.methodInputForm}}
@@ -78,17 +83,23 @@
                 [name]="query.methodInputForm"></app-form>
 
             </div> -->
+            </div>
 
+            <div dndPlaceholderRef>
+
+              <div  style="margin:10px;height:40px;border:1px dashed #ccc;border-radius: 10px;" *ngIf="fieldDragging">
+
+              </div>
+            </div>
 
           </div>
-
 
         </div>
 
       </div>
 
 
-      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'" *ngIf="report && mode == 'data'">
+      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'" *ngIf="!resultLoading && report && mode == 'data'">
 
         <div class="report-header">
 
@@ -144,11 +155,11 @@
     <mat-card-actions *ngIf="report && mode == 'data'">
 
       <button mat-button>{{ entityLabelSingular }} جدید </button>
-      <button (click)="edit()" *ngIf="selected.length > 0" mat-button>
+      <button color="primary" (click)="edit()" *ngIf="selected.length > 0" mat-button>
 
-         ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }}  انتخاب‌شده
+        ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }} انتخاب‌شده
 
-        </button>
+      </button>
 
       <div class="paginator pull-left" *ngIf="report && report.count">
 

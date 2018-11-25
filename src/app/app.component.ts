@@ -2,7 +2,6 @@ import { Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
 
 import * as _moment from "moment-jalaali";
 import { AuthService } from "./auth.service";
-import { SyncService } from "./sync.service";
 import { MatSnackBar } from "@angular/material";
 import {
   ActivatedRoute,
@@ -20,8 +19,9 @@ import swal from "sweetalert2";
   styleUrls: ["./app.component.less"]
 })
 export class AppComponent implements OnInit, OnDestroy {
+  currentPwa = "v0.05";
+
   moment: any;
-  authService: AuthService;
   snackBar: MatSnackBar;
   loggedIn = false;
   routerLoading: boolean;
@@ -29,30 +29,14 @@ export class AppComponent implements OnInit, OnDestroy {
   routerSubscription: Subscription;
 
   constructor(
-    private crmService: BusinessService,
     private httpClient: HttpClient,
-    private _authService: AuthService,
-    _activatedRoute: ActivatedRoute,
-    _router: Router,
-    _syncService: SyncService,
-    _snackBar: MatSnackBar
+    private authService: AuthService,
+    private router: Router
   ) {
-    this.snackBar = _snackBar;
-    this.moment = _moment;
-    this.authService = _authService;
-    this.syncService = _syncService;
-    this.router = _router;
-    this.activatedRoute = _activatedRoute;
-
     setInterval(() => {
       this.loggedIn = this.authService.loggedIn;
     }, 1000);
   }
-  public collectionSynced = [];
-
-  private syncService: SyncService;
-  activatedRoute: ActivatedRoute;
-  router: Router;
 
   rpd(input) {
     if (!input) {
@@ -67,8 +51,6 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.routerSubscription.unsubscribe();
   }
-
-  currentPwa = "v0.05";
 
   updatePwa() {
     navigator.serviceWorker.getRegistration().then(function(registration) {
@@ -90,7 +72,6 @@ export class AppComponent implements OnInit, OnDestroy {
       cancelButtonText: "انصراف",
       confirmButtonText: "بسیار خب"
     });
-
 
     this.httpClient
       .get(
@@ -133,35 +114,5 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
     );
-
-    // if (this.crmService.getActiveBusinessId()) {
-    //   setTimeout(() => {
-    //     this.snackBar.open("همگام سازی شروع شد ...", "", { duration: 1000 });
-    //     const syncStart = Date.now();
-    //     this.syncService
-    //       .start({
-    //         onCollectionSync: collection => {
-    //           this.collectionSynced.unshift(collection);
-    //           console.log(collection + " synced");
-    //         }
-    //       })
-    //       .then(() => {
-    //         this.snackBar.open(
-    //           `همگام سازی در ${this.rpd(
-    //             ((Date.now() - syncStart) / 1000).toFixed(1)
-    //           )} ثانیه انجام شد.`,
-    //           "",
-    //           { duration: 10000 }
-    //         );
-    //         //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
-    //       })
-    //       .catch(e => {
-    //         this.snackBar.open("همگام سازی با خطا مواجه شد.", "", {
-    //           duration: 3000
-    //         });
-    //         console.error(e);
-    //       });
-    //   }, 1000);
-    // }
   }
 }

@@ -60,6 +60,9 @@
         </a>
       </nav>
     -->
+<div class="clearfix"></div>
+    <mat-progress-bar [color]="'primary'" mode ="indeterminate">
+      </mat-progress-bar>
   </header>
 
   <!-- (mouseenter)="explorerMouseIn()" (mouseleave)="explorerMouseOut()" -->
@@ -110,7 +113,7 @@
 
           <ul [class.show]="section.toggleUl">
             <li *ngFor="let tab of getExplorerTabs(section.tabs)">
-              <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab: tab }">
+              <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab: tab }" (dndStart)="tabDragStart(tab)" (dndEnd)="tabDragEnd()" >
                 <div class="img">
                   <img [src]="'assets/icons/' + tab.icon + '.svg'" />
                 </div>
@@ -118,6 +121,13 @@
               </a>
             </li>
           </ul>
+        </li>
+
+        <li class="sync">
+          <a (click)="sync()">
+            <img [src]="'assets/icons/sync-6.svg'" />
+            <span>همگام سازی</span>
+          </a>
         </li>
 
         <li class="logout">
@@ -136,14 +146,17 @@
       *ngFor="let container of grid.containers; let c = index">
       <!-- optional placeholder element for dropzone -->
       <!-- will be removed from DOM on init -->
-      <div class="placeholder" dndPlaceholderRef></div>
+      <div dndPlaceholderRef>
+
+        <div  class="placeholder" *ngIf="tabDragging"></div>
+
+      </div>
 
       <ul class="tabs-nav" *ngIf="container.tabs.length > 0" [class.showTabs]="container.showTabs" [id]="'nav-tab-' + c"
         [class.full]="isNavTabFull('nav-tab-' + c)">
         <li *ngFor="let tab of definedItemsOfArray(container.tabs); let i = index" [style.top]="container.showTabs ? i * 40 + 10 + 'px' : 'unset'"
           [class.last-item]="i == container.tabs.length - 1" [style.z-index]="i" [style.left]="container.showTabs ? 10 + 'px' : 'unset'"
-          [style.right]="container.showTabs ? 10 + 'px' : 'unset'" [id]="'tab-' + c + '-' + i"
-          [class.nextIsActive]="
+          [style.right]="container.showTabs ? 10 + 'px' : 'unset'" [id]="'tab-' + c + '-' + i" [class.nextIsActive]="
             container.tabs[i + 1] && container.tabs[i + 1].active
           "
           [class.prevIsActive]="
@@ -158,7 +171,7 @@
           [class.active]="tab.active" [class.hover]="tab.hover" (mouseenter)="tab.hover = !container.showTabs"
           (mouseout)="tab.hover = false" (click)="isNavTabFull('nav-tab-' + c) && !container.showTabs ? '' : setActive(tab, container); container.showTabs = false">
           <a class="tab-handle" [title]="tab.title" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'"
-            [dndDraggable]="{ containerIndex: c, tabIndex: i }">
+         (dndStart)="tabDragStart(tab)" (dndEnd)="tabDragEnd()"   [dndDraggable]="{ containerIndex: c, tabIndex: i }">
             <div class="tab-icon">
               <img [src]="'assets/icons/location-pin.svg'" />
               <!-- <img [src]="'assets/icons/' + tab.icon + '.svg'" /> -->

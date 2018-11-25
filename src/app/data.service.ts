@@ -19,6 +19,7 @@ import {
   ReportModel,
   ReportInterface
 } from "serendip-business-model";
+import { MatSnackBar } from "@angular/material";
 
 export interface DataRequestInterface {
   method: string | "POST" | "GET";
@@ -34,13 +35,14 @@ export interface DataRequestInterface {
 
 @Injectable()
 export class DataService {
-  public static synced: string[] = [];
-
+  public static collectionsSynced: string[] = [];
+  public static collectionsToSync: string[] = ["people", "company"];
   constructor(
     private obService: ObService,
     private http: HttpClient,
     private authService: AuthService,
     private idbService: IdbService,
+    private snackBar: MatSnackBar,
     private businessService: BusinessService
   ) {}
 
@@ -160,21 +162,36 @@ export class DataService {
     return unzippedArray;
   }
 
-  async list<A>(controller: string, skip, limit): Promise<any> {
-    if (DataService.synced.indexOf(controller) !== -1) {
+  async list<A>(
+    controller: string,
+    skip,
+    limit,
+    useUnSynced?: boolean
+  ): Promise<any> {
+    if (
+      DataService.collectionsSynced.indexOf(controller) !== -1 ||
+      useUnSynced
+    ) {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB(storeName);
 
       return store.list(skip, limit);
     } else {
-      return this.request({
-        method: "POST",
-        path: `/api/entity/${controller}/list`,
-        model: {
-          skip: skip,
-          limit: limit
+      try {
+        return this.request({
+          method: "POST",
+          path: `/api/entity/${controller}/list`,
+          timeout: 1000,
+          model: {
+            skip: skip,
+            limit: limit
+          }
+        });
+      } catch (error) {
+        if (!useUnSynced) {
+          return await this.list(controller, skip, limit, true);
         }
-      });
+      }
     }
   }
 
@@ -193,8 +210,14 @@ export class DataService {
     );
   }
 
-  async reports() {
-    return this.request({ path: "/api/entity/reports", method: "POST" });
+  async reports(entityName: string) {
+    return this.request({
+      path: "/api/entity/reports",
+      model: { entityName },
+      method: "POST",
+      timeout: 1000,
+      retry: false
+    });
   }
   async report<A>(opts: {
     entity: string;
@@ -207,42 +230,67 @@ export class DataService {
     const requestOpts: DataRequestInterface = {
       method: "POST",
       path: `/api/entity/report`,
-      model: opts
+      model: opts,
+      timeout: 3000
     };
 
     if (opts.zip) {
       requestOpts.raw = true;
     }
 
-    const requestResult = await this.request(requestOpts);
+    try {
+      const requestResult = await this.request(requestOpts);
 
-    if (opts.zip) {
-      const data = requestResult.body;
-      if (!data) {
-        return null;
+      if (opts.zip) {
+        const data = requestResult.body;
+        if (!data) {
+          return null;
+        }
+
+        const zip = await JsZip.loadAsync(data, {
+          base64: false,
+          checkCRC32: true
+        });
+
+        const unzippedText: any = await zip.file("data.json").async("text");
+
+        const unzippedArray = JSON.parse(unzippedText);
+
+        return unzippedArray;
+      } else {
+        return requestResult;
       }
+    } catch (error) {
+      this.snackBar.open(
+        "دسترسی به سرور امکان‌پذیر نمی‌باشد. تلاش برای ساخت گزارش از اطلاعات آفلاین...",
+        "",
+        { duration: 3000 }
+      );
 
-      const zip = await JsZip.loadAsync(data, {
-        base64: false,
-        checkCRC32: true
-      });
-
-      const unzippedText: any = await zip.file("data.json").async("text");
-
-      const unzippedArray = JSON.parse(unzippedText);
-
-      return unzippedArray;
-    } else {
-      return requestResult;
+      return {
+        fields: opts.report.fields,
+        count: await this.count(opts.entity, true),
+        name: "",
+        label: "گزارش پیش‌فرض آنلاین",
+        createDate: new Date(),
+        data: await this.list(opts.entity, opts.skip, opts.limit, true),
+        entityName: opts.entity,
+        offline: true
+      };
     }
   }
 
   async search<A>(
     controller: string,
     query: string,
-    take: number
+    take: number,
+    properties: string[],
+    useUnSynced?: boolean
   ): Promise<any> {
-    if (DataService.synced.indexOf(controller) !== -1) {
+    if (
+      DataService.collectionsSynced.indexOf(controller) !== -1 ||
+      useUnSynced
+    ) {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB(storeName);
 
@@ -267,42 +315,74 @@ export class DataService {
 
       return _.take(result, take);
     } else {
-      return this.request({
-        method: "POST",
-        path: `/api/entity/${controller}/search`,
-        model: {
-          take: take,
-          query: query
+      try {
+        return this.request({
+          method: "POST",
+          path: `/api/entity/${controller}/search`,
+          model: {
+            properties: properties,
+            take: take,
+            query: query
+          },
+          timeout: 1000
+        });
+      } catch (error) {
+        if (!useUnSynced) {
+          return await this.search(controller, query, take, properties, true);
         }
-      });
+      }
     }
   }
 
-  async count(controller: string): Promise<number> {
-    if (DataService.synced.indexOf(controller) !== -1) {
+  async count(controller: string, useUnSynced?: boolean): Promise<number> {
+    if (
+      DataService.collectionsSynced.indexOf(controller) !== -1 ||
+      useUnSynced
+    ) {
       const store = await this.idbService.dataIDB(controller);
       const keys = await store.keys();
       return keys.length;
     } else {
-      return this.request({
-        method: "POST",
-        path: `/api/entity/${controller}/count`
-      });
+      try {
+        return this.request({
+          method: "POST",
+          timeout: 1000,
+          path: `/api/entity/${controller}/count`
+        });
+      } catch (error) {
+        if (!useUnSynced) {
+          return await this.count(controller, true);
+        }
+      }
     }
   }
 
-  async details<A>(controller: string, _id: string): Promise<A> {
+  async details<A>(
+    controller: string,
+    _id: string,
+    useUnSynced?: boolean
+  ): Promise<A> {
     const model = { _id: _id };
 
-    if (DataService.synced.indexOf(controller) !== -1) {
+    if (
+      DataService.collectionsSynced.indexOf(controller) !== -1 ||
+      useUnSynced
+    ) {
       const store = await this.idbService.dataIDB(controller);
       return store.get(_id);
     } else {
-      return this.request({
-        method: "POST",
-        path: `/api/entity/${controller}/details`,
-        model: model
-      });
+      try {
+        return this.request({
+          method: "POST",
+          timeout: 1000,
+          path: `/api/entity/${controller}/details`,
+          model: model
+        });
+      } catch (error) {
+        if (!useUnSynced) {
+          return await this.details<A>(controller, _id, true);
+        }
+      }
     }
   }
 
@@ -321,6 +401,7 @@ export class DataService {
     return this.request({
       method: "POST",
       path: `/api/entity/${controller}/changes`,
+      timeout: 1000,
       model: model
     });
   }
@@ -333,6 +414,7 @@ export class DataService {
     return this.request({
       method: "POST",
       path: `/api/entity/${controller}/insert`,
+      timeout: 1000,
       model: model,
       modelName: modelName,
       retry: true
@@ -365,5 +447,148 @@ export class DataService {
       model: model,
       retry: true
     });
+  }
+
+  public async pullCollection(collection) {
+    const historyStore = await this.idbService.syncIDB("pull");
+
+    let lastSync: number;
+
+    try {
+      const syncKeys = _.filter(await historyStore.keys(), (item: string) => {
+        return item.toString().indexOf(collection) === 0;
+      }).reverse();
+
+      if (syncKeys && syncKeys.length > 0) {
+        // tslint:disable-next-line:radix
+        lastSync = parseInt(syncKeys[0].split("_")[1]);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    const store = await this.idbService.dataIDB(collection);
+    let changesToSync;
+
+    if (lastSync) {
+      changesToSync = await this.changes(collection, lastSync, Date.now());
+      if (changesToSync.deleted.length > 0) {
+        await Promise.all(
+          changesToSync.deleted.map(key => {
+            return store.delete(key);
+          })
+        );
+      }
+    }
+
+    const data = await this.zip(collection, lastSync, Date.now());
+    let recordInserted = 0;
+    await Promise.all(
+      _.map(data, (record: any) => {
+        return new Promise(async (_resolve, _reject) => {
+          await store.set(record._id, record);
+
+          recordInserted++;
+
+          // console.log(collection, recordInserted * 100 / data.length);
+
+          _resolve();
+        });
+      })
+    );
+
+    await historyStore.set(collection + "_" + Date.now(), {
+      events: changesToSync
+    });
+  }
+
+  public pushCollections() {
+    return new Promise(async (resolve, reject) => {
+      const store = await this.idbService.syncIDB("push");
+      const keys = await store.keys();
+
+      const pushes = _.map(keys, key => {
+        return {
+          key: key,
+          promise: new Promise(async (_resolve, _reject) => {
+            const pushModel = await store.get(key);
+            await this.request(pushModel.opts);
+            _resolve();
+          })
+        };
+      });
+
+      const runInSeries = index => {
+        const pushModel: any = pushes[index];
+        pushModel.promise
+          .then(() => {
+            store.delete(pushModel.key);
+            index++;
+
+            if (index === pushes.length) {
+              resolve();
+            } else {
+              runInSeries(index);
+            }
+          })
+          .catch(e => {
+            reject();
+          });
+      };
+
+      if (pushes.length > 0) {
+        runInSeries(0);
+      } else {
+        resolve();
+      }
+    });
+  }
+
+  public pullCollections(onCollectionSync?: Function) {
+    console.log("pull started");
+    return new Promise((resolve, reject) => {
+      const runInSeries = index => {
+        const collection = DataService.collectionsToSync[index];
+        this.pullCollection(collection)
+          .then(() => {
+            if (onCollectionSync) {
+              onCollectionSync(collection);
+            }
+
+            DataService.collectionsSynced.push(collection);
+
+            index++;
+
+            if (index === DataService.collectionsToSync.length) {
+              resolve();
+            } else {
+              runInSeries(index);
+            }
+          })
+          .catch(e => {
+            reject(e);
+          });
+      };
+
+      runInSeries(0);
+    });
+  }
+
+  public async sync(opts: { onCollectionSync?: Function }) {
+    console.log("push start");
+    try {
+      await this.pushCollections();
+      console.log("push done");
+    } catch (error) {
+      console.log("push fail");
+    }
+
+    console.log("pull start");
+    try {
+      await this.pullCollections();
+      console.log("pull done");
+    } catch (error) {
+      console.log("pull fail");
+    }
   }
 }

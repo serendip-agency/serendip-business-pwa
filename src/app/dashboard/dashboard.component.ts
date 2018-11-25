@@ -39,6 +39,7 @@ import { WeatherService } from "../weather.service";
 import { GmapsService } from "../gmaps.service";
 import { DataService } from "../data.service";
 import { AuthService } from "../auth.service";
+import { MatSnackBar } from "@angular/material";
 
 // optional import of scroll behavior
 polyfill({
@@ -83,6 +84,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   gridSizeChange = new EventEmitter();
   dashboardSocket: WebSocket;
   private _grid: DashboardGridInterface;
+  tabDragging: DashboardTabInterface;
   public get grid(): DashboardGridInterface {
     if (!this._grid) {
       return { containers: [] };
@@ -146,7 +148,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public weatherService: WeatherService,
     public authService: AuthService,
     public gmapsService: GmapsService,
-    public dataService: DataService
+    public dataService: DataService,
+    private snackBar: MatSnackBar
   ) {
     moment.loadPersian({ dialect: "persian-modern", usePersianDigits: false });
   }
@@ -234,6 +237,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
+  tabDragStart(tab: DashboardTabInterface) {
+    this.tabDragging = tab;
+  }
+
+  tabDragEnd() {
+    this.tabDragging = null;
+  }
   onTabDragover(event: DragEvent, containerIndex: number) {
     console.log("onTabDragover");
 
@@ -329,6 +339,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const eventData: { containerIndex: number; tabIndex: number; tab: any } =
       event.data;
+
+    if (!eventData) return;
+
+    if (!eventData.tab && typeof eventData.tabIndex != "number") return;
+
+    this.tabDragging = null;
 
     if (eventData.tab) {
       if (eventData.tab.widgets[0].id) {
@@ -460,15 +476,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
           return (
             w &&
             w.inputs &&
+            w.component === options.tab.widgets[0].component &&
             w.inputs.documentId === options.tab.widgets[0].inputs.documentId
           );
         })
         .value();
 
-      if (existInGrid) {
-        console.log("widget already exist");
-        return;
-      }
+      // if (existInGrid) {
+      //   console.log("widget already exist");
+      //   return;
+      // }
 
       if (window.innerWidth > 860) {
         let addedToCurrentContainers = false;
@@ -750,11 +767,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         const isFull =
           navTab.getBoundingClientRect().width - listItemsWith < 10;
 
-        console.log(
-          listItemsWith,
-          navTab.getBoundingClientRect().width,
-          isFull
-        );
         // var isFull = navTab.getBoundingClientRect().width <= _.reduceRight(navTab.querySelectorAll("li"), (memo, item: HTMLElement) => {
         //   return memo + item.getBoundingClientRect().width;
         // }, 0);
@@ -774,6 +786,41 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }, 100);
   }
 
+  sync() {
+    this.snackBar.open("همگام سازی شروع شد ...", "", { duration: 1000 });
+    const syncStart = Date.now();
+    this.dataService
+      .sync({
+        onCollectionSync: collection => {
+          this.snackBar.open(
+            "کالکشن " + collection.toUpperCase() + " همگام‌سازی شد.",
+            "",
+            {
+              duration: 500
+            }
+          );
+        }
+      })
+      .then(() => {
+        setTimeout(() => {
+          this.snackBar.open(
+            `همگام سازی در ${this.rpd(
+              ((Date.now() - syncStart) / 1000).toFixed(1)
+            )} ثانیه انجام شد.`,
+            "",
+            { duration: 1000 }
+          );
+        }, 1000);
+
+        //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
+      })
+      .catch(e => {
+        this.snackBar.open("همگام سازی با خطا مواجه شد.", "", {
+          duration: 3000
+        });
+        console.error(e);
+      });
+  }
   handleGridMouseDragScroll() {
     let capture = false;
     let lastCapture = 0;
@@ -824,27 +871,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
 
-    grid.onmouseover = grid.touchstart = ev => {
-      if (gridEdgeScrollInterval) { clearInterval(gridEdgeScrollInterval); }
+    // grid.onmouseover = grid.touchstart = ev => {
+    //   if (gridEdgeScrollInterval) { clearInterval(gridEdgeScrollInterval); }
 
-      if (gridEdgeTimeout) { clearTimeout(gridEdgeTimeout); }
-      const mousePosition = { x: ev.clientX, y: ev.clientY };
-      if (mousePosition.x < 50) {
-        gridEdgeTimeout = setTimeout(() => {
-          gridEdgeScrollInterval = setInterval(() => {
-            grid.scroll({ left: grid.scrollLeft - 150, behavior: "smooth" });
-          }, 500);
-        }, 500);
-      }
+    //   if (gridEdgeTimeout) { clearTimeout(gridEdgeTimeout); }
+    //   const mousePosition = { x: ev.clientX, y: ev.clientY };
+    //   if (mousePosition.x < 50) {
+    //     gridEdgeTimeout = setTimeout(() => {
+    //       gridEdgeScrollInterval = setInterval(() => {
+    //         grid.scroll({ left: grid.scrollLeft - 150, behavior: "smooth" });
+    //       }, 500);
+    //     }, 500);
+    //   }
 
-      if (window.innerWidth - mousePosition.x < 100) {
-        gridEdgeTimeout = setTimeout(() => {
-          gridEdgeScrollInterval = setInterval(() => {
-            grid.scroll({ left: grid.scrollLeft + 150, behavior: "smooth" });
-          }, 500);
-        }, 500);
-      }
-    };
+    //   if (window.innerWidth - mousePosition.x < 100) {
+    //     gridEdgeTimeout = setTimeout(() => {
+    //       gridEdgeScrollInterval = setInterval(() => {
+    //         grid.scroll({ left: grid.scrollLeft + 150, behavior: "smooth" });
+    //       }, 500);
+    //     }, 500);
+    //   }
+    // };
     grid.onmouseup = (up_ev: MouseEvent) => {
       capture = false;
       last = { x: 0, y: 0 };
@@ -948,6 +995,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.newDashboardSocket()
       .then(() => {})
       .catch(() => {});
+
+    this.dashboardService.dashboardCommand.on("command", command => {
+      this.dashboardCommand(0, 0, 0)(command);
+    });
 
     await this.dashboardService.setDefaultSchema();
 

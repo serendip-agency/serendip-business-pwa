@@ -6,20 +6,6 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     title: "داشبورد",
     icon: "dashboard-1",
     tabs: [
-      {
-        title: "فرم مثال انواع ورودی‌ها",
-        icon: "tab-9",
-        widgets: [
-          {
-            component: "FormComponent",
-            inputs: {
-              name: "serendip-base-inputs",
-              entityName: "example",
-              entityLabel: "مثال"
-            }
-          }
-        ]
-      }
     ]
   },
   {
@@ -33,13 +19,28 @@ export const DashboardSchema: DashboardSectionInterface[] = [
         widgets: [
           {
             component: "FormComponent",
-
             inputs: {
               name: "crm-people-form",
               entityName: "people",
               entityLabel: "شخص",
-              entityIcon : 'people-users-5'
-
+              entityIcon: "people-users-5"
+            }
+          }
+        ]
+      },
+      {
+        title: "گزارش اطلاعات اشخاص",
+        icon: "plus-add-2",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "people-default",
+              entityName: "people",
+              entityLabelSingular: "شخص",
+              entityLabelPlural: "اشخاص",
+              subtitle: "'گزارش، جست‌وجو و عمیات‌ها'",
+              title: "اطلاعات اشخاص"
             }
           }
         ]
@@ -61,8 +62,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
               name: "crm-company-form",
               entityName: "company",
               entityLabel: "شرکت",
-              entityIcon : 'building-company-1'
-
+              entityIcon: "building-company-1"
             }
           }
         ]
@@ -76,23 +76,10 @@ export const DashboardSchema: DashboardSectionInterface[] = [
             inputs: {
               reportName: "company-default",
               entityName: "company",
-              entityLabelSingular : "شرکت",
-              entityLabelPlural : "شرکت‌ها",
+              entityLabelSingular: "شرکت",
+              entityLabelPlural: "شرکت‌ها",
               subtitle: "'گزارش، جست‌وجو و عمیات‌ها'",
               title: "اطلاعات شرکت‌ها"
-            }
-          }
-        ]
-      },
-      {
-        title: "تنظیم روال کاری اطلاعات شرکت‌ها",
-        icon: "plus-add-2",
-        widgets: [
-          {
-            component: "TriggersComponent",
-            inputs: {
-              label: "اطلاعات شرکت‌ها",
-              entity: "company"
             }
           }
         ]
@@ -132,19 +119,6 @@ export const DashboardSchema: DashboardSectionInterface[] = [
             }
           }
         ]
-      },
-      {
-        title: "تنظیم روال کاری اطلاعات خدمات",
-        icon: "plus-add-2",
-        widgets: [
-          {
-            component: "TriggersComponent",
-            inputs: {
-              label: "اطلاعات خدمات",
-              entity: "service"
-            }
-          }
-        ]
       }
     ]
   },
@@ -178,19 +152,6 @@ export const DashboardSchema: DashboardSectionInterface[] = [
               entityName: "complaint",
               subtitle: "'گزارش، جست‌وجو و عمیات‌ها'",
               title: "اطلاعات شکایت‌ها"
-            }
-          }
-        ]
-      },
-      {
-        title: "تنظیم روال کاری اطلاعات شکایات",
-        icon: "plus-add-2",
-        widgets: [
-          {
-            component: "TriggersComponent",
-            inputs: {
-              label: "اطلاعات شکایات",
-              entity: "complaint"
             }
           }
         ]
@@ -236,20 +197,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
             }
           }
         ]
-      },
-      {
-        title: "تنظیم روال کاری اطلاعات فروش‌ها",
-        icon: "plus-add-2",
-        widgets: [
-          {
-            component: "TriggersComponent",
-            inputs: {
-              label: "اطلاعات فروش‌ها",
-              entity: "sale"
-            }
-          }
-        ]
       }
+
     ]
   },
   {
@@ -299,6 +248,18 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "settings",
     title: "تنظیمات",
     icon: "settings-1",
-    tabs: []
+    tabs: [{
+      title: "تنظیم روال کاری اطلاعات فروش‌ها",
+      icon: "plus-add-2",
+      widgets: [
+        {
+          component: "TriggersComponent",
+          inputs: {
+            label: "اطلاعات فروش‌ها",
+            entity: "sale"
+          }
+        }
+      ]
+    }]
   }
 ];

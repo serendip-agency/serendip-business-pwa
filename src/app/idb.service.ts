@@ -81,7 +81,9 @@ export class Idb {
   }
   async set(key, val) {
     return this.dbPromise.then(db => {
+
       const tx = db.transaction(this.store, "readwrite");
+
       tx.objectStore(this.store).put(val, key);
       return tx.complete;
     });
@@ -108,11 +110,11 @@ export class IdbService {
     console.log("IdbService constructed ...");
   }
 
-  async syncIDB(store: "pull" ) {
+  async syncIDB(store: "pull" | "push") {
     return new Idb(
       idb.default.open("SYNC", 1, db => {
         db.createObjectStore("pull");
-    //    db.createObjectStore("push");
+      db.createObjectStore("push");
       }),
       store
     );
@@ -135,14 +137,13 @@ export class IdbService {
       | "complaint"
       | "service"
       | "company"
-      | "person"
+      | "people"
       | "product"
   ) {
     return new Idb(
       idb.default.open("DB", 1, db => {
         db.createObjectStore("company");
-        db.createObjectStore("person");
-        db.createObjectStore("product");
+        db.createObjectStore("people");
       }),
       store
     );

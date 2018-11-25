@@ -2,9 +2,7 @@ import { ReportInterface } from "serendip-business-model";
 
 export const ReportsSchema: ReportInterface[] = [
   {
-    name: "company-default",
-    entityName: "company",
-    label: "",
+    name: "common",
     fields: [
       {
         enabled: true,
@@ -25,7 +23,7 @@ export const ReportsSchema: ReportInterface[] = [
         ]
       },
       {
-        enabled: true,
+        enabled: false,
         name: "_cdate",
         label: "تاریخ ثبت",
         template: "DateViewComponent",
@@ -47,14 +45,21 @@ export const ReportsSchema: ReportInterface[] = [
         ]
       },
       {
-        enabled: true,
+        enabled: false,
         name: "_vdate",
         label: "تاریخ ورژن",
         template: "DateViewComponent",
         templateInputs: {
           format: "jYYYY/jMM/jDD HH:mm:ss"
         }
-      },
+      }
+    ]
+  },
+  {
+    name: "company-default",
+    entityName: "company",
+    label: "",
+    fields: [
       {
         enabled: true,
         name: "name",
@@ -68,5 +73,60 @@ export const ReportsSchema: ReportInterface[] = [
         template: "ContactsViewComponent"
       }
     ]
+  },
+  {
+    name: "people-default",
+    entityName: "people",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "gender",
+        label: "جنسیت",
+        template: "ShortTextViewComponent",
+        templateInputs: {
+          replace: {
+            male: "آقا",
+            female: "خانم"
+          }
+        }
+      },
+      {
+        enabled: true,
+        name: "firstName",
+        label: "نام ",
+        template: "ShortTextViewComponent"
+      },
+      {
+        enabled: true,
+        name: "lastName",
+        label: "نام خانوادگی",
+        template: "ShortTextViewComponent"
+      },
+      {
+        enabled: true,
+        name: "mobiles",
+        label: "موبایل",
+        template: "ShortTextViewComponent"
+      },
+      {
+        enabled: false,
+        name: "emails",
+        label: "ایمیل",
+        template: "ShortTextViewComponent"
+      },
+      {
+        enabled: false,
+        name: "contacts",
+        label: "اطلاعات تماس",
+        template: "ContactsViewComponent"
+      }
+    ]
+  },
+  {
+    name: "service-default",
+    entityName: "service",
+    label: "",
+    fields: []
   }
 ];

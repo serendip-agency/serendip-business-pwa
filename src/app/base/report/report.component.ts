@@ -15,7 +15,6 @@ import {
 } from "serendip-business-model";
 import * as sUtils from "serendip-utility";
 import { ClubRatingViewComponent } from "src/app/crm/club-rating-view/club-rating-view.component";
-import { ContactViewComponent } from "src/app/crm/contact-view/contact-view.component";
 import { ContactsViewComponent } from "src/app/crm/contacts-view/contacts-view.component";
 import { DashboardService } from "src/app/dashboard.service";
 import { DataService } from "src/app/data.service";
@@ -45,6 +44,7 @@ import { ObService } from "src/app/ob.service";
   styleUrls: ["./report.component.less"]
 })
 export class ReportComponent implements OnInit {
+  fieldDragging: ReportFieldInterface;
   @Output()
   WidgetChange = new EventEmitter<DashboardWidgetInterface>();
 
@@ -72,7 +72,7 @@ export class ReportComponent implements OnInit {
 
   @Input() selected = [];
 
-  _mode: "report" | "data" = "data";
+  _mode: "report" | "data" = "report";
   reportStore: Idb;
   page: any[] = [];
   reports: { label: string; value: string }[];
@@ -115,7 +115,6 @@ export class ReportComponent implements OnInit {
 
     // Business related  report views
     ClubRatingViewComponent,
-    ContactViewComponent,
     ContactsViewComponent
   };
 
@@ -128,6 +127,46 @@ export class ReportComponent implements OnInit {
     private changeRef: ChangeDetectorRef,
     private obService: ObService
   ) {}
+
+  reportFieldDragStart(field, index, event) {
+    this.fieldDragging = field;
+  }
+
+  reportFieldDragEnd(field, index, event) {
+    this.fieldDragging = null;
+  }
+
+  reportFieldDrop(event) {
+    this.fieldDragging = null;
+    if (!event) {
+      return;
+    }
+    if (!event.data) {
+      return;
+    }
+
+    let eventData: { field: ReportFieldInterface; index: number } = event.data;
+
+    if (!eventData.field) {
+      return;
+    }
+
+    this.report.fields.splice(eventData.index, 1);
+    this.report.fields.splice(
+      event.index > eventData.index ? event.index - 1 : event.index,
+      0,
+      eventData.field
+    );
+
+    console.log(
+      event.index,
+      event.data.index,
+      event.index > eventData.index ? event.index + 1 : event.index - 1
+    );
+    this.checkLabel();
+
+    this.changeRef.detectChanges();
+  }
 
   allSelected() {
     return this.selected.length === this.pageSize;
@@ -273,6 +312,12 @@ export class ReportComponent implements OnInit {
       this.report = _.findWhere(this.dashboardService.schema.reports, {
         name: this.reportName
       }) as any;
+
+      const commonFields = _.findWhere(this.dashboardService.schema.reports, {
+        name: "common"
+      }).fields;
+
+      this.report.fields = [...this.report.fields, ...commonFields];
     }
     console.log("in refresh method report before await", this.report);
 
@@ -299,6 +344,7 @@ export class ReportComponent implements OnInit {
     await this.reportStore.delete(this.report._id);
     this.resultLoading = false;
   }
+
   async saveOffline() {
     this.resultLoading = true;
     this.report = await this.dataService.report({
@@ -338,7 +384,18 @@ export class ReportComponent implements OnInit {
   }
 
   async refreshReports() {
-    this.reports = _.chain(await this.dataService.reports())
+    let onlineReports = [];
+    let offlineReports = [];
+
+    try {
+      onlineReports = await this.dataService.reports(this.entityName);
+    } catch (error) {}
+
+    try {
+      offlineReports = await this.reportStore.list(0, 100);
+    } catch (error) {}
+
+    this.reports = _.chain([...offlineReports, ...onlineReports])
       .map(item => {
         return {
           label:
@@ -346,7 +403,12 @@ export class ReportComponent implements OnInit {
             " | " +
             sUtil.text.replaceEnglishDigitsWithPersian(
               this.moment(item.createDate).fromNow()
-            ),
+            ) +
+            " | توسط " +
+            item.user +
+            item.offline
+              ? " | آفلاین "
+              : "",
           value: item._id
         };
       })
@@ -380,11 +442,11 @@ export class ReportComponent implements OnInit {
 
   async ngOnInit() {
     console.log("oninit");
+
     this.reportStore = await this.idbService.reportIDB();
 
     await this.dashboardService.setDefaultSchema();
 
-    console.log(await this.dataService.reports());
     await this.refreshReports();
 
     await this.changePage(0);

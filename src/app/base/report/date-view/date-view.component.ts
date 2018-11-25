@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { WidgetCommandInterface } from 'src/app/models';
 
 import { validate } from 'serendip-utility';
 
@@ -14,9 +13,6 @@ import * as MomentJalaali from 'moment-jalaali'
 export class DateViewComponent implements OnInit {
 
   constructor() { }
-
-
-  @Output() widgetCommand: EventEmitter<WidgetCommandInterface> = new EventEmitter<WidgetCommandInterface>();
 
 
 

@@ -92,15 +92,33 @@ export const FormsSchema: FormInterface[] = [
         }
       },
       {
-        componentName: "FormTextInputComponent",
-        propertyName: "email",
+        componentName: "FormSelectInputComponent",
+        propertyName: "gender",
+        inputs: {
+          selectType: "single",
+          label: "جنسیت",
+          data: [
+            {
+              label: "خانم",
+              value: "female"
+            },
+            {
+              label: "آقا",
+              value: "male"
+            }
+          ]
+        }
+      },
+      {
+        componentName: "FormMultipleTextInputComponent",
+        propertyName: "emails",
         inputs: {
           label: "آدرس ایمیل"
         }
       },
       {
-        componentName: "FormTextInputComponent",
-        propertyName: "mobile",
+        componentName: "FormMultipleTextInputComponent",
+        propertyName: "mobiles",
         inputs: {
           label: "شماره موبایل"
         }
@@ -165,15 +183,43 @@ export const FormsSchema: FormInterface[] = [
           data: ["شریک تجاری", "شرکت پخش", "شرکت رقیب", "تامین کننده"]
         }
       },
+      {
+        propertyName: "peoples",
+        propertyType: "array",
+        cssClass: "double-field",
+        parts: [
+          {
+            componentName: "FormChipsInputComponent",
+            propertyName: "value",
+            propertyType: "string",
+            cssClass: "w-60",
+            inputs: {
+              entityName: "people",
+              selectType: "single",
+              label: "نام شخص",
+              propertiesToSearch: ["firstName", "lastName", "mobiles"]
+            }
+          },
+          {
+            componentName: "FormTextInputComponent",
+            propertyName: "type",
+            propertyType: "string",
+            cssClass: "w-40",
 
+            inputs: {
+              label: "عنوان شغلی"
+            }
+          }
+        ]
+      },
       {
         propertyName: "contacts",
-        propertyType: "array",
         componentName: "ContactInputComponent"
       }
     ],
     defaultModel: {
       name: "",
+      peoples: [{ value: "", type: "" }],
       contacts: [
         {
           name: "اطلاعات تماس اصلی",
