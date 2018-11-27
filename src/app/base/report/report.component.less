@@ -4,6 +4,7 @@
   border-radius: 0 15px 0 0;
   padding: 10px 30px;
   margin-bottom: 30px;
+  margin-top: 15px;
 
   .reset-query {
     img {
@@ -42,16 +43,13 @@
     padding: 0 0 0 15px;
   }
 
-
-
   .fields {
     .field {
       margin: 15px 0;
       font-size: 12px;
-      padding-left:30px;
+      padding-left: 30px;
 
       position: relative;
-
     }
   }
   .drag-handle {
@@ -59,18 +57,17 @@
     display: inline-block;
     width: 30px;
     height: 30px;
-    top:0;
-    left:0;
-      position: absolute;
-      cursor: move;
-      opacity: 0.7;
+    top: 0;
+    left: 0;
+    position: absolute;
+    cursor: move;
+    opacity: 0.7;
   }
 
   .mat-slide-toggle-content {
     font-size: 13px;
     font-weight: 500;
   }
-
 }
 
 .report-result {
@@ -80,7 +77,14 @@
   padding: 60px 15px;
   overflow-x: scroll;
   box-sizing: border-box;
-  .records {
+  .empty {
+border-radius: 30px;
+    text-align: center;
+    font-style: italic;
+    font-size: 11px;
+    font-weight: 100;
+    padding:40px 0;
+    background: #f2f2f2;
   }
   .record,
   .report-header {
@@ -113,8 +117,12 @@
   .report-header {
     position: absolute;
     top: 0;
-    right: 15px;
+    right: 0;
     width: 100%;
+
+    .inner{
+      padding:0 15px;
+    }
 
     .field,
     .field-label,

@@ -1,25 +1,31 @@
 <div class="widget" *ngIf="formType != 'inline'">
-  <mat-card>
+  <mat-card [class.minimal]="minimal">
     <mat-card-header>
       <div mat-card-avatar>
         <img [src]="'/assets/icons/' + entityIcon  +'.svg'" />
       </div>
-      <mat-card-title>فرم اطلاعات
+      <mat-card-title *ngIf="!minimal">فرم اطلاعات
         {{entityLabel}}
       </mat-card-title>
-      <mat-card-subtitle *ngIf="!model._id">
+
+      <mat-card-title *ngIf=" minimal">
+        {{title}}
+      </mat-card-title>
+
+
+      <mat-card-subtitle *ngIf="!model._id && !minimal">
         ثبت
         {{entityLabel}}
         جدید
       </mat-card-subtitle>
 
-      <mat-card-subtitle *ngIf="model._id">
+      <mat-card-subtitle *ngIf="model._id && !minimal">
         ویرایش
         {{entityLabel}}
 
       </mat-card-subtitle>
 
-      <div class="action" [class.active]="mode == 'triggers'" (click)="mode = mode == 'triggers' ? 'form':'triggers'">
+      <div *ngIf="!minimal" class="action" [class.active]="mode == 'triggers'" (click)="mode = mode == 'triggers' ? 'form':'triggers'">
         <img [src]="'/assets/icons/' + 'complaints-customize-customer-voice-3'  +'.svg'" />
       </div>
 
@@ -29,7 +35,7 @@
     </mat-progress-bar>
 
     <mat-card-content *ngIf="mode == 'form'">
-        {{model._id}}
+      {{model._id}}
       <!-- <textarea  class="logbox">{{model | json}}</textarea> -->
 
       <ng-container *ngTemplateOutlet="form"></ng-container>
@@ -43,8 +49,16 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-raised-button color="secondary" (click)="save()">ثبت</button>
-      <button mat-button type="reset" (click)="reset()">ریست</button>
+      <button mat-raised-button color="secondary" (click)="save()">
+        <img *ngIf="saveButtonIcon" [src]="'/assets/icons/'+saveButtonIcon +'.svg'" />
+
+        {{saveButtonText}}</button>
+      <button mat-button type="reset" class="pull-left" (click)="reset()">
+        <img [src]="'/assets/icons/refresh.svg'" />
+
+      </button>
+
+      <div class="clearfix"></div>
     </mat-card-actions>
 
 

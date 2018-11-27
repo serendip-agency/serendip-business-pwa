@@ -1,4 +1,4 @@
-<div id="auth" [class.day]="day" *ngIf="!authService.loggedIn">
+<div id="space" [class.day]="day" *ngIf="!authService.loggedIn">
 
   <div class="moon" (mouseover)="day = true" (mouseout)="day = false">
     <a href="https://serendip.agency" target="_blank"> <img *ngIf="!loading" class="logo" src='assets/graphics/brand/serendip-circle.svg' />

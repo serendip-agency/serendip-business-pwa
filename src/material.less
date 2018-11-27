@@ -82,6 +82,8 @@
 
 .mat-button,
 .mat-raised-button {
+  font-size: 13px!important;
+  font-weight: 100;
   img {
     width: 24px;
     height: 24px;
@@ -169,6 +171,15 @@ textarea {
   .mat-form-field.w-80 {
     width: 80%;
   }
+  .w-90,
+  .mat-form-field.w-90 {
+    width: 90%;
+  }
+
+  .w-100,
+  .mat-form-field.w-100 {
+    width: 100%;
+  }
 }
 
 .mat-cell {
@@ -206,6 +217,19 @@ input[dir="ltr"] {
   margin-bottom: 0 !important;
 }
 
+.minimal {
+  .mat-card-subtitle{
+    display: none;
+  }
+  .mat-card-title {
+  font-size:17px!important;
+  font-weight: 100!important;
+  line-height: 50px!important;
+  margin:0 !important;
+  color:#777;
+  }
+}
+
 .mat-card-avatar {
   height: 50px !important;
   width: 50px !important;
@@ -214,8 +238,9 @@ input[dir="ltr"] {
   box-sizing: border-box;
   padding: 4px;
   overflow: hidden;
+  opacity: 0.7;
+
   img {
-    opacity: 0.5;
   }
 }
 

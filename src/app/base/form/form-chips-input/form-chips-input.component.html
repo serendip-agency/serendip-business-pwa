@@ -19,6 +19,7 @@
 </mat-form-field>
 
 <div *ngIf="selectType == 'single'">
+
   <div class="single-chip" *ngIf="model">
     <div class="text">
       <span (click)="goEntity(model)" *ngIf="getEntity(model)">
@@ -31,7 +32,6 @@
     <div class="icon" (click)="model = null; modelChange.emit(null)">
       <img src="assets/icons/recycle-bin-trash.svg" alt="" />
     </div>
-
   </div>
 
   <div class="single-chip" *ngIf="creatingEntity">
@@ -49,18 +49,24 @@
       [matAutocomplete]="entityAuto" (matChipInputTokenEnd)="entitySingleAutoInput.value= ''">
   </mat-form-field>
 
-
 </div>
 
-<mat-autocomplete #entityAuto="matAutocomplete" (optionSelected)="selectEntity(  $event);selectType == 'multiple' ? entityAutoInput.value= '': ''">
+<mat-autocomplete #entityAuto="matAutocomplete" [autoActiveFirstOption]="true" (optionSelected)="selectEntity(  $event);selectType == 'multiple' ? entityAutoInput.value= '': ''">
 
-  <mat-option value="new">
-    <img src="assets/icons/plus-add-1.svg" alt="" />
-    ثبت {{label}} جدید
-  </mat-option>
   <mat-option *ngFor="let item of filteredEntities" [value]="item._id">
 
     <span *ngFor="let prop of propertiesToSearch"> {{ item[prop] | rpd }} </span>
 
   </mat-option>
+
+
+  <mat-option value="new">
+    <img src="assets/icons/plus-add-1.svg" alt="" />
+    ثبت {{label}} جدید
+  </mat-option>
+
+
+  <mat-progress-bar *ngIf="loading" [color]="'primary'" mode="indeterminate">
+  </mat-progress-bar>
+
 </mat-autocomplete>

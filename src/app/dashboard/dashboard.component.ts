@@ -23,7 +23,7 @@ import { ReportComponent } from "../base/report/report.component";
 import { TriggersComponent } from "../base/triggers/triggers.component";
 import { BusinessService } from "../business.service";
 import { IdbService } from "../idb.service";
-
+import * as lunr from "lunr";
 import {
   DashboardContainerInterface,
   DashboardGridInterface,
@@ -40,6 +40,7 @@ import { GmapsService } from "../gmaps.service";
 import { DataService } from "../data.service";
 import { AuthService } from "../auth.service";
 import { MatSnackBar } from "@angular/material";
+import swal from "sweetalert2";
 
 // optional import of scroll behavior
 polyfill({
@@ -463,6 +464,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     widgetIndex: number
   ) {
     return (options: { command: "open-tab"; tab: DashboardTabInterface }) => {
+      //FIXME:
       const existInGrid = _.chain(this.grid.containers)
         .map((c: DashboardContainerInterface) => {
           return c.tabs;
@@ -756,13 +758,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         let listItemsWith = 0;
 
-        document
-          .querySelectorAll("#" + navTabId + " li")
-          .forEach((item: HTMLElement) => {
+        (document.querySelectorAll("#" + navTabId + " li") as any).forEach(
+          (item: HTMLElement) => {
             if (!item.classList.contains("full-nav")) {
               listItemsWith += item.getBoundingClientRect().width;
             }
-          });
+          }
+        );
 
         const isFull =
           navTab.getBoundingClientRect().width - listItemsWith < 10;
@@ -787,39 +789,43 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   sync() {
-    this.snackBar.open("همگام سازی شروع شد ...", "", { duration: 1000 });
-    const syncStart = Date.now();
-    this.dataService
-      .sync({
-        onCollectionSync: collection => {
+    return new Promise((resolve, reject) => {
+      this.snackBar.open("همگام سازی شروع شد ...", "", { duration: 1000 });
+
+      const syncStart = Date.now();
+      this.dataService
+        .sync({
+          onCollectionSync: collection => {
+            this.snackBar.open(
+              "کالکشن " + collection.toUpperCase() + " همگام‌سازی شد.",
+              "",
+              {
+                duration: 500
+              }
+            );
+          }
+        })
+        .then(() => {
+          var seconds = ((Date.now() - syncStart) / 1000).toFixed(1);
           this.snackBar.open(
-            "کالکشن " + collection.toUpperCase() + " همگام‌سازی شد.",
-            "",
-            {
-              duration: 500
-            }
-          );
-        }
-      })
-      .then(() => {
-        setTimeout(() => {
-          this.snackBar.open(
-            `همگام سازی در ${this.rpd(
-              ((Date.now() - syncStart) / 1000).toFixed(1)
-            )} ثانیه انجام شد.`,
+            `همگام سازی در ${this.rpd(seconds)} ثانیه انجام شد.`,
             "",
             { duration: 1000 }
           );
-        }, 1000);
 
-        //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
-      })
-      .catch(e => {
-        this.snackBar.open("همگام سازی با خطا مواجه شد.", "", {
-          duration: 3000
+          console.warn("pull done " + seconds + "s");
+
+          resolve();
+
+          //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
+        })
+        .catch(e => {
+          this.snackBar.open("همگام سازی با خطا مواجه شد.", "", {
+            duration: 3000
+          });
+          console.error(e);
         });
-        console.error(e);
-      });
+    });
   }
   handleGridMouseDragScroll() {
     let capture = false;
@@ -991,7 +997,71 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     await this.initGrid(this.dashboardService.currentSection.tabs);
   }
+  memorySizeOf(obj) {
+    var bytes = 0;
+
+    function sizeOf(obj) {
+      if (obj !== null && obj !== undefined) {
+        switch (typeof obj) {
+          case "number":
+            bytes += 8;
+            break;
+          case "string":
+            bytes += obj.length * 2;
+            break;
+          case "boolean":
+            bytes += 4;
+            break;
+          case "object":
+            var objClass = Object.prototype.toString.call(obj).slice(8, -1);
+            if (objClass === "Object" || objClass === "Array") {
+              for (var key in obj) {
+                if (!obj.hasOwnProperty(key)) continue;
+                sizeOf(obj[key]);
+              }
+            } else bytes += obj.toString().length * 2;
+            break;
+        }
+      }
+      return bytes;
+    }
+
+    function formatByteSize(bytes) {
+      if (bytes < 1024) return bytes + " bytes";
+      else if (bytes < 1048576) return (bytes / 1024).toFixed(3) + " KiB";
+      else if (bytes < 1073741824) return (bytes / 1048576).toFixed(3) + " MiB";
+      else return (bytes / 1073741824).toFixed(3) + " GiB";
+    }
+
+    return formatByteSize(sizeOf(obj));
+  }
   async ngOnInit() {
+    // this.idbService
+    //   .dataIDB("company")
+    //   .then(async store => {
+    //     var count = await store.count();
+    //     var start = Date.now();
+    //     console.warn("gathering " + count + " peoples data");
+    //     var data = await store.getAll();
+
+    //     console.warn(
+    //       "all peoples gathered in " + (Date.now() - start) + " ms",
+    //       data.length,
+    //       this.memorySizeOf(data)
+    //     );
+    //   })
+    //   .catch(err => {
+    //     console.error(err);
+    //   });
+
+    await (await this.idbService.dataIDB()).clear();
+    await (await this.idbService.syncIDB("pull")).clear();
+
+    await this.sync();
+
+    this.dashboardReady = true;
+
+
     this.newDashboardSocket()
       .then(() => {})
       .catch(() => {});
@@ -1024,8 +1094,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.handleStartButtonMove();
     this.dashboardDateTimeTick();
     this.handleGridMouseDragScroll();
-
-    this.dashboardReady = true;
 
     this.dashboardDateTimeInterval = setInterval(() => {
       this.dashboardDateTimeTick();

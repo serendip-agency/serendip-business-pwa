@@ -1,4 +1,5 @@
 @import "material.less";
+@import "space.less";
 
 /**
 *
@@ -381,7 +382,7 @@ label {
         li.active,
         li.full-nav {
           opacity: 1;
-          z-index: 3;
+          z-index: 30;
           position: relative;
           display: inline-block;
         }
@@ -404,7 +405,7 @@ label {
           &::after {
             display: none;
           }
-        opacity: 1;
+          opacity: 1;
 
           position: absolute;
           display: block;
@@ -466,7 +467,7 @@ label {
           content: " ";
         }
 
-        &:last-child{
+        &:last-child {
           cursor: default;
         }
         &:last-child,
@@ -524,7 +525,6 @@ label {
             border-radius: 0 0 10px 0px;
           }
         }
-
 
         &.prevIsHover {
           background: rgb(242, 242, 242);
@@ -627,9 +627,8 @@ label {
           border-left: none;
         }
       }
-      &.table {
+      &.report {
         max-width: 100%;
-
       }
       &.chart {
         max-height: calc(~"100vh - 130px");
@@ -708,7 +707,7 @@ label {
     .widget-container {
       .mat-card {
         &,
-        &.chart {
+        &.report {
           max-width: 100%;
           min-width: 100%;
           width: 100%;

@@ -37,6 +37,7 @@ import {
   FormInterface
 } from "serendip-business-model";
 import { FormDateRangeInputComponent } from "./form-date-range-input/form-date-range-input.component";
+import { FormFileInputComponent } from "./form-file-input/form-file-input.component";
 
 @Component({
   selector: "app-form",
@@ -63,7 +64,8 @@ export class FormComponent implements OnInit {
     ContactInputComponent,
     FormDateInputComponent,
     FormRelativeDateInputComponent,
-    FormDateRangeInputComponent
+    FormDateRangeInputComponent,
+    FormFileInputComponent,
   };
 
   constructor(
@@ -81,6 +83,12 @@ export class FormComponent implements OnInit {
   }>();
 
   _ = _;
+
+  @Input() saveButtonText: string = "ثبت";
+  @Input() saveButtonIcon: string  ;
+
+  @Input() title: string;
+  @Input() minimal: boolean;
 
   @Input()
   model: any = false;
@@ -150,7 +158,7 @@ export class FormComponent implements OnInit {
 
       console.log(insertedResponse);
 
-
+      this.detectChange();
       this.detectChange();
     } else {
       await this.dataService.update(

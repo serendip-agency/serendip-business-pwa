@@ -1,5 +1,5 @@
-<div class="widget">
-  <mat-card class="table">
+<div class="widget" [class.minimal]="minimal">
+  <mat-card class="report">
     <mat-card-header>
 
       <div mat-card-avatar class="pull-right">
@@ -14,11 +14,11 @@
         {{subtitle}}
       </mat-card-subtitle>
 
-      <div class="menu">
+      <div *ngIf="!minimal" class="menu">
         <img [src]="'/assets/icons/' + 'office-paper-work-bag'  +'.svg'" />
       </div>
 
-      <div class="search" [class.active]="mode == 'report'" (click)="mode = mode == 'report' ? 'data':'report'">
+      <div *ngIf="!minimal" class="search" [class.active]="mode == 'report'" (click)="mode = mode == 'report' ? 'data':'report'">
         <img [src]="'/assets/icons/' + 'search'  +'.svg'" />
       </div>
 
@@ -87,7 +87,7 @@
 
             <div dndPlaceholderRef>
 
-              <div  style="margin:10px;height:40px;border:1px dashed #ccc;border-radius: 10px;" *ngIf="fieldDragging">
+              <div style="margin:10px;height:40px;border:1px dashed #ccc;border-radius: 10px;" *ngIf="fieldDragging">
 
               </div>
             </div>
@@ -101,14 +101,15 @@
 
       <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'" *ngIf="!resultLoading && report && mode == 'data'">
 
-        <div class="report-header">
-
-          <div class="select">
-            <mat-checkbox (change)="allSelectChange($event)" [checked]="allSelected()"></mat-checkbox>
-          </div>
-          <div class="field-label" *ngFor="let field of  enabledReportFields()">
-            <ndc-dynamic *ngIf="  field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , viewType : 'label' } )"
-              [ndcDynamicOutputs]="{  widgetCommand : DashboardCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
+        <div *ngIf="page && page.length > 0" class="report-header">
+          <div class="inner">
+            <div class="select">
+              <mat-checkbox (change)="allSelectChange($event)" [checked]="allSelected()"></mat-checkbox>
+            </div>
+            <div class="field-label" *ngFor="let field of  enabledReportFields()">
+              <ndc-dynamic *ngIf="  field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , viewType : 'label' } )"
+                [ndcDynamicOutputs]="{  widgetCommand : DashboardCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
+            </div>
           </div>
         </div>
 
@@ -137,6 +138,10 @@
             </div>
 
           </div>
+
+          <div class="empty" *ngIf="page && page.length == 0">
+            تا کنون رکورد {{ entityLabelSingular }} ثبت نشده است.
+          </div>
         </div>
       </div>
 
@@ -154,7 +159,9 @@
 
     <mat-card-actions *ngIf="report && mode == 'data'">
 
-      <button mat-button>{{ entityLabelSingular }} جدید </button>
+      <button mat-button>
+        <img src="assets/icons/plus-add-1.svg" />
+        {{ entityLabelSingular }} جدید </button>
       <button color="primary" (click)="edit()" *ngIf="selected.length > 0" mat-button>
 
         ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }} انتخاب‌شده
@@ -176,7 +183,7 @@
         </div>
       </div>
 
-      <button mat-button class="pull-left" *ngIf="!report._id" (click)="saveReport()">
+      <button mat-button class="pull-left" *ngIf="!report._id && !minimal" (click)="saveReport()">
         <img src="assets/icons/save-backup-1.svg" *ngIf="!report.offline" />
         <img src="assets/icons/check-9.svg" *ngIf="report.offline" />
         ذخیره

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import * as idb from "idb";
-
+import * as _ from "underscore";
+import * as promiseSerial from "promise-serial";
 export class Idb {
   dbPromise: Promise<idb.DB>;
   store: string;
@@ -15,26 +16,28 @@ export class Idb {
     return this.dbPromise.then(db => {
       const tx = db.transaction(this.store);
       const keys = [];
-      const oStore = tx.objectStore(this.store);
+
+      return tx.objectStore(this.store).getAllKeys();
+      //  const oStore = tx.objectStore(this.store);
 
       // This would be this.store.getAllKeys(), but it isn't supported by Edge or Safari.
       // openKeyCursor isn't supported by Safari, so we fall back
-      (oStore.iterateKeyCursor || oStore.iterateCursor).call(oStore, cursor => {
-        if (!cursor) {
-          return;
-        }
-        keys.push(cursor.key);
-        cursor.continue();
-      });
+      // (oStore.iterateKeyCursor || oStore.iterateCursor).call(oStore, cursor => {
+      //   if (!cursor) {
+      //     return;
+      //   }
+      //   keys.push(cursor.key);
+      //   cursor.continue();
+      // });
 
-      return tx.complete.then(() => {
-        console.log("keys done");
-        return keys;
-      });
+      // return tx.complete.then(() => {
+      //   console.log("keys done");
+      //   return keys;
+      // });
     });
   }
 
-  async list(skip, limit) {
+  async list(skip?, limit?) {
     return this.dbPromise.then(db => {
       const tx = db.transaction(this.store);
       const records = [];
@@ -50,16 +53,16 @@ export class Idb {
           return;
         }
 
-        console.log(cursor);
-
-        if (recordSkipped >= skip) {
+        if (!skip || recordSkipped >= skip) {
           records.push(cursor.value);
         } else {
           recordSkipped++;
         }
 
-        if (records.length === limit) {
-          return;
+        if (limit) {
+          if (records.length === limit) {
+            return;
+          }
         }
 
         cursor.continue();
@@ -79,13 +82,41 @@ export class Idb {
         .get(key);
     });
   }
+
+  async getAll() {
+    return this.dbPromise.then(db => {
+      return db
+        .transaction(this.store)
+        .objectStore(this.store)
+        .getAll();
+    });
+  }
+
+  async count() {
+    return this.dbPromise.then(db => {
+      return db
+        .transaction(this.store)
+        .objectStore(this.store)
+        .count();
+    });
+  }
   async set(key, val) {
     return this.dbPromise.then(db => {
-
       const tx = db.transaction(this.store, "readwrite");
 
-      tx.objectStore(this.store).put(val, key);
-      return tx.complete;
+      return tx.objectStore(this.store).put(val, key);
+      //  return tx.complete;
+    });
+  }
+  async setAll(data: { key: string; val: any }[]) {
+    return this.dbPromise.then(db => {
+      const tx = db.transaction(this.store, "readwrite");
+      return promiseSerial(
+        _.map(data, item => {
+          return () => tx.objectStore(this.store).put(item.val, item.key);
+        }),
+        { parallelize: 100 }
+      );
     });
   }
   async delete(key) {
@@ -114,7 +145,7 @@ export class IdbService {
     return new Idb(
       idb.default.open("SYNC", 1, db => {
         db.createObjectStore("pull");
-      db.createObjectStore("push");
+        db.createObjectStore("push");
       }),
       store
     );
@@ -129,23 +160,12 @@ export class IdbService {
     );
   }
 
-  async dataIDB(
-    store:
-      | string
-      | "cache"
-      | "interaction"
-      | "complaint"
-      | "service"
-      | "company"
-      | "people"
-      | "product"
-  ) {
+  async dataIDB() {
     return new Idb(
-      idb.default.open("DB", 1, db => {
-        db.createObjectStore("company");
-        db.createObjectStore("people");
+      idb.default.open("DATA", 1, db => {
+        db.createObjectStore("collections");
       }),
-      store
+      "collections"
     );
   }
 

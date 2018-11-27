@@ -54,6 +54,8 @@ export class ReportComponent implements OnInit {
     tab: DashboardTabInterface;
   }>();
 
+  @Input() minimal: boolean;
+
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
 
@@ -72,13 +74,12 @@ export class ReportComponent implements OnInit {
 
   @Input() selected = [];
 
-  _mode: "report" | "data" = "report";
+  _mode: "report" | "data" = "data";
   reportStore: Idb;
   page: any[] = [];
   reports: { label: string; value: string }[];
   set mode(value: "report" | "data") {
     this._mode = value;
-    console.log("set mode");
   }
 
   get mode() {
@@ -95,7 +96,6 @@ export class ReportComponent implements OnInit {
   set report(value: ReportModel) {
     this._report = value;
 
-    console.log("set report", value);
     this.page = [];
   }
 
@@ -158,11 +158,6 @@ export class ReportComponent implements OnInit {
       eventData.field
     );
 
-    console.log(
-      event.index,
-      event.data.index,
-      event.index > eventData.index ? event.index + 1 : event.index - 1
-    );
     this.checkLabel();
 
     this.changeRef.detectChanges();
@@ -177,7 +172,6 @@ export class ReportComponent implements OnInit {
     this.checkLabel();
 
     this.changeRef.detectChanges();
-    console.log("model change");
   }
 
   checkLabel() {
@@ -199,13 +193,9 @@ export class ReportComponent implements OnInit {
           .join(", ")
           .trim() +
         "_";
-
-      console.log(this.report.label);
     }
   }
   reportFieldInputsChange(name, newInputs) {
-    console.log("reportFieldInputsChange", name, newInputs);
-    console.log(name, newInputs);
     this.report.fields = _.map(this.report.fields, item => {
       if (item.name === name) {
         item.templateInputs = newInputs;
@@ -319,7 +309,6 @@ export class ReportComponent implements OnInit {
 
       this.report.fields = [...this.report.fields, ...commonFields];
     }
-    console.log("in refresh method report before await", this.report);
 
     this.report = await this.dataService.report({
       entity: this.entityName,
@@ -423,7 +412,6 @@ export class ReportComponent implements OnInit {
     });
   }
   async changeReport(reportId) {
-    console.log("change report to " + reportId);
     this.report = null;
 
     this.report = await this.reportStore.get(reportId);
@@ -436,13 +424,9 @@ export class ReportComponent implements OnInit {
     }
 
     await this.refresh();
-
-    console.log("changed report to ", this.report);
   }
 
   async ngOnInit() {
-    console.log("oninit");
-
     this.reportStore = await this.idbService.reportIDB();
 
     await this.dashboardService.setDefaultSchema();

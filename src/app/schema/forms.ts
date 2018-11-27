@@ -74,6 +74,159 @@ export const FormsSchema: FormInterface[] = [
     ]
   },
   {
+    name: "sms-form",
+    entityName: "sms",
+    parts: [
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "recipients",
+        propertyType: "string",
+        cssClass: "w-60",
+        inputs: {
+          entityName: "people",
+          propertiesToSearch: ["firstName", "lastName", "emails"],
+          propertiesSearchMode: "mix",
+          selectType: "multiple",
+          label: "دریافت کنندگان"
+        }
+      },
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "template",
+        propertyType: "string",
+        cssClass: "w-60",
+        inputs: {
+          entityName: "emailTemplate",
+          propertiesToSearch: ["name"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "قالب پیامک"
+        }
+      },
+      {
+        componentName: "FormDateInputComponent",
+        propertyName: "jdate",
+        propertyType: "string",
+        inputs: {
+          label: "ارسال در تاریخ"
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "firstName",
+        inputs: {
+          label: "متن پیامک",
+          type: "multi-line"
+        }
+      }
+    ]
+  },
+  {
+    name: "fax-form",
+    entityName: "fax",
+    parts: [
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "subject",
+        inputs: {
+          label: "موضوع"
+        }
+      },
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "recipients",
+        propertyType: "string",
+        cssClass: "w-60",
+        inputs: {
+          entityName: "people",
+          propertiesToSearch: ["firstName", "lastName", "emails"],
+          propertiesSearchMode: "mix",
+          selectType: "multiple",
+          label: "دریافت کنندگان"
+        }
+      },
+      {
+        componentName: "FormDateInputComponent",
+        propertyName: "jdate",
+        propertyType: "string",
+        inputs: {
+          label: "ارسال در تاریخ"
+        }
+      },
+      {
+        componentName: "FormFileInputComponent",
+        propertyName: "pages",
+        inputs: {
+          type: "multiple",
+          label: "فایل‌های PDF یا تصاویر"
+        }
+      }
+    ]
+  },
+  {
+    name: "email-form",
+    entityName: "email",
+    parts: [
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "subject",
+        inputs: {
+          label: "موضوع"
+        }
+      },
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "recipients",
+        propertyType: "string",
+        cssClass: "w-60",
+        inputs: {
+          entityName: "people",
+          propertiesToSearch: ["firstName", "lastName", "emails"],
+          propertiesSearchMode: "mix",
+          selectType: "multiple",
+          label: "دریافت کنندگان"
+        }
+      },
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "template",
+        propertyType: "string",
+        cssClass: "w-60",
+        inputs: {
+          entityName: "emailTemplate",
+          propertiesToSearch: ["name"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "قالب ایمیل"
+        }
+      },
+      {
+        componentName: "FormDateInputComponent",
+        propertyName: "jdate",
+        propertyType: "string",
+        inputs: {
+          label: "ارسال در تاریخ"
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "firstName",
+        inputs: {
+          label: "متن ایمیل",
+          type: "multi-line"
+        }
+      },
+      {
+        componentName: "FormFileInputComponent",
+        propertyName: "attachments",
+        inputs: {
+          type: "multiple",
+          label: "فایل‌های ضمیمه"
+        }
+      }
+    ]
+  },
+  {
     name: "crm-people-form",
     entityName: "people",
     parts: [
@@ -144,17 +297,337 @@ export const FormsSchema: FormInterface[] = [
   {
     name: "crm-service-form",
     entityName: "service",
-    parts: []
+    parts: [
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "value",
+        propertyType: "string",
+        inputs: {
+          entityName: "people",
+          propertiesToSearch: ["firstName", "lastName", "mobiles"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "شخص مرتبط"
+        }
+      },
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "value",
+        propertyType: "string",
+        inputs: {
+          entityName: "company",
+          propertiesToSearch: ["company"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "شرکت مرتبط"
+        }
+      },
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "serviceType",
+        propertyType: "string",
+        inputs: {
+          entityName: "serviceType",
+          propertiesToSearch: ["name"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "نوع خدمت"
+        }
+      },
+      {
+        componentName: "FormDateInputComponent",
+        propertyName: "receiveTime",
+        propertyType: "string",
+        inputs: {
+          label: "تاریخ درخواست خدمت"
+        }
+      },
+      {
+        componentName: "FormDateInputComponent",
+        propertyName: "receiveTime",
+        propertyType: "string",
+        inputs: {
+          label: "مهلت انجام خدمت"
+        }
+      },
+
+      {
+        propertyName: "products",
+        propertyType: "array",
+        cssClass: "double-field",
+        parts: [
+          {
+            componentName: "FormChipsInputComponent",
+            propertyName: "value",
+            propertyType: "string",
+            cssClass: "w-60",
+            inputs: {
+              entityName: "product",
+              propertiesToSearch: ["name"],
+              propertiesSearchMode: "mix",
+              selectType: "single",
+              label: "محصول مرتبط"
+            }
+          },
+          {
+            componentName: "FormAutoCompleteInputComponent",
+            propertyName: "lotNumber",
+            propertyType: "string",
+            cssClass: "w-40",
+            inputs: {
+              label: "سری ساخت",
+              strict: true,
+              data: []
+            }
+          }
+        ]
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "firstName",
+        inputs: {
+          label: "توضیحات درخواست کننده",
+          type: "multi-line"
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "firstName",
+        inputs: {
+          label: "توضیحات ثبت کننده",
+          type: "multi-line"
+        }
+      },
+      {
+        propertyName: "contacts",
+        componentName: "ContactInputComponent"
+      }
+    ],
+    defaultModel: {
+      name: "",
+      products: [{ product: "", lotNumber: "" }]
+    }
   },
   {
     name: "crm-complaint-form",
     entityName: "complaint",
-    parts: []
+    parts: [
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "value",
+        propertyType: "string",
+        inputs: {
+          entityName: "people",
+          propertiesToSearch: ["firstName", "lastName", "mobiles"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "شخص مرتبط"
+        }
+      },
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "value",
+        propertyType: "string",
+        inputs: {
+          entityName: "company",
+          propertiesToSearch: ["company"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "شرکت مرتبط"
+        }
+      },
+      {
+        componentName: "FormAutoCompleteInputComponent",
+        propertyName: "subject",
+        propertyType: "string",
+        inputs: {
+          label: "موضوع شکایت",
+          strict: true,
+          data: []
+        }
+      },
+      {
+        componentName: "FormDateInputComponent",
+        propertyName: "receiveTime",
+        propertyType: "string",
+        inputs: {
+          label: "تاریخ دریافت شکایت"
+        }
+      },
+
+      {
+        propertyName: "products",
+        propertyType: "array",
+        cssClass: "double-field",
+        parts: [
+          {
+            componentName: "FormChipsInputComponent",
+            propertyName: "value",
+            propertyType: "string",
+            cssClass: "w-60",
+            inputs: {
+              entityName: "product",
+              propertiesToSearch: ["name"],
+              propertiesSearchMode: "mix",
+              selectType: "single",
+              label: "محصول"
+            }
+          },
+          {
+            componentName: "FormAutoCompleteInputComponent",
+            propertyName: "lotNumber",
+            propertyType: "string",
+            cssClass: "w-40",
+            inputs: {
+              label: "سری ساخت",
+              strict: true,
+              data: []
+            }
+          }
+        ]
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "firstName",
+        inputs: {
+          label: "توضیحات شکایت کننده",
+          type: "multi-line"
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "firstName",
+        inputs: {
+          label: "جمع بندی دریافت کننده",
+          type: "multi-line"
+        }
+      },
+      {
+        propertyName: "contacts",
+        componentName: "ContactInputComponent"
+      }
+    ],
+    defaultModel: {
+      name: "",
+      products: [{ product: "", lotNumber: "" }]
+    }
   },
   {
     name: "crm-sale-form",
     entityName: "company",
-    parts: []
+    parts: [
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "value",
+        propertyType: "string",
+        inputs: {
+          entityName: "people",
+          propertiesToSearch: ["firstName", "lastName", "mobiles"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "شخص مرتبط"
+        }
+      },
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "value",
+        propertyType: "string",
+        inputs: {
+          entityName: "company",
+          propertiesToSearch: ["company"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "شرکت مرتبط"
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "subject",
+        propertyType: "string",
+        inputs: {
+          label: "عنوان فاکتور یا قرارداد"
+        }
+      },
+      {
+        propertyName: "products",
+        propertyType: "array",
+        cssClass: "double-field",
+        parts: [
+          {
+            componentName: "FormChipsInputComponent",
+            propertyName: "value",
+            propertyType: "string",
+            cssClass: "w-40",
+            inputs: {
+              entityName: "product",
+              propertiesToSearch: ["name"],
+              propertiesSearchMode: "mix",
+              selectType: "single",
+              label: "محصول"
+            }
+          },
+          {
+            componentName: "FormPriceInputComponent",
+            propertyName: "price",
+            cssClass: "w-60",
+            inputs: {
+              label: "هزینه"
+            }
+          }
+        ]
+      },
+      {
+        propertyName: "services",
+        propertyType: "array",
+        cssClass: "double-field",
+        parts: [
+          {
+            componentName: "FormChipsInputComponent",
+            propertyName: "serviceType",
+            propertyType: "string",
+            cssClass: "w-40",
+            inputs: {
+              entityName: "product",
+              propertiesToSearch: ["name"],
+              propertiesSearchMode: "mix",
+              selectType: "single",
+              label: "نوع خدمت"
+            }
+          },
+          {
+            componentName: "FormPriceInputComponent",
+            propertyName: "price",
+            cssClass: "w-60",
+            inputs: {
+              label: "هزینه"
+            }
+          },
+          {
+            componentName: "FormDateInputComponent",
+            propertyName: "dueDate",
+            propertyType: "string",
+            cssClass: "w-100",
+            inputs: {
+              label: "مهلت",
+              calendarType: "persian"
+            }
+          },
+          {
+            componentName: "FormTextInputComponent",
+            propertyName: "description",
+            propertyType: "string",
+            inputs: {
+              type: "multi-line",
+              label: "توضیحت سرویس"
+            }
+          }
+        ]
+      }
+    ],
+    defaultModel: {
+      services: [{}],
+      products: [{}]
+    }
   },
   {
     name: "crm-sale-form",
@@ -195,19 +668,29 @@ export const FormsSchema: FormInterface[] = [
             cssClass: "w-60",
             inputs: {
               entityName: "people",
+              propertiesToSearch: ["firstName", "lastName", "mobiles"],
+              propertiesSearchMode: "mix",
               selectType: "single",
-              label: "نام شخص",
-              propertiesToSearch: ["firstName", "lastName", "mobiles"]
+              label: "شخص مرتبط"
             }
           },
           {
-            componentName: "FormTextInputComponent",
+            componentName: "FormAutoCompleteInputComponent",
             propertyName: "type",
             propertyType: "string",
             cssClass: "w-40",
-
             inputs: {
-              label: "عنوان شغلی"
+              label: "نوع ارتباط",
+              strict: true,
+              data: [
+                "مدیر عامل",
+                "مدیر فنی",
+                "کارشناس فنی",
+                "سوپروایزر",
+                "حسابدار",
+                "کارمند",
+                "مشاور"
+              ]
             }
           }
         ]

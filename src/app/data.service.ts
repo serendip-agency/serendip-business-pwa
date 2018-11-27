@@ -1,25 +1,18 @@
-import { BusinessService } from "./business.service";
-import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { MatSnackBar } from "@angular/material";
+import * as JsZip from "jszip";
+import { ReportInterface, ReportModel } from "serendip-business-model";
+import * as utils from "serendip-utility";
+import * as _ from "underscore";
+
 import { environment } from "../environments/environment";
 import { AuthService } from "./auth.service";
-import * as _ from "underscore";
+import { BusinessService } from "./business.service";
 import { IdbService } from "./idb.service";
-
-import * as JsZip from "jszip";
-
-import * as utils from "serendip-utility";
 import { ObService } from "./ob.service";
-import { UpdateMessage } from "./messaging/updateMessage";
-import { InsertMessage } from "./messaging/InsertMessage";
-import { DeleteMessage } from "./messaging/DeleteMessage";
-import {
-  ReportFieldQueryInterface,
-  ReportFieldInterface,
-  ReportModel,
-  ReportInterface
-} from "serendip-business-model";
-import { MatSnackBar } from "@angular/material";
+import * as promiseSerial from "promise-serial";
+import { FormsSchema, ReportsSchema } from "./schema";
 
 export interface DataRequestInterface {
   method: string | "POST" | "GET";
@@ -36,7 +29,7 @@ export interface DataRequestInterface {
 @Injectable()
 export class DataService {
   public static collectionsSynced: string[] = [];
-  public static collectionsToSync: string[] = ["people", "company"];
+  public static collectionsToSync: string[] = ["company", "people"];
   constructor(
     private obService: ObService,
     private http: HttpClient,
@@ -166,16 +159,13 @@ export class DataService {
     controller: string,
     skip,
     limit,
-    useUnSynced?: boolean
+    offline?: boolean
   ): Promise<any> {
-    if (
-      DataService.collectionsSynced.indexOf(controller) !== -1 ||
-      useUnSynced
-    ) {
+    if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
       const storeName = controller.toLowerCase().trim();
-      const store = await this.idbService.dataIDB(storeName);
-
-      return store.list(skip, limit);
+      const store = await this.idbService.dataIDB();
+      const data = await store.get(controller);
+      return _.take(_.rest(data, skip), limit);
     } else {
       try {
         return this.request({
@@ -188,7 +178,7 @@ export class DataService {
           }
         });
       } catch (error) {
-        if (!useUnSynced) {
+        if (!offline) {
           return await this.list(controller, skip, limit, true);
         }
       }
@@ -261,11 +251,6 @@ export class DataService {
         return requestResult;
       }
     } catch (error) {
-      this.snackBar.open(
-        "دسترسی به سرور امکان‌پذیر نمی‌باشد. تلاش برای ساخت گزارش از اطلاعات آفلاین...",
-        "",
-        { duration: 3000 }
-      );
 
       return {
         fields: opts.report.fields,
@@ -273,7 +258,7 @@ export class DataService {
         name: "",
         label: "گزارش پیش‌فرض آنلاین",
         createDate: new Date(),
-        data: await this.list(opts.entity, opts.skip, opts.limit, true),
+        data: await this.list(opts.entity, 0, 0, true),
         entityName: opts.entity,
         offline: true
       };
@@ -285,25 +270,20 @@ export class DataService {
     query: string,
     take: number,
     properties: string[],
-    useUnSynced?: boolean
+    propertiesSearchMode: string,
+    offline?: boolean
   ): Promise<any> {
-    if (
-      DataService.collectionsSynced.indexOf(controller) !== -1 ||
-      useUnSynced
-    ) {
+    if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
       const storeName = controller.toLowerCase().trim();
-      const store = await this.idbService.dataIDB(storeName);
 
-      const keys = await store.keys();
-
+      const store = await this.idbService.dataIDB();
+      const data = await store.get(controller);
       const result = [];
 
       await Promise.all(
-        _.map(keys, key => {
+        _.map(data, model => {
           return new Promise(async (resolve, reject) => {
-            const model = await store.get(key);
             const modelText = JSON.stringify(model);
-
             if (modelText.indexOf(query) !== -1) {
               result.push(model);
             }
@@ -316,32 +296,41 @@ export class DataService {
       return _.take(result, take);
     } else {
       try {
-        return this.request({
+        return await this.request({
           method: "POST",
           path: `/api/entity/${controller}/search`,
           model: {
-            properties: properties,
+            properties,
+            propertiesSearchMode,
             take: take,
             query: query
           },
-          timeout: 1000
+          timeout: 1000,
+          retry: false
         });
       } catch (error) {
-        if (!useUnSynced) {
-          return await this.search(controller, query, take, properties, true);
+        if (!offline) {
+          return await this.search(
+            controller,
+            query,
+            take,
+            properties,
+            propertiesSearchMode,
+            true
+          );
+        } else {
+          throw error;
         }
       }
     }
   }
 
-  async count(controller: string, useUnSynced?: boolean): Promise<number> {
-    if (
-      DataService.collectionsSynced.indexOf(controller) !== -1 ||
-      useUnSynced
-    ) {
-      const store = await this.idbService.dataIDB(controller);
-      const keys = await store.keys();
-      return keys.length;
+  async count(controller: string, offline?: boolean): Promise<number> {
+    if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
+      const store = await this.idbService.dataIDB();
+      const data = await store.get(controller);
+
+      return data.length;
     } else {
       try {
         return this.request({
@@ -350,7 +339,7 @@ export class DataService {
           path: `/api/entity/${controller}/count`
         });
       } catch (error) {
-        if (!useUnSynced) {
+        if (!offline) {
           return await this.count(controller, true);
         }
       }
@@ -360,26 +349,23 @@ export class DataService {
   async details<A>(
     controller: string,
     _id: string,
-    useUnSynced?: boolean
+    offline?: boolean
   ): Promise<A> {
-    const model = { _id: _id };
+    if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
+      const store = await this.idbService.dataIDB();
+      const data = await store.get(controller);
 
-    if (
-      DataService.collectionsSynced.indexOf(controller) !== -1 ||
-      useUnSynced
-    ) {
-      const store = await this.idbService.dataIDB(controller);
-      return store.get(_id);
+      return _.findWhere(data, { _id: _id });
     } else {
       try {
         return this.request({
           method: "POST",
           timeout: 1000,
           path: `/api/entity/${controller}/details`,
-          model: model
+          model: { _id }
         });
       } catch (error) {
-        if (!useUnSynced) {
+        if (!offline) {
           return await this.details<A>(controller, _id, true);
         }
       }
@@ -426,8 +412,8 @@ export class DataService {
     model: A,
     modelName?: string
   ): Promise<A> {
-    const store = await this.idbService.dataIDB(controller);
-    store.set((model as any)._id, model);
+    // const store = await this.idbService.dataIDB(controller);
+    // store.set((model as any)._id, model);
 
     return this.request({
       method: "POST",
@@ -450,13 +436,14 @@ export class DataService {
   }
 
   public async pullCollection(collection) {
-    const historyStore = await this.idbService.syncIDB("pull");
+    console.warn("pulling collection", collection);
+    const pullStore = await this.idbService.syncIDB("pull");
 
     let lastSync: number;
 
     try {
-      const syncKeys = _.filter(await historyStore.keys(), (item: string) => {
-        return item.toString().indexOf(collection) === 0;
+      const syncKeys = _.filter(await pullStore.keys(), (item: string) => {
+        return item.toString().indexOf(collection + "_") === 0;
       }).reverse();
 
       if (syncKeys && syncKeys.length > 0) {
@@ -467,11 +454,23 @@ export class DataService {
       console.log(e);
     }
 
-    const store = await this.idbService.dataIDB(collection);
+    if (lastSync) {
+      console.warn(
+        "last sync of " +
+          collection +
+          " was " +
+          (Date.now() - lastSync) / 1000 +
+          "ms"
+      );
+    }
+
+    const store = await this.idbService.dataIDB();
     let changesToSync;
 
     if (lastSync) {
       changesToSync = await this.changes(collection, lastSync, Date.now());
+
+      console.warn("changes to sync for " + collection, changesToSync);
       if (changesToSync.deleted.length > 0) {
         await Promise.all(
           changesToSync.deleted.map(key => {
@@ -481,23 +480,21 @@ export class DataService {
       }
     }
 
+    console.warn("downloading zip for " + collection);
     const data = await this.zip(collection, lastSync, Date.now());
-    let recordInserted = 0;
-    await Promise.all(
-      _.map(data, (record: any) => {
-        return new Promise(async (_resolve, _reject) => {
-          await store.set(record._id, record);
 
-          recordInserted++;
-
-          // console.log(collection, recordInserted * 100 / data.length);
-
-          _resolve();
-        });
-      })
+    // data = _.map(data, (record: any) => {
+    //   return { key: record._id, val: record };
+    // });
+    console.warn(
+      "zip extracted. it contain " +
+        data.length +
+        " record, starting to add ..."
     );
+    //   await store.setAll(data as any);
+    await store.set(collection, data);
 
-    await historyStore.set(collection + "_" + Date.now(), {
+    await pullStore.set(collection + "_" + Date.now(), {
       events: changesToSync
     });
   }
@@ -544,34 +541,34 @@ export class DataService {
     });
   }
 
-  public pullCollections(onCollectionSync?: Function) {
+  public async pullCollections(onCollectionSync?: Function) {
     console.log("pull started");
-    return new Promise((resolve, reject) => {
-      const runInSeries = index => {
-        const collection = DataService.collectionsToSync[index];
-        this.pullCollection(collection)
-          .then(() => {
-            if (onCollectionSync) {
-              onCollectionSync(collection);
-            }
-
-            DataService.collectionsSynced.push(collection);
-
-            index++;
-
-            if (index === DataService.collectionsToSync.length) {
-              resolve();
-            } else {
-              runInSeries(index);
-            }
-          })
-          .catch(e => {
-            reject(e);
-          });
-      };
-
-      runInSeries(0);
+    const collections = [];
+    FormsSchema.forEach(schema => {
+      if (schema.entityName) {
+        if (collections.indexOf(schema.entityName) === -1) {
+          collections.push(schema.entityName);
+        }
+      }
     });
+    ReportsSchema.forEach(schema => {
+      if (schema.entityName) {
+        if (collections.indexOf(schema.entityName) === -1) {
+          collections.push(schema.entityName);
+        }
+      }
+    });
+
+    console.warn(collections);
+
+    await promiseSerial(
+      _.map(collections, collection => {
+        return () => {
+          return this.pullCollection(collection);
+        };
+      }),
+      { parallelize: 16 }
+    );
   }
 
   public async sync(opts: { onCollectionSync?: Function }) {

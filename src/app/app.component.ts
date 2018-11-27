@@ -65,7 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log(this.currentPwa);
+    console.log("current version of PWA is " + this.currentPwa);
 
     swal.setDefaults({
       buttonsStyling: false,

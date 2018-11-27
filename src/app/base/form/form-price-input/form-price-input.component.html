@@ -1,3 +1,11 @@
-<p>
-  form-price-input works!
-</p>
+<div class="double-field">
+
+  <div class="w-75">
+    <app-form-text-input [label]="label" [model]="model?.value" (modelChange)="model.type = $event;modelChange.emit(model)"></app-form-text-input>
+  </div>
+
+  <div class="w-25">
+    <app-form-auto-complete-input [strict]="true" [label]="'ارز'" [data]="['ریال','دلار','یورو']" [model]="model?.type" (modelChange)="model.type = $event;modelChange.emit(model)"></app-form-auto-complete-input>
+  </div>
+
+</div>

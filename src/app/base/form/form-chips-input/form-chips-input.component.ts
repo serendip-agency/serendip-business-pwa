@@ -13,7 +13,7 @@ import * as _ from "underscore";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { DashboardService } from "src/app/dashboard.service";
 import { ObService } from "src/app/ob.service";
-
+import * as sUtil from "serendip-utility";
 @Component({
   selector: "app-form-chips-input",
   templateUrl: "./form-chips-input.component.html",
@@ -21,6 +21,7 @@ import { ObService } from "src/app/ob.service";
 })
 export class FormChipsInputComponent implements OnInit {
   creatingEntity: boolean;
+  loading = false;
   constructor(
     private dataService: DataService,
     private snackBar: MatSnackBar,
@@ -48,6 +49,8 @@ export class FormChipsInputComponent implements OnInit {
   @Input() label: string;
 
   @Input() propertiesToSearch: string[] = [];
+
+  @Input() propertiesSearchMode;
   public _model: any;
 
   @Input()
@@ -136,7 +139,6 @@ export class FormChipsInputComponent implements OnInit {
   }
 
   async selectEntity(event: MatAutocompleteSelectedEvent) {
-    console.log("selectEntity", event);
 
     if (event.option.value === "new") {
       this.creatingEntity = true;
@@ -167,6 +169,7 @@ export class FormChipsInputComponent implements OnInit {
     }>(this.entityName, event.option.value);
 
     if (this.selectType === "multiple") {
+      if (!this.model) this.model = [];
       this.model.push(event.option.value);
     } else {
       this.model = event.option.value;
@@ -183,17 +186,22 @@ export class FormChipsInputComponent implements OnInit {
 
   async filterEntities(input, currentValues) {
     if (input) {
+      this.loading = true;
       this.filteredEntities = _.filter(
         await this.dataService.search(
           this.entityName,
-          input,
+          sUtil.text.replacePersianDigitsWithEnglish(input),
           10,
-          this.propertiesToSearch
+          this.propertiesToSearch,
+          this.propertiesSearchMode
         ),
         (item: any) => {
+          if (!currentValues) return true;
           return currentValues.indexOf(item._id) === -1;
         }
       );
+
+      this.loading = false;
     }
   }
 
@@ -208,8 +216,8 @@ export class FormChipsInputComponent implements OnInit {
   }
 
   async ngOnInit() {
+    if (!this.model) if (this.selectType == "multiple") this.model = [];
     this.filterEntities(" ", []);
-    console.log("form chips inited");
 
     this.obService.listen(this.entityName).subscribe(async (model: any) => {
       this.cachedEntities[model._id] = model;

@@ -75,6 +75,175 @@ export const ReportsSchema: ReportInterface[] = [
     ]
   },
   {
+    name: "service-type-default",
+    entityName: "serviceType",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام دسته بندی",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "job-title-default",
+    entityName: "jobTitle",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام عنوان شعلی",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "support-ticket-default",
+    entityName: "supportTicket",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "موضوع تیکت",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "complaint-default",
+    entityName: "complaint",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "subject",
+        label: "موضوع ",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "sale-default",
+    entityName: "sale",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "subject",
+        label: "موضوع ",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "email-default",
+    entityName: "email",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "subject",
+        label: "موضوع ",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "sms-default",
+    entityName: "sms",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "body",
+        label: "متن ",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "fax-default",
+    entityName: "fax",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "pages",
+        label: "صفحات ",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "support-invoice-default",
+    entityName: "supportInvoice",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "subject",
+        label: "عنوان فاکتور",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "company-relation-type-default",
+    entityName: "companyRelationType",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام نوع ارتباط",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "people-relation-type-default",
+    entityName: "peopleRelationType",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام نوع ارتباط",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "job-title-default",
+    entityName: "jobTitle",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام عنوان شعلی",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "job-title-default",
+    entityName: "jobTitle",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام عنوان شعلی",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
     name: "people-default",
     entityName: "people",
     label: "",
