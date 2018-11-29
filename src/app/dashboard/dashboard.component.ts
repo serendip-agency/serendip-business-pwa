@@ -1036,6 +1036,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return formatByteSize(sizeOf(obj));
   }
   async ngOnInit() {
+
+    // alert(JSON.stringify(await this.dataService.changes("company")));
+
     // this.idbService
     //   .dataIDB("company")
     //   .then(async store => {
@@ -1052,15 +1055,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //   })
     //   .catch(err => {
     //     console.error(err);
-    //   });
+    // });
 
-    await (await this.idbService.dataIDB()).clear();
-    await (await this.idbService.syncIDB("pull")).clear();
+    // await (await this.idbService.dataIDB()).clear();
+    // await (await this.idbService.syncIDB("pull")).clear();
 
     await this.sync();
 
     this.dashboardReady = true;
-
 
     this.newDashboardSocket()
       .then(() => {})

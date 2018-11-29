@@ -251,7 +251,6 @@ export class DataService {
         return requestResult;
       }
     } catch (error) {
-
       return {
         fields: opts.report.fields,
         count: await this.count(opts.entity, true),
@@ -374,21 +373,42 @@ export class DataService {
 
   changes(
     controller: string,
-    from: number,
-    to: number,
+    from?: number,
+    to?: number,
     _id?: string
   ): Promise<any> {
-    const model = {
-      _id: _id,
-      from: from,
-      to: to
+    let query = {
+      _id,
+      "model._entity": controller,
+      "model._vdate": { $gt: from || 0, $lt: to || Date.now() }
     };
 
     return this.request({
       method: "POST",
-      path: `/api/entity/${controller}/changes`,
+      path: `/api/entity/changes`,
       timeout: 1000,
-      model: model
+      model: query
+    });
+  }
+
+  countChanges(
+    controller: string,
+    from?: number,
+    to?: number,
+    _id?: string
+  ): Promise<any> {
+    let query = {
+      _id,
+      "model._entity": controller,
+      "model._vdate": { $gt: from || 0, $lt: to || Date.now() },
+      count: true
+    };
+
+    return this.request({
+      method: "POST",
+      path: `/api/entity/changes`,
+      timeout: 1000,
+      model: query
     });
   }
 
@@ -439,7 +459,7 @@ export class DataService {
     console.warn("pulling collection", collection);
     const pullStore = await this.idbService.syncIDB("pull");
 
-    let lastSync: number;
+    let lastSync: number = 0;
 
     try {
       const syncKeys = _.filter(await pullStore.keys(), (item: string) => {
@@ -465,37 +485,44 @@ export class DataService {
     }
 
     const store = await this.idbService.dataIDB();
-    let changesToSync;
+    let changes;
+    let changesCount;
 
-    if (lastSync) {
-      changesToSync = await this.changes(collection, lastSync, Date.now());
+    changesCount = await this.countChanges(collection, lastSync, Date.now());
 
-      console.warn("changes to sync for " + collection, changesToSync);
-      if (changesToSync.deleted.length > 0) {
-        await Promise.all(
-          changesToSync.deleted.map(key => {
-            return store.delete(key);
-          })
-        );
-      }
-    }
+    if (!changesCount) return;
 
-    console.warn("downloading zip for " + collection);
+    changes = await this.changes(collection, lastSync, Date.now());
+    // if (changes.deleted.length > 0) {
+    //   await Promise.all(
+    //     changes.deleted.map(key => {
+    //       return store.delete(key);
+    //     })
+    //   );
+    // }
+
+    console.warn(
+      "changes count for " + collection,
+      changesCount + " since " + lastSync,
+      changes
+    );
+
+    //  console.warn("downloading zip for " + collection);
     const data = await this.zip(collection, lastSync, Date.now());
 
     // data = _.map(data, (record: any) => {
     //   return { key: record._id, val: record };
     // });
-    console.warn(
-      "zip extracted. it contain " +
-        data.length +
-        " record, starting to add ..."
-    );
+    // console.warn(
+    //   "zip extracted. it contain " +
+    //     data.length +
+    //     " record, starting to add ..."
+    // );
     //   await store.setAll(data as any);
     await store.set(collection, data);
 
     await pullStore.set(collection + "_" + Date.now(), {
-      events: changesToSync
+      events: changes
     });
   }
 
@@ -542,7 +569,6 @@ export class DataService {
   }
 
   public async pullCollections(onCollectionSync?: Function) {
-    console.log("pull started");
     const collections = [];
     FormsSchema.forEach(schema => {
       if (schema.entityName) {
@@ -572,7 +598,6 @@ export class DataService {
   }
 
   public async sync(opts: { onCollectionSync?: Function }) {
-    console.log("push start");
     try {
       await this.pushCollections();
       console.log("push done");
@@ -580,7 +605,6 @@ export class DataService {
       console.log("push fail");
     }
 
-    console.log("pull start");
     try {
       await this.pullCollections();
       console.log("pull done");
