@@ -121,7 +121,7 @@ export class FormChipsInputComponent implements OnInit {
               {
                 component: "FormComponent",
                 inputs: {
-                  name: "crm-" + this.entityName + "-form",
+                  name: "" + this.entityName + "-form",
                   documentId: _id,
                   entityName: this.entityName,
                   entityLabel: this.label
@@ -139,7 +139,6 @@ export class FormChipsInputComponent implements OnInit {
   }
 
   async selectEntity(event: MatAutocompleteSelectedEvent) {
-
     if (event.option.value === "new") {
       this.creatingEntity = true;
       this.dashboardService.dashboardCommand.emit("command", {
@@ -152,7 +151,7 @@ export class FormChipsInputComponent implements OnInit {
             {
               component: "FormComponent",
               inputs: {
-                name: "crm-" + this.entityName + "-form",
+                name: "" + this.entityName + "-form",
                 entityName: this.entityName,
                 entityLabel: this.label
               }
@@ -218,6 +217,16 @@ export class FormChipsInputComponent implements OnInit {
   async ngOnInit() {
     if (!this.model) if (this.selectType == "multiple") this.model = [];
     this.filterEntities(" ", []);
+
+    if (this.model) {
+      if (this.selectType == "single") {
+        this.cachedEntities[this.model] = await this.dataService.details(
+          this.entityName,
+          this.model,
+          true
+        );
+      }
+    }
 
     this.obService.listen(this.entityName).subscribe(async (model: any) => {
       this.cachedEntities[model._id] = model;

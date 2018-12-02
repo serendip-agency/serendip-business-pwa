@@ -125,7 +125,7 @@ export class FormAutoCompleteInputComponent implements OnInit {
               {
                 component: "FormComponent",
                 inputs: {
-                  name: "crm-" + this.entityName + "-form",
+                  name: "" + this.entityName + "-form",
                   documentId: _id,
                   entityName: this.entityName,
                   entityLabel: this.label
@@ -167,7 +167,7 @@ export class FormAutoCompleteInputComponent implements OnInit {
               {
                 component: "FormComponent",
                 inputs: {
-                  name: "crm-" + this.entityName + "-form",
+                  name: "" + this.entityName + "-form",
                   entityName: this.entityName,
                   entityLabel: this.label
                 }

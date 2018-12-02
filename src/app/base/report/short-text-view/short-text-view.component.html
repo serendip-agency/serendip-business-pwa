@@ -5,8 +5,13 @@
   </div>
 
 
-  <div class="cell" *ngIf="viewType != 'label'">
+  <div class="cell" *ngIf="viewType != 'label' && viewType != 'json'">
     {{replace[model] || model | rpd}}
+  </div>
+
+
+  <div class="cell" *ngIf="viewType == 'json'">
+    {{ model | json}}
   </div>
 
 </div>

@@ -19,7 +19,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "FormComponent",
             inputs: {
-              name: "crm-people-form",
+              name: "people-form",
               entityName: "people",
               entityLabel: "شخص",
               entityIcon: "people-users-5"
@@ -58,7 +58,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "FormComponent",
             inputs: {
-              name: "crm-company-form",
+              name: "company-form",
               entityName: "company",
               entityLabel: "شرکت",
               entityIcon: "building-company-1"
@@ -98,7 +98,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "FormComponent",
             inputs: {
-              name: "crm-service-form",
+              name: "service-form",
               entityIcon: "service",
               entityName: "service",
               entityLabel: "خدمت"
@@ -137,7 +137,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "FormComponent",
             inputs: {
-              name: "crm-complaint-form",
+              name: "complaint-form",
               entityIcon: "complaints-customer-voice-2",
               entityName: "complaint",
               entityLabel: "شکایت"
@@ -182,7 +182,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "FormComponent",
             inputs: {
-              name: "crm-sale-form",
+              name: "sale-form",
               entityName: "sale",
               entityLabel: "فروش",
               entityIcon : 'sell-money-expense-7'

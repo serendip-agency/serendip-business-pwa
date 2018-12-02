@@ -65,7 +65,7 @@ export class FormComponent implements OnInit {
     FormDateInputComponent,
     FormRelativeDateInputComponent,
     FormDateRangeInputComponent,
-    FormFileInputComponent,
+    FormFileInputComponent
   };
 
   constructor(
@@ -84,8 +84,8 @@ export class FormComponent implements OnInit {
 
   _ = _;
 
-  @Input() saveButtonText: string = "ثبت";
-  @Input() saveButtonIcon: string  ;
+  @Input() saveButtonText = "ثبت";
+  @Input() saveButtonIcon: string;
 
   @Input() title: string;
   @Input() minimal: boolean;
@@ -216,6 +216,16 @@ export class FormComponent implements OnInit {
         this.documentId,
         true
       );
+
+      Object.keys(this.formSchema.defaultModel).forEach(dKey => {
+        console.log(dKey, typeof this.model[dKey]);
+        if (
+          typeof this.model[dKey] === "undefined" ||
+          (this.model[dKey].length && this.model[dKey].length === 0)
+        ) {
+          this.model[dKey] = this.formSchema.defaultModel[dKey];
+        }
+      });
     }
     if (!this.model) {
       this.reset();
@@ -240,7 +250,7 @@ export class FormComponent implements OnInit {
       if (!subProperty) {
         this.model[property] = newValue;
       } else {
-        if (subProperty && typeof subPropertyIndexInArray == "undefined") {
+        if (subProperty && typeof subPropertyIndexInArray === "undefined") {
           if (!this.model[property]) {
             this.model[property] = {};
           }

@@ -227,7 +227,7 @@ export const FormsSchema: FormInterface[] = [
     ]
   },
   {
-    name: "crm-people-form",
+    name: "people-form",
     entityName: "people",
     parts: [
       {
@@ -295,7 +295,7 @@ export const FormsSchema: FormInterface[] = [
     }
   },
   {
-    name: "crm-service-form",
+    name: "service-form",
     entityName: "service",
     parts: [
       {
@@ -409,7 +409,7 @@ export const FormsSchema: FormInterface[] = [
     }
   },
   {
-    name: "crm-complaint-form",
+    name: "complaint-form",
     entityName: "complaint",
     parts: [
       {
@@ -513,7 +513,7 @@ export const FormsSchema: FormInterface[] = [
     }
   },
   {
-    name: "crm-sale-form",
+    name: "sale-form",
     entityName: "company",
     parts: [
       {
@@ -630,12 +630,12 @@ export const FormsSchema: FormInterface[] = [
     }
   },
   {
-    name: "crm-sale-form",
+    name: "sale-form",
     entityName: "sale",
     parts: []
   },
   {
-    name: "crm-company-form",
+    name: "company-form",
     entityName: "company",
     parts: [
       {

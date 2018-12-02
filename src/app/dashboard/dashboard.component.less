@@ -49,9 +49,9 @@ header {
   height: 50px;
   overflow: hidden;
   user-select: none;
-  background: #d2ae6d;
+  background: #657aa9;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-  border-bottom: 4px solid #c5a76d;
+  border-bottom: 4px solid #5e6d8f;
   nav {
     padding: 15px 30px;
     padding-bottom: 0;
@@ -725,7 +725,7 @@ header .shortcuts .search {
       font-size: 15px;
       font-weight: 100;
       background: rgba(255, 255, 255, 0.15);
-      color: #000;
+      color: #f7f9fb;
       border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 
       box-sizing: border-box;
@@ -783,11 +783,10 @@ header .shortcuts .search {
     max-width: 420px;
     width: 100%;
     margin: 0 auto;
-    background: #c3a265 url("/assets/graphics/auth/astro-small.svg") no-repeat
+    background: #657aa9 url("/assets/graphics/auth/astro-small.svg") no-repeat
       center bottom;
     background-size: 64px;
     min-height: 100%;
-    border-radius: 5px 5px 0 0;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     box-sizing: border-box;
     position: absolute;
@@ -840,6 +839,17 @@ header .shortcuts .search {
       margin: 0;
       overflow: hidden;
       direction: rtl;
+
+      &.search-active {
+        li:not(.no-result) {
+          background: rgba(255, 255, 255, 1);
+          transition: none;
+
+          a {
+            color: #3a394f;
+          }
+        }
+      }
       li {
         display: inline-block;
         width: 70px;
@@ -849,9 +859,12 @@ header .shortcuts .search {
         border-radius: 5px;
         margin: 5px;
         background: rgba(255, 255, 255, 0.1);
-        transition: background ease 0.5s;
+        transition: all ease 0.5s;
         cursor: pointer;
 
+        &.no-result {
+          opacity: 0.5;
+        }
         &:hover {
           background: rgba(255, 255, 255, 0.5);
         }
@@ -859,18 +872,30 @@ header .shortcuts .search {
         &.active {
           background: rgba(255, 255, 255, 1);
           transition: none;
+
+          a {
+            color: #3a394f;
+
+            img,
+            .count {
+              filter: none;
+            }
+          }
         }
 
         a {
-          color: #000;
+          color: #f7f9fb;
           text-decoration: none;
           display: block;
           text-align: center;
           font-size: 13px;
           font-weight: 100;
-          img {
+          img,
+          .count {
             width: 40px;
             height: 40px;
+            line-height: 40px;
+
             border-radius: 100%;
             // background: rgba(255, 255, 255, 1);
             border: 1px solid #999;
@@ -879,6 +904,10 @@ header .shortcuts .search {
             display: block;
             margin: 0 auto;
           }
+
+          img {
+            filter: invert(1);
+          }
           span {
             display: block;
             line-height: 24px;
@@ -886,23 +915,6 @@ header .shortcuts .search {
           }
         }
       }
-    }
-  }
-  .tabs {
-    margin: 0 auto;
-    box-sizing: border-box;
-    padding: 15px;
-    width: 100%;
-    .tabs-inner {
-      max-width: 480px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.1);
-    }
-    .tab-content {
-      margin-top: 10px;
-      padding: 16px;
-      min-height: 200px;
-      border-radius: 0 0 5px 5px;
     }
   }
 }

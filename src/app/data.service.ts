@@ -13,7 +13,8 @@ import { IdbService } from "./idb.service";
 import { ObService } from "./ob.service";
 import * as promiseSerial from "promise-serial";
 import { FormsSchema, ReportsSchema } from "./schema";
-
+import { DocumentIndex } from "ndx";
+import { SearchSchema } from "./schema/search";
 export interface DataRequestInterface {
   method: string | "POST" | "GET";
   path: string;
@@ -28,6 +29,9 @@ export interface DataRequestInterface {
 
 @Injectable()
 export class DataService {
+  // public collectionsTextIndex: DocumentIndex[];
+
+  collectionsTextIndexCache: { [key: string]: any } = {};
   public static collectionsSynced: string[] = [];
   public static collectionsToSync: string[] = ["company", "people"];
   constructor(
@@ -37,7 +41,11 @@ export class DataService {
     private idbService: IdbService,
     private snackBar: MatSnackBar,
     private businessService: BusinessService
-  ) {}
+  ) {
+    setTimeout(async () => {
+      console.warn(await this.changes("people"));
+    }, 3000);
+  }
 
   private async requestError(opts: DataRequestInterface, error) {
     if (error.status === 401) {
@@ -165,7 +173,22 @@ export class DataService {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB();
       const data = await store.get(controller);
-      return _.take(_.rest(data, skip), limit);
+
+      console.log("list", skip, limit);
+
+      if (skip && limit) {
+        return _.take(_.rest(data, skip), limit);
+      }
+
+      if (!skip && limit) {
+        return _.take(data, limit);
+      }
+
+      if (skip && !limit) {
+        return _.rest(data, skip);
+      }
+
+      return data;
     } else {
       try {
         return this.request({
@@ -200,70 +223,63 @@ export class DataService {
     );
   }
 
-  async reports(entityName: string) {
-    return this.request({
-      path: "/api/entity/reports",
-      model: { entityName },
-      method: "POST",
-      timeout: 1000,
-      retry: false
-    });
-  }
-  async report<A>(opts: {
-    entity: string;
-    skip?: number;
-    limit?: number;
-    zip?: boolean;
-    save?: boolean;
-    report: ReportInterface;
-  }): Promise<ReportModel> {
-    const requestOpts: DataRequestInterface = {
-      method: "POST",
-      path: `/api/entity/report`,
-      model: opts,
-      timeout: 3000
-    };
+  // async report<A>(opts: reportOptionsInterface): Promise<ReportModel> {
+  //   if (!opts.online) {
+  //     return this.offlineReport(opts);
+  //   }
 
-    if (opts.zip) {
-      requestOpts.raw = true;
-    }
+  //   const requestOpts: DataRequestInterface = {
+  //     method: "POST",
+  //     path: `/api/entity/report`,
+  //     model: opts,
+  //     timeout: 3000
+  //   };
 
-    try {
-      const requestResult = await this.request(requestOpts);
+  //   if (opts.zip) {
+  //     requestOpts.raw = true;
+  //   }
 
-      if (opts.zip) {
-        const data = requestResult.body;
-        if (!data) {
-          return null;
-        }
+  //   try {
+  //     const requestResult = await this.request(requestOpts);
 
-        const zip = await JsZip.loadAsync(data, {
-          base64: false,
-          checkCRC32: true
-        });
+  //     if (opts.zip) {
+  //       const data = requestResult.body;
+  //       if (!data) {
+  //         return null;
+  //       }
 
-        const unzippedText: any = await zip.file("data.json").async("text");
+  //       const zip = await JsZip.loadAsync(data, {
+  //         base64: false,
+  //         checkCRC32: true
+  //       });
 
-        const unzippedArray = JSON.parse(unzippedText);
+  //       const unzippedText: any = await zip.file("data.json").async("text");
 
-        return unzippedArray;
-      } else {
-        return requestResult;
-      }
-    } catch (error) {
-      return {
-        fields: opts.report.fields,
-        count: await this.count(opts.entity, true),
-        name: "",
-        label: "گزارش پیش‌فرض آنلاین",
-        createDate: new Date(),
-        data: await this.list(opts.entity, 0, 0, true),
-        entityName: opts.entity,
-        offline: true
-      };
-    }
-  }
+  //       const unzippedArray = JSON.parse(unzippedText);
 
+  //       return unzippedArray;
+  //     } else {
+  //       return requestResult;
+  //     }
+  //   } catch (error) {
+  //     return await this.offlineReport(opts);
+  //   }
+  // }
+
+  // async offlineReport(opts: reportOptionsInterface) {
+  //   console.log("offline report", opts);
+
+  //   return {
+  //     fields: opts.report.fields,
+  //     count: await this.count(opts.entity, true),
+  //     name: "",
+  //     label: "گزارش پیش‌فرض آنلاین",
+  //     createDate: new Date(),
+  //     data: await this.list(opts.entity, opts.skip, opts.limit, true),
+  //     entityName: opts.entity,
+  //     offline: true
+  //   };
+  // }
   async search<A>(
     controller: string,
     query: string,
@@ -377,7 +393,7 @@ export class DataService {
     to?: number,
     _id?: string
   ): Promise<any> {
-    let query = {
+    const query = {
       _id,
       "model._entity": controller,
       "model._vdate": { $gt: from || 0, $lt: to || Date.now() }
@@ -397,7 +413,7 @@ export class DataService {
     to?: number,
     _id?: string
   ): Promise<any> {
-    let query = {
+    const query = {
       _id,
       "model._entity": controller,
       "model._vdate": { $gt: from || 0, $lt: to || Date.now() },
@@ -456,10 +472,9 @@ export class DataService {
   }
 
   public async pullCollection(collection) {
-    console.warn("pulling collection", collection);
     const pullStore = await this.idbService.syncIDB("pull");
 
-    let lastSync: number = 0;
+    let lastSync = 0;
 
     try {
       const syncKeys = _.filter(await pullStore.keys(), (item: string) => {
@@ -475,13 +490,7 @@ export class DataService {
     }
 
     if (lastSync) {
-      console.warn(
-        "last sync of " +
-          collection +
-          " was " +
-          (Date.now() - lastSync) / 1000 +
-          "ms"
-      );
+      // TODO Delete removed items
     }
 
     const store = await this.idbService.dataIDB();
@@ -490,7 +499,9 @@ export class DataService {
 
     changesCount = await this.countChanges(collection, lastSync, Date.now());
 
-    if (!changesCount) return;
+    if (!changesCount) {
+      return;
+    }
 
     changes = await this.changes(collection, lastSync, Date.now());
     // if (changes.deleted.length > 0) {
@@ -595,9 +606,74 @@ export class DataService {
       }),
       { parallelize: 16 }
     );
+
+    DataService.collectionsSynced = collections;
   }
 
-  public async sync(opts: { onCollectionSync?: Function }) {
+  public async indexCollections() {
+    await Promise.all(
+      SearchSchema.map(schema => {
+        return new Promise(async (resolve, reject) => {
+          var docIndex = new DocumentIndex({
+            filter: str => {
+              return str;
+            }
+          });
+          var docs: any[] = await this.list(schema.entityName, 0, 0, true);
+
+          schema.fields.forEach(field => {
+            docIndex.addField(field.name, field.opts);
+          });
+
+          var alphabets = {
+            ا: [],
+            ب: [],
+            پ: [],
+            ت: [],
+            ث: [],
+            ج: [],
+            چ: [],
+            ح: [],
+            خ: [],
+            د: [],
+            ذ: [],
+            ر: [],
+            ز: [],
+            ژ: [],
+            س: [],
+            ش: [],
+            ص: [],
+            ض: [],
+            ط: [],
+            ظ: [],
+            ع: [],
+            غ: [],
+            ف: [],
+            ق: [],
+            ک: [],
+            گ: [],
+            ل: [],
+            م: [],
+            ن: [],
+            و: [],
+            ه: [],
+            ی: []
+          };
+
+          Object.keys(alphabets).forEach(k => {});
+
+          docs.forEach(doc => {
+            docIndex.add(doc._id, doc);
+          });
+
+          this.collectionsTextIndexCache[schema.entityName] = docIndex;
+
+          resolve();
+        });
+      })
+    );
+  }
+  public async sync() {
     try {
       await this.pushCollections();
       console.log("push done");
@@ -611,5 +687,7 @@ export class DataService {
     } catch (error) {
       console.log("pull fail");
     }
+
+    await this.indexCollections();
   }
 }

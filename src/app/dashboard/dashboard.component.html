@@ -1,4 +1,4 @@
-<!-- <app-calendar></app-calendar> -->
+<app-calendar></app-calendar>
 <app-weather></app-weather>
 <app-map [mapId]="'dashboard'"></app-map>
 
@@ -60,9 +60,9 @@
         </a>
       </nav>
     -->
-<div class="clearfix"></div>
-    <mat-progress-bar [color]="'primary'" mode ="indeterminate">
-      </mat-progress-bar>
+    <div class="clearfix"></div>
+    <mat-progress-bar [color]="'primary'" mode="indeterminate">
+    </mat-progress-bar>
   </header>
 
   <!-- (mouseenter)="explorerMouseIn()" (mouseleave)="explorerMouseOut()" -->
@@ -113,7 +113,7 @@
 
           <ul [class.show]="section.toggleUl">
             <li *ngFor="let tab of getExplorerTabs(section.tabs)">
-              <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab: tab }" (dndStart)="tabDragStart(tab)" (dndEnd)="tabDragEnd()" >
+              <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab: tab }" (dndStart)="tabDragStart(tab)" (dndEnd)="tabDragEnd()">
                 <div class="img">
                   <img [src]="'assets/icons/' + tab.icon + '.svg'" />
                 </div>
@@ -148,7 +148,7 @@
       <!-- will be removed from DOM on init -->
       <div dndPlaceholderRef>
 
-        <div  class="placeholder" *ngIf="tabDragging"></div>
+        <div class="placeholder" *ngIf="tabDragging"></div>
 
       </div>
 
@@ -171,7 +171,7 @@
           [class.active]="tab.active" [class.hover]="tab.hover" (mouseenter)="tab.hover = !container.showTabs"
           (mouseout)="tab.hover = false" (click)="isNavTabFull('nav-tab-' + c) && !container.showTabs ? '' : setActive(tab, container); container.showTabs = false">
           <a class="tab-handle" [title]="tab.title" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'"
-         (dndStart)="tabDragStart(tab)" (dndEnd)="tabDragEnd()"   [dndDraggable]="{ containerIndex: c, tabIndex: i }">
+            (dndStart)="tabDragStart(tab)" (dndEnd)="tabDragEnd()" [dndDraggable]="{ containerIndex: c, tabIndex: i }">
             <div class="tab-icon">
               <img [src]="'assets/icons/location-pin.svg'" />
               <!-- <img [src]="'assets/icons/' + tab.icon + '.svg'" /> -->
@@ -226,15 +226,19 @@
     <div class="inner">
       <ng-container *ngTemplateOutlet="shortcuts"></ng-container>
       <nav>
-        <ul>
+        <ul [class.search-active]="search.text">
           <li *ngFor="
               let item of dashboardService.schema
                 ? dashboardService.schema.dashboard
                 : []
             "
-            [class.active]="dashboardService.currentSection.name == item.name">
+            [class.no-result]="search.text && (search.results[item.name] ?  search.results[item.name].length == 0 : true )"
+            [class.active]="!search.text && dashboardService.currentSection.name == item.name">
             <a [routerLink]="['/dashboard', item.name == 'dashboard' ? '' : item.name]" (click)="hideStart()">
-              <img [src]="'assets/icons/' + item.icon + '.svg'" />
+              <div class="count" *ngIf="search.text">
+
+                {{( search.results[item.name] ? search.results[item.name].length || '0' : '0') | rpd}}</div>
+              <img *ngIf="!search.text" [src]="'assets/icons/' + item.icon + '.svg'" />
               <span> {{ item.title }} </span>
             </a>
           </li>
@@ -262,7 +266,7 @@
   <div class="shortcuts">
     <div class="search">
       <div class="search-inner">
-        <input type="text" [(ngModel)]="search.text" placeholder="جست‌و‌جو ..." />
+        <input type="text" [(ngModel)]="search.text" (keyup)="doSearch(search.text)" placeholder="جست‌و‌جو ..." />
         <img src="assets/icons/search.svg" />
       </div>
     </div>

@@ -11,7 +11,7 @@ import { PageEvent } from "@angular/material";
 import {
   ReportModel,
   ReportFieldInterface,
-  ReportFieldQueryInterface
+  FieldQueryInterface
 } from "serendip-business-model";
 import * as sUtils from "serendip-utility";
 import { ClubRatingViewComponent } from "src/app/crm/club-rating-view/club-rating-view.component";
@@ -37,6 +37,7 @@ import * as Moment from "moment";
 import * as MomentJalaali from "moment-jalaali";
 import * as sUtil from "serendip-utility";
 import { ObService } from "src/app/ob.service";
+import { ReportService } from "src/app/report.service";
 
 @Component({
   selector: "app-report",
@@ -124,6 +125,7 @@ export class ReportComponent implements OnInit {
     private dashboardService: DashboardService,
     private dataService: DataService,
     private idbService: IdbService,
+    private reportService: ReportService,
     private changeRef: ChangeDetectorRef,
     private obService: ObService
   ) {}
@@ -243,7 +245,7 @@ export class ReportComponent implements OnInit {
 
   fieldQuerySelect(
     field: ReportFieldInterface,
-    selectedQuery: ReportFieldQueryInterface
+    selectedQuery: FieldQueryInterface
   ) {
     field.queries = _.map(field.queries, q => {
       q.enabled = false;
@@ -286,18 +288,6 @@ export class ReportComponent implements OnInit {
 
     const skip = this.pageIndex * this.pageSize;
 
-    // if (!this.report && this.reportName) {
-    //   const offlineReport = await this.reportStore.get(this.reportName);
-    //   if (offlineReport) {
-    //     this.report = offlineReport;
-    //   }
-    // }
-
-    // return founded report in idb
-    if (this.report && this.report.offline) {
-      return this.changePage(0);
-    }
-
     if (!this.report) {
       this.report = _.findWhere(this.dashboardService.schema.reports, {
         name: this.reportName
@@ -310,13 +300,15 @@ export class ReportComponent implements OnInit {
       this.report.fields = [...this.report.fields, ...commonFields];
     }
 
-    this.report = await this.dataService.report({
+    this.report = await this.reportService.generate({
       entity: this.entityName,
       skip: skip,
       limit: this.pageSize,
       report: this.report,
       save: false
     });
+
+    console.warn(this.report);
 
     this.page = this.report.data;
 
@@ -334,32 +326,12 @@ export class ReportComponent implements OnInit {
     this.resultLoading = false;
   }
 
-  async saveOffline() {
-    this.resultLoading = true;
-    this.report = await this.dataService.report({
-      entity: this.report.entityName,
-      skip: 0,
-      limit: 0,
-      report: this.report,
-      save: false
-    });
-    this.report.offline = true;
-    await this.reportStore.set(this.report._id, this.report);
-    this.resultLoading = false;
-  }
   async saveReport() {
     this.resultLoading = true;
-    this.report = await this.dataService.report({
-      entity: this.report.entityName,
-      skip: 0,
-      limit: 0,
-      report: this.report,
-      save: true
-    });
+
+    // TODO:
 
     this.report.offline = true;
-
-    await this.reportStore.set(this.report._id, this.report);
 
     this.pageIndex = 0;
 
@@ -376,13 +348,13 @@ export class ReportComponent implements OnInit {
     let onlineReports = [];
     let offlineReports = [];
 
-    try {
-      onlineReports = await this.dataService.reports(this.entityName);
-    } catch (error) {}
+    // try {
+    //   onlineReports = await this.dataService.reports(this.entityName);
+    // } catch (error) {}
 
-    try {
-      offlineReports = await this.reportStore.list(0, 100);
-    } catch (error) {}
+    // try {
+    //   offlineReports = await this.reportStore.list(0, 100);
+    // } catch (error) {}
 
     this.reports = _.chain([...offlineReports, ...onlineReports])
       .map(item => {
@@ -448,6 +420,17 @@ export class ReportComponent implements OnInit {
     // }, 1000);
   }
 
+  activeFieldQueries() {
+    if (!this.report || !this.report.fields || this.report.fields.length == 0)
+      return [];
+
+    return this.report.fields.filter(
+      item =>
+        item.queries &&
+        item.queries.length > 0 &&
+        item.queries.filter(q => q.enabled).length > 0
+    );
+  }
   recordSelectChange(_id: string, event: { checked: boolean }) {
     if (event.checked) {
       if (this.selected.indexOf(_id) === -1) {
@@ -469,6 +452,27 @@ export class ReportComponent implements OnInit {
       this.selected = [];
     }
   }
+  new() {
+    this.DashboardCommand.emit({
+      command: "open-tab",
+      tab: {
+        title: "ثبت " + this.entityLabelSingular,
+        active: true,
+        icon: "office-paper-work-pen",
+        widgets: [
+          {
+            component: "FormComponent",
+            inputs: {
+              name: "" + this.entityName + "-form",
+              entityName: this.entityName,
+              entityLabel: this.entityLabelSingular,
+              entityIcon: this.icon
+            }
+          }
+        ]
+      }
+    });
+  }
 
   edit() {
     this.selected.forEach(_id => {
@@ -482,7 +486,7 @@ export class ReportComponent implements OnInit {
             {
               component: "FormComponent",
               inputs: {
-                name: "crm-" + this.entityName + "-form",
+                name: "" + this.entityName + "-form",
                 documentId: _id,
                 entityName: this.entityName,
                 entityLabel: this.entityLabelSingular,
@@ -496,24 +500,18 @@ export class ReportComponent implements OnInit {
   }
 
   getPage() {
-    return _.take(
-      _.rest(this.report.data, this.pageSize * this.pageIndex),
-      this.pageSize
-    );
+    return this.report.data;
   }
   async changePage(iterate: number) {
+    this.resultLoading = true;
+
     this.pageIndex += iterate;
 
     if (iterate !== 0) {
       this.selected = [];
     }
-    if (this.report && this.report.offline) {
-      this.pageCount = Math.floor(this.report.count / this.pageSize);
-      this.page = this.getPage();
 
-      this.resultLoading = false;
-    } else {
-      await this.refresh();
-    }
+    await this.refresh();
+    this.resultLoading = false;
   }
 }

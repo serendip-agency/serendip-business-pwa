@@ -149,9 +149,7 @@ export class CalendarMonthComponent implements OnInit {
     this.viewId = `month-view-${Math.random().toString().split('.')[1]}`;
 
     this.calendarService.subscribeToEventsChange(this.viewId).subscribe(() => {
-
       this.layoutEvents().then(() => { }).catch(() => { });
-
     });
 
   }

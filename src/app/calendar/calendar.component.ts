@@ -12,7 +12,7 @@ import { CalendarService } from "../calendar.service";
   styleUrls: ["./calendar.component.less"]
 })
 export class CalendarComponent implements OnInit {
-  moment: typeof MomentJalaali;
+  moment: any;
 
   calendarsToShow = {};
 
@@ -87,7 +87,7 @@ export class CalendarComponent implements OnInit {
     this.calendarsToShowChange();
 
     this.moment = MomentJalaali;
-    this.moment.loadPersian({
+    (this.moment as any).loadPersian({
       dialect: "persian-modern",
       usePersianDigits: false
     });

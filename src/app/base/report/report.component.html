@@ -18,8 +18,13 @@
         <img [src]="'/assets/icons/' + 'office-paper-work-bag'  +'.svg'" />
       </div>
 
-      <div *ngIf="!minimal" class="search" [class.active]="mode == 'report'" (click)="mode = mode == 'report' ? 'data':'report'">
+      <div *ngIf="!minimal" class="search" [class.spanned]="activeFieldQueries().length > 0" [class.active]="mode == 'report'" (click)="mode = mode == 'report' ? 'data':'report'">
         <img [src]="'/assets/icons/' + 'search'  +'.svg'" />
+
+        <span *ngIf="activeFieldQueries().length > 0">
+         {{activeFieldQueries().length | rpd}} فیلتر
+        </span>
+
       </div>
 
     </mat-card-header>
@@ -65,7 +70,6 @@
                       class="" src="assets/icons/close-4.svg" />
                   </div>
                 </div>
-
 
                 <app-form *ngIf="findEnabledFieldQuery(field)" [formType]="'inline'" [defaultModel]="findEnabledFieldQuery(field).methodInput || {}"
                   (WidgetChange)="findEnabledFieldQuery(field).methodInput = $event.inputs.model " [name]="findEnabledFieldQuery(field).methodInputForm"></app-form>
@@ -159,7 +163,7 @@
 
     <mat-card-actions *ngIf="report && mode == 'data'">
 
-      <button mat-button>
+      <button mat-button (click)="new()">
         <img src="assets/icons/plus-add-1.svg" />
         {{ entityLabelSingular }} جدید </button>
       <button color="primary" (click)="edit()" *ngIf="selected.length > 0" mat-button>
@@ -168,7 +172,7 @@
 
       </button>
 
-      <div class="paginator pull-left" *ngIf="report && report.count">
+      <div class="paginator pull-left" *ngIf="!resultLoading && report && report.count && pageCount > 0">
 
         <div class="next" *ngIf="pageIndex < pageCount" (click)="changePage(1)">
           <img src="assets/icons/arrow-left-back-10.svg" />
@@ -183,17 +187,6 @@
         </div>
       </div>
 
-      <button mat-button class="pull-left" *ngIf="!report._id && !minimal" (click)="saveReport()">
-        <img src="assets/icons/save-backup-1.svg" *ngIf="!report.offline" />
-        <img src="assets/icons/check-9.svg" *ngIf="report.offline" />
-        ذخیره
-      </button>
-
-      <button mat-button class="pull-left" *ngIf="report._id" (click)="report.offline ? deleteOffline() : saveOffline()">
-        <img src="assets/icons/save-backup-1.svg" *ngIf="!report.offline" />
-        <img src="assets/icons/check-9.svg" *ngIf="report.offline" />
-        آفلاین
-      </button>
 
       <div class="clearfix"></div>
     </mat-card-actions>

@@ -41,6 +41,7 @@ import { DataService } from "../data.service";
 import { AuthService } from "../auth.service";
 import { MatSnackBar } from "@angular/material";
 import swal from "sweetalert2";
+import { text } from "serendip-utility";
 
 // optional import of scroll behavior
 polyfill({
@@ -68,12 +69,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   explorerVisible = false;
   explorerAnimDone = true;
 
-  search: { text: string; mode: string } = { text: "", mode: "contacts" };
+  search: {
+    text: string;
+    results: { [key: string]: { docId: string; score: number } }[];
+  } = { text: "", results: [] };
 
   dashboardDate = "";
   dashboardTime = "";
 
-  mapVisible = false;
   dashboardDateTimeInterval;
   dashboardDateTimeFormats = [
     "dddd jD jMMMM jYYYY",
@@ -111,6 +114,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"][a];
     };
     return input.toString().replace(/\d/g, convert);
+  }
+
+  doSearch(q) {
+    q = text.replaceArabicDigitsWithEnglish(q);
+    q = text.replacePersianDigitsWithEnglish(q);
+    q = text.replaceArabicCharWithPersian(q);
+
+    Object.keys(this.dataService.collectionsTextIndexCache).forEach(
+      entityName => {
+        this.search.results[
+          entityName
+        ] = this.dataService.collectionsTextIndexCache[entityName].search(q);
+      }
+    );
   }
 
   dashboardDateTimeTick() {
@@ -304,11 +321,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.calendarService.calendarVisible = false;
     this.weatherService.weatherVisible = false;
     this.hideStart();
-    this.gmapsService.dashboardMapVisible = this.gmapsService.dashboardMapVisible;
+    this.gmapsService.dashboardMapVisible = !this.gmapsService
+      .dashboardMapVisible;
     this.gmapsService.emitSetMode({ mapId: "dashboard", mode: "explorer" });
     this.gmapsService.emitSetVisible({
       mapId: "dashboard",
-      visible: this.mapVisible
+      visible: this.gmapsService.dashboardMapVisible
     });
   }
 
@@ -320,10 +338,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   hideMap() {
-    this.mapVisible = false;
+    this.gmapsService.dashboardMapVisible = false;
     this.gmapsService.emitSetVisible({
       mapId: "dashboard",
-      visible: this.mapVisible
+      visible: this.gmapsService.dashboardMapVisible
     });
   }
   definedItemsOfArray(array) {
@@ -341,9 +359,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const eventData: { containerIndex: number; tabIndex: number; tab: any } =
       event.data;
 
-    if (!eventData) return;
+    if (!eventData) {
+      return;
+    }
 
-    if (!eventData.tab && typeof eventData.tabIndex != "number") return;
+    if (!eventData.tab && typeof eventData.tabIndex !== "number") {
+      return;
+    }
 
     this.tabDragging = null;
 
@@ -464,7 +486,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     widgetIndex: number
   ) {
     return (options: { command: "open-tab"; tab: DashboardTabInterface }) => {
-      //FIXME:
+      // FIXME:S
       const existInGrid = _.chain(this.grid.containers)
         .map((c: DashboardContainerInterface) => {
           return c.tabs;
@@ -484,10 +506,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         })
         .value();
 
-      // if (existInGrid) {
-      //   console.log("widget already exist");
-      //   return;
-      // }
+      if (existInGrid) {
+        console.log("widget already exist");
+        return;
+      }
 
       if (window.innerWidth > 860) {
         let addedToCurrentContainers = false;
@@ -701,6 +723,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       elem.setAttribute("style", `top:${destPos.y}px;left:${destPos.x}px;`);
       moved = true;
     };
+
     document.ontouchend = document.onmouseup = (ev: any) => {
       if (captureMove) {
         captureMove = false;
@@ -737,10 +760,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     const gridRect = gridElem.getBoundingClientRect();
 
-    const count = Math.round(gridRect.width / 420);
-
-    if (count === 1 || count > this.grid.containers.length) {
-      this.setGridLayout(count);
+    if (gridRect.width < 860) {
+      this.setGridLayout(1);
+    } else {
+      this.setGridLayout(10);
     }
   }
 
@@ -794,19 +817,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       const syncStart = Date.now();
       this.dataService
-        .sync({
-          onCollectionSync: collection => {
-            this.snackBar.open(
-              "کالکشن " + collection.toUpperCase() + " همگام‌سازی شد.",
-              "",
-              {
-                duration: 500
-              }
-            );
-          }
-        })
+        .sync()
         .then(() => {
-          var seconds = ((Date.now() - syncStart) / 1000).toFixed(1);
+          const seconds = ((Date.now() - syncStart) / 1000).toFixed(1);
           this.snackBar.open(
             `همگام سازی در ${this.rpd(seconds)} ثانیه انجام شد.`,
             "",
@@ -998,7 +1011,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     await this.initGrid(this.dashboardService.currentSection.tabs);
   }
   memorySizeOf(obj) {
-    var bytes = 0;
+    let bytes = 0;
 
     function sizeOf(obj) {
       if (obj !== null && obj !== undefined) {
@@ -1013,13 +1026,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
             bytes += 4;
             break;
           case "object":
-            var objClass = Object.prototype.toString.call(obj).slice(8, -1);
+            const objClass = Object.prototype.toString.call(obj).slice(8, -1);
             if (objClass === "Object" || objClass === "Array") {
-              for (var key in obj) {
-                if (!obj.hasOwnProperty(key)) continue;
+              for (const key in obj) {
+                if (!obj.hasOwnProperty(key)) {
+                  continue;
+                }
                 sizeOf(obj[key]);
               }
-            } else bytes += obj.toString().length * 2;
+            } else {
+              bytes += obj.toString().length * 2;
+            }
             break;
         }
       }
@@ -1027,16 +1044,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     function formatByteSize(bytes) {
-      if (bytes < 1024) return bytes + " bytes";
-      else if (bytes < 1048576) return (bytes / 1024).toFixed(3) + " KiB";
-      else if (bytes < 1073741824) return (bytes / 1048576).toFixed(3) + " MiB";
-      else return (bytes / 1073741824).toFixed(3) + " GiB";
+      if (bytes < 1024) {
+        return bytes + " bytes";
+      } else if (bytes < 1048576) {
+        return (bytes / 1024).toFixed(3) + " KiB";
+      } else if (bytes < 1073741824) {
+        return (bytes / 1048576).toFixed(3) + " MiB";
+      } else {
+        return (bytes / 1073741824).toFixed(3) + " GiB";
+      }
     }
 
     return formatByteSize(sizeOf(obj));
   }
   async ngOnInit() {
-
     // alert(JSON.stringify(await this.dataService.changes("company")));
 
     // this.idbService
@@ -1077,12 +1098,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.gridSizeChange.subscribe(() => {
       this.adjustLayout();
     });
-
+    setTimeout(() => {
+      this.adjustLayout();
+    }, 1000);
     this.handleParams(this.activatedRoute.snapshot.params);
 
-    this.router.events.subscribe((event: any) => {
+    this.router.events.subscribe(async (event: any) => {
       if (event instanceof NavigationEnd) {
-        this.handleParams(this.activatedRoute.snapshot.params);
+        await this.handleParams(this.activatedRoute.snapshot.params);
+        setTimeout(() => {
+          this.adjustLayout();
+        }, 1000);
       }
     });
 
@@ -1096,6 +1122,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.handleStartButtonMove();
     this.dashboardDateTimeTick();
     this.handleGridMouseDragScroll();
+
+    // FIXME: for test
+    document.getElementById("start").classList.toggle("fadeIn");
+    document.querySelector("body").classList.toggle("hideScroll");
 
     this.dashboardDateTimeInterval = setInterval(() => {
       this.dashboardDateTimeTick();

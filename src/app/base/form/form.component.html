@@ -36,16 +36,13 @@
 
     <mat-card-content *ngIf="mode == 'form'">
       {{model._id}}
-      <!-- <textarea  class="logbox">{{model | json}}</textarea> -->
+      <!-- <textarea class="logbox">{{model | json}}</textarea> -->
 
       <ng-container *ngTemplateOutlet="form"></ng-container>
 
     </mat-card-content>
 
     <mat-card-content *ngIf="mode == 'triggers'">
-
-
-
     </mat-card-content>
 
     <mat-card-actions>

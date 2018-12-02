@@ -68,6 +68,13 @@ export const ReportsSchema: ReportInterface[] = [
       },
       {
         enabled: true,
+        name: "peoples",
+        label: "افراد",
+        templateInputs : { viewType : 'json'},
+        template: "ShortTextViewComponent"
+      },
+      {
+        enabled: true,
         name: "contacts",
         label: "اطلاعات تماس",
         template: "ContactsViewComponent"
@@ -270,6 +277,15 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "lastName",
         label: "نام خانوادگی",
+        template: "ShortTextViewComponent"
+      },
+      {
+        enabled: true,
+        name: "__fullName",
+        label: "نام کامل",
+        method: "joinFields",
+        methodOptions: { fields: ["firstName", "lastName"], seperator: " " },
+        queries: [],
         template: "ShortTextViewComponent"
       },
       {
