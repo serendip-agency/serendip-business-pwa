@@ -317,6 +317,10 @@ label {
   white-space: nowrap;
   margin-right: auto;
   user-select: none;
+
+  &:active{
+    cursor: move;
+  }
   &:hover {
     overflow-x: scroll;
   }
@@ -334,7 +338,7 @@ label {
     user-select: none;
     ::-webkit-scrollbar {
       width: 2px;
-      height:  2px;
+      height: 2px;
     }
     .placeholder {
       background: rgba(255, 255, 255, 0.5);
@@ -353,7 +357,7 @@ label {
       margin: 0;
       margin-bottom: -1px;
       display: block;
-      background: #E3E0DB;
+      background: #e3e0db;
       user-select: none;
       height: 30px;
       white-space: nowrap;
@@ -382,7 +386,7 @@ label {
         li.full-nav {
           display: none;
         }
-        background: #E3E0DB;
+        background: #e3e0db;
         position: absolute;
         top: 0;
         left: 0;
@@ -524,7 +528,7 @@ label {
           display: block;
           position: relative;
           padding: 0 30px 0 20px;
-          background: #E3E0DB;
+          background: #e3e0db;
         }
         .tab-title {
           color: #777;
@@ -596,6 +600,7 @@ label {
     overflow: hidden;
     box-sizing: border-box;
     .mat-card {
+      cursor: default;
       background: #fff;
       padding: 0 !important;
       max-width: 420px;
@@ -791,7 +796,7 @@ div.timepicker {
 }
 html,
 body {
-  background: #E3E0DB;
+  background: #e3e0db;
   width: 100%;
   height: 100%;
 }
@@ -804,9 +809,22 @@ body {
   overflow-x: hidden;
 }
 
-div,p,input,textarea,label,span,a,h1,h2,h3,h4,h5,ul,li,button{
+div,
+p,
+input,
+textarea,
+label,
+span,
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+ul,
+li,
+button {
   font-family: iranyekan;
-
 }
 body.swal2-shown {
   overflow: hidden;

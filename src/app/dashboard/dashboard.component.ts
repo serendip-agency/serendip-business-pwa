@@ -827,7 +827,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
         });
     });
   }
+  getClosest(elem, selector) {
+    // Element.matches() polyfill
+    if (!Element.prototype.matches) {
+      Element.prototype.matches =
+        Element.prototype.webkitMatchesSelector ||
+        function(s) {
+          var matches = (this.document || this.ownerDocument).querySelectorAll(
+              s
+            ),
+            i = matches.length;
+          while (--i >= 0 && matches.item(i) !== this) {}
+          return i > -1;
+        };
+    }
 
+    // Get the closest matching element
+    for (; elem && elem !== document; elem = elem.parentNode) {
+      if (elem.matches(selector)) return elem;
+    }
+    return null;
+  }
   handleGridMouseDragScroll() {
     let capture = false;
     let lastCapture = 0;
@@ -836,11 +856,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     const captureTimeout = null;
     grid.onmousewheel = (ev: MouseWheelEvent) => {
       const target = ev.target as HTMLElement;
-      if (
-        Date.now() - lastCapture < 500 ||
-        target.classList.contains("grid-container") ||
-        target.classList.contains("tabs-container")
-      ) {
+
+      console.log(this.getClosest(target, ".mat-card-content"));
+      if (!this.getClosest(target, ".mat-card-content")) {
         lastCapture = Date.now();
         if (ev.deltaY < 0) {
           grid.scroll({ left: grid.scrollLeft - 100, behavior: "instant" });
@@ -853,10 +871,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     grid.onmousedown = (down_ev: MouseEvent) => {
       const target = down_ev.target as HTMLElement;
 
-      if (
-        target.classList.contains("grid-container") ||
-        target.classList.contains("tabs-container")
-      ) {
+      if (!this.getClosest(target, ".mat-card-content")) {
         if (captureTimeout) {
           clearTimeout(captureTimeout);
         }
@@ -920,7 +935,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       msg.data = JSON.parse(msg.data as any);
       if (msg.command === "change_grid") {
-
         localStorage.setItem(
           "grid-" + msg.data.section,
           JSON.stringify(msg.data)
@@ -941,7 +955,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async handleParams(params) {
-
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
       {

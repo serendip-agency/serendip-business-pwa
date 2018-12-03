@@ -56,12 +56,14 @@ export class ReportService {
     }
 
     let data = await this.dataService.list(opts.entity, 0, 0, true);
+    if (!data) data = [];
 
     data = await Promise.all(
       data.map((document, index) => {
         return this.formatDocument(document, reportFields);
       })
     );
+
 
     const queriedData = [];
     await Promise.all(
@@ -168,7 +170,9 @@ export class ReportService {
                 );
               }
               if (this.asyncQueries[query.method]) {
-                return resolve(await this.asyncQueries()[query.method](record, query));
+                return resolve(
+                  await this.asyncQueries()[query.method](record, query)
+                );
               } else {
                 resolve(false);
                 console.error("query-method-notfound", query);
