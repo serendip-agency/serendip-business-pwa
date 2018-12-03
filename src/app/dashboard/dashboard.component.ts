@@ -659,6 +659,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  startButtonClick(){
+
+    document.getElementById("start").classList.toggle("fadeIn");
+    document.querySelector("body").classList.toggle("hideScroll");
+  }
   async handleStartButtonMove() {
     const elem = document.getElementById("start-button");
 
@@ -668,6 +673,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let startPos = { x: 0, y: 0 };
 
     elem.ontouchstart = elem.onmousedown = (start_ev: any) => {
+
+      console.log(start_ev);
       elemPos = { x: elem.offsetLeft, y: elem.offsetTop };
       captureMove = true;
       moved = false;
@@ -870,8 +877,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     grid.onmousedown = (down_ev: MouseEvent) => {
       const target = down_ev.target as HTMLElement;
-
-      if (!this.getClosest(target, ".mat-card-content")) {
+      console.log(target);
+      if (
+        !this.getClosest(target, ".mat-card-content") &&
+        target.id != "start-button"
+      ) {
         if (captureTimeout) {
           clearTimeout(captureTimeout);
         }
@@ -1124,9 +1134,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardDateTimeTick();
     this.handleGridMouseDragScroll();
 
-    // FIXME: for test
-    document.getElementById("start").classList.toggle("fadeIn");
-    document.querySelector("body").classList.toggle("hideScroll");
+    // // FIXME: for test
+    // document.getElementById("start").classList.toggle("fadeIn");
+    // document.querySelector("body").classList.toggle("hideScroll");
 
     this.dashboardDateTimeInterval = setInterval(() => {
       this.dashboardDateTimeTick();

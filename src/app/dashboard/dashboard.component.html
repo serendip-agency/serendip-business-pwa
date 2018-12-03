@@ -235,7 +235,7 @@
     </div>
   </div>
 
-  <div *ngIf="businessService.getActiveBusinessId()" id="start-button">
+  <div *ngIf="businessService.getActiveBusinessId()" id="start-button" (click)="startButtonClick()">
     <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="" />
   </div>
 
