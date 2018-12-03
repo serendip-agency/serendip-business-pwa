@@ -1,8 +1,37 @@
 .dashboard-wrapper {
-  opacity: 0;
-  transition: opacity ease 0.3s;
-  &.ready {
-    opacity: 1;
+
+}
+
+.dashboard-loader {
+  line-height: 100vh;
+  width: 100%;
+  text-align: center;
+  .box {
+    height: 280px;
+    max-width: 380px;
+    margin: 0 auto;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 0;
+
+    .spinner {
+      display: inline-block;
+      margin-top: -90px;
+      width: 100px;
+    }
+    .logo {
+      display: block;
+      max-width: 80px;
+      margin: 0 auto;
+    }
+    .text {
+      line-height: 30px;
+      font-size: 15px;
+      font-weight: 100;
+      margin-top: 15px;
+      color:#75613D;
+    }
   }
 }
 #start-button {
@@ -49,9 +78,9 @@ header {
   height: 50px;
   overflow: hidden;
   user-select: none;
-  background: #657aa9;
+  background: #7f6d70;
   box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-  border-bottom: 4px solid #5e6d8f;
+  border-bottom: 4px solid #776884;
   nav {
     padding: 15px 30px;
     padding-bottom: 0;
@@ -725,7 +754,7 @@ header .shortcuts .search {
       font-size: 15px;
       font-weight: 100;
       background: rgba(255, 255, 255, 0.15);
-      color: #f7f9fb;
+      color: #e3e0db;
       border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 
       box-sizing: border-box;
@@ -783,7 +812,7 @@ header .shortcuts .search {
     max-width: 420px;
     width: 100%;
     margin: 0 auto;
-    background: #657aa9 url("/assets/graphics/auth/astro-small.svg") no-repeat
+    background: #7f6d70 url("/assets/graphics/auth/astro-small.svg") no-repeat
       center bottom;
     background-size: 64px;
     min-height: 100%;
@@ -884,7 +913,7 @@ header .shortcuts .search {
         }
 
         a {
-          color: #f7f9fb;
+          color: #e3e0db;
           text-decoration: none;
           display: block;
           text-align: center;

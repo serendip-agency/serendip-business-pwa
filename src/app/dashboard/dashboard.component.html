@@ -1,12 +1,29 @@
 <app-calendar></app-calendar>
 <app-weather></app-weather>
 <app-map [mapId]="'dashboard'"></app-map>
+<div class="dashboard-loader" *ngIf="!dashboardReady">
 
-<div class="dashboard-wrapper" [class.ready]="dashboardReady">
+
+  <div class="box">
+
+    <div class="logo">
+      <img src="/assets/graphics/brand/fav-icon-call-to-action-button-5.svg" />
+    </div>
+    <div class="spinner">
+      <mat-spinner></mat-spinner>
+    </div>
+
+    <div class="text">
+      {{dashboardLoadingText}}
+    </div>
+  </div>
+
+</div>
+<div class="dashboard-wrapper" *ngIf="dashboardReady">
   <header id="header">
     <div class="inner">
       <div class="logo">
-        <img src="/assets/graphics/brand/serendip-logo-light.svg" />
+        <img src="/assets/graphics/brand/logo-6.svg" />
       </div>
 
       <div class="quick" (click)="toggleDashboardDateTimeFormat()">

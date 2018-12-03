@@ -274,15 +274,6 @@ ngx-charts-number-card .cell .trimmed-label {
   }
 }
 
-body * {
-  font-family: iranyekan !important;
-}
-
-body {
-  font-family: iranyekan;
-  font-size: 11px;
-}
-
 label {
   font-weight: 500;
   color: #333;
@@ -342,8 +333,8 @@ label {
     transition: all ease 0.5s;
     user-select: none;
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 2px;
+      height:  2px;
     }
     .placeholder {
       background: rgba(255, 255, 255, 0.5);
@@ -362,7 +353,7 @@ label {
       margin: 0;
       margin-bottom: -1px;
       display: block;
-      background: #efefef;
+      background: #E3E0DB;
       user-select: none;
       height: 30px;
       white-space: nowrap;
@@ -391,7 +382,7 @@ label {
         li.full-nav {
           display: none;
         }
-        background: #efefef;
+        background: #E3E0DB;
         position: absolute;
         top: 0;
         left: 0;
@@ -533,7 +524,7 @@ label {
           display: block;
           position: relative;
           padding: 0 30px 0 20px;
-          background: #efefef;
+          background: #E3E0DB;
         }
         .tab-title {
           color: #777;
@@ -798,18 +789,24 @@ div.timepicker {
     border-color: rgba(255, 255, 255, 0.9);
   }
 }
-
+html,
 body {
-  background: #efefef;
-  background-size: cover;
+  background: #E3E0DB;
+  width: 100%;
+  height: 100%;
+}
+body {
   font-family: iranyekan;
+  font-weight: 100;
+  font-size: 12px;
   padding: 0;
   margin: 0;
   overflow-x: hidden;
 }
 
-html {
-  background: #fff;
+div,p,input,textarea,label,span,a,h1,h2,h3,h4,h5,ul,li,button{
+  font-family: iranyekan;
+
 }
 body.swal2-shown {
   overflow: hidden;

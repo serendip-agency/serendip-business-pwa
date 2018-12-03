@@ -76,7 +76,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   dashboardDate = "";
   dashboardTime = "";
-
+  dashboardLoadingText = "";
   dashboardDateTimeInterval;
   dashboardDateTimeFormats = [
     "dddd jD jMMMM jYYYY",
@@ -97,7 +97,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
   public set grid(v: DashboardGridInterface) {
-    console.log("grid value change");
     this._grid = v;
   }
   fullNavTabs = [];
@@ -263,8 +262,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.tabDragging = null;
   }
   onTabDragover(event: DragEvent, containerIndex: number) {
-    console.log("onTabDragover");
-
     if (this.screen === "mobile") {
       return;
     }
@@ -351,7 +348,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
-    console.log("onTabDrop");
     if (this.screen === "mobile") {
       this.explorerMouseOut();
     }
@@ -428,7 +424,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async initGrid(tabs: DashboardTabInterface[]) {
-    console.log("initGrid");
     const tabsToAdd = _.clone(tabs);
 
     this.grid = { containers: [{ tabs: tabsToAdd }] };
@@ -507,7 +502,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         .value();
 
       if (existInGrid) {
-        console.log("widget already exist");
+        console.warn("widget already exist");
         return;
       }
 
@@ -580,7 +575,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   async syncGrid() {
     this.grid.version = Date.now();
 
-    console.log("syncGrid");
+    console.log("syncing grid state ...");
     if (
       !this.dashboardSocket ||
       (this.dashboardSocket &&
@@ -813,33 +808,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   sync() {
     return new Promise((resolve, reject) => {
-      this.snackBar.open("همگام سازی شروع شد ...", "", { duration: 1000 });
+      this.dashboardLoadingText = "همگام سازی شروع شد ...";
 
       const syncStart = Date.now();
       this.dataService
         .sync()
         .then(() => {
           const seconds = ((Date.now() - syncStart) / 1000).toFixed(1);
-          this.snackBar.open(
-            `همگام سازی در ${this.rpd(seconds)} ثانیه انجام شد.`,
-            "",
-            { duration: 1000 }
-          );
-
-          console.warn("pull done " + seconds + "s");
+          this.dashboardLoadingText = `همگام سازی در ${this.rpd(
+            seconds
+          )} ثانیه انجام شد.`;
 
           resolve();
-
-          //  alert(`sync took ${(Date.now() - syncStart) / 1000} seconds`);
         })
         .catch(e => {
-          this.snackBar.open("همگام سازی با خطا مواجه شد.", "", {
-            duration: 3000
-          });
+          this.dashboardLoadingText = "همگام سازی با خطا مواجه شد.";
           console.error(e);
         });
     });
   }
+
   handleGridMouseDragScroll() {
     let capture = false;
     let lastCapture = 0;
@@ -931,27 +919,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
       } = JSON.parse(ev.data);
 
       msg.data = JSON.parse(msg.data as any);
+      if (msg.command === "change_grid") {
 
-      if (
-        msg.command === "change_grid" &&
-        msg.data.version > this.grid.version
-      ) {
         localStorage.setItem(
           "grid-" + msg.data.section,
           JSON.stringify(msg.data)
         );
-        console.log("should chang grid");
-        if (this.dashboardService.currentSection === msg.data.section) {
-          this.grid = msg.data.grid;
+
+        if (
+          msg.data.section === this.dashboardService.currentSection.name &&
+          msg.data.version > this.grid.version
+        ) {
+          console.log("should chang grid");
+          if (this.dashboardService.currentSection === msg.data.section) {
+            this.grid = msg.data.grid;
+          }
+          this.changeRef.markForCheck();
         }
-        this.changeRef.markForCheck();
       }
-      console.log(msg);
     };
   }
 
   async handleParams(params) {
-    console.log("handleParams", params);
 
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
@@ -1082,7 +1071,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // await (await this.idbService.syncIDB("pull")).clear();
 
     await this.sync();
-
     this.dashboardReady = true;
 
     this.newDashboardSocket()
