@@ -73,7 +73,6 @@ export class DashboardService {
       }
     });
 
-    console.log(this.schema);
 
     // localStorage.setItem(
     //   "schema",

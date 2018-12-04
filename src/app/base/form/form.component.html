@@ -70,7 +70,7 @@
 <ng-template #form>
   <form class="" *ngIf="formSchema">
 
-    <div class="dynamic-form-part" *ngFor="let part of formSchema.parts">
+    <div class="dynamic-form-part" *ngFor="let part of filterParts(formSchema.parts)">
 
 
 
@@ -83,7 +83,7 @@
           <div class="form-array-row">
             <div class="item">
               <div [class]="part.cssClass">
-                <div *ngFor="let subPart of part.parts" [class]="subPart.cssClass">
+                <div *ngFor="let subPart of filterParts(part.parts)" [class]="subPart.cssClass">
                   <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : model[part.propertyName][itemIndex][subPart.propertyName]  } , subPart.inputs || {} )"
                     [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.propertyName,subPart.propertyName,itemIndex)  }"
                     [ndcDynamicComponent]="getDynamicPart(subPart.componentName)"></ndc-dynamic>
@@ -104,7 +104,7 @@
 
       <div *ngIf="part.propertyType =='object'">
         <div [class]="part.cssClass">
-          <div *ngFor="let subPart of part.parts" [class]="subPart.cssClass">
+          <div *ngFor="let subPart of filterParts( part.parts)" [class]="subPart.cssClass">
             <ndc-dynamic [ndcDynamicInputs]="extendObj( { model : model[part.propertyName][subPart.propertyName]  } , subPart.inputs || {} )"
               [ndcDynamicOutputs]="{  modelChange : dynamicPartModelChange(part.propertyName,subPart.propertyName)  }"
               [ndcDynamicComponent]="getDynamicPart(subPart.componentName)"></ndc-dynamic>

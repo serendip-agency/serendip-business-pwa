@@ -145,6 +145,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.subscription_OnSetMode = this.gmapsService
       .subscribeOnSetMode(this.mapId)
       .subscribe(mode => {
+
         console.log(`${this.mapId} received setMode ${mode}`);
 
         this.mapMode = mode as any;

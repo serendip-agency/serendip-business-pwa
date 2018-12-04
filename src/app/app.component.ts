@@ -65,7 +65,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log("current version of PWA is " + this.currentPwa);
+    console.warn("running version of Serendip PWA is " + this.currentPwa);
 
     swal.setDefaults({
       buttonsStyling: false,
@@ -82,7 +82,7 @@ export class AppComponent implements OnInit, OnDestroy {
       )
       .toPromise()
       .then(versions => {
-        console.log("pwa versions", versions);
+        console.warn("available Serendip PWA versions", versions);
 
         if (versions[0] !== this.currentPwa) {
           this.updatePwa();

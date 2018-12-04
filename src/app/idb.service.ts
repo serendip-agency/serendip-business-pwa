@@ -9,7 +9,6 @@ export class Idb {
     this.dbPromise = _dbPromise;
     this.store = _store;
 
-    console.log("IDB > " + this.store);
   }
 
   async keys() {

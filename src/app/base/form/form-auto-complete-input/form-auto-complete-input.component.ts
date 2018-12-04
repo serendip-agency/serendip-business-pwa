@@ -249,7 +249,7 @@ export class FormAutoCompleteInputComponent implements OnInit {
       this.cachedEntities[model._id] = model;
       this.changeRef.detectChanges();
 
-      console.log(this.cachedEntities, model);
+
       if (this.creatingEntity) {
         this.selectEntity({ option: { value: model._id } } as any);
 

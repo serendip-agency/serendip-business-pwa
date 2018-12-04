@@ -103,6 +103,7 @@ import { TicketFormComponent } from './support/ticket-form/ticket-form.component
 import { TicketListComponent } from './support/ticket-list/ticket-list.component';
 import { WeatherComponent } from './weather/weather.component';
 import { FormFileInputComponent } from './base/form/form-file-input/form-file-input.component';
+import { ListComponent } from './base/list/list.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -184,7 +185,7 @@ export const primaryComponents = [
 ];
 
 @NgModule({
-  declarations: [...primaryComponents, ...dynamicComponents],
+  declarations: [...primaryComponents, ...dynamicComponents, ListComponent],
   entryComponents: [],
   imports: [
     QuillModule,

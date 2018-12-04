@@ -69,7 +69,9 @@ export class WsService {
       };
 
       wsConnection.onmessage = (ev: MessageEvent) => {
-        console.log("ws initiate onmessage", ev);
+
+        // FIXME: saw this method fired twice. find out why;
+        // console.log("ws initiate onmessage", ev);
 
         if (ev.data === "authenticated") { resolve(wsConnection); }
       };

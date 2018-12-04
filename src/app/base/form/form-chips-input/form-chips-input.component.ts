@@ -110,7 +110,8 @@ export class FormChipsInputComponent implements OnInit {
       )
       .onAction()
       .subscribe(() => {
-        console.log("open details widget");
+
+
         this.dashboardService.dashboardCommand.emit("command", {
           command: "open-tab",
           tab: {

@@ -176,8 +176,6 @@ export class FormComponent implements OnInit {
       this.model = this.formSchema.defaultModel;
     }
 
-    console.log("reset form", this.model);
-
     if (!this.model) {
       this.model = {};
     }
@@ -197,7 +195,27 @@ export class FormComponent implements OnInit {
   findFormInSchema(formName): FormInterface {
     return _.findWhere(this.formsSchema, { name: formName });
   }
+  filterParts(parts: FormPartInterface[]) {
+    if (!parts) {
+      return [];
+    }
 
+    return parts.filter(part => {
+      if (part.if) {
+        let evalResult = false;
+
+        try {
+          // tslint:disable-next-line:no-eval
+          evalResult = eval(
+            part.if.replace(/\^form/g, "(" + JSON.stringify(this.model) + ")")
+          );
+        } catch (error) {}
+
+        return evalResult;
+      }
+      return true;
+    });
+  }
   async ngOnInit() {
     // this.ref.detach();
     this.loading = true;

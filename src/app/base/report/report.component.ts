@@ -308,8 +308,6 @@ export class ReportComponent implements OnInit {
       save: false
     });
 
-    console.warn(this.report);
-
     this.page = this.report.data;
 
     this.pageCount = Math.floor(this.report.count / this.pageSize);

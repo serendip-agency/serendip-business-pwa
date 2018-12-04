@@ -116,6 +116,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   doSearch(q) {
+    if (!q) return;
+
     q = text.replaceArabicDigitsWithEnglish(q);
     q = text.replacePersianDigitsWithEnglish(q);
     q = text.replaceArabicCharWithPersian(q);
@@ -566,16 +568,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  // widgetIdChange(widget: DashboardWidgetInterface) {
-  //   return newId => {
-  //     widget.id = newId;
-  //   };
-  // }
-
   async syncGrid() {
     this.grid.version = Date.now();
 
-    console.log("syncing grid state ...");
+    console.warn("syncing grid ...");
+
     if (
       !this.dashboardSocket ||
       (this.dashboardSocket &&
@@ -659,12 +656,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  startButtonClick(){
-
+  startButtonClick() {
     document.getElementById("start").classList.toggle("fadeIn");
     document.querySelector("body").classList.toggle("hideScroll");
   }
   async handleStartButtonMove() {
+    return;
     const elem = document.getElementById("start-button");
 
     let captureMove = false;
@@ -673,8 +670,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let startPos = { x: 0, y: 0 };
 
     elem.ontouchstart = elem.onmousedown = (start_ev: any) => {
-
-      console.log(start_ev);
       elemPos = { x: elem.offsetLeft, y: elem.offsetTop };
       captureMove = true;
       moved = false;
@@ -864,7 +859,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     grid.onmousewheel = (ev: MouseWheelEvent) => {
       const target = ev.target as HTMLElement;
 
-      console.log(this.getClosest(target, ".mat-card-content"));
       if (!this.getClosest(target, ".mat-card-content")) {
         lastCapture = Date.now();
         if (ev.deltaY < 0) {
@@ -877,7 +871,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     grid.onmousedown = (down_ev: MouseEvent) => {
       const target = down_ev.target as HTMLElement;
-      console.log(target);
+
       if (
         !this.getClosest(target, ".mat-card-content") &&
         target.id != "start-button"
@@ -979,13 +973,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     let remoteGrid;
     try {
-      remoteGrid = await this.dataService.request({
-        method: "post",
-        path: "/api/business/grid",
-        model: { section: params.section },
-        timeout: 100,
-        retry: false
-      });
+      // remoteGrid = await this.dataService.request({
+      //   method: "post",
+      //   path: "/api/business/grid",
+      //   model: { section: params.section },
+      //   timeout: 100,
+      //   retry: false
+      // });
     } catch (error) {}
 
     console.log("remoteGrid", remoteGrid, "localGrid", localGrid);
@@ -1069,31 +1063,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     return formatByteSize(sizeOf(obj));
   }
+
+  wait(timeout) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
+    });
+  }
   async ngOnInit() {
-    // alert(JSON.stringify(await this.dataService.changes("company")));
-
-    // this.idbService
-    //   .dataIDB("company")
-    //   .then(async store => {
-    //     var count = await store.count();
-    //     var start = Date.now();
-    //     console.warn("gathering " + count + " peoples data");
-    //     var data = await store.getAll();
-
-    //     console.warn(
-    //       "all peoples gathered in " + (Date.now() - start) + " ms",
-    //       data.length,
-    //       this.memorySizeOf(data)
-    //     );
-    //   })
-    //   .catch(err => {
-    //     console.error(err);
-    // });
-
-    // await (await this.idbService.dataIDB()).clear();
-    // await (await this.idbService.syncIDB("pull")).clear();
 
     await this.sync();
+
+    await this.wait(500);
+
     this.dashboardReady = true;
 
     this.newDashboardSocket()

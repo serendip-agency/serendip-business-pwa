@@ -42,9 +42,7 @@ export class DataService {
     private snackBar: MatSnackBar,
     private businessService: BusinessService
   ) {
-    setTimeout(async () => {
-      console.warn(await this.changes("people"));
-    }, 3000);
+
   }
 
   private async requestError(opts: DataRequestInterface, error) {
@@ -96,11 +94,10 @@ export class DataService {
           options.observe = "response";
         }
 
-        console.log(
-          "HTTP " + opts.method.toUpperCase() + " Request to",
-          opts.host,
-          opts.path
-        );
+        // console.log(
+        //   "HTTP " + opts.method.toUpperCase() + " Request to",
+        //   opts.host + opts.path
+        // );
 
         if (opts.method.toUpperCase() === "POST") {
           result = await this.http
@@ -172,9 +169,14 @@ export class DataService {
     if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB();
-      const data = await store.get(controller);
+      let data = await store.get(controller);
 
-      console.log("list", skip, limit);
+      if (!data) {
+        data = [];
+      } else {
+        data = Object.values(data);
+      }
+
 
       if (skip && limit) {
         return _.take(_.rest(data, skip), limit);
@@ -266,20 +268,6 @@ export class DataService {
   //   }
   // }
 
-  // async offlineReport(opts: reportOptionsInterface) {
-  //   console.log("offline report", opts);
-
-  //   return {
-  //     fields: opts.report.fields,
-  //     count: await this.count(opts.entity, true),
-  //     name: "",
-  //     label: "گزارش پیش‌فرض آنلاین",
-  //     createDate: new Date(),
-  //     data: await this.list(opts.entity, opts.skip, opts.limit, true),
-  //     entityName: opts.entity,
-  //     offline: true
-  //   };
-  // }
   async search<A>(
     controller: string,
     query: string,
@@ -369,8 +357,7 @@ export class DataService {
     if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
       const store = await this.idbService.dataIDB();
       const data = await store.get(controller);
-
-      return _.findWhere(data, { _id: _id });
+      return data[_id];
     } else {
       try {
         return this.request({
@@ -503,34 +490,33 @@ export class DataService {
       return;
     }
 
+    let currentData = await store.get(collection);
+    if (!currentData) currentData = {};
+
     changes = await this.changes(collection, lastSync, Date.now());
-    // if (changes.deleted.length > 0) {
-    //   await Promise.all(
-    //     changes.deleted.map(key => {
-    //       return store.delete(key);
-    //     })
-    //   );
-    // }
+
+    if (changes) {
+      if (changes.deleted.length > 0) {
+        changes.deleted.foreach(key => {
+          delete currentData[key];
+        });
+      }
+    }
 
     console.warn(
-      "changes count for " + collection,
-      changesCount + " since " + lastSync,
+      "changes count for " +
+        collection +
+        " is " +
+        changesCount +
+        " since " +
+        lastSync,
       changes
     );
 
-    //  console.warn("downloading zip for " + collection);
-    const data = await this.zip(collection, lastSync, Date.now());
+    const newData = await this.zip(collection, lastSync, Date.now());
+    currentData = _.extend(currentData, newData);
 
-    // data = _.map(data, (record: any) => {
-    //   return { key: record._id, val: record };
-    // });
-    // console.warn(
-    //   "zip extracted. it contain " +
-    //     data.length +
-    //     " record, starting to add ..."
-    // );
-    //   await store.setAll(data as any);
-    await store.set(collection, data);
+    await store.set(collection, currentData);
 
     await pullStore.set(collection + "_" + Date.now(), {
       events: changes
@@ -596,8 +582,6 @@ export class DataService {
       }
     });
 
-    console.warn(collections);
-
     await promiseSerial(
       _.map(collections, collection => {
         return () => {
@@ -614,18 +598,19 @@ export class DataService {
     await Promise.all(
       SearchSchema.map(schema => {
         return new Promise(async (resolve, reject) => {
-          var docIndex = new DocumentIndex({
+          let docIndex = new DocumentIndex({
             filter: str => {
               return str;
             }
           });
-          var docs: any[] = await this.list(schema.entityName, 0, 0, true);
+          let docs: any[] = await this.list(schema.entityName, 0, 0, true);
+
 
           schema.fields.forEach(field => {
             docIndex.addField(field.name, field.opts);
           });
 
-          var alphabets = {
+          let alphabets = {
             ا: [],
             ب: [],
             پ: [],
@@ -663,8 +648,10 @@ export class DataService {
           Object.keys(alphabets).forEach(k => {});
 
           docs.forEach(doc => {
+
             docIndex.add(doc._id, doc);
           });
+
 
           this.collectionsTextIndexCache[schema.entityName] = docIndex;
 
@@ -674,19 +661,9 @@ export class DataService {
     );
   }
   public async sync() {
-    try {
-      await this.pushCollections();
-      console.log("push done");
-    } catch (error) {
-      console.log("push fail");
-    }
+    await this.pushCollections();
 
-    try {
-      await this.pullCollections();
-      console.log("pull done");
-    } catch (error) {
-      console.log("pull fail");
-    }
+    await this.pullCollections();
 
     await this.indexCollections();
   }
