@@ -298,7 +298,7 @@
 
         <div class="did-you-mean" *ngIf="search.didYouMean">
           آیا منظور شما
-          <a (click)="search.text = search.didYouMean;search.didYouMean = ''">{{search.didYouMean}}</a>
+          <a (click)="search.text = search.didYouMean;search.didYouMean = '';doSearch(search.text)">{{search.didYouMean}}</a>
           است؟
         </div>
 

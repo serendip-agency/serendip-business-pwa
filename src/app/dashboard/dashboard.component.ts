@@ -141,6 +141,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return text.englishKeyChar.indexOf(input[0] || " ") === -1 ? "rtl" : "ltr";
   }
   doSearch(q) {
+    this.search.didYouMean = "";
+
     if (!q) {
       return;
     }
@@ -149,26 +151,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
     q = text.replacePersianDigitsWithEnglish(q);
     q = text.replaceArabicCharWithPersian(q);
 
-    this.search.didYouMean = "";
-
-    const matchAnyCommonEnglishWord =
-      this.dataService.commonEnglishWordsIndexCache.search(q).length > 0;
-
-    if (
-      text.englishKeyChar.indexOf(q[0] || " ") != -1 &&
-      !matchAnyCommonEnglishWord &&
-      !validate.isNumeric(q)
-    ) {
-      this.search.didYouMean = text.switchEnglishKeyToPersian(q);
-    }
-
+    let foundAnyThing = false;
     Object.keys(this.dataService.collectionsTextIndexCache).forEach(
       entityName => {
-        this.search.results[
+        let result = this.dataService.collectionsTextIndexCache[
           entityName
-        ] = this.dataService.collectionsTextIndexCache[entityName].search(q);
+        ].search(q);
+        this.search.results[entityName] = result;
+        if (result.lenght > 0) {
+          foundAnyThing = true;
+        }
       }
     );
+
+    if (!foundAnyThing) {
+      const matchAnyCommonEnglishWord =
+        this.dataService.commonEnglishWordsIndexCache.search(q).length > 0;
+      if (
+        text.englishKeyChar.indexOf(q[0] || " ") !== -1 &&
+        !matchAnyCommonEnglishWord &&
+        !validate.isNumeric(q)
+      ) {
+        this.search.didYouMean = text.switchEnglishKeyToPersian(q);
+      }
+    }
   }
 
   dashboardDateTimeTick() {
