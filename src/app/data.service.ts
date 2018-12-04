@@ -34,6 +34,7 @@ export class DataService {
   collectionsTextIndexCache: { [key: string]: any } = {};
   public static collectionsSynced: string[] = [];
   public static collectionsToSync: string[] = ["company", "people"];
+  commonEnglishWordsIndexCache: any;
   constructor(
     private obService: ObService,
     private http: HttpClient,
@@ -41,9 +42,7 @@ export class DataService {
     private idbService: IdbService,
     private snackBar: MatSnackBar,
     private businessService: BusinessService
-  ) {
-
-  }
+  ) {}
 
   private async requestError(opts: DataRequestInterface, error) {
     if (error.status === 401) {
@@ -176,7 +175,6 @@ export class DataService {
       } else {
         data = Object.values(data);
       }
-
 
       if (skip && limit) {
         return _.take(_.rest(data, skip), limit);
@@ -605,7 +603,6 @@ export class DataService {
           });
           let docs: any[] = await this.list(schema.entityName, 0, 0, true);
 
-
           schema.fields.forEach(field => {
             docIndex.addField(field.name, field.opts);
           });
@@ -648,10 +645,8 @@ export class DataService {
           Object.keys(alphabets).forEach(k => {});
 
           docs.forEach(doc => {
-
             docIndex.add(doc._id, doc);
           });
-
 
           this.collectionsTextIndexCache[schema.entityName] = docIndex;
 
@@ -660,11 +655,30 @@ export class DataService {
       })
     );
   }
+
+  public async indexCommonEnglishWords() {
+    const words =
+      (await this.http
+        .get<string[]>("assets/data/common-words.json")
+        .toPromise()) || [];
+
+    var docIndex = new DocumentIndex();
+
+    docIndex.addField("value");
+
+    words.forEach(w => {
+      docIndex.add(w, { value: w });
+    });
+
+    this.commonEnglishWordsIndexCache = docIndex;
+  }
   public async sync() {
     await this.pushCollections();
 
     await this.pullCollections();
 
     await this.indexCollections();
+
+    await this.indexCommonEnglishWords();
   }
 }

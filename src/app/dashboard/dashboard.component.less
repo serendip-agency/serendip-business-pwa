@@ -1,5 +1,4 @@
 .dashboard-wrapper {
-
 }
 
 .dashboard-loader {
@@ -30,7 +29,7 @@
       font-size: 15px;
       font-weight: 100;
       margin-top: 15px;
-      color:#75613D;
+      color: #75613d;
     }
   }
 }
@@ -668,7 +667,20 @@ header .shortcuts .search {
     padding: 0 15px;
     width: 100%;
     box-sizing: border-box;
+
+    .did-you-mean {
+      font-weight: 100;
+line-height: 30px;
+font-size: 11px;
+      a {
+        color:#fff;
+text-decoration: none;
+        font-weight: 500;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      }
+    }
     .search-inner {
+
     }
     ::-webkit-input-placeholder {
       /* Chrome/Opera/Safari */
@@ -686,33 +698,52 @@ header .shortcuts .search {
       /* Firefox 18- */
       color: #fff;
     }
+
     input {
       height: 28px;
       background: none;
       color: #fff;
       border: none;
-      width: calc(~"100% - 33px");
-      float: right;
+      width: calc(~"100% - 32px");
+      display: inline-block;
       padding: 0 10px;
       border-radius: 0;
       outline: none;
       box-sizing: border-box;
-      border-bottom: 1px solid rgba(255, 255, 255, 1);
-      direction: rtl;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+
       font-size: 12px;
       font-weight: 100;
     }
+
     img {
       width: 28px;
       height: 28px;
-      float: right;
+
+      display: inline-block;
       padding: 2px;
       box-sizing: border-box;
       filter: invert(1);
       vertical-align: middle;
-      border: 1px solid rgba(0, 0, 0, 1);
-      margin-right: 5px;
+      border: 1px solid rgba(0, 0, 0, 0.5);
+      margin-right: 4px;
       border-radius: 100%;
+    }
+
+    img.mode {
+      margin-right: 0;
+      margin-left: 4px;
+    }
+    &.search-active {
+      input {
+        width: calc(~"100% - 64px");
+      }
+    }
+
+    &.mode-selected {
+      input {
+        width: calc(~"100% - 96px");
+      }
     }
   }
 }

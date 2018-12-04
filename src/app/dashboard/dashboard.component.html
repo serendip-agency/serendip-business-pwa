@@ -242,7 +242,7 @@
   <div id="start" (click)="clickOnStartWrapper($event)">
     <div class="inner">
       <ng-container *ngTemplateOutlet="shortcuts"></ng-container>
-      <nav>
+      <nav *ngIf="!search.mode">
         <ul [class.search-active]="search.text">
           <li *ngFor="
               let item of dashboardService.schema
@@ -251,7 +251,7 @@
             "
             [class.no-result]="search.text && (search.results[item.name] ?  search.results[item.name].length == 0 : true )"
             [class.active]="!search.text && dashboardService.currentSection.name == item.name">
-            <a [routerLink]="['/dashboard', item.name == 'dashboard' ? '' : item.name]" (click)="hideStart()">
+            <a [routerLink]="search.text ? null : ['/dashboard', item.name == 'dashboard' ? '' : item.name]" (click)="search.text ? search.mode =item.name : hideStart()">
               <div class="count" *ngIf="search.text">
 
                 {{( search.results[item.name] ? search.results[item.name].length || '0' : '0') | rpd}}</div>
@@ -261,31 +261,49 @@
           </li>
         </ul>
       </nav>
-
-      <div class="toggles">
-        <div class="task">وظایف</div>
-        <div class="notification">اعلان‌ها</div>
-      </div>
-
-      <div class="notifications">
-        <div class="empty">
-          <img src="assets/icons/notification-bell-5.svg" />
-
-          <p>اعلانی موجود نیست.</p>
+      <div *ngIf="!search.mode">
+        <div class="toggles">
+          <div class="task">وظایف</div>
+          <div class="notification">اعلان‌ها</div>
         </div>
+
+        <div class="notifications">
+          <div class="empty">
+            <img src="assets/icons/notification-bell-5.svg" />
+
+            <p>اعلانی موجود نیست.</p>
+          </div>
+        </div>
+        <div class="tasks"></div>
       </div>
-      <div class="tasks"></div>
+
     </div>
   </div>
 </div>
 
 <ng-template #shortcuts>
   <div class="shortcuts">
-    <div class="search">
+    <div class="search" [class.search-active]="search.text" [class.mode-selected]="search.mode">
       <div class="search-inner">
-        <input type="text" [(ngModel)]="search.text" (keyup)="doSearch(search.text)" placeholder="جست‌و‌جو ..." />
-        <img src="assets/icons/search.svg" />
+
+        <div>
+          <img src="assets/icons/search.svg" alt="انجام جست‌و‌جو" (click)="doSearch(search.text)" />
+          <img *ngIf="search.text" src="assets/icons/close-5.svg" (click)="search.text= '';search.mode=''" alt="ریست جست‌و‌جو">
+
+          <input type="text" [dir]="getInputDirection(search.text)" [(ngModel)]="search.text" (keyup)="doSearch(search.text)"
+            placeholder="جست‌و‌جو ..." />
+
+          <img *ngIf="search.mode" (click)="search.mode = ''" [src]="'assets/icons/'+ getModeIcon(search.mode) +'.svg'" />
+        </div>
+
+        <div class="did-you-mean" *ngIf="search.didYouMean">
+          آیا منظور شما
+          <a (click)="search.text = search.didYouMean;search.didYouMean = ''">{{search.didYouMean}}</a>
+          است؟
+        </div>
+
       </div>
+
     </div>
     <ul>
       <li>

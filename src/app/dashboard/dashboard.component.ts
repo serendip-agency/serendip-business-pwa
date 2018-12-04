@@ -41,7 +41,7 @@ import { DataService } from "../data.service";
 import { AuthService } from "../auth.service";
 import { MatSnackBar } from "@angular/material";
 import swal from "sweetalert2";
-import { text } from "serendip-utility";
+import { text, validate } from "serendip-utility";
 
 // optional import of scroll behavior
 polyfill({
@@ -69,10 +69,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   explorerVisible = false;
   explorerAnimDone = true;
 
+  textUtils = text;
   search: {
+    /**
+     * Entity name or ...
+     */
+    mode: string;
+    didYouMean: string;
     text: string;
     results: { [key: string]: { docId: string; score: number } }[];
-  } = { text: "", results: [] };
+  } = { mode: "", text: "", didYouMean: "", results: [] };
 
   dashboardDate = "";
   dashboardTime = "";
@@ -115,12 +121,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return input.toString().replace(/\d/g, convert);
   }
 
+  getModeIcon(mode) {
+    const section = _.findWhere(this.dashboardService.schema.dashboard, {
+      name: mode
+    });
+
+    if (section) {
+      return section.icon;
+    } else {
+      return "folder-archive-open";
+    }
+  }
+
+  getInputDirection(input: string) {
+    if (!input) {
+      return "rtl";
+    }
+
+    return text.englishKeyChar.indexOf(input[0] || " ") === -1 ? "rtl" : "ltr";
+  }
   doSearch(q) {
-    if (!q) return;
+    if (!q) {
+      return;
+    }
 
     q = text.replaceArabicDigitsWithEnglish(q);
     q = text.replacePersianDigitsWithEnglish(q);
     q = text.replaceArabicCharWithPersian(q);
+
+    this.search.didYouMean = "";
+
+    const matchAnyCommonEnglishWord =
+      this.dataService.commonEnglishWordsIndexCache.search(q).length > 0;
+
+    if (
+      text.englishKeyChar.indexOf(q[0] || " ") != -1 &&
+      !matchAnyCommonEnglishWord &&
+      !validate.isNumeric(q)
+    ) {
+      this.search.didYouMean = text.switchEnglishKeyToPersian(q);
+    }
 
     Object.keys(this.dataService.collectionsTextIndexCache).forEach(
       entityName => {
@@ -662,79 +702,79 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   async handleStartButtonMove() {
     return;
-    const elem = document.getElementById("start-button");
+    // const elem = document.getElementById("start-button");
 
-    let captureMove = false;
-    let moved = false;
-    let elemPos = { x: elem.offsetLeft, y: elem.offsetTop };
-    let startPos = { x: 0, y: 0 };
+    // let captureMove = false;
+    // let moved = false;
+    // let elemPos = { x: elem.offsetLeft, y: elem.offsetTop };
+    // let startPos = { x: 0, y: 0 };
 
-    elem.ontouchstart = elem.onmousedown = (start_ev: any) => {
-      elemPos = { x: elem.offsetLeft, y: elem.offsetTop };
-      captureMove = true;
-      moved = false;
+    // elem.ontouchstart = elem.onmousedown = (start_ev: any) => {
+    //   elemPos = { x: elem.offsetLeft, y: elem.offsetTop };
+    //   captureMove = true;
+    //   moved = false;
 
-      startPos = {
-        x: start_ev.clientX || start_ev.touches[0].clientX,
-        y: start_ev.clientY || start_ev.touches[0].clientY
-      };
-    };
+    //   startPos = {
+    //     x: start_ev.clientX || start_ev.touches[0].clientX,
+    //     y: start_ev.clientY || start_ev.touches[0].clientY
+    //   };
+    // };
 
-    document.ontouchmove = document.onmousemove = (move_ev: any) => {
-      if (!captureMove) {
-        return;
-      }
+    // document.ontouchmove = document.onmousemove = (move_ev: any) => {
+    //   if (!captureMove) {
+    //     return;
+    //   }
 
-      document.querySelector("body").setAttribute("style", "overflow:hidden;");
+    //   document.querySelector("body").setAttribute("style", "overflow:hidden;");
 
-      elem.classList.add("moving");
+    //   elem.classList.add("moving");
 
-      const movePos = {
-        x: move_ev.clientX || move_ev.touches[0].clientX,
-        y: move_ev.clientY || move_ev.touches[0].clientY
-      };
+    //   const movePos = {
+    //     x: move_ev.clientX || move_ev.touches[0].clientX,
+    //     y: move_ev.clientY || move_ev.touches[0].clientY
+    //   };
 
-      const destPos = {
-        x: elemPos.x - (startPos.x - movePos.x),
-        y: elemPos.y - (startPos.y - movePos.y)
-      };
+    //   const destPos = {
+    //     x: elemPos.x - (startPos.x - movePos.x),
+    //     y: elemPos.y - (startPos.y - movePos.y)
+    //   };
 
-      if (
-        destPos.x < 5 ||
-        destPos.x >
-          window.innerWidth -
-            (this.dashboardService.screen === "mobile" ? 37 : 69)
-      ) {
-        return;
-      }
+    //   if (
+    //     destPos.x < 5 ||
+    //     destPos.x >
+    //       window.innerWidth -
+    //         (this.dashboardService.screen === "mobile" ? 37 : 69)
+    //   ) {
+    //     return;
+    //   }
 
-      if (
-        destPos.y < 5 ||
-        destPos.y >
-          window.innerHeight -
-            (this.dashboardService.screen === "mobile" ? 37 : 69)
-      ) {
-        return;
-      }
+    //   if (
+    //     destPos.y < 5 ||
+    //     destPos.y >
+    //       window.innerHeight -
+    //         (this.dashboardService.screen === "mobile" ? 37 : 69)
+    //   ) {
+    //     return;
+    //   }
 
-      elem.setAttribute("style", `top:${destPos.y}px;left:${destPos.x}px;`);
-      moved = true;
-    };
+    //   elem.setAttribute("style", `top:${destPos.y}px;left:${destPos.x}px;`);
+    //   moved = true;
+    // };
 
-    document.ontouchend = document.onmouseup = (ev: any) => {
-      if (captureMove) {
-        captureMove = false;
-        elem.classList.remove("moving");
-        document.querySelector("body").removeAttribute("style");
+    // document.ontouchend = document.onmouseup = (ev: any) => {
+    //   if (captureMove) {
+    //     captureMove = false;
+    //     elem.classList.remove("moving");
+    //     document.querySelector("body").removeAttribute("style");
 
-        if (ev instanceof MouseEvent) {
-          if (!moved) {
-            document.getElementById("start").classList.toggle("fadeIn");
-            document.querySelector("body").classList.toggle("hideScroll");
-          }
-        }
-      }
-    };
+    //     if (ev instanceof MouseEvent) {
+    //       if (!moved) {
+    //         document.getElementById("start").classList.toggle("fadeIn");
+    //         document.querySelector("body").classList.toggle("hideScroll");
+    //       }
+    //     }
+    //   }
+    // };
   }
 
   hideStart() {
@@ -835,7 +875,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       Element.prototype.matches =
         Element.prototype.webkitMatchesSelector ||
         function(s) {
-          var matches = (this.document || this.ownerDocument).querySelectorAll(
+          let matches = (this.document || this.ownerDocument).querySelectorAll(
               s
             ),
             i = matches.length;
@@ -846,7 +886,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     // Get the closest matching element
     for (; elem && elem !== document; elem = elem.parentNode) {
-      if (elem.matches(selector)) return elem;
+      if (elem.matches(selector)) {
+        return elem;
+      }
     }
     return null;
   }
@@ -874,7 +916,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
       if (
         !this.getClosest(target, ".mat-card-content") &&
-        target.id != "start-button"
+        target.id !== "start-button"
       ) {
         if (captureTimeout) {
           clearTimeout(captureTimeout);
@@ -1072,7 +1114,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
   async ngOnInit() {
-
     await this.sync();
 
     await this.wait(500);
@@ -1117,9 +1158,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardDateTimeTick();
     this.handleGridMouseDragScroll();
 
-    // // FIXME: for test
-    // document.getElementById("start").classList.toggle("fadeIn");
-    // document.querySelector("body").classList.toggle("hideScroll");
+    // FIXME: for test
+    document.getElementById("start").classList.toggle("fadeIn");
+    document.querySelector("body").classList.toggle("hideScroll");
 
     this.dashboardDateTimeInterval = setInterval(() => {
       this.dashboardDateTimeTick();
