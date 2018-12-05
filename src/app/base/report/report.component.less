@@ -1,29 +1,25 @@
-
 .mat-card-header .search {
-
-  &.spanned{
-    width:auto;
-border-radius: 5px;
+  &.spanned {
+    width: auto;
+    border-radius: 5px;
   }
 
-  span{
+  span {
     display: inline-block;
     vertical-align: top;
     line-height: 50px;
     padding-left: 10px;
     font-weight: 100;
     font-size: 17px;
-
   }
 
-  img{
+  img {
     display: inline-block;
-    width:50px;
+    width: 50px;
   }
 }
 
-
-.report{
+.report {
   min-width: 600px;
   max-width: 100%;
 }
@@ -107,16 +103,16 @@ border-radius: 5px;
   overflow-x: scroll;
   box-sizing: border-box;
 
-  .mat-checkbox-inner-container{
-    margin:0;
+  .mat-checkbox-inner-container {
+    margin: 0;
   }
   .empty {
-border-radius: 30px;
+    border-radius: 30px;
     text-align: center;
     font-style: italic;
     font-size: 11px;
     font-weight: 100;
-    padding:40px 0;
+    padding: 40px 0;
     background: #f2f2f2;
   }
   .record,
@@ -133,15 +129,20 @@ border-radius: 30px;
     .field-label,
     .select {
       display: inline-block;
-        border-top: 1px solid #DEE4F2;
+      border-top: 1px solid #dee4f2;
       // border-bottom: 2px solid #eee;
       vertical-align: top;
       line-height: 30px;
-      padding: 10px 5px;
+      padding:  5px 0;
     }
     .select {
       line-height: 40px;
-      height:40px;
+      height: 40px;
+      width: 60px;
+
+      [dir="rtl"] .mat-checkbox-inner-container {
+        margin-left: 0 !important;
+      }
     }
     .label {
       font-weight: bold;
@@ -153,15 +154,14 @@ border-radius: 30px;
     right: 0;
     width: 100%;
 
-    .inner{
-      padding:0 15px;
+    .inner {
+      padding: 0 15px;
     }
 
     .field,
     .field-label,
     .select {
       border-top: none;
-
     }
   }
 }

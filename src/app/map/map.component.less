@@ -26,21 +26,7 @@
   * {
     transition: none;
   }
-  &.explorer {
-    width: 100%;
-    height: calc("100% - 50px");
-    top: 50px;
-    left: 0;
-    position: fixed;
 
-    .map {
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border-radius: none;
-    }
-  }
   &.visible {
     display: block;
   }
@@ -54,13 +40,14 @@
   }
   .actions {
     position: absolute;
-    bottom: 10px;
-    left: 10px;
+    bottom: 45px;
+    left: 20px;
     text-align: center;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
     button {
       border: none;
-      color: rgb(90, 70, 34);
-      background: #d2ae6d;
+      color: #000;
+      background: #fff;
       line-height: 40px; // border-radius: 5px;
       font-weight: bold;
       outline: none;

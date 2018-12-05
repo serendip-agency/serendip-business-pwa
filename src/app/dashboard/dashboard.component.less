@@ -72,7 +72,7 @@
 
 header {
   position: relative;
-  z-index: 400;
+  z-index: 5500;
   box-sizing: border-box;
   height: 50px;
   overflow: hidden;
@@ -308,7 +308,7 @@ aside#explorer {
   overflow-y: hidden;
   overflow-x: hidden; // transition: width cubic-bezier(0.68, -0.55, 0.265, 1.55) .3s; //  transition: width linear .3s;
   // transition: width ease-in-out .25s; //  transition: width linear .3s;
-  z-index: 300;
+  z-index: 5000;
   &:hover {
     overflow-y: scroll;
   }
@@ -352,7 +352,6 @@ aside#explorer {
           a {
             width: 30px;
             height: 30px;
-            background: rgb(236, 236, 236);
             border-radius: 100%;
             margin: 0 auto;
           }
@@ -401,6 +400,7 @@ aside#explorer {
       white-space: nowrap;
       text-overflow: ellipsis;
       overflow: hidden;
+      display: none;
     }
     ul {
       margin: 0;
@@ -473,13 +473,12 @@ aside#explorer {
           }
           display: none;
           & > li {
+            border: none;
             padding: 0 4px;
-            border: 1px solid rgb(210, 175, 109);
-            border-radius: 20px;
+            border-radius: 5px;
             margin: 10px auto;
             box-sizing: border-box;
-            background: #fff;
-            background: rgba(210, 175, 109, 0.9);
+            background: #f4f4f4;
             &:hover {
               background: #d2ae6d;
               transition: all ease 0.3s;
@@ -491,16 +490,16 @@ aside#explorer {
               // border-bottom: none;
             }
             a {
-              font-size: 12px;
+              font-size: 11px;
               font-weight: 100;
               line-height: 29px;
               color: rgb(92, 68, 25);
               cursor: move;
               .img {
                 display: inline-block;
-                background: rgb(153, 124, 70);
-                width: 20px;
-                height: 20px;
+                background-color: rgba(195, 162, 101, 0.3);
+                width: 26px;
+                height: 26px;
                 border-radius: 100%;
                 overflow: hidden;
                 display: inline-block; // border: 1px solid #000;
@@ -508,7 +507,6 @@ aside#explorer {
                 vertical-align: middle;
               }
               img {
-                filter: invert(1);
                 display: block;
                 opacity: 1;
                 width: 100%;
@@ -670,17 +668,16 @@ header .shortcuts .search {
 
     .did-you-mean {
       font-weight: 100;
-line-height: 30px;
-font-size: 11px;
+      line-height: 30px;
+      font-size: 11px;
       a {
-        color:#fff;
-text-decoration: none;
+        color: #fff;
+        text-decoration: none;
         font-weight: 500;
         border-bottom: 1px solid rgba(255, 255, 255, 0.5);
       }
     }
     .search-inner {
-
     }
     ::-webkit-input-placeholder {
       /* Chrome/Opera/Safari */
@@ -853,7 +850,7 @@ text-decoration: none;
     top: 0;
 
     left: -600px;
-    transition: left ease 0.5s;
+    //  transition: left ease 0.5s;
     transition: none;
 
     &:after {
@@ -874,7 +871,7 @@ text-decoration: none;
   &.fadeIn {
     right: 0;
     opacity: 1;
-    z-index: 500;
+    z-index: 6000;
     border-radius: 0;
     filter: grayscale(0);
     .inner {

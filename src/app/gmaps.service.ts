@@ -19,6 +19,7 @@ export class GmapsService {
 
   mapClickListener: google.maps.MapsEventListener;
 
+  initializedMaps: string[] = [];
   scriptLoaded: boolean = false;
 
   dashboardMapVisible = false;
@@ -43,13 +44,7 @@ export class GmapsService {
           })
         );
       } else {
-        this.eventEmitter.on("scriptLoad", () => {
-          resolve();
-        });
-
-        this.eventEmitter.on("scriptError", e => {
-          reject(e);
-        });
+        resolve();
       }
     });
   }
@@ -78,6 +73,8 @@ export class GmapsService {
     positions: { lat: number; lng: number }[]
   ) {
     this.emitSetVisible({ mapId, visible: true });
+
+    this.emitSetMode({ mapId, mode: "select-single" });
     this.eventEmitter.emit("selectSingle", { mapId, positions });
   }
 
@@ -153,6 +150,7 @@ export class GmapsService {
     styles?: any;
   }): Promise<google.maps.Map> {
     await this.addScripts();
+
 
     var _opts = {
       center: {

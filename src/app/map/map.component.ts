@@ -84,7 +84,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.mapVisible = false;
     this.changeRef.detectChanges();
-
   }
 
   public selectCancel() {
@@ -97,8 +96,7 @@ export class MapComponent implements OnInit, OnDestroy {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve();
-    this.changeRef.detectChanges();
-
+        this.changeRef.detectChanges();
       }, timeout);
     });
   }
@@ -112,14 +110,14 @@ export class MapComponent implements OnInit, OnDestroy {
 
         this.addMarker(e.latLng);
         this._map.panTo(e.latLng);
-    this.changeRef.detectChanges();
-
+        this.changeRef.detectChanges();
       }
     });
   }
 
   async map(): Promise<google.maps.Map> {
     if (!this._map) {
+      console.log(document.getElementById(this.mapId));
       this._map = await this.gmapsService.newMap({
         mapWrapper: document.getElementById(this.mapId)
       });
@@ -127,6 +125,9 @@ export class MapComponent implements OnInit, OnDestroy {
       this.bindMapEvents(this._map);
     }
 
+    if (this.gmapsService.initializedMaps.indexOf(this.mapId) == -1) {
+      this.gmapsService.initializedMaps.push(this.mapId);
+    }
     this.changeRef.detectChanges();
 
     return this._map;
@@ -139,13 +140,11 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.changeRef.detach();
 
-
     console.log(`${this.mapId} being initialized.`);
 
     this.subscription_OnSetMode = this.gmapsService
       .subscribeOnSetMode(this.mapId)
       .subscribe(mode => {
-
         console.log(`${this.mapId} received setMode ${mode}`);
 
         this.mapMode = mode as any;
@@ -162,6 +161,19 @@ export class MapComponent implements OnInit, OnDestroy {
       .subscribe(visible => {
         console.log(`${this.mapId} received setVisible ${visible}`);
         this.mapVisible = visible;
+
+        if (visible) {
+          if (this.mapId == "dashboard-map") {
+            this.gmapsService.initializedMaps.forEach(mId => {
+              if (mId != this.mapId) {
+                this.gmapsService.emitSetVisible({
+                  mapId: mId,
+                  visible: false
+                });
+              }
+            });
+          }
+        }
         this.changeRef.detectChanges();
       });
 
@@ -173,7 +185,6 @@ export class MapComponent implements OnInit, OnDestroy {
           this.addMarker(pos);
         });
         this.changeRef.detectChanges();
-
       });
 
     this.subscription_OnSelectSingle = this.gmapsService
@@ -191,20 +202,15 @@ export class MapComponent implements OnInit, OnDestroy {
         });
 
         this.changeRef.detectChanges();
-
-
       });
     this.changeRef.detectChanges();
-
   }
 
   async initExplorer() {
-
     this.mapVisible = true;
     this.changeRef.detectChanges();
     await this.map();
     this.changeRef.detectChanges();
-
   }
 
   ngOnDestroy(): void {

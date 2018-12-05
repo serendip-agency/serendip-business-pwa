@@ -368,9 +368,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.hideStart();
     this.gmapsService.dashboardMapVisible = !this.gmapsService
       .dashboardMapVisible;
-    this.gmapsService.emitSetMode({ mapId: "dashboard", mode: "explorer" });
+    this.gmapsService.emitSetMode({ mapId: "dashboard-map", mode: "explorer" });
     this.gmapsService.emitSetVisible({
-      mapId: "dashboard",
+      mapId: "dashboard-map",
       visible: this.gmapsService.dashboardMapVisible
     });
   }
@@ -385,7 +385,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   hideMap() {
     this.gmapsService.dashboardMapVisible = false;
     this.gmapsService.emitSetVisible({
-      mapId: "dashboard",
+      mapId: "dashboard-map",
       visible: this.gmapsService.dashboardMapVisible
     });
   }
