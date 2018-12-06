@@ -38,6 +38,7 @@ import {
 } from "serendip-business-model";
 import { FormDateRangeInputComponent } from "./form-date-range-input/form-date-range-input.component";
 import { FormFileInputComponent } from "./form-file-input/form-file-input.component";
+import { formPartTemplates } from "src/app/schema/formPartTemplates";
 
 @Component({
   selector: "app-form",
@@ -85,7 +86,7 @@ export class FormComponent implements OnInit {
   _ = _;
 
   @Input() saveButtonText = "ثبت";
-  @Input() saveButtonIcon: string;
+  @Input() saveButtonIcon: string = "save-backup-1";
 
   @Input() title: string;
   @Input() minimal: boolean;
@@ -200,6 +201,17 @@ export class FormComponent implements OnInit {
       return [];
     }
 
+    parts = parts.map(part => {
+      if (part.templateName && formPartTemplates[part.templateName]) {
+        part.inputs = _.extend(
+          formPartTemplates[part.templateName].inputs,
+          part.inputs
+        );
+        part = _.extend(formPartTemplates[part.templateName], part);
+      }
+      return part;
+    });
+
     return parts.filter(part => {
       if (part.if) {
         let evalResult = false;
@@ -235,7 +247,7 @@ export class FormComponent implements OnInit {
         true
       );
 
-      Object.keys(this.formSchema.defaultModel).forEach(dKey => {
+      Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
         console.log(dKey, typeof this.model[dKey]);
         if (
           typeof this.model[dKey] === "undefined" ||

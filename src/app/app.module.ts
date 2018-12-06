@@ -104,6 +104,7 @@ import { TicketListComponent } from './support/ticket-list/ticket-list.component
 import { WeatherComponent } from './weather/weather.component';
 import { FormFileInputComponent } from './base/form/form-file-input/form-file-input.component';
 import { ListComponent } from './base/list/list.component';
+import { PriceViewComponent } from './base/report/price-view/price-view.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -164,7 +165,7 @@ export const dynamicComponents = [
   // Business related  report views
   ClubRatingViewComponent,
   ContactsViewComponent,
-
+  PriceViewComponent,
   // Other services
   WeatherComponent,
   EmailComponent,

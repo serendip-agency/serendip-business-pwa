@@ -1,11 +1,17 @@
-<div class="double-field">
+<div class="double-field" *ngIf="model">
 
-  <div class="w-75">
-    <app-form-text-input [label]="label" [model]="model?.value" (modelChange)="model.type = $event;modelChange.emit(model)"></app-form-text-input>
+  <div class="w-70">
+
+    <mat-form-field>
+    <input matInput type="text" currencyMask  [options]="currencyOptions"  dir="ltr" class="en"  [placeholder]="label" [(ngModel)]="model.value" (change)=" modelChange.emit(model)" />
+  </mat-form-field>
+
   </div>
 
-  <div class="w-25">
-    <app-form-auto-complete-input [strict]="true" [label]="'ارز'" [data]="['ریال','دلار','یورو']" [model]="model?.type" (modelChange)="model.type = $event;modelChange.emit(model)"></app-form-auto-complete-input>
+
+  <div class="w-30">
+    <app-form-select-input [selectType]="'single'"  [label]="'ارز'" [data]="currencyLabels" [model]="model.type"
+      (modelChange)="currencyOptions = currencies[$event] || {}; model.type =$event;modelChange.emit(model)"></app-form-select-input>
   </div>
 
 </div>

@@ -38,6 +38,7 @@ import * as MomentJalaali from "moment-jalaali";
 import * as sUtil from "serendip-utility";
 import { ObService } from "src/app/ob.service";
 import { ReportService } from "src/app/report.service";
+import { PriceViewComponent } from "./price-view/price-view.component";
 
 @Component({
   selector: "app-report",
@@ -113,7 +114,7 @@ export class ReportComponent implements OnInit {
     StarRatingViewComponent,
     DateViewComponent,
     CurrencyViewComponent,
-
+    PriceViewComponent,
     // Business related  report views
     ClubRatingViewComponent,
     ContactsViewComponent
@@ -495,6 +496,14 @@ export class ReportComponent implements OnInit {
         }
       });
     });
+  }
+
+  delete() {
+
+    this.selected.forEach(_id => {
+      this.dataService.delete(this.entityName, _id);
+    });
+    this.selected = [];
   }
 
   getPage() {

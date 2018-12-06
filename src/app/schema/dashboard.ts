@@ -185,7 +185,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
               name: "sale-form",
               entityName: "sale",
               entityLabel: "فروش",
-              entityIcon : 'sell-money-expense-7'
+              entityIcon: "sell-money-expense-7"
             }
           }
         ]
@@ -406,6 +406,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       {
         title: "  انواع خدمات",
         icon: "settings-adjust-bold",
+        status: "default",
+
         widgets: [
           {
             component: "ReportComponent",
@@ -474,7 +476,26 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           }
         ]
       },
+      {
+        title: "فرم انواع خدمات",
+        icon: "send",
+        status: "default",
+        widgets: [
+          {
+            component: "FormComponent",
+            inputs: {
+              minimal: true,
+              title: "فرم انواع خدمات",
 
+              saveButtonText: "ثبت",
+              name: "serviceType-form",
+              entityName: "serviceType",
+              entityIcon: "send",
+              entityLabel: "نوع خدمت"
+            }
+          }
+        ]
+      },
       {
         title: "تنظیم روال کاری اطلاعات ",
         icon: "settings-adjust-bold",

@@ -18,11 +18,12 @@
         <img [src]="'/assets/icons/' + 'office-paper-work-bag'  +'.svg'" />
       </div>
 
-      <div *ngIf="!minimal" class="search" [class.spanned]="activeFieldQueries().length > 0" [class.active]="mode == 'report'" (click)="mode = mode == 'report' ? 'data':'report'">
+      <div *ngIf="!minimal" class="search" [class.spanned]="activeFieldQueries().length > 0" [class.active]="mode == 'report'"
+        (click)="mode = mode == 'report' ? 'data':'report'">
         <img [src]="'/assets/icons/' + 'search'  +'.svg'" />
 
         <span *ngIf="activeFieldQueries().length > 0">
-         {{activeFieldQueries().length | rpd}} فیلتر
+          {{activeFieldQueries().length | rpd}} فیلتر
         </span>
 
       </div>
@@ -108,7 +109,7 @@
         <div *ngIf="page && page.length > 0" class="report-header">
           <div class="inner">
             <div class="select">
-              <mat-checkbox (change)="allSelectChange($event)" [checked]="allSelected()"></mat-checkbox>
+              <mat-checkbox style="margin:0 auto!important;" (change)="allSelectChange($event)" [checked]="allSelected()"></mat-checkbox>
             </div>
             <div class="field-label" *ngFor="let field of  enabledReportFields()">
               <ndc-dynamic *ngIf="  field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , viewType : 'label' } )"
@@ -163,13 +164,19 @@
 
     <mat-card-actions *ngIf="report && mode == 'data'">
 
-      <button mat-button (click)="new()">
-        <img src="assets/icons/plus-add-1.svg" />
-        {{ entityLabelSingular }} جدید </button>
-      <button color="primary" (click)="edit()" *ngIf="selected.length > 0" mat-button>
+      <button class="sp-button-icon" (click)="new()">
+        <img src="assets/icons/plus-add-3.svg" />
+      </button>
+      <button class="sp-button-icon" (click)="edit()" *ngIf="selected.length > 0">
 
-        ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }} انتخاب‌شده
+        <!-- ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }} انتخاب‌شده -->
 
+        <img src="assets/icons/office-paper-work-pen.svg" />
+
+      </button>
+
+      <button class="sp-button-icon" (click)="delete()" *ngIf="selected.length > 0">
+        <img src="assets/icons/recycle-bin-trash.svg" />
       </button>
 
       <div class="paginator pull-left" *ngIf="!resultLoading && report && report.count && pageCount > 0">

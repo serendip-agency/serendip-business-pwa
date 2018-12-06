@@ -472,7 +472,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async initGrid(tabs: DashboardTabInterface[]) {
-    const tabsToAdd = _.clone(tabs);
+    const tabsToAdd = _.where(tabs, { status: "default" });
 
     this.grid = { containers: [{ tabs: tabsToAdd }] };
     this.grid.version = Date.now();

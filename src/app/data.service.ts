@@ -120,9 +120,6 @@ export class DataService {
         throw error;
       }
 
-      if (opts.modelName) {
-        this.obService.publish(opts.modelName, result);
-      }
       resolve(result);
     });
   }
@@ -413,12 +410,12 @@ export class DataService {
     });
   }
 
-  async insert<A>(
+  async insert(
     controller: string,
-    model: A,
+    model: any,
     modelName?: string
-  ): Promise<A> {
-    return this.request({
+  ): Promise<any> {
+    let result = await this.request({
       method: "POST",
       path: `/api/entity/${controller}/insert`,
       timeout: 1000,
@@ -426,15 +423,33 @@ export class DataService {
       modelName: modelName,
       retry: true
     });
+
+    if (result._id) {
+      const store = await this.idbService.dataIDB();
+      let data = await store.get(controller);
+      data[result._id] = result;
+      await store.set(controller, data);
+
+      this.obService.publish(controller, result);
+    }
+
+    return model;
   }
 
-  async update<A>(
+  async update(
     controller: string,
-    model: A,
+    model: any,
     modelName?: string
-  ): Promise<A> {
-    // const store = await this.idbService.dataIDB(controller);
-    // store.set((model as any)._id, model);
+  ): Promise<any> {
+    const store = await this.idbService.dataIDB();
+    let data = await store.get(controller);
+
+    if (model._id) {
+      data[model._id] = model;
+      await store.set(controller, data);
+    }
+
+    this.obService.publish(controller, model);
 
     return this.request({
       method: "POST",
@@ -445,8 +460,18 @@ export class DataService {
     });
   }
 
-  delete<A>(controller: string, _id: string): Promise<A> {
+  async delete<A>(controller: string, _id: string): Promise<A> {
     const model = { _id: _id };
+
+    if (_id) {
+      const store = await this.idbService.dataIDB();
+
+      let data = await store.get(controller);
+      delete data[_id];
+      await store.set(controller, data);
+
+      this.obService.publish(controller, model);
+    }
 
     return this.request({
       method: "POST",
@@ -489,13 +514,15 @@ export class DataService {
     }
 
     let currentData = await store.get(collection);
-    if (!currentData) currentData = {};
+    if (!currentData) {
+      currentData = {};
+    }
 
     changes = await this.changes(collection, lastSync, Date.now());
 
     if (changes) {
       if (changes.deleted.length > 0) {
-        changes.deleted.foreach(key => {
+        changes.deleted.forEach(key => {
           delete currentData[key];
         });
       }
@@ -596,18 +623,18 @@ export class DataService {
     await Promise.all(
       SearchSchema.map(schema => {
         return new Promise(async (resolve, reject) => {
-          let docIndex = new DocumentIndex({
+          const docIndex = new DocumentIndex({
             filter: str => {
               return str;
             }
           });
-          let docs: any[] = await this.list(schema.entityName, 0, 0, true);
+          const docs: any[] = await this.list(schema.entityName, 0, 0, true);
 
           schema.fields.forEach(field => {
             docIndex.addField(field.name, field.opts);
           });
 
-          let alphabets = {
+          const alphabets = {
             ا: [],
             ب: [],
             پ: [],
@@ -662,7 +689,7 @@ export class DataService {
         .get<string[]>("assets/data/common-words.json")
         .toPromise()) || [];
 
-    var docIndex = new DocumentIndex();
+    const docIndex = new DocumentIndex();
 
     docIndex.addField("value");
 

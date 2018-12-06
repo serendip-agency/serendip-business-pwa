@@ -91,6 +91,12 @@ export const ReportsSchema: ReportInterface[] = [
         name: "name",
         label: "نام دسته بندی",
         template: "ShortTextViewComponent"
+      },
+      {
+        enabled: true,
+        name: "price",
+        label: "قیمت",
+        template: "PriceViewComponent"
       }
     ]
   },

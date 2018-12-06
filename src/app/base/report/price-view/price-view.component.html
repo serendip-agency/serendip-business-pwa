@@ -1,0 +1,13 @@
+<div class="view">
+
+  <div class="label" *ngIf="viewType == 'label'">
+    {{label | rpd}}
+  </div>
+
+
+
+  <input *ngIf="model && model.value" type="text" currencyMask [options]="currencies[model.type]" [(ngModel)]="model.value"
+    dir="ltr" />
+
+
+</div>

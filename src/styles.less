@@ -85,6 +85,19 @@ This set of fonts are used in this project under the license: (.....)
 .en * {
   font-family: "Roboto", sans-serif !important;
 }
+
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
 a,
 a:hover,
 a:active {
@@ -97,7 +110,36 @@ textarea {
   font-family: iranyekan;
 }
 
+button.sp-button-icon {
+  width: 34px;
+  height: 34px;
+  border: none;
+  background: #D8D5CE;
 
+  box-shadow: -1px 1px 5px #A29597,  5px -5px 5px #F3E0C2 inset;
+  cursor: pointer;
+
+  outline: none;
+  border-radius: 100%;
+  padding: 3px;
+  box-sizing: border-box;
+  margin: 0 5px;
+  transform: rotate(0.01deg);
+  transition: all linear 0.1s;
+  &:hover,
+  &:active {
+    background: #F3E0C2;
+
+    img {
+
+    }
+  }
+  img {
+    width: 100%;
+    opacity: .7;
+    height: 100%;
+  }
+}
 
 #dashboard-map {
   z-index: 5600;
@@ -639,7 +681,7 @@ label {
         box-sizing: border-box;
         overflow-x: hidden;
         overflow-y: hidden;
-        padding: 15px 5px;
+        padding: 10px 15px;
         margin-bottom: 0;
         padding-top: 0;
         border-left: 2px solid transparent;

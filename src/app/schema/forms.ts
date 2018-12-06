@@ -122,6 +122,29 @@ export const FormsSchema: FormInterface[] = [
     ]
   },
   {
+    name: "serviceType-form",
+    entityName: "serviceType",
+    parts: [
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "name",
+        inputs: {
+          label: "نام دسته‌بندی خدمات"
+        }
+      },
+      {
+        templateName: "price"
+      },
+      {
+        templateName: "serviceTiming",
+        propertyName: "timing",
+        inputs :{
+          display: 'inline'
+        }
+      }
+    ]
+  },
+  {
     name: "fax-form",
     entityName: "fax",
     parts: [

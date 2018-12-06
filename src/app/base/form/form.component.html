@@ -35,8 +35,12 @@
     </mat-progress-bar>
 
     <mat-card-content *ngIf="mode == 'form'">
-      {{model._id}}
-      <!-- <textarea class="logbox">{{model | json}}</textarea> -->
+
+
+<!--
+     <div class="en text-left">{{model._id || 'new entry'}} </div>
+
+      <textarea class="logbox">{{model | json}}</textarea> -->
 
       <ng-container *ngTemplateOutlet="form"></ng-container>
 
@@ -46,13 +50,13 @@
     </mat-card-content>
 
     <mat-card-actions>
-      <button mat-raised-button color="secondary" (click)="save()">
+      <button (click)="save()" class="sp-button-icon">
         <img *ngIf="saveButtonIcon" [src]="'/assets/icons/'+saveButtonIcon +'.svg'" />
+        <!-- {{saveButtonText}} -->
+      </button>
 
-        {{saveButtonText}}</button>
-      <button mat-button type="reset" class="pull-left" (click)="reset()">
+      <button class="pull-left sp-button-icon"  (click)="reset()">
         <img [src]="'/assets/icons/refresh.svg'" />
-
       </button>
 
       <div class="clearfix"></div>
