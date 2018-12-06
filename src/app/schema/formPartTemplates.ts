@@ -7,9 +7,10 @@ export const formPartTemplates = {
     inputs: {
       display: "block",
       data: [
+        {value : 'none',label : 'ندارد'},
         { value: "periodic", label: "دوره‌های مشخص" },
         { value: "absolute", label: "زمان مشخص" },
-        { value: "relative", label: "زمان نسبی" }
+        { value: "relative", label: "مدت دار" }
       ],
       label: "زمان‌بندی انجام خدمت"
     }

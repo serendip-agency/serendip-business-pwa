@@ -61,22 +61,26 @@ export class FormPriceInputComponent implements OnInit {
   ];
   @Output() modelChange = new EventEmitter();
   @Input() label: string;
-  @Input() _model: any = { type: "toman", value: "" };
+  @Input() _model: any = { type: "toman", value: null };
 
   @Input()
   set model(value: any) {
     if (value) { this._model = value; }
     else {
-      this._model = { type: "toman", value: "" };
+      this._model = { type: "toman", value: null};
     }
   }
 
   get model(): any {
     return this._model;
   }
+
+
   ngOnInit() {
     if (this.model && this.model.type) {
       this.currencyOptions = this.currencies[this.model.type];
     }
+
+    this.modelChange.emit(this.model);
   }
 }

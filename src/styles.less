@@ -114,9 +114,9 @@ button.sp-button-icon {
   width: 34px;
   height: 34px;
   border: none;
-  background: #D8D5CE;
+  background: #d8d5ce;
 
-  box-shadow: -1px 1px 5px #A29597,  5px -5px 5px #F3E0C2 inset;
+  box-shadow: -1px 1px 5px #a29597, 5px -5px 5px #f3e0c2 inset;
   cursor: pointer;
 
   outline: none;
@@ -126,17 +126,29 @@ button.sp-button-icon {
   margin: 0 5px;
   transform: rotate(0.01deg);
   transition: all linear 0.1s;
+  overflow: hidden;
+  position: relative;
+
+  &:after {
+    width: 100%;
+    height: 100%;
+    content: " ";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: transparent;
+  }
   &:hover,
   &:active {
-    background: #F3E0C2;
+    background: #f3e0c2;
 
     img {
-
     }
   }
   img {
     width: 100%;
-    opacity: .7;
+    opacity: 0.7;
     height: 100%;
   }
 }
@@ -702,6 +714,8 @@ label {
       }
       .mat-card-header {
         padding: 10px;
+        padding-top:20px;
+        padding-bottom: 0;
       }
       .mat-card-actions {
         box-sizing: border-box;
@@ -836,17 +850,21 @@ div.timepicker {
 }
 
 .logbox {
-  background: #444;
-  color: chartreuse;
+  background: #D8D5CE;
+  color: #453E5D;
+  border:none;
   direction: ltr;
   padding: 5px;
   box-sizing: border-box;
   font-size: 11px;
-  font-family: "Roboto" !important;
+  font-family: monospace !important;
   text-align: left;
-  margin: 0 auto; // display: none;
+  margin: 15px auto; // display: none;
   width: 100%;
   min-height: 100px; // display: none;
+  resize: none;
+
+  height:120px;
 }
 
 #start {

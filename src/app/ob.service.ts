@@ -33,14 +33,20 @@ export class ListenParams<T> {
 })
 export class ObService {
   private eventEmitter: EventEmitter = new EventEmitter();
-  public listen<T>(channel: string): Observable<T> {
-    return new Observable<T>(obServer => {
-      this.eventEmitter.on(channel, (model: T) => {
-        obServer.next(model);
+  public listen<T>(
+    channel: string
+  ): Observable<{ eventType: "create" | "delete" | "update"; model: T }> {
+    return new Observable(obServer => {
+      this.eventEmitter.on(channel, (eventType, model: T) => {
+        obServer.next({ eventType, model });
       });
     });
   }
-  public publish<T>(channel: string, model: T) {
-    this.eventEmitter.emit(channel, model);
+  public publish<T>(
+    channel: string,
+    eventType: "create" | "delete" | "update",
+    model: T
+  ) {
+    this.eventEmitter.emit(channel, eventType, model);
   }
 }

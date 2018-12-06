@@ -79,6 +79,8 @@ export class ReportComponent implements OnInit {
   _mode: "report" | "data" = "data";
   reportStore: Idb;
   page: any[] = [];
+
+  obServiceActive = true;
   reports: { label: string; value: string }[];
   set mode(value: "report" | "data") {
     this._mode = value;
@@ -148,7 +150,8 @@ export class ReportComponent implements OnInit {
       return;
     }
 
-    let eventData: { field: ReportFieldInterface; index: number } = event.data;
+    const eventData: { field: ReportFieldInterface; index: number } =
+      event.data;
 
     if (!eventData.field) {
       return;
@@ -316,36 +319,9 @@ export class ReportComponent implements OnInit {
     this.resultLoading = false;
   }
 
-  async deleteOffline() {
-    this.resultLoading = true;
-
-    this.report.offline = false;
-
-    await this.reportStore.delete(this.report._id);
-    this.resultLoading = false;
-  }
-
-  async saveReport() {
-    this.resultLoading = true;
-
-    // TODO:
-
-    this.report.offline = true;
-
-    this.pageIndex = 0;
-
-    this.changePage(0);
-
-    this.resultLoading = false;
-
-    this.changeRef.detectChanges();
-
-    this.refreshReports();
-  }
-
   async refreshReports() {
-    let onlineReports = [];
-    let offlineReports = [];
+    const onlineReports = [];
+    const offlineReports = [];
 
     // try {
     //   onlineReports = await this.dataService.reports(this.entityName);
@@ -407,8 +383,8 @@ export class ReportComponent implements OnInit {
     await this.changePage(0);
     this.checkLabel();
 
-    this.obService.listen(this.entityName).subscribe(model => {
-      if (!this.report.offline) {
+    this.obService.listen(this.entityName).subscribe(event => {
+      if (event.eventType != "delete" && this.obServiceActive) {
         this.refresh();
       }
     });
@@ -420,8 +396,13 @@ export class ReportComponent implements OnInit {
   }
 
   activeFieldQueries() {
-    if (!this.report || !this.report.fields || this.report.fields.length == 0)
+    if (
+      !this.report ||
+      !this.report.fields ||
+      this.report.fields.length === 0
+    ) {
       return [];
+    }
 
     return this.report.fields.filter(
       item =>
@@ -498,12 +479,28 @@ export class ReportComponent implements OnInit {
     });
   }
 
-  delete() {
+  async delete() {
+    this.obServiceActive = false;
+    await Promise.all(
+      this.selected.map(_id => {
+        return new Promise(async (resolve, reject) => {
+          try {
+            this.dataService.delete(this.report.entityName, _id);
+          } catch (error) {}
 
-    this.selected.forEach(_id => {
-      this.dataService.delete(this.entityName, _id);
+          resolve();
+        });
+      })
+    );
+
+    this.page = _.filter(this.page, item => {
+      return this.selected.indexOf(item._id) === -1;
     });
+
     this.selected = [];
+    this.obServiceActive = true;
+
+    this.changeRef.detectChanges();
   }
 
   getPage() {

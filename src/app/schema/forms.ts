@@ -138,11 +138,16 @@ export const FormsSchema: FormInterface[] = [
       {
         templateName: "serviceTiming",
         propertyName: "timing",
-        inputs :{
-          display: 'inline'
+        inputs: {
+          display: "inline"
         }
       }
-    ]
+    ],
+    defaultModel: {
+      name: "",
+      timing: "none",
+      price: { type: "toman", value: null }
+    }
   },
   {
     name: "fax-form",

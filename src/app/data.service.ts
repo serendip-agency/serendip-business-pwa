@@ -430,10 +430,10 @@ export class DataService {
       data[result._id] = result;
       await store.set(controller, data);
 
-      this.obService.publish(controller, result);
+      this.obService.publish(controller, "create", result);
     }
 
-    return model;
+    return result;
   }
 
   async update(
@@ -449,7 +449,7 @@ export class DataService {
       await store.set(controller, data);
     }
 
-    this.obService.publish(controller, model);
+    this.obService.publish(controller, "update", model);
 
     return this.request({
       method: "POST",
@@ -470,7 +470,7 @@ export class DataService {
       delete data[_id];
       await store.set(controller, data);
 
-      this.obService.publish(controller, model);
+      this.obService.publish(controller, "delete", model);
     }
 
     return this.request({

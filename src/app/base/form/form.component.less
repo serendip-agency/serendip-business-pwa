@@ -18,7 +18,43 @@
   }
 }
 
+.form-status {
+  background: #f2f2f2;
+  color: #555;
+  font-weight: 100;
+  font-size: 9px;
+  line-height: 14px;
+  display: inline-block;
+  padding: 0 5px;
+   border-radius: 0 0 5px 5px ;
 
-.dynamic-form-part{
-  margin:15px 0;
+  .id {
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: monospace;
+  }
+}
+.dynamic-form-part {
+  margin: 0 0 15px 0;
+}
+
+
+.logbox{
+  display: none;
+}
+
+.widget{
+  position: relative;
+
+  .form-status{
+    position: absolute;
+    top:0;
+    left:10px;
+  }
+}
+.widget:hover{
+  .logbox{
+    display: block;
+  }
 }

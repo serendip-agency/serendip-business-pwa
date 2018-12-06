@@ -109,7 +109,7 @@
         <div *ngIf="page && page.length > 0" class="report-header">
           <div class="inner">
             <div class="select">
-              <mat-checkbox style="margin:0 auto!important;" (change)="allSelectChange($event)" [checked]="allSelected()"></mat-checkbox>
+              <mat-checkbox  (change)="allSelectChange($event)" [checked]="allSelected()"></mat-checkbox>
             </div>
             <div class="field-label" *ngFor="let field of  enabledReportFields()">
               <ndc-dynamic *ngIf="  field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , viewType : 'label' } )"
@@ -167,6 +167,8 @@
       <button class="sp-button-icon" (click)="new()">
         <img src="assets/icons/plus-add-3.svg" />
       </button>
+
+
       <button class="sp-button-icon" (click)="edit()" *ngIf="selected.length > 0">
 
         <!-- ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }} انتخاب‌شده -->
@@ -194,6 +196,9 @@
         </div>
       </div>
 
+      <button class="sp-button-icon pull-left" (click)="refresh()">
+        <img src="assets/icons/refresh.svg" />
+      </button>
 
       <div class="clearfix"></div>
     </mat-card-actions>

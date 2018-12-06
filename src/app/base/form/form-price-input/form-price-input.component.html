@@ -1,9 +1,11 @@
+
+{{model | json}}
 <div class="double-field" *ngIf="model">
 
   <div class="w-70">
 
     <mat-form-field>
-    <input matInput type="text" currencyMask  [options]="currencyOptions"  dir="ltr" class="en"  [placeholder]="label" [(ngModel)]="model.value" (change)=" modelChange.emit(model)" />
+    <input matInput type="text" currencyMask  [options]="currencyOptions"  dir="ltr" class="en"  [placeholder]="label" [(ngModel)]="model.value" (change)="modelChange.emit(model)" />
   </mat-form-field>
 
   </div>

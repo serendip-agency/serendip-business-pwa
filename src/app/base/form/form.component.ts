@@ -148,19 +148,17 @@ export class FormComponent implements OnInit {
   stateDb: Idb;
   async save() {
     if (!this.model._id) {
-      console.log("going to insert");
-      const insertedResponse = await this.dataService.insert(
+      const insertResult = await this.dataService.insert(
         this.entityName,
         this.model,
         this.entityName
       );
-      this.documentId = insertedResponse._id;
-      this.model = insertedResponse;
-
-      console.log(insertedResponse);
-
-      this.detectChange();
-      this.detectChange();
+      this.WidgetChange.emit({
+        inputs: {
+          model: insertResult,
+          documentId: insertResult._id
+        }
+      });
     } else {
       await this.dataService.update(
         this.entityName,
@@ -170,18 +168,38 @@ export class FormComponent implements OnInit {
     }
   }
 
-  reset() {
-    if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
-      this.model = this.defaultModel;
+  async reset() {
+    if (this.documentId) {
+      this.model = await this.dataService.details(
+        this.entityName,
+        this.documentId,
+        true
+      );
+
+      Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
+        console.log(dKey, typeof this.model[dKey]);
+        if (
+          typeof this.model[dKey] === "undefined" ||
+          (this.model[dKey].length && this.model[dKey].length === 0)
+        ) {
+          this.model[dKey] = this.formSchema.defaultModel[dKey];
+        }
+      });
     } else {
-      this.model = this.formSchema.defaultModel;
+      if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
+        this.model = _.clone(this.defaultModel);
+      } else {
+        this.model = _.clone(this.formSchema.defaultModel);
+      }
     }
 
     if (!this.model) {
       this.model = {};
     }
 
-    this.ref.detectChanges();
+    this.WidgetChange.emit({ inputs: { model: this.model } });
+
+    console.log("form model reset", this.model);
   }
 
   async detectChange() {
@@ -229,7 +247,6 @@ export class FormComponent implements OnInit {
     });
   }
   async ngOnInit() {
-    // this.ref.detach();
     this.loading = true;
 
     if (!this.formsSchema && !this.formSchema) {
@@ -240,26 +257,7 @@ export class FormComponent implements OnInit {
       this.formSchema = _.findWhere(this.formsSchema, { name: this.name });
     }
 
-    if (this.documentId) {
-      this.model = await this.dataService.details(
-        this.entityName,
-        this.documentId,
-        true
-      );
-
-      Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
-        console.log(dKey, typeof this.model[dKey]);
-        if (
-          typeof this.model[dKey] === "undefined" ||
-          (this.model[dKey].length && this.model[dKey].length === 0)
-        ) {
-          this.model[dKey] = this.formSchema.defaultModel[dKey];
-        }
-      });
-    }
-    if (!this.model) {
-      this.reset();
-    }
+    await this.reset();
 
     this.loading = false;
     this.ref.detectChanges();
@@ -270,7 +268,7 @@ export class FormComponent implements OnInit {
   }
 
   extendObj(obj1, obj2) {
-    return _.extend({}, obj1, obj2);
+    return _.extend(obj1, obj2);
   }
 
   dynamicPartModelChange(property, subProperty, subPropertyIndexInArray) {

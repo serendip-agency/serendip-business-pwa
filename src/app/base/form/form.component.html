@@ -28,7 +28,28 @@
       <div *ngIf="!minimal" class="action" [class.active]="mode == 'triggers'" (click)="mode = mode == 'triggers' ? 'form':'triggers'">
         <img [src]="'/assets/icons/' + 'complaints-customize-customer-voice-3'  +'.svg'" />
       </div>
+      <div class="form-status">
+        <span class="text" *ngIf="model._id">
+          ویرایش
+        </span>
 
+        <span class="text" *ngIf="model._oid">
+          ویرایش سند همگام‌نشده
+        </span>
+
+        <span class="text" *ngIf="!model._id">
+          ثبت سند جدید
+        </span>
+
+        <span class="id" *ngIf="model._id">
+          {{ model._id}}
+        </span>
+
+        <span class="id" *ngIf="model._oid">
+          {{ model._oid}}
+        </span>
+
+      </div>
     </mat-card-header>
 
     <mat-progress-bar *ngIf="loading" [color]="'primary'" mode="indeterminate">
@@ -37,10 +58,8 @@
     <mat-card-content *ngIf="mode == 'form'">
 
 
-<!--
-     <div class="en text-left">{{model._id || 'new entry'}} </div>
 
-      <textarea class="logbox">{{model | json}}</textarea> -->
+      <textarea class="logbox">{{model | json}}</textarea>
 
       <ng-container *ngTemplateOutlet="form"></ng-container>
 
@@ -55,7 +74,7 @@
         <!-- {{saveButtonText}} -->
       </button>
 
-      <button class="pull-left sp-button-icon"  (click)="reset()">
+      <button class="pull-left sp-button-icon" (click)="reset()">
         <img [src]="'/assets/icons/refresh.svg'" />
       </button>
 
