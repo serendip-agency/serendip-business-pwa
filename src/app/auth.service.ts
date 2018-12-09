@@ -30,26 +30,11 @@ export class AuthService {
 
   logout(): void {
 
-    swal({
-      title: "خارج می‌شوید؟",
-      text: "تمام اطلاعات ذخیره شده به صورت آفلاین، حذف خواهند شد.",
-      type: "warning",
-      showCancelButton: true,
 
-      preConfirm: () => {
-        return new Promise((resolve, reject) => {
-          swal.showLoading();
-          swal.getConfirmButton().innerText = "در حال خروج"
 
-          localStorage.clear();
-          window.location.reload();
 
-          setTimeout(() => {
-            resolve();
-          }, 1000);
-        });
-      }
-    });
+    localStorage.clear();
+    window.location.reload();
 
   }
 
@@ -161,7 +146,6 @@ export class AuthService {
       const newToken = await this.http
         .post<userToken>(this.apiUrl + "/api/auth/token", {
           mobile,
-          password,
           oneTimePassword,
           grant_type: "password"
         })

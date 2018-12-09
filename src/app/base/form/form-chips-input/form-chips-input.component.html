@@ -51,7 +51,7 @@
 
 </div>
 
-<mat-autocomplete #entityAuto="matAutocomplete" [autoActiveFirstOption]="true" (optionSelected)="selectEntity(  $event);selectType == 'multiple' ? entityAutoInput.value= '': ''">
+<mat-autocomplete #entityAuto="matAutocomplete" [autoActiveFirstOption]="true" (optionSelected)="selectEntity(  $event);">
 
   <mat-option *ngFor="let item of filteredEntities" [value]="item._id">
 

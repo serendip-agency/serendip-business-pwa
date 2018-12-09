@@ -76,8 +76,6 @@ export class DataService {
         if (!opts.model._business) {
           if (this.businessService.getActiveBusinessId()) {
             opts.model._business = this.businessService.getActiveBusinessId();
-          } else {
-            throw new Error("no business set");
           }
         }
 
@@ -131,6 +129,7 @@ export class DataService {
   ): Promise<A[]> {
     const res: any = await this.request({
       method: "POST",
+      timeout : 60000,
       path: `/api/entity/${controller}/zip`,
       model: {
         from: from,
@@ -303,7 +302,7 @@ export class DataService {
             take: take,
             query: query
           },
-          timeout: 1000,
+          timeout: 3000,
           retry: false
         });
       } catch (error) {
@@ -384,7 +383,7 @@ export class DataService {
     return this.request({
       method: "POST",
       path: `/api/entity/changes`,
-      timeout: 1000,
+      timeout : 60000,
       model: query
     });
   }
@@ -405,7 +404,7 @@ export class DataService {
     return this.request({
       method: "POST",
       path: `/api/entity/changes`,
-      timeout: 1000,
+      timeout: 60000,
       model: query
     });
   }

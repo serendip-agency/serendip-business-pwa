@@ -81,7 +81,6 @@ import { CalendarScheduleComponent } from './calendar/calendar-schedule/calendar
 import { CalendarYearComponent } from './calendar/calendar-year/calendar-year.component';
 import { CalendarComponent } from './calendar/calendar.component';
 import { ClubRatingViewComponent } from './crm/club-rating-view/club-rating-view.component';
-import { CompanyViewComponent } from './crm/company-view/company-view.component';
 import { ContactInputComponent } from './crm/contact-input/contact-input.component';
 import { ContactsViewComponent } from './crm/contacts-view/contacts-view.component';
 import { DashboardService } from './dashboard.service';
@@ -105,6 +104,7 @@ import { WeatherComponent } from './weather/weather.component';
 import { FormFileInputComponent } from './base/form/form-file-input/form-file-input.component';
 import { ListComponent } from './base/list/list.component';
 import { PriceViewComponent } from './base/report/price-view/price-view.component';
+import { PersianPipe } from './persian.pipe';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -127,7 +127,6 @@ export const dynamicComponents = [
 
   // views
 
-  CompanyViewComponent,
 
   // Form Parts
 
@@ -182,6 +181,7 @@ export const primaryComponents = [
   CalendarComponent,
   RpdPipe,
   Split3Pipe,
+  PersianPipe,
   CalendarYearComponent
 ];
 

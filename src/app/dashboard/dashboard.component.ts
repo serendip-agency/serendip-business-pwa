@@ -498,7 +498,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     }
   }
+  logout() {
+    swal({
+      title: "خارج می‌شوید؟",
+      text: "تمام اطلاعات ذخیره شده به صورت آفلاین، حذف خواهند شد.",
+      type: "warning",
+      showCancelButton: true,
 
+      preConfirm: () => {
+        return new Promise((resolve, reject) => {
+          swal.showLoading();
+          swal.getConfirmButton().innerText = "در حال خروج";
+
+          this.authService.logout();
+
+          setTimeout(() => {
+            resolve();
+          }, 1000);
+        });
+      }
+    });
+  }
   addContainer() {
     if (this.dashboardService.currentSection) {
       // JSON.parse(JSON.stringify(this.dashboardService.currentSection.tabs))

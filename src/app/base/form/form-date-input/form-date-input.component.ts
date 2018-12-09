@@ -95,7 +95,7 @@ export class FormDateInputComponent implements OnInit {
     return index;
   }
 
-  inputsChange($event) {
+  inputsChange($event?) {
     this.modelChange.emit(this.model);
     this.changeRef.detectChanges();
   }

@@ -1,18 +1,17 @@
-
-{{model | json}}
 <div class="double-field" *ngIf="model">
 
   <div class="w-70">
 
     <mat-form-field>
-    <input matInput type="text" currencyMask  [options]="currencyOptions"  dir="ltr" class="en"  [placeholder]="label" [(ngModel)]="model.value" (change)="modelChange.emit(model)" />
-  </mat-form-field>
+      <input matInput type="text" currencyMask [options]="currencyOptions" dir="ltr" class="en" [placeholder]="label"
+        [(ngModel)]="model.value" (change)="modelChange.emit(model)" />
+    </mat-form-field>
 
   </div>
 
 
   <div class="w-30">
-    <app-form-select-input [selectType]="'single'"  [label]="'ارز'" [data]="currencyLabels" [model]="model.type"
+    <app-form-select-input [selectType]="'single'" [label]="'ارز'" [data]="currencyLabels" [model]="model.type"
       (modelChange)="currencyOptions = currencies[$event] || {}; model.type =$event;modelChange.emit(model)"></app-form-select-input>
   </div>
 

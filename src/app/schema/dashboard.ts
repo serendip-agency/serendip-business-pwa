@@ -5,7 +5,40 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "dashboard",
     title: "داشبورد",
     icon: "dashboard-1",
-    tabs: []
+    tabs: [
+      {
+        title: "فرم اطلاعات اشخاص",
+        status: "default",
+        icon: "people-users-5",
+        widgets: [
+          {
+            component: "FormComponent",
+            inputs: {
+              name: "people-form",
+              entityName: "people",
+              entityLabel: "شخص",
+              entityIcon: "people-users-5"
+            }
+          }
+        ]
+      },
+      {
+        title: "فرم اطلاعات شرکت",
+        status: "default",
+        icon: "building-company-1",
+        widgets: [
+          {
+            component: "FormComponent",
+            inputs: {
+              name: "company-form",
+              entityName: "company",
+              entityLabel: "شرکت",
+              entityIcon: "building-company-1"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     name: "people",
@@ -14,6 +47,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: [
       {
         title: "فرم اطلاعات اشخاص",
+        status: "default",
         icon: "people-users-5",
         widgets: [
           {
@@ -29,6 +63,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       },
       {
         title: "گزارش اطلاعات اشخاص",
+        status: "default",
         icon: "plus-add-2",
         widgets: [
           {
@@ -53,6 +88,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: [
       {
         title: "فرم اطلاعات شرکت",
+        status: "default",
         icon: "building-company-1",
         widgets: [
           {
@@ -68,6 +104,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       },
       {
         title: "گزارش اطلاعات شرکت‌ها",
+        status: "default",
         icon: "building-corp",
         widgets: [
           {
@@ -108,6 +145,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       },
       {
         title: "گزارش اطلاعات خدمات",
+        status: "default",
         icon: "settings-2",
         widgets: [
           {
@@ -131,6 +169,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     icon: "complaints-customer-voice-2",
     tabs: [
       {
+        status: "default",
         title: "فرم اطلاعات شکایت",
         icon: "plus-add-2",
         widgets: [
@@ -146,6 +185,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
         ]
       },
       {
+        status: "default",
         title: "گزارش اطلاعات شکایات",
         icon: "complaints-customer-voice-2",
         widgets: [
@@ -177,6 +217,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: [
       {
         title: "فرم اطلاعات فروش",
+        status: "default",
         icon: "plus-add-2",
         widgets: [
           {
@@ -192,6 +233,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       },
       {
         title: "گزارش اطلاعات فروش",
+        status: "default",
         icon: "plus-add-2",
         widgets: [
           {
@@ -234,6 +276,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: [
       {
         title: "ارسال ایمیل",
+        status: "default",
         icon: "send",
         widgets: [
           {
@@ -253,6 +296,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       },
       {
         title: "صندوق ایمیل",
+        status: "default",
         icon: "email-reg",
         widgets: [
           {
@@ -277,6 +321,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: [
       {
         title: "ارسال پیامک",
+        status: "default",
         icon: "sms-bold-1",
         widgets: [
           {
@@ -296,6 +341,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       },
       {
         title: "صندوق پیامک",
+        status: "default",
         icon: "sms-bold-2",
         widgets: [
           {
@@ -320,6 +366,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: [
       {
         title: "ارسال فکس",
+        status: "default",
         icon: "send",
         widgets: [
           {
@@ -339,6 +386,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       },
       {
         title: "صندوق فکس",
+        status: "default",
         icon: "fax",
         widgets: [
           {
@@ -362,6 +410,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     icon: "support-1",
     tabs: [
       {
+        status: "default",
         title: "تیکت‌های پشتیبانی",
         icon: "service-customer-support-online-chat",
         widgets: [
@@ -380,6 +429,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
         ]
       },
       {
+        status: "default",
         title: "فاکتورهای پشتیبانی",
         icon: "sell-buy-1",
         widgets: [

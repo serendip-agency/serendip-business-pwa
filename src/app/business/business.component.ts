@@ -8,6 +8,7 @@ import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
 import { Subscription } from "rxjs";
 import { BusinessService } from "../business.service";
 import { environment } from "../../environments/environment";
+import { DataService } from "../data.service";
 
 @Component({
   selector: "app-business",
@@ -23,13 +24,15 @@ export class BusinessComponent implements OnInit, OnDestroy {
   list: any[] = [];
   token: userToken;
 
+  loading = false;
+
   constructor(
     private fb: FormBuilder,
     public authService: AuthService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     public businessService: BusinessService,
-    private httpClient: HttpClient
+    public dataService: DataService
   ) {}
 
   addMember(event: MatChipInputEvent): void {
@@ -62,35 +65,23 @@ export class BusinessComponent implements OnInit, OnDestroy {
     this.router.navigate(["/dashboard"]);
   }
   async saveBusiness() {
-    await this.httpClient
-      .post<any>(
-        environment.api + "/api/business/saveBusiness",
-        this.businessForm.value,
-        {
-          headers: {
-            Authorization: "Bearer " + this.token.access_token,
-            clientid: environment.clientId
-          }
-        }
-      )
-      .toPromise();
+    await this.dataService.request({
+      method: "POST",
+      model: this.businessForm.value,
+      path: "/api/business/saveBusiness",
+      retry: false
+    });
 
-    this.router.navigate(["/business", "choose"]);
+    this.router.navigate(["/business", "list"]);
   }
 
   async refresh() {
-    this.list = (await this.httpClient
-      .get(environment.api + "/api/business/list", {
-        headers: {
-          Authorization: "Bearer " + this.token.access_token,
-          clientid: environment.clientId
-        }
-      })
-      .toPromise()
-      .catch(e => {
-        // FIXME:
-        if (e.code == 401) localStorage.clear();
-      })) as any;
+    this.list = await this.dataService.request({
+      method: "get",
+      retry: false,
+      path: "/api/business/list"
+    });
+    console.log(this.list);
   }
 
   async handleParams() {
@@ -98,10 +89,18 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
     this.tab = this.activatedRoute.snapshot.params.tab || "list";
 
-    if (this.tab == "choose")
-      if (this.list.length == 1) {
-        localStorage.setItem("business", this.list[0]._id);
-      }
+    if (this.list.length == 0) {
+      this.tab == "new";
+    }
+
+    if (this.tab != "new" && this.tab != "list")
+      this.router.navigate(["/business", "list"]);
+
+    // if (this.tab === "choose") {
+    //   if (this.list.length === 1) {
+    //     localStorage.setItem("business", this.list[0]._id);
+    //   }
+    // }
   }
   ngOnDestroy() {
     this.routerSubscription.unsubscribe();
@@ -121,7 +120,9 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
     this.routerSubscription = this.routerSubscription = this.router.events.subscribe(
       (event: any) => {
-        if (event instanceof NavigationEnd) this.handleParams();
+        if (event instanceof NavigationEnd) {
+          this.handleParams();
+        }
       }
     );
   }

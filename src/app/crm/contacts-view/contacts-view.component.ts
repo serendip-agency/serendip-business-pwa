@@ -1,5 +1,4 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { ContactModel } from 'serendip-business-model';
 
 @Component({
   selector: 'app-contacts-view',
@@ -9,7 +8,7 @@ import { ContactModel } from 'serendip-business-model';
 export class ContactsViewComponent implements OnInit {
 
 
-  @Input() model: ContactModel[] = [];
+  @Input() model: any[] = [];
   @Input() label: string;
   @Input() viewType: string;
 
