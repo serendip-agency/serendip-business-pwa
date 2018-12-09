@@ -1,10 +1,20 @@
 <div id="space" [class.day]="day" *ngIf="!authService.loggedIn">
 
   <div class="moon" (mouseover)="day = true" (mouseout)="day = false">
-    <a href="https://serendip.agency" target="_blank"> <img *ngIf="!loading" class="logo" src='assets/graphics/brand/serendip-circle.svg' />
-    </a>
-    <div class="loading" *ngIf="loading">
-      <mat-spinner></mat-spinner>
+
+
+    <div class="logo-loader">
+
+      <div class="loader" [style.opacity]="loading ? '1' : '0'"></div>
+
+      <div class="logo">
+        <a href="https://serendip.agency" target="_blank">
+
+          <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="">
+        </a>
+
+      </div>
+
     </div>
 
     <div class="wizard">
@@ -14,8 +24,8 @@
         </div>
 
         <mat-form-field>
-          <input type="text" matInput dir="ltr" prefix="+98 " [showMaskTyped]="true" mask="(000) 000 0000"
-            [(ngModel)]="model.mobile" placeholder="مثال ۹۱۲۷۸۹۱۲۳۴" autofocus name="mobile" #mobile="ngModel" />
+          <input type="text" matInput dir="ltr" prefix="+98 " [showMaskTyped]="true" mask="(000) 000 0000" [(ngModel)]="model.mobile"
+            placeholder="مثال ۹۱۲۷۸۹۱۲۳۴" autofocus name="mobile" #mobile="ngModel" />
 
 
         </mat-form-field>
@@ -25,7 +35,7 @@
             #username="ngModel" placeholder="رمز عبور" />
         </mat-form-field> -->
 
-        <div class="submit">
+        <div class="submit" *ngIf="!loading">
           <button (click)="sendOneTimePassword()" mat-raised-button color="secondary">
             ادامه
           </button>
@@ -53,7 +63,7 @@
             #username="ngModel" placeholder="رمز عبور" />
         </mat-form-field> -->
 
-        <div class="submit">
+        <div class="submit" *ngIf="!loading">
           <button (click)="login()" mat-raised-button color="secondary">
             ادامه
           </button>

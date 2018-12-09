@@ -4,19 +4,98 @@
 <head>
   <meta charset="utf-8">
   <title>
-    CRM
+    داشبورد سرندیپ
   </title>
   <base href=".">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/png" href="assets/favicon.png">
-  <meta name="theme-color" content="#D2AE6D">
+  <meta name="theme-color" content="#e3e0db">
   <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="pwa-loader.css">
+  <style>
+    html,
+    body {
+      background: #e3e0db;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
 
+    }
+
+
+    div,
+    p,
+    input,
+    textarea,
+    label,
+    span,
+    a,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    ul,
+    li,
+    button {
+      font-family: iranyekan, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+  </style>
 </head>
 
 <body>
-  <app-root></app-root>
+  <app-root>
 
+    <div id="pwa-loader">
+
+      <div class="box">
+        <div class="logo-loader">
+          <div class="loader"></div>
+
+
+          <div class="logo">
+            <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="">
+          </div>
+
+        </div>
+
+        <div class="text">
+          در حال بارگذاری ...
+        </div>
+
+      </div>
+    </div>
+
+
+  </app-root>
+
+
+
+
+
+  <script>
+    (function () {
+
+
+      if (window.location.protocol === "http:")
+        if (window.location.hostname !== 'localhost') {
+
+          document.write('redirecting to secure protocol ...')
+
+          setTimeout(() => {
+            window.location = window.location.href.replace('http://', 'https://');
+          }, 2500);
+
+
+        }
+
+
+
+    })();
+
+  </script>
 
 </body>
 

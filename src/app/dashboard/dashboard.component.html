@@ -1,22 +1,24 @@
 <app-calendar></app-calendar>
 <app-weather></app-weather>
 <app-map [mapId]="'dashboard-map'"></app-map>
-<div class="dashboard-loader" *ngIf="!dashboardReady">
-
+<div id="pwa-loader" *ngIf="!dashboardReady">
 
   <div class="box">
 
-    <div class="logo">
-      <img src="/assets/graphics/brand/fav-icon-call-to-action-button-5.svg" />
-    </div>
-    <div class="spinner">
-      <mat-spinner></mat-spinner>
-    </div>
+    <div class="logo-loader">
 
+      <div class="loader"></div>
+
+      <div class="logo">
+        <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="">
+      </div>
+
+    </div>
     <div class="text">
       {{dashboardLoadingText}}
     </div>
   </div>
+
 
 </div>
 <div class="dashboard-wrapper" *ngIf="dashboardReady">

@@ -1,0 +1,243 @@
+@keyframes spaceBack {
+  0% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes astro {
+  0% {
+    transform: rotate(70deg) translate3d(0, 0, 0);
+  }
+  25% {
+    transform: rotate(70deg) translate3d(10px, 0, 0) scale(0.95);
+  }
+  50% {
+    transform: rotate(65deg) translate3d(10px, 10px, 0);
+  }
+  75% {
+    transform: rotate(70deg) translate3d(10px, 10px, 0) scale(0.97);
+  }
+  100% {
+    transform: rotate(65deg) translate3d(10px, 10px, 0);
+  }
+}
+#space {
+  background-repeat: repeat;
+  background-position: center bottom;
+  padding: 0;
+  box-sizing: border-box;
+  background: #7F6D70;
+  height: 100vh;
+  text-align: center;
+  transition: background ease 3s;
+  background: #3e3c5f;
+}
+#space:before {
+  background-size: 1200px;
+  background: url("/assets/graphics/background/star-back.svg");
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: " ";
+  z-index: 0;
+  transform: rotateY(180deg);
+  animation-name: spaceBack;
+  animation-delay: 0s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: 540s;
+  animation-fill-mode: both;
+}
+#space:after {
+  z-index: 1;
+  position: fixed;
+  bottom: 0;
+  left: -10px;
+  width: 180px;
+  height: 180px;
+  content: " ";
+  background: url("/assets/graphics/space/astro-small.svg") no-repeat;
+  transform: rotate(45deg);
+  animation-name: astro;
+  animation-delay: 0s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-duration: 30s;
+  animation-fill-mode: both;
+  transform-style: preserve-3d;
+}
+#space .loading {
+  background: url("/assets/graphics/brand/serendip-circle.svg") no-repeat;
+  background-position: center center;
+  background-size: 80px;
+  display: block;
+  max-width: 100px;
+  margin: 0 auto;
+}
+#space .loading circle {
+  stroke-width: 4px;
+}
+#space .loading mat-spinner {
+  margin: 0 auto;
+}
+#space .moon {
+  width: 600px;
+  height: 600px;
+  border-radius: 100%;
+  position: relative;
+  z-index: 10;
+  box-sizing: border-box;
+  margin: 0 auto 0 auto;
+  padding: 110px;
+  background: rgba(255, 255, 255, 0.7);
+  background: #fff url("/assets/graphics/space/planet.svg");
+  background-size: contain;
+  box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.1);
+  top: 50%;
+  transform: translateY(-50%);
+  vertical-align: middle;
+  display: inline-block;
+}
+#space .moon img.logo {
+  max-width: 80px;
+  display: block;
+  position: relative;
+  z-index: 2;
+  margin: 10px auto;
+}
+#space .moon .links {
+  margin: 30px 0 0 0;
+  padding: 0;
+}
+#space .moon .links li {
+  list-style: none;
+  margin-bottom: 5px;
+  font-weight: 100;
+}
+#space .moon .links a {
+  text-decoration: none;
+  font-weight: 100;
+  font-size: 13px;
+  color: #6c87c3;
+}
+#space .moon form {
+  border-radius: 5px;
+  padding: 30px 15px;
+  padding-bottom: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+#space .moon form input {
+  text-align: center;
+  font-size: 13px;
+}
+#space .moon form .title {
+  font-weight: 100;
+  margin-bottom: 10px;
+  font-size: 17px;
+}
+#space .moon form .submit {
+  text-align: left;
+}
+#space .moon form .submit button[type="submit"] {
+  width: 120px;
+}
+#space .moon form mat-form-field {
+  margin: 0 auto;
+  max-width: 160px;
+}
+#space .moon form .submit {
+  margin: 15px 0 0 0;
+  text-align: center;
+}
+#space .moon form .buttons {
+  margin: 15px 0 0 0;
+}
+#space .moon form .buttons button[type="submit"] {
+  float: left;
+}
+#space .moon form .buttons button[type="button"] {
+  float: right;
+}
+#space .moon form .buttons:after {
+  clear: both;
+  display: block;
+  content: " ";
+}
+#space .moon form .validation {
+  color: red;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 100;
+}
+@media (max-height: 640px) {
+  #space:after {
+    display: none;
+  }
+}
+@media (max-width: 768px) and (max-height: 1024px) {
+  #space {
+    padding: 0;
+    box-sizing: border-box;
+  }
+  #space .moon {
+    margin: 0;
+    transform: none;
+    top: 0;
+    width: 100%;
+    border-radius: 0 0 0 100%;
+    padding: 15px 0 0 0;
+    background-image: none;
+  }
+  #space .moon img.logo,
+  #space .moon .loading {
+    margin: 0 15px;
+  }
+  #space .moon img.logo {
+    margin: 10px 25px;
+  }
+  #space .moon form {
+    max-width: 360px;
+  }
+}
+@media (max-width: 440px) {
+  #space {
+    padding: 0;
+    box-sizing: border-box;
+  }
+  #space:after {
+    transform: rotate(0);
+  }
+  #space .moon {
+    width: 100%;
+    border-radius: 0;
+    padding: 15px 0;
+    background-image: none;
+    height: auto;
+  }
+  #space .moon img.logo {
+    margin: 10px auto;
+  }
+  #space .moon .loading {
+    margin: 0 auto;
+  }
+  #space .moon form {
+    max-width: 380px;
+    margin: 0 auto;
+  }
+}

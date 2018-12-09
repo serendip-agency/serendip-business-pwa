@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist",
+            "outputPath": "../serendip-business-api/files/public",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -22,7 +22,8 @@
               "src/assets",
               "src/icons",
               "src/manifest.json",
-              "src/schema"
+              "src/schema",
+              "src/pwa-loader.css"
             ],
             "styles": [
               "src/styles.less",
