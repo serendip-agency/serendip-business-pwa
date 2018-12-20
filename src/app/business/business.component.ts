@@ -9,6 +9,7 @@ import { Subscription } from "rxjs";
 import { BusinessService } from "../business.service";
 import { environment } from "../../environments/environment";
 import { DataService } from "../data.service";
+import { DashboardService } from "../dashboard.service";
 
 @Component({
   selector: "app-business",
@@ -17,14 +18,16 @@ import { DataService } from "../data.service";
 })
 export class BusinessComponent implements OnInit, OnDestroy {
   tab = "new";
-  businessForm: FormGroup;
+
+  model = { title: "" };
   routerSubscription: Subscription;
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   list: any[] = [];
   token: userToken;
-
-  loading = false;
+  businessesToSelect = [];
+  currentBusiness = null;
+  loading = true;
 
   constructor(
     private fb: FormBuilder,
@@ -32,42 +35,19 @@ export class BusinessComponent implements OnInit, OnDestroy {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     public businessService: BusinessService,
+    public dashboardService: DashboardService,
     public dataService: DataService
   ) {}
 
-  addMember(event: MatChipInputEvent): void {
-    const input = event.input;
-    const value = event.value;
-
-    // Add our fruit
-    if ((value || "").trim()) {
-      const items = this.businessForm.get("members").value;
-      items.push(value as any);
-    }
-
-    // Reset the input value
-    if (input) {
-      input.value = "";
-    }
-  }
-
-  removeMember(item): void {
-    const items = this.businessForm.get("members").value;
-
-    const index = items.indexOf(item);
-    if (index >= 0) {
-      items.splice(index, 1);
-    }
-  }
-
-  choose(item) {
-    localStorage.setItem("business", item._id);
+  choose(id) {
+    localStorage.setItem("business", id);
     this.router.navigate(["/dashboard"]);
   }
+
   async saveBusiness() {
     await this.dataService.request({
       method: "POST",
-      model: this.businessForm.value,
+      model: this.model,
       path: "/api/business/saveBusiness",
       retry: false
     });
@@ -75,26 +55,38 @@ export class BusinessComponent implements OnInit, OnDestroy {
     this.router.navigate(["/business", "list"]);
   }
 
-  async refresh() {
-    this.list = await this.dataService.request({
-      method: "get",
-      retry: false,
-      path: "/api/business/list"
+  sleep() {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, 1000);
     });
-    console.log(this.list);
   }
+  async refresh() {
+    if ((this.tab == "new" && this.list.length == 0) || this.tab == "list") {
+      this.list = await this.dataService.request({
+        method: "get",
+        retry: false,
+        path: "/api/business/list"
+      });
+    }
 
+    // await this.sleep();
+    this.businessesToSelect = this.list.map(item => {
+      return { label: item.title, value: item._id };
+    });
+  }
   async handleParams() {
-    await this.refresh();
+    this.loading = true;
 
     this.tab = this.activatedRoute.snapshot.params.tab || "list";
 
-    if (this.list.length == 0) {
-      this.tab == "new";
-    }
+    await this.refresh();
+    this.loading = false;
 
-    if (this.tab != "new" && this.tab != "list")
-      this.router.navigate(["/business", "list"]);
+    if (this.list.length === 0) {
+      this.tab = "new";
+    }
 
     // if (this.tab === "choose") {
     //   if (this.list.length === 1) {
@@ -106,17 +98,14 @@ export class BusinessComponent implements OnInit, OnDestroy {
     this.routerSubscription.unsubscribe();
   }
   async ngOnInit() {
-    this.businessForm = this.fb.group({
-      title: ["", Validators.required],
-      members: this.fb.array([])
-    });
-
     try {
       this.token = await this.authService.token();
       await this.handleParams();
     } catch (error) {
       this.router.navigate(["/auth"]);
     }
+
+    this.loading = false;
 
     this.routerSubscription = this.routerSubscription = this.router.events.subscribe(
       (event: any) => {

@@ -4,15 +4,16 @@
 
 export const environment = {
   production: false,
-//  api: 'http://192.168.17.184:2040',
-  api: 'http://serendip.ir',
- //api: 'http://localhost',
-// api: 'http://localhost:2020',
+  //  api: 'http://192.168.17.184:2040',
+ // api: "http://serendip.ir",
+  //api: 'http://localhost',
+  // api: 'http://localhost:2020',
 
-//api: 'http://localhost:2040',
-  // api: 'http://192.168.2.222:2040',
-  clientId: '',
-  googleApiKey: 'AIzaSyB1ZFq-cxNYtuxRXSZgpMrdUfBe7Mr-X_g'
+   api: 'http://localhost:2040',
+
+  ws: "wss://serendip.ir",
+  clientId: "",
+  googleApiKey: "AIzaSyB1ZFq-cxNYtuxRXSZgpMrdUfBe7Mr-X_g"
 };
 
 /*

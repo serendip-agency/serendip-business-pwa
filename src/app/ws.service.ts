@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { AuthService } from "./auth.service";
+import { environment } from "src/environments/environment";
 
 @Injectable({
   providedIn: "root"
@@ -55,7 +56,7 @@ export class WsService {
       let wsConnection;
 
       try {
-        wsConnection = new WebSocket("ws://localhost:2040" + (path || ""));
+        wsConnection = new WebSocket(environment.ws + (path || ""));
       } catch (error) {
         reject(error);
       }

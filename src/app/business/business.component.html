@@ -1,48 +1,76 @@
 <div id="space">
   <div class="moon">
-    <a href="https://serendip.agency" target="_blank"> <img *ngIf="!loading" class="logo" src='assets/graphics/brand/serendip-circle.svg' />
-    </a>
-    <div class="loading" *ngIf="loading">
-      <mat-spinner></mat-spinner>
+
+    <div class="logo-loader">
+
+      <div class="loader" [style.opacity]="loading ? '1' : '0'"></div>
+
+      <div class="logo">
+        <a href="https://serendip.agency" target="_blank">
+
+          <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="">
+        </a>
+
+      </div>
+
     </div>
 
     <div class="wirzard">
-      <form *ngIf="tab == 'new'" (ngSubmit)="saveBusiness()" [formGroup]="businessForm" class="">
+      <form *ngIf="tab == 'new'" class="">
 
-        <!-- <mat-form-field>
-      <input matInput placeholder="نام" formControlName="firstName" />
-    </mat-form-field>
-
-    <mat-form-field>
-      <input matInput placeholder="نام‌خانوادگی" formControlName="lastName" />
-    </mat-form-field>
-
-
-    <mat-form-field>
-      <input matInput placeholder="آدرس ایمیل" dir="auto" formControlName="email" />
-    </mat-form-field> -->
 
         <div class="title">
-          نام کسب‌وکار خود را وارد کنید.
+          نام کسب‌وکار جدید را وارد کنید
         </div>
         <mat-form-field>
-          <input matInput placeholder="نام کسب و کار" formControlName="title" />
+          <input matInput placeholder="نام کسب و کار" name="title" [(ngModel)]="model.title" />
         </mat-form-field>
 
 
         <div class="submit">
-          <button color="secondary" type="submit" mat-raised-button>ذخیره</button>
+
+
+          <button (click)="saveBusiness()" [class.loading]="loading" mat-raised-button color="secondary">
+            <div class="spinner" *ngIf="loading">
+              <div class="rect1"></div>
+              <div class="rect2"></div>
+              <div class="rect3"></div>
+              <div class="rect4"></div>
+              <div class="rect5"></div>
+            </div>
+            <span *ngIf="!loading">
+              ادامه</span>
+          </button>
+
         </div>
 
         <ul class="links">
           <li>
-            <a target="_blank" href="https://serendip.agency">
-              وبسایت سرندیپ </a>
+            <a [routerLink]="['/business','list']" *ngIf="list.length > 0">
+              لیست کسب‌وکارها </a>
           </li>
         </ul>
 
       </form>
 
+      <form  *ngIf="tab == 'schema'" class="schema">
+
+
+        <ul class="schema-sections">
+          <li *ngFor="
+                let item of dashboardService.schema
+                  ? dashboardService.schema.dashboard
+                  : []
+              "
+            [class.active]=" dashboardService.currentSection.name == item.name">
+            <a [routerLink]="['/dashboard', item.name == 'dashboard' ? '' : item.name]">
+              <img [src]="'assets/icons/' + item.icon + '.svg'" />
+              <span> {{ item.title }} </span>
+            </a>
+          </li>
+        </ul>
+
+      </form>
 
       <form class="list" *ngIf="tab == 'list'">
 
@@ -50,17 +78,46 @@
         <div class="title">
           کسب‌وکار مورد نظر را انتخاب کنید.
         </div>
-        <button color="secondary" *ngFor="let item of list" type="button" (click)="choose(item)" mat-raised-button>
-       ورود به  کسب‌وکار {{item.title}}
 
-        </button>
 
-        <ul class="links">
-          <li>
-            <a target="_blank" href="https://serendip.agency">
-              وبسایت سرندیپ </a>
-          </li>
-        </ul>
+        <div class="id">
+
+          {{currentBusiness | uppercase}}
+        </div>
+
+
+        <div class="radio-list">
+          <app-form-radio-input (modelChange)="currentBusiness = $event" [data]="businessesToSelect" [display]="'block'"></app-form-radio-input>
+        </div>
+
+
+        <div class="submit">
+          <button (click)="choose(currentBusiness)" [class.loading]="loading" mat-raised-button color="secondary">
+            <div class="spinner" *ngIf="loading">
+              <div class="rect1"></div>
+              <div class="rect2"></div>
+              <div class="rect3"></div>
+              <div class="rect4"></div>
+              <div class="rect5"></div>
+            </div>
+
+            <span *ngIf="!loading">
+              ادامه</span>
+          </button>
+
+          <ul class="links">
+
+
+            <li>
+              <a [routerLink]="['/business','new']">
+                ثبت کسب‌و‌کار جدید </a>
+            </li>
+
+
+          </ul>
+
+        </div>
+
 
       </form>
 

@@ -8,7 +8,7 @@ import {
 } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../environments/environment";
-import swal from 'sweetalert2'
+import swal from "sweetalert2";
 export interface userToken {
   // Request
   grant_type?: string;
@@ -29,13 +29,8 @@ export class AuthService {
   profileValid = false;
 
   logout(): void {
-
-
-
-
     localStorage.clear();
     window.location.reload();
-
   }
 
   loggedIn = false;
@@ -96,12 +91,24 @@ export class AuthService {
       .toPromise();
   }
 
-  async sendOneTimePassword(mobile: string): Promise<any> {
-    return this.http
-      .post(this.apiUrl + "/api/auth/oneTimePassword", {
-        mobile: mobile
-      })
-      .toPromise();
+  async sendOneTimePassword(mobile: string, timeout?: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject({ status: 0 });
+      }, timeout || 3000);
+
+      this.http
+        .post(this.apiUrl + "/api/auth/oneTimePassword", {
+          mobile: mobile
+        })
+        .toPromise()
+        .then(res => {
+          resolve(res);
+        })
+        .catch(err => {
+          reject(err);
+        });
+    });
   }
 
   async sendResetPasswordToken(mobile: string): Promise<any> {
@@ -138,6 +145,7 @@ export class AuthService {
   }
 
   async login(
+    username: string,
     mobile: string,
     password: string,
     oneTimePassword: string
@@ -145,7 +153,9 @@ export class AuthService {
     try {
       const newToken = await this.http
         .post<userToken>(this.apiUrl + "/api/auth/token", {
+          username,
           mobile,
+          password,
           oneTimePassword,
           grant_type: "password"
         })
@@ -214,7 +224,8 @@ export class AuthGuard implements CanActivate {
         return false;
       }
 
-      if (!this.businessService.getActiveBusinessId()) {
+
+      if (typeof this.businessService.getActiveBusinessId() == 'undefined') {
         // Navigate to the login page with extras
         this.router.navigate(["/business"]);
         return false;

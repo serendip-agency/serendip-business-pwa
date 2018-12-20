@@ -3,9 +3,9 @@
 <mat-form-field>
   <input type="text" [name]="SelectId" matInput placeholder="موقعیت مکانی" dir="ltr" [(ngModel)]="model" />
   <div class="location" (click)="setGeo()" matSuffix>
-    <img src="/assets/icons/location-address-1.svg" />
+    <img src="assets/icons/location-address-1.svg" />
   </div>
   <div class="location" *ngIf="model" (click)="goGeo()" matSuffix>
-    <img src="/assets/icons/location-address-2.svg" />
+    <img src="assets/icons/location-address-2.svg" />
   </div>
 </mat-form-field>

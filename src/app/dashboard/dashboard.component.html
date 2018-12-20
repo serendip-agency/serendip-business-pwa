@@ -25,13 +25,13 @@
   <header id="header">
     <div class="inner">
       <div class="logo">
-        <img src="/assets/graphics/brand/logo-6.svg" />
+        <img src="assets/graphics/brand/logo-6.svg" />
       </div>
 
       <div class="quick" (click)="toggleDashboardDateTimeFormat()">
         <div class="datetime">
           <span class="time">
-            <img *ngFor="let w of dashboardTime.split('')" [src]="'/assets/digital-numbers/' + w + '.svg'" />
+            <img *ngFor="let w of dashboardTime.split('')" [src]="'assets/digital-numbers/' + w + '.svg'" />
           </span>
 
           <span class="date"> {{ rpd(dashboardDate) }} </span>
@@ -40,7 +40,7 @@
       <div class="title" *ngIf="dashboardService.currentSection">
         <div class="icon">
           <img [src]="
-              '/assets/icons/' + dashboardService.currentSection.icon + '.svg'
+              'assets/icons/' + dashboardService.currentSection.icon + '.svg'
             " />
         </div>
 
@@ -48,20 +48,20 @@
       </div>
 
       <div class="explorer-toggle" (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()" [class.active]="explorerVisible">
-        <img [src]="'/assets/icons/arrow-right-next-2.svg'" />
+        <img [src]="'assets/icons/arrow-right-next-2.svg'" />
       </div>
 
       <ng-container *ngTemplateOutlet="shortcuts"></ng-container>
 
       <!--
         <div class="container-add" (click)="addContainer()">
-          <img [src]='"/assets/icons/plus-add-2.svg"' />
+          <img [src]='"assets/icons/plus-add-2.svg"' />
         </div>
       -->
 
       <!--
         <div *ngFor="let item of [1,2,3,4,6,9]" class="grid-layout grid-layout-{{item}}" (click)="setGridLayout(item)">
-          <img [src]="'/assets/icons/tab-' + item + '.svg'" />
+          <img [src]="'assets/icons/tab-' + item + '.svg'" />
         </div>
       -->
 
@@ -71,7 +71,7 @@
       <nav>
         <a *ngFor="let item of dashboardService.getActiveTabs();trackBy:item?.title" [routerLink]="['/dashboard',dashboardService.currentSection.name,item.name]"
           routerLinkActive="active-link">
-          <img [src]="item.icon ? '/assets/icons/' + item.icon + '.svg' : '/assets/icons/tabs/' + item.name + '.svg'" />
+          <img [src]="item.icon ? 'assets/icons/' + item.icon + '.svg' : 'assets/icons/tabs/' + item.name + '.svg'" />
 
           <span>
             {{item.title}}
@@ -127,7 +127,7 @@
             <img [src]="'assets/icons/' + section.icon + '.svg'" />
             <span> {{ section.title }} </span>
 
-            <img class="toggle-ul" [class.active]="section.toggleUl" [src]="'/assets/icons/arrow-right-next-8.svg'" />
+            <img class="toggle-ul" [class.active]="section.toggleUl" [src]="'assets/icons/arrow-right-next-8.svg'" />
           </a>
 
           <ul [class.show]="section.toggleUl">
@@ -310,25 +310,25 @@
     <ul>
       <li>
         <a>
-          <img src="/assets/icon-crm-header/icons-crm-header-note-2.svg" alt="" />
+          <img src="assets/icon-crm-header/icons-crm-header-note-2.svg" alt="" />
         </a>
       </li>
 
       <li>
         <a (click)="toggleCalendar()" [class.active]="calendarService.calendarVisible">
-          <img src="/assets/icon-crm-header/icons-crm-header-calendar.svg" alt="" />
+          <img src="assets/icon-crm-header/icons-crm-header-calendar.svg" alt="" />
         </a>
       </li>
 
       <li>
         <a (click)="toggleMap()" [class.active]="gmapsService.dashboardMapVisible">
-          <img src="/assets/icon-crm-header/icons-crm-header-map.svg" alt="" />
+          <img src="assets/icon-crm-header/icons-crm-header-map.svg" alt="" />
         </a>
       </li>
 
       <li>
         <a (click)="toggleWeather()" [class.active]="weatherService.weatherVisible">
-          <img src="/assets/icon-crm-header/icons-crm-header-weather.svg" alt="" />
+          <img src="assets/icon-crm-header/icons-crm-header-weather.svg" alt="" />
         </a>
       </li>
     </ul>

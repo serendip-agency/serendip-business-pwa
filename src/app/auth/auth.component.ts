@@ -12,6 +12,13 @@ import { MatSnackBar } from "@angular/material";
   styleUrls: ["./auth.component.less"]
 })
 export class AuthComponent implements OnInit {
+  serversToSelect = [
+    { label: "سرور ایران", value: "ir" },
+    { label: "سرور ابری آلمان", value: "cloud" },
+    { label: "سرور باکس سرندیپ", value: "box" },
+    { label: "سرور توسعه محلی", value: "localhost" },
+    { label: "سرور توسعه کلاد", value: "dev" }
+  ];
   loading = false;
   tab = "login";
   model: any = {};
@@ -80,6 +87,7 @@ export class AuthComponent implements OnInit {
     try {
       this.loading = true;
       await this.authService.login(
+        this.model.username,
         this.model.mobile,
         this.model.password,
         this.model.oneTimePassword
@@ -113,6 +121,11 @@ export class AuthComponent implements OnInit {
     this.loading = false;
   }
 
+  removeMobileZero() {
+    if (typeof this.model.mobile != "undefined") {
+      this.model.mobile = this.model.mobile.replace(/^0/, "");
+    }
+  }
   async sleep(timeout) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -124,11 +137,25 @@ export class AuthComponent implements OnInit {
     if (this.model.mobile) {
       this.loading = true;
       //   await this.sleep(3000);
-      await this.authService.sendOneTimePassword(this.model.mobile);
-
+      try {
+        await this.authService.sendOneTimePassword(this.model.mobile);
+        this.router.navigate(["/auth", "code"]);
+      } catch (error) {
+        switch (error.status) {
+          case 0:
+            this.showMessage("ارتباط شما با سرور یا اینترنت قطع است.");
+            break;
+          case 400:
+            this.showMessage("فیلدهای ورودی را بازبینی کنید.");
+            break;
+          default:
+            this.showMessage(
+              "سرور قادر به پاسخگویی نیست لطفا دوباره تلاش کنید."
+            );
+            break;
+        }
+      }
       this.loading = false;
-
-      this.router.navigate(["/auth", "code"]);
     }
   }
 
@@ -261,16 +288,6 @@ export class AuthComponent implements OnInit {
   }
 
   showMessage(msg) {
-    // if (this.messageTimeout)
-    //   clearTimeout(this.messageTimeout);
-
-    // this.message = msg;
-
-    // this.messageTimeout = setTimeout(() => {
-    //   this.message = "";
-
-    // }, 10000);
-
     const snackRef = this.snackBar.open(msg, "بستن", {
       duration: 3000
     });
@@ -370,9 +387,9 @@ export class AuthComponent implements OnInit {
     if (this.authService.loggedIn) {
       this.router.navigate([localStorage.getItem("lastUrl") || "/dashboard"]);
     } else {
-      if (!this.model.mobile) {
-        this.router.navigate(["/auth", "login"]);
-      }
+      // if (!this.model.mobile) {
+      //   this.router.navigate(["/auth", "login"]);
+      // }
     }
   }
 }

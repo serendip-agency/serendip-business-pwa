@@ -2,7 +2,7 @@
   <mat-card [class.minimal]="minimal">
     <mat-card-header>
       <div mat-card-avatar>
-        <img [src]="'/assets/icons/' + entityIcon  +'.svg'" />
+        <img [src]="'assets/icons/' + entityIcon  +'.svg'" />
       </div>
       <mat-card-title *ngIf="!minimal">فرم اطلاعات
         {{entityLabel}}
@@ -26,7 +26,7 @@
       </mat-card-subtitle>
 
       <div *ngIf="!minimal" class="action" [class.active]="mode == 'triggers'" (click)="mode = mode == 'triggers' ? 'form':'triggers'">
-        <img [src]="'/assets/icons/' + 'complaints-customize-customer-voice-3'  +'.svg'" />
+        <img [src]="'assets/icons/' + 'complaints-customize-customer-voice-3'  +'.svg'" />
       </div>
       <div class="form-status">
         <span class="text" *ngIf="model._id">
@@ -70,12 +70,12 @@
 
     <mat-card-actions>
       <button (click)="save()" class="sp-button-icon">
-        <img *ngIf="saveButtonIcon" [src]="'/assets/icons/'+saveButtonIcon +'.svg'" />
+        <img *ngIf="saveButtonIcon" [src]="'assets/icons/'+saveButtonIcon +'.svg'" />
         <!-- {{saveButtonText}} -->
       </button>
 
       <button class="pull-left sp-button-icon" (click)="reset()">
-        <img [src]="'/assets/icons/refresh.svg'" />
+        <img [src]="'assets/icons/refresh.svg'" />
       </button>
 
       <div class="clearfix"></div>
@@ -115,10 +115,10 @@
             </div>
             <div class="action">
               <div class="plus" *ngIf="itemIndex == 0" (click)="model[part.propertyName].push('');detectChange();">
-                <img src="/assets/icons/plus-add-2.svg" />
+                <img src="assets/icons/plus-add-2.svg" />
               </div>
               <div class="minus" *ngIf="itemIndex != 0" (click)="model[part.propertyName].splice(itemIndex,1);detectChange();">
-                <img src="/assets/icons/recycle-bin-trash.svg" />
+                <img src="assets/icons/recycle-bin-trash.svg" />
               </div>
             </div>
           </div>

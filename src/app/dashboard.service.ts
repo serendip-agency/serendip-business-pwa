@@ -30,12 +30,7 @@ export class DashboardService {
 
   dashboardCommand = new EventEmitter();
 
-  constructor(
-    private businessService: BusinessService,
-    private httpClient: HttpClient,
-    private dataService: DataService,
-    private wsService: WsService
-  ) {
+  constructor() {
     this.setScreen();
     window.onresize = () => {
       this.setScreen();
@@ -52,33 +47,6 @@ export class DashboardService {
       dashboard: BusinessSchema.DashboardSchema,
       reports: BusinessSchema.ReportsSchema
     };
-
-    if (this.schema) {
-      return;
-    }
-
-    if (!this.schema && localStorage.getItem("schema")) {
-      return (this.schema = JSON.parse(localStorage.getItem("schema")));
-    }
-
-    this.schema = await this.dataService.request({
-      path:
-        "/api/schema?nocache=" +
-        Math.random()
-          .toString()
-          .split(".")[1],
-      method: "post",
-      model: {
-        _business: this.businessService.getActiveBusinessId()
-      }
-    });
-
-
-    // localStorage.setItem(
-    //   "schema",
-    //   JSON.stringify(model)
-    // );
-    // location.reload();
   }
   getActiveTabs() {
     if (!this.currentSection) {

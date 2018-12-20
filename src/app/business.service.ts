@@ -7,7 +7,10 @@ export class BusinessService {
   constructor() {}
 
   getActiveBusinessId() {
-    return localStorage.getItem("business");
-  }
+    var business = localStorage.getItem("business");
 
+    if (typeof business !== "undefined" && business !== "undefined") {
+      return business;
+    } else return undefined;
+  }
 }

@@ -12,7 +12,7 @@
         <div class="file-upload">
           <input type="file" accept="image/*" (change)="fileChanged($event,'profilePicture')" />
           <img [src]="userForm.get('profilePicture').value" *ngIf="userForm.get('profilePicture').value" alt="" />
-          <img src="/assets/icons/account-profile-user-4.svg" class="default" *ngIf="!userForm.get('profilePicture').value" alt="" />
+          <img src="assets/icons/account-profile-user-4.svg" class="default" *ngIf="!userForm.get('profilePicture').value" alt="" />
 
 
         </div>
