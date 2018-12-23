@@ -28,13 +28,12 @@ export interface userToken {
 export class AuthService {
   profileValid = false;
 
-  logout(): void {
-    localStorage.clear();
-    window.location.reload();
-  }
-
   loggedIn = false;
-  apiUrl: string;
+  _apiUrl: string;
+
+  get apiUrl() {
+    return localStorage.server;
+  }
   http: HttpClient;
   router: Router;
   profile: any = {};
@@ -43,9 +42,12 @@ export class AuthService {
     this.router = _router;
 
     this.http = _http;
-    this.apiUrl = environment.api;
-  }
 
+  }
+  logout(): void {
+    localStorage.clear();
+    window.location.reload();
+  }
   async token(): Promise<userToken> {
     let token: userToken = { groups: [] };
     if (localStorage.getItem("token")) {
@@ -151,6 +153,8 @@ export class AuthService {
     oneTimePassword: string
   ): Promise<userToken> {
     try {
+
+      console.log(this.apiUrl);
       const newToken = await this.http
         .post<userToken>(this.apiUrl + "/api/auth/token", {
           username,
@@ -171,7 +175,6 @@ export class AuthService {
 
       localStorage.setItem("token", JSON.stringify(newToken));
 
-      this.router.navigate(["/dashboard"]);
       return newToken;
     } catch (error) {
       console.error("newToken", error);
@@ -202,7 +205,7 @@ export class AuthGuard implements CanActivate {
     private authService: AuthService,
     private businessService: BusinessService,
     private router: Router
-  ) {}
+  ) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -211,25 +214,15 @@ export class AuthGuard implements CanActivate {
     const url: string = state.url;
 
     if (
-      this.authService.loggedIn &&
-      this.businessService.getActiveBusinessId()
+      this.authService.loggedIn
     ) {
+
       return true;
     } else {
-      if (!this.authService.loggedIn) {
-        // Store the attempted URL for redirecting
-        localStorage.setItem("lastUrl", url);
-        // Navigate to the login page with extras
-        this.router.navigate(["/auth", "login"]);
-        return false;
-      }
-
-
-      if (typeof this.businessService.getActiveBusinessId() == 'undefined') {
-        // Navigate to the login page with extras
-        this.router.navigate(["/business"]);
-        return false;
-      }
+      // Store the attempted URL for redirecting
+      localStorage.setItem("lastUrl", url);
+      // Navigate to the login page with extras
+      this.router.navigate(["/auth", "login"]);
     }
   }
 }

@@ -1,4 +1,4 @@
-<div id="space" [class.day]="day" *ngIf="!authService.loggedIn">
+<div id="space" [class.day]="day">
 
   <div class="moon" (mouseover)="day = true" (mouseout)="day = false">
 
@@ -59,11 +59,11 @@
             <a target="_blank" href="https://serendip.agency">
               وبسایت سرندیپ </a>
           </li>
-          <li [routerLink]="['/auth','user-pass']">
+          <!-- <li [routerLink]="['/auth','user-pass']">
             <a>
               ورود با شناسه و رمز
             </a>
-          </li>
+          </li> -->
           <li [routerLink]="['/auth','server']">
             <a>
               انتخاب سرور
@@ -114,11 +114,7 @@
             <a [routerLink]="['/auth','login']">
               اصلاح شماره </a>
           </li>
-          <li [routerLink]="['/auth','user-pass']">
-            <a>
-              ورود با شناسه و رمز
-            </a>
-          </li>
+        
 
         </ul>
 
@@ -198,7 +194,7 @@
               <a target="_blank" href="https://serendip.agency">
                 وبسایت سرندیپ </a>
             </li>
-            <li [routerLink]="['/auth','user-pass']">
+            <li [routerLink]="['/auth','login']">
               <a>
                 ورود با شماره موبایل
               </a>
@@ -220,9 +216,8 @@
           سرور مورد نظر را انتخاب کنید
         </div>
 
-
         <div class="radio-list">
-          <app-form-radio-input [model]="'ir'" [data]="serversToSelect" [display]="'block'"></app-form-radio-input>
+          <app-form-radio-input [model]="dataService.currentServer" (modelChange)="dataService.setCurrentServer($event)" [data]="serversToSelect" [display]="'block'"></app-form-radio-input>
         </div>
 
         <!-- <mat-form-field>
@@ -231,7 +226,7 @@
         </mat-form-field> -->
 
         <div class="submit">
-          <button [class.loading]="loading" (click)="login()" mat-raised-button color="secondary">
+          <button [class.loading]="loading" [routerLink]="['/auth','login']" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -241,19 +236,15 @@
             </div>
 
             <span *ngIf="!loading">
-              ادامه</span>
+              بازگشت</span>
           </button>
 
-          <ul class="links">
-
-
+          <!-- <ul class="links">
             <li>
               <a>
                 وارد کردن دستی آدرس سرور </a>
             </li>
-
-
-          </ul>
+          </ul> -->
 
         </div>
 

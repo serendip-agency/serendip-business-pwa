@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { AuthService } from "./auth.service";
 import { environment } from "src/environments/environment";
+import { DataService } from "./data.service";
 
 @Injectable({
   providedIn: "root"
 })
 export class WsService {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private dataService: DataService) { }
 
   async newSocket(
     path?,
@@ -52,11 +53,13 @@ export class WsService {
   }
 
   private initiateSocket(path?: string): Promise<WebSocket> {
+
+    console.log('request for websocket');
     return new Promise(async (resolve, reject) => {
       let wsConnection;
 
       try {
-        wsConnection = new WebSocket(environment.ws + (path || ""));
+        wsConnection = new WebSocket(this.dataService.currentServer.replace('http:', 'ws:').replace('https:', 'wss:') + (path || ""));
       } catch (error) {
         reject(error);
       }

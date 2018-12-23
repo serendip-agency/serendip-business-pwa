@@ -51,8 +51,8 @@ polyfill({
 
 // workaround to make scroll prevent work in iOS Safari > 10
 try {
-  window.addEventListener("touchmove", function() {}, { passive: false });
-} catch (e) {}
+  window.addEventListener("touchmove", function () { }, { passive: false });
+} catch (e) { }
 
 const dynamicComponents = {
   FormComponent,
@@ -639,13 +639,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     console.warn("syncing grid ...");
 
-    if (
-      !this.dashboardSocket ||
-      (this.dashboardSocket &&
-        this.dashboardSocket.readyState !== WebSocket.OPEN)
-    ) {
-      await this.newDashboardSocket();
-    }
+    // if (
+    //   !this.dashboardSocket ||
+    //   (this.dashboardSocket &&
+    //     this.dashboardSocket.readyState !== WebSocket.OPEN)
+    // ) {
+    //   await this.newDashboardSocket();
+    // }
 
     localStorage.setItem(
       "grid-" + this.dashboardService.currentSection.name,
@@ -656,15 +656,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.dashboardSocket.send(
-      JSON.stringify({
-        command: "sync_grid",
-        data: JSON.stringify({
-          section: this.dashboardService.currentSection.name,
-          grid: this.grid
-        })
-      })
-    );
+    // this.dashboardSocket.send(
+    //   JSON.stringify({
+    //     command: "sync_grid",
+    //     data: JSON.stringify({
+    //       section: this.dashboardService.currentSection.name,
+    //       grid: this.grid
+    //     })
+    //   })
+    // );
   }
 
   widgetChange(containerIndex: number, tabIndex: number, widgetIndex: number) {
@@ -679,7 +679,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         widgetIndex
       ] = _.extend(
         this.grid.containers[containerIndex].tabs[tabIndex].widgets[
-          widgetIndex
+        widgetIndex
         ],
         newWidget
       );
@@ -900,12 +900,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!Element.prototype.matches) {
       Element.prototype.matches =
         Element.prototype.webkitMatchesSelector ||
-        function(s) {
+        function (s) {
           let matches = (this.document || this.ownerDocument).querySelectorAll(
-              s
-            ),
+            s
+          ),
             i = matches.length;
-          while (--i >= 0 && matches.item(i) !== this) {}
+          while (--i >= 0 && matches.item(i) !== this) { }
           return i > -1;
         };
     }
@@ -1052,7 +1052,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       //   timeout: 100,
       //   retry: false
       // });
-    } catch (error) {}
+    } catch (error) { }
 
     console.log("remoteGrid", remoteGrid, "localGrid", localGrid);
     if (localGrid && localGrid.version) {
@@ -1144,6 +1144,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
   async ngOnInit() {
+
+    if (!this.businessService.getActiveBusinessId()) {
+      this.router.navigate(['/business']);
+      return;
+    }
     await this.sync();
 
     await this.wait(500);
@@ -1151,8 +1156,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardReady = true;
 
     this.newDashboardSocket()
-      .then(() => {})
-      .catch(() => {});
+      .then(() => { })
+      .catch(() => { });
 
     this.dashboardService.dashboardCommand.on("command", command => {
       this.dashboardCommand(0, 0, 0)(command);

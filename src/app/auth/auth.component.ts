@@ -13,30 +13,25 @@ import { MatSnackBar } from "@angular/material";
 })
 export class AuthComponent implements OnInit {
   serversToSelect = [
-    { label: "سرور ایران", value: "ir" },
-    { label: "سرور ابری آلمان", value: "cloud" },
+    { label: "سرور ایران", value: "https://serendip.ir" },
+    { label: "سرور ابری آلمان", value: "https://serendip.cloud" },
+    { label: "سرور ابری لیارا", value: "https://serendip.liara.run" },
     { label: "سرور باکس سرندیپ", value: "box" },
-    { label: "سرور توسعه محلی", value: "localhost" },
-    { label: "سرور توسعه کلاد", value: "dev" }
+    { label: "سرور توسعه کلاد", value: "http://dev.serendip.cloud:2040" },
+    { label: "سرور توسعه محلی", value: "http://localhost:2040" }
   ];
   loading = false;
   tab = "login";
   model: any = {};
 
   day = true;
-  authService: AuthService;
-  dataService: DataService;
   username: string;
   activationMessage: string;
 
   message: string;
   messageTimeout: any;
-  router: Router;
-  sanitizer: DomSanitizer;
   token: userToken;
-  ref: ChangeDetectorRef;
   profile: any;
-  activatedRoute: ActivatedRoute;
 
   states: any[] = [];
   cities: any[] = [];
@@ -45,7 +40,7 @@ export class AuthComponent implements OnInit {
     if (!input) {
       input = "";
     }
-    let map = [
+    const map = [
       "&#1632;",
       "&#1633;",
       "&#1634;",
@@ -59,28 +54,21 @@ export class AuthComponent implements OnInit {
     ];
 
     return this.sanitizer.bypassSecurityTrustHtml(
-      input.toString().replace(/\d(?=[^<>]*(<|$))/g, function($0) {
+      input.toString().replace(/\d(?=[^<>]*(<|$))/g, function ($0) {
         return map[$0];
       })
     );
   }
-  snackBar: MatSnackBar;
   constructor(
-    public _snackBar: MatSnackBar,
-    private _authService: AuthService,
-    _activatedRoute: ActivatedRoute,
-    _ref: ChangeDetectorRef,
-    _dataService: DataService,
-    private _router: Router,
-    _sanitizer: DomSanitizer
+    public snackBar: MatSnackBar,
+    public router: Router,
+    public authService: AuthService,
+    public activatedRoute: ActivatedRoute,
+    public ref: ChangeDetectorRef,
+    public dataService: DataService,
+    public sanitizer: DomSanitizer
   ) {
-    this.snackBar = _snackBar;
-    this.dataService = _dataService;
-    this.authService = _authService;
-    this.router = _router;
-    this.sanitizer = _sanitizer;
-    this.ref = _ref;
-    this.activatedRoute = _activatedRoute;
+
   }
 
   async login() {
@@ -94,10 +82,13 @@ export class AuthComponent implements OnInit {
       );
 
       if (localStorage.getItem("lastUrl")) {
-        let url = localStorage.getItem("lastUrl");
+        const url = localStorage.getItem("lastUrl");
 
         localStorage.removeItem("lastUrl");
         this.router.navigateByUrl(url);
+
+      } else {
+        this.router.navigateByUrl('/');
       }
     } catch (error) {
       console.log(error);
@@ -122,7 +113,7 @@ export class AuthComponent implements OnInit {
   }
 
   removeMobileZero() {
-    if (typeof this.model.mobile != "undefined") {
+    if (typeof this.model.mobile !== "undefined") {
       this.model.mobile = this.model.mobile.replace(/^0/, "");
     }
   }
@@ -316,6 +307,7 @@ export class AuthComponent implements OnInit {
 
     if (
       !model.username.startsWith("09") ||
+      // tslint:disable-next-line:radix
       parseInt(model.username).toString().length !== 10
     ) {
       return "شماره موبایل وارد شده معتبر نیست. مثال : 09120129887";
@@ -362,7 +354,7 @@ export class AuthComponent implements OnInit {
     }
   }
 
-  loginWithCode() {}
+  loginWithCode() { }
   logout() {
     this.authService.logout();
     this.router.navigate(["/auth", "login"]);
@@ -372,9 +364,12 @@ export class AuthComponent implements OnInit {
     this.tab = params.tab || "login";
   }
   async ngOnInit() {
+
+
     try {
-      const token = await this.authService.token();
-    } catch (error) {}
+      await this.authService.token();
+    } catch (error) { }
+
 
     this.handleParams(this.activatedRoute.snapshot.params);
 
@@ -383,13 +378,21 @@ export class AuthComponent implements OnInit {
         this.handleParams(this.activatedRoute.snapshot.params);
       }
     });
-
+    console.log(this.authService.loggedIn);
     if (this.authService.loggedIn) {
-      this.router.navigate([localStorage.getItem("lastUrl") || "/dashboard"]);
+      if (localStorage.getItem("lastUrl")) {
+        this.router.navigateByUrl(localStorage.getItem("lastUrl"));
+      }
+      else {
+        this.router.navigateByUrl('/');
+      }
+
+      console.log('has valid token no need to login');
+
     } else {
-      // if (!this.model.mobile) {
-      //   this.router.navigate(["/auth", "login"]);
-      // }
+      if (!this.model.mobile) {
+        this.router.navigate(["/auth", "login"]);
+      }
     }
   }
 }

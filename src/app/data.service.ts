@@ -6,7 +6,6 @@ import { ReportInterface, ReportModel } from "serendip-business-model";
 import * as utils from "serendip-utility";
 import * as _ from "underscore";
 
-import { environment } from "../environments/environment";
 import { AuthService } from "./auth.service";
 import { BusinessService } from "./business.service";
 import { IdbService } from "./idb.service";
@@ -30,20 +29,56 @@ export interface DataRequestInterface {
 @Injectable()
 export class DataService {
   // public collectionsTextIndex: DocumentIndex[];
-
-  collectionsTextIndexCache: { [key: string]: any } = {};
   public static collectionsSynced: string[] = [];
   public static collectionsToSync: string[] = ["company", "people"];
+  collectionsTextIndexCache: { [key: string]: any } = {};
+
   commonEnglishWordsIndexCache: any;
+
+  currentServer = 'localhost:2040';
+
+
   constructor(
     private obService: ObService,
+
+    private authService : AuthService,
     private http: HttpClient,
-    private authService: AuthService,
     private idbService: IdbService,
     private snackBar: MatSnackBar,
     private businessService: BusinessService
-  ) {}
+  ) {
 
+    this.setCurrentServer();
+
+  }
+
+
+  setCurrentServer(srv?) {
+    let lsServer = localStorage.server;
+
+    if (srv) {
+      lsServer = srv;
+    } else {
+      if (!lsServer || (lsServer.indexOf && lsServer.indexOf('http') !== 0)) {
+
+        switch (location.hostname) {
+          case 'serendip.ir':
+            lsServer = 'https://serendip.cloud';
+            break;
+          case 'localhost':
+            lsServer = 'http://localhost:2040';
+            break;
+          default:
+            lsServer = 'https://serendip.cloud'
+            break;
+        }
+
+      }
+    }
+
+    localStorage.setItem('server', lsServer);
+    this.currentServer = lsServer;
+  }
   private async requestError(opts: DataRequestInterface, error) {
     if (error.status === 401) {
       this.authService.logout();
@@ -56,7 +91,7 @@ export class DataService {
     return new Promise(async (resolve, reject) => {
       setTimeout(() => {
         reject("timeout");
-      }, opts.timeout || 10000);
+      }, opts.timeout || 30000);
 
       opts.method = opts.method.trim().toUpperCase();
 
@@ -67,7 +102,7 @@ export class DataService {
       }
 
       if (!opts.host) {
-        opts.host = environment.api;
+        opts.host = this.currentServer;
       }
 
       try {
@@ -82,7 +117,7 @@ export class DataService {
         const options: any = {
           headers: {
             Authorization: "Bearer " + token.access_token,
-            clientid: environment.clientId
+            // clientid: environment.clientId
           }
         };
 
@@ -106,12 +141,14 @@ export class DataService {
           result = await this.http
             .get(
               opts.host +
-                opts.path +
-                "?" +
-                utils.querystring.fromObject(opts.model),
+              opts.path +
+              "?" +
+              utils.querystring.fromObject(opts.model),
               options
             )
             .toPromise();
+
+            console.log(result);
         }
       } catch (error) {
         await this.requestError(opts, error);
@@ -129,7 +166,7 @@ export class DataService {
   ): Promise<A[]> {
     const res: any = await this.request({
       method: "POST",
-      timeout : 60000,
+      timeout: 60000,
       path: `/api/entity/${controller}/zip`,
       model: {
         from: from,
@@ -383,7 +420,7 @@ export class DataService {
     return this.request({
       method: "POST",
       path: `/api/entity/changes`,
-      timeout : 60000,
+      timeout: 60000,
       model: query
     });
   }
@@ -414,7 +451,7 @@ export class DataService {
     model: any,
     modelName?: string
   ): Promise<any> {
-    let result = await this.request({
+    const result = await this.request({
       method: "POST",
       path: `/api/entity/${controller}/insert`,
       timeout: 1000,
@@ -425,7 +462,7 @@ export class DataService {
 
     if (result._id) {
       const store = await this.idbService.dataIDB();
-      let data = await store.get(controller);
+      const data = await store.get(controller);
       data[result._id] = result;
       await store.set(controller, data);
 
@@ -441,7 +478,7 @@ export class DataService {
     modelName?: string
   ): Promise<any> {
     const store = await this.idbService.dataIDB();
-    let data = await store.get(controller);
+    const data = await store.get(controller);
 
     if (model._id) {
       data[model._id] = model;
@@ -465,7 +502,7 @@ export class DataService {
     if (_id) {
       const store = await this.idbService.dataIDB();
 
-      let data = await store.get(controller);
+      const data = await store.get(controller);
       delete data[_id];
       await store.set(controller, data);
 
@@ -529,11 +566,11 @@ export class DataService {
 
     console.warn(
       "changes count for " +
-        collection +
-        " is " +
-        changesCount +
-        " since " +
-        lastSync,
+      collection +
+      " is " +
+      changesCount +
+      " since " +
+      lastSync,
       changes
     );
 
@@ -668,7 +705,7 @@ export class DataService {
             ی: []
           };
 
-          Object.keys(alphabets).forEach(k => {});
+          Object.keys(alphabets).forEach(k => { });
 
           docs.forEach(doc => {
             docIndex.add(doc._id, doc);

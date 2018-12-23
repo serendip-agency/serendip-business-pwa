@@ -29,6 +29,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
   currentBusiness = null;
   loading = true;
 
+  lastListReq = 0;
   constructor(
     private fb: FormBuilder,
     public authService: AuthService,
@@ -37,7 +38,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
     public businessService: BusinessService,
     public dashboardService: DashboardService,
     public dataService: DataService
-  ) {}
+  ) { }
 
   choose(id) {
     localStorage.setItem("business", id);
@@ -64,17 +65,27 @@ export class BusinessComponent implements OnInit, OnDestroy {
   }
   async refresh() {
     if ((this.tab == "new" && this.list.length == 0) || this.tab == "list") {
-      this.list = await this.dataService.request({
-        method: "get",
-        retry: false,
-        path: "/api/business/list"
-      });
+
+      if (Date.now() - this.lastListReq > 500) {
+        this.lastListReq = Date.now();
+        this.list = await this.dataService.request({
+          method: "get",
+          retry: false,
+          path: "/api/business/list"
+        });
+
+        console.log(this.list);
+
+      }
     }
 
     // await this.sleep();
-    this.businessesToSelect = this.list.map(item => {
-      return { label: item.title, value: item._id };
-    });
+
+    if (this.list && this.list.map) {
+      this.businessesToSelect = this.list.map(item => {
+        return { label: item.title, value: item._id };
+      });
+    }
   }
   async handleParams() {
     this.loading = true;
@@ -83,6 +94,8 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
     await this.refresh();
     this.loading = false;
+
+    console.log(this.list);
 
     if (this.list.length === 0) {
       this.tab = "new";
@@ -95,7 +108,9 @@ export class BusinessComponent implements OnInit, OnDestroy {
     // }
   }
   ngOnDestroy() {
-    this.routerSubscription.unsubscribe();
+    if (this.routerSubscription && this.routerSubscription.unsubscribe) {
+      this.routerSubscription.unsubscribe();
+    }
   }
   async ngOnInit() {
     try {
