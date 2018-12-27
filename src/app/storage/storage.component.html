@@ -1,0 +1,36 @@
+<div id="storage">
+  <section class="browser">
+    <ul class="commands">
+      <li class="upload">
+        <input type="file" multiple id="upload-zone" />
+        <img src="assets/icons/upload.svg" alt="" />
+      </li>
+      <li><img src="assets/icons/download.svg" alt="" /></li>
+      <li><img src="assets/icons/link.svg" alt="" /></li>
+      <li><img src="assets/icons/share.svg" alt="" /></li>
+
+      <li class="trash">
+        <img src="assets/icons/recycle-bin-trash-full.svg" alt="" />
+      </li>
+    </ul>
+
+    <ul class="files to-upload">
+      <li *ngFor="let path of objectKeys(toUpload)">
+        <div
+          class="progress"
+          [style.width]="toUpload[path].percent + '%'"
+        ></div>
+
+        <div class="size">
+          {{ readableSize(toUpload[path].size / 1024 / 1024) }}
+        </div>
+
+        <input type="text" dir="auto" readonly [value]="toUpload[path].name" />
+
+        <img src="assets/icons/photo-image-picture-landscape.svg" alt="" />
+      </li>
+    </ul>
+  </section>
+
+  <section class="preview"></section>
+</div>

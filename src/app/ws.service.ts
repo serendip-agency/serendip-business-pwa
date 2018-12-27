@@ -17,6 +17,10 @@ export class WsService {
     if (!path) { path = "/"; }
     let tries = 1;
 
+    if (!maxRetry) {
+      maxRetry = 3000;
+    }
+
     return new Promise<WebSocket>((resolve, reject) => {
       this.initiateSocket(path)
         .then(ws => {
@@ -34,13 +38,13 @@ export class WsService {
                   clearInterval(tryTimer);
                   return resolve(ws);
                 })
-                .catch(ev => {
+                .catch(ev2 => {
                   console.log(
                     `newSocket at ${path} initiate ended with catch`,
                     ev
                   );
 
-                  if (maxRetry && tries === maxRetry) { reject(ev); } else {
+                  if (maxRetry && tries === maxRetry) { reject(ev2); } else {
                     console.log(
                       `Trying again for newSocket at ${path} in 3sec`
                     );
@@ -58,8 +62,11 @@ export class WsService {
     return new Promise(async (resolve, reject) => {
       let wsConnection;
 
+      const wsAddress = path.indexOf('://') !== -1 ?
+        path : this.dataService.currentServer.replace('http:', 'ws:').replace('https:', 'wss:') + (path || "");
+
       try {
-        wsConnection = new WebSocket(this.dataService.currentServer.replace('http:', 'ws:').replace('https:', 'wss:') + (path || ""));
+        wsConnection = new WebSocket(wsAddress);
       } catch (error) {
         reject(error);
       }
@@ -76,6 +83,7 @@ export class WsService {
 
         // FIXME: saw this method fired twice. find out why;
         // console.log("ws initiate onmessage", ev);
+        console.log(ev);
 
         if (ev.data === "authenticated") { resolve(wsConnection); }
       };
