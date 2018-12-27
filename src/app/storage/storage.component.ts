@@ -112,29 +112,58 @@ export class StorageComponent implements OnInit {
     return input.toFixed(2) + " MB";
   }
   async upload(path, base64: string) {
-    const partSize = 1024 * 1024 ;
+    const remoteParts: {
+      exists: { start: number; end: number }[];
+      missing: { start: number; end: number }[];
+    } = await this.dataService.request({
+      path: "/api/storage/parts",
+      method: "post",
+      model: {
+        type: "parts",
+        path: path
+      }
+    });
+
+    console.log(remoteParts);
+
+    const partSize = 1024 * 1024;
     const numberOfParts = Math.ceil(base64.length / partSize);
 
     await promise_serial(
       new Array(numberOfParts).fill(0, 0, numberOfParts).map((v, i) => {
         return () =>
           new Promise(async (resolve, reject) => {
-            console.log(`uploading ${i + 1} of ${numberOfParts}`);
+            if (
+              _.any(
+                remoteParts.exists,
+                (item: { start: number; end: number }) => {
+                  return (
+                    item.start <= i * partSize && item.end > (i + 1) * partSize
+                  );
+                }
+              )
+            ) {
+              console.log(`skipping ${i + 1} of ${numberOfParts}`);
+            } else {
+              console.log(`uploading ${i + 1} of ${numberOfParts}`);
 
-            await this.dataService.request({
-              method: "POST",
-              retry: false,
-              model: {
-                type: "upload",
-                data: base64.slice(i * partSize, (i + 1) * partSize),
-                start: i * partSize,
-                end:
-                  i === numberOfParts - 1 ? base64.length : (i + 1) * partSize,
-                total: base64.length,
-                path
-              } as StorageCommandInterface,
-              path: "/api/storage/upload"
-            });
+              await this.dataService.request({
+                method: "POST",
+                retry: false,
+                model: {
+                  type: "upload",
+                  data: base64.slice(i * partSize, (i + 1) * partSize),
+                  start: i * partSize,
+                  end:
+                    i === numberOfParts - 1
+                      ? base64.length
+                      : (i + 1) * partSize,
+                  total: base64.length,
+                  path
+                } as StorageCommandInterface,
+                path: "/api/storage/upload"
+              });
+            }
 
             if (this.toUpload[path]) {
               this.toUpload[path].percent = (
