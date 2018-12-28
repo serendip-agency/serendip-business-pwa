@@ -4,13 +4,17 @@ import { Injectable } from "@angular/core";
   providedIn: "root"
 })
 export class BusinessService {
+  business: any;
+
   constructor() {}
 
   getActiveBusinessId() {
-    var business = localStorage.getItem("business");
+    const business = localStorage.getItem("business");
 
     if (typeof business !== "undefined" && business !== "undefined") {
       return business;
-    } else return undefined;
+    } else {
+      return undefined;
+    }
   }
 }

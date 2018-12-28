@@ -1,7 +1,7 @@
 <app-calendar></app-calendar>
 <app-weather></app-weather>
 
-<app-storage></app-storage>
+<app-storage *ngIf="dashboardReady"></app-storage>
 <app-map [mapId]="'dashboard-map'"></app-map>
 <div id="pwa-loader" *ngIf="!dashboardReady">
 

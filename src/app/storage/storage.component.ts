@@ -1,9 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { WsService } from "../ws.service";
-import { AuthService } from "../auth.service";
+import { AuthService, userToken } from "../auth.service";
 import * as promise_serial from "promise-serial";
 import * as _ from "underscore";
 import { DataService } from "../data.service";
+import { BusinessService } from "../business.service";
+import { DashboardService } from "../dashboard.service";
 
 @Component({
   selector: "app-storage",
@@ -12,23 +14,100 @@ import { DataService } from "../data.service";
 })
 export class StorageComponent implements OnInit {
   socket: WebSocket;
+
   toUpload: any = {};
 
-  objectKeys(object) {
-    return Object.keys(object);
+  _folders: any = {};
+
+  get folders() {
+    return this._folders;
   }
+  set folders(obj) {
+    if (_.isEqual(obj, this._folders)) {
+      return;
+    }
+    let lsFolders: any = localStorage.getItem("folders");
+    if (lsFolders) {
+      lsFolders = _.extend(JSON.parse(lsFolders), obj);
+    } else {
+      lsFolders = obj;
+    }
+    console.log(lsFolders);
+    localStorage.setItem("folders", JSON.stringify(lsFolders));
+  }
+
+  selectedPaths = [];
+
+  showUserFolderList = true;
+  folderPath: string;
+
+  toDownload: any = {};
+
+  public token: userToken;
 
   constructor(
     public wsService: WsService,
     public authService: AuthService,
     public dataService: DataService,
+    public businessService: BusinessService,
+    public dashboardService: DashboardService,
     public changeRef: ChangeDetectorRef
   ) {}
 
+  getCrumbs() {
+    return this.folderPath
+      .replace("users/" + this.token.userId, "فایل‌های من")
+      .replace(
+        "businesses/" + this.businessService.getActiveBusinessId(),
+        "فایل‌ های " + this.businessService.business.title
+      )
+      .split("/");
+  }
+  objectKeys(object) {
+    return Object.keys(object);
+  }
+  goBack(path) {
+    return path.replace(path.split("/").reverse()[0] + "/", "");
+  }
+  async refreshFolder() {
+    if (!this.folderPath || this.folderPath === "/") {
+      this.folders["/"] = [
+        {
+          isFile: false,
+          isDirectory: true,
+          path: "users/" + this.token.userId,
+          basename: "فایل‌های من"
+        },
+        {
+          isFile: false,
+          isDirectory: true,
+          path: "businesses/" + this.businessService.getActiveBusinessId(),
+          basename: "فایل‌های " + this.businessService.business.title
+        }
+      ];
+      return;
+    }
+
+    this.folders[this.folderPath] = _.sortBy(
+      await this.dataService.request({
+        path: "/api/storage/list",
+        model: { path: this.folderPath + "/**" },
+        method: "POST"
+      }),
+      (item: any) => {
+        return item.isDirectory ? "000-" : "111-" + item.path;
+      }
+    );
+  }
   async ngOnInit() {
     this.socket = await this.wsService.newSocket("/storage", true);
     this.socket.send(new Date().toString());
-    const token = await this.authService.token();
+    this.token = await this.authService.token();
+
+    await this.refreshFolder();
+
+    console.log("folders", this.folders);
+
     this.socket.onclose = async closeEv => {
       console.log(closeEv);
       this.socket = null;
@@ -38,63 +117,62 @@ export class StorageComponent implements OnInit {
     this.socket.onmessage = msg => {
       console.log(msg);
     };
-
-    const uploadZone = document.getElementById("upload-zone");
-    uploadZone.onchange = async zoneChangeEv => {
-      const files: FileList = (zoneChangeEv.target as any).files;
-
-      const readPromises = new Array(files.length)
-        .fill(0, 0, files.length)
-        .map((v, i) => {
-          return () =>
-            new Promise((resolve, reject) => {
-              console.log("reading", i);
-              const fileReader = new FileReader();
-
-              fileReader.readAsDataURL(files.item(i));
-
-              fileReader.onprogress = ev => {
-                console.log((ev.loaded / ev.total) * 100);
-              };
-
-              fileReader.onerror = ev => {
-                reject(ev);
-              };
-
-              fileReader.onload = ev => {
-                const result: string = (ev.target as any).result;
-
-                // this.socket.send(JSON.stringify({
-                //   type: 'upload',
-                //   data: result,
-                //   path: 'users/' + token.userId + '/' + files.item(0).name
-                // } as StorageCommandInterface));
-
-                const path = "users/" + token.userId + "/" + files.item(i).name;
-
-                console.log(path);
-
-                this.toUpload[path] = {
-                  path,
-                  percent: 0,
-                  data: result,
-                  name: files.item(i).name,
-                  size: files.item(i).size,
-                  type: files.item(i).type
-                };
-
-                resolve();
-              };
-            });
-        });
-
-      await promise_serial(readPromises, { parallelize: 1 });
-      (uploadZone as any).value = "";
-
-      this.processQueue();
-    };
   }
+  async uploadZoneChange(zoneChangeEv) {
+    console.log(zoneChangeEv);
 
+    const files: FileList = (zoneChangeEv.target as any).files;
+
+    const readPromises = new Array(files.length)
+      .fill(0, 0, files.length)
+      .map((v, i) => {
+        return () =>
+          new Promise((resolve, reject) => {
+            console.log("reading", i);
+            const fileReader = new FileReader();
+
+            fileReader.readAsDataURL(files.item(i));
+
+            fileReader.onprogress = ev => {
+              console.log((ev.loaded / ev.total) * 100);
+            };
+
+            fileReader.onerror = ev => {
+              reject(ev);
+            };
+
+            fileReader.onload = ev => {
+              const result: string = (ev.target as any).result;
+
+              // this.socket.send(JSON.stringify({
+              //   type: 'upload',
+              //   data: result,
+              //   path: 'users/' + token.userId + '/' + files.item(0).name
+              // } as StorageCommandInterface));
+
+              const path = this.folderPath + "/" + files.item(i).name;
+
+              console.log(path);
+
+              this.toUpload[path] = {
+                path,
+                percent: 0,
+                data: result,
+                name: files.item(i).name,
+                size: files.item(i).size,
+                type: files.item(i).type
+              };
+
+              resolve();
+            };
+          });
+      });
+
+    await promise_serial(readPromises, { parallelize: 1 });
+    (zoneChangeEv.target as any).value = "";
+
+    this.processQueue();
+  }
   async processQueue() {
     if (Object.keys(this.toUpload).length > 0) {
       const item: any = this.toUpload[Object.keys(this.toUpload)[0]];
@@ -102,6 +180,7 @@ export class StorageComponent implements OnInit {
 
       delete this.toUpload[item.path];
 
+      await this.refreshFolder();
       setTimeout(() => {
         this.processQueue();
       }, 1000);
@@ -109,7 +188,10 @@ export class StorageComponent implements OnInit {
   }
 
   readableSize(input) {
-    return input.toFixed(2) + " MB";
+    if (!input) {
+      return;
+    }
+    return input.toFixed(2);
   }
   async upload(path, base64: string) {
     const remoteParts: {
@@ -126,7 +208,11 @@ export class StorageComponent implements OnInit {
 
     console.log(remoteParts);
 
-    const partSize = 1024 * 1024;
+    let partSize = 1024 * 1024;
+
+    if (this.toUpload[path].size < 1024 * 1024 * 10) {
+      partSize = 1024 * 500;
+    }
     const numberOfParts = Math.ceil(base64.length / partSize);
 
     await promise_serial(
@@ -174,18 +260,21 @@ export class StorageComponent implements OnInit {
 
             this.changeRef.detectChanges();
 
-            resolve();
+            setTimeout(() => {
+              resolve();
+            }, 100);
           });
       }),
       { parallelize: 1 }
     );
 
-    this.socket.send(
-      JSON.stringify({
-        type: "assemble",
+    this.dataService.request({
+      method: "POST",
+      path: "/api/storage/assemble",
+      model: {
         path
-      })
-    );
+      }
+    });
   }
 }
 

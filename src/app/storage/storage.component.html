@@ -1,20 +1,48 @@
-<div id="storage">
+<div id="storage" *ngIf="token">
   <section class="browser">
-    <ul class="commands">
+    <ul class="commands" *ngIf="folderPath">
       <li class="upload">
-        <input type="file" multiple id="upload-zone" />
-        <img src="assets/icons/upload.svg" alt="" />
+        <input
+          type="file"
+          multiple
+          (change)="uploadZoneChange($event)"
+          id="upload-zone"
+        />
+        <img src="assets/icons/upload.svg" title="آپلود" />
       </li>
-      <li><img src="assets/icons/download.svg" alt="" /></li>
-      <li><img src="assets/icons/link.svg" alt="" /></li>
-      <li><img src="assets/icons/share.svg" alt="" /></li>
 
-      <li class="trash">
-        <img src="assets/icons/recycle-bin-trash-full.svg" alt="" />
+      <li *ngIf="selectedPaths.length > 0">
+        <img src="assets/icons/download.svg" title="دانلود" />
+      </li>
+
+      <li *ngIf="selectedPaths.length == 0">
+        <img src="assets/icons/folder-archive.svg" title="فولدر جدید" />
+        <img src="assets/icons/plus-add-3.svg" class="add" />
+      </li>
+
+      <li *ngIf="selectedPaths.length > 0">
+        <img src="assets/icons/link.svg" title="ساخت لینک" />
+      </li>
+
+      <li *ngIf="selectedPaths.length > 0">
+        <img src="assets/icons/share.svg" title="اشتراک گذاری" />
+      </li>
+
+      <li *ngIf="selectedPaths.length > 0" class="trash">
+        <img src="assets/icons/recycle-bin-trash-full.svg" title="حدف" />
+      </li>
+
+      <li class="refresh" (click)="refreshFolder()">
+        <img src="assets/icons/refresh.svg" title="به‌روز رسانی" />
       </li>
     </ul>
 
-    <ul class="files to-upload">
+    <div class="title" *ngIf="objectKeys(toUpload).length > 0">
+      <img src="assets/icons/upload.svg" /> فایل‌های در حال آپلود ({{
+        objectKeys(toUpload).length || "0" | rpd
+      }})
+    </div>
+    <ul *ngIf="objectKeys(toUpload).length > 0" class="files to-upload">
       <li *ngFor="let path of objectKeys(toUpload)">
         <div
           class="progress"
@@ -22,12 +50,114 @@
         ></div>
 
         <div class="size">
-          {{ readableSize(toUpload[path].size / 1024 / 1024) }}
+          {{ readableSize(toUpload[path].size / 1024 / 1024) | rpd }}
+
+          <div class="en">MB</div>
         </div>
 
-        <input type="text" dir="auto" readonly [value]="toUpload[path].name" />
+        <input type="text" readonly [value]="toUpload[path].name" />
 
         <img src="assets/icons/photo-image-picture-landscape.svg" alt="" />
+      </li>
+    </ul>
+
+    <div *ngIf="objectKeys(toDownload).length > 0" class="title">
+      <img src="assets/icons/download.svg" /> فایل‌های در حال دانلود ({{
+        objectKeys(toDownload).length || "0" | rpd
+      }})
+    </div>
+    <ul *ngIf="objectKeys(toDownload).length > 0" class="files to-download">
+      <li *ngFor="let path of objectKeys(toDownload)" [title]="path">
+        <div
+          class="progress"
+          [style.width]="toDownload[path].percent + '%'"
+        ></div>
+        <img src="assets/icons/export-3.svg" alt="" />
+
+        <input type="text" readonly [value]="toDownload[path].name" />
+        <div class="size">
+          {{ readableSize(toDownload[path].size / 1024 / 1024) | rpd }}
+          <div class="en">MB</div>
+        </div>
+      </li>
+    </ul>
+
+    <div class="title" *ngIf="!folderPath">
+      <img src="assets/icons/folder-archive-open.svg" /> مدیریت فایل
+    </div>
+    <div
+      class="title"
+      *ngIf="folders[folderPath]"
+      (click)="showUserFolderList = !showUserFolderList"
+    >
+      <img src="assets/icons/folder-archive-open.svg" />
+      <ul class="crumbs">
+        <li *ngFor="let c of getCrumbs()">{{ c }}</li>
+      </ul>
+      ({{ folders[folderPath].length || "0" | rpd }})
+    </div>
+
+    <ul *ngIf="showUserFolderList" class="files to-download">
+      <li
+        *ngIf="folderPath"
+        (click)="folderPath = folderPath ? '' : cdDir(folderPath)"
+      >
+        <div class="img  no-hover">
+          <img class="icon" src="assets/icons/arrow-left-back-10.svg" />
+        </div>
+
+        <div class="size">&nbsp;</div>
+        <input type="text" name="" value="بازگشت" id="" />
+      </li>
+      <li
+        *ngFor="let item of folders[folderPath || '/']"
+        (click)="
+          item.isFile
+            ? selectedPaths.indexOf(item.path) == -1
+              ? selectedPaths.push(item.path)
+              : selectedPaths.splice(selectedPaths.indexOf(item.path), 1)
+            : (folderPath = folderPath
+                ? folderPath + '/' + item.basename
+                : item.path);
+          refreshFolder()
+        "
+        [title]="item.basename"
+      >
+        <div
+          *ngIf="item.uploadPercent"
+          class="progress"
+          [style.width]="item.uploadPercent + '%'"
+        ></div>
+
+        <div class="img" *ngIf="item.isDirectory">
+          <img src="assets/icons/folder-archive.svg" alt="" />
+        </div>
+        <div class="img" *ngIf="item.isFile">
+          <img
+            *ngIf="selectedPaths.indexOf(item.path) == -1"
+            class="icon"
+            src="assets/icons/photo-image-picture-landscape.svg"
+          />
+          <img
+            src="assets/icons/tab-1.svg"
+            *ngIf="selectedPaths.indexOf(item.path) == -1"
+            class="hover"
+          />
+          <img
+            src="assets/icons/check-9.svg"
+            *ngIf="selectedPaths.indexOf(item.path) != -1"
+            class="hover selected"
+          />
+        </div>
+
+        <input type="text" readonly [value]="item.basename" />
+
+        <div class="size">
+          <span *ngIf="item.sizeInMB">
+            {{ readableSize(item.sizeInMB) | rpd }}
+            <div class="en">MB</div>
+          </span>
+        </div>
       </li>
     </ul>
   </section>

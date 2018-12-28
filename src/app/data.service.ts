@@ -35,23 +35,18 @@ export class DataService {
 
   commonEnglishWordsIndexCache: any;
 
-  currentServer = 'localhost:2040';
-
+  currentServer = "localhost:2040";
 
   constructor(
     private obService: ObService,
-
-    private authService : AuthService,
+    private authService: AuthService,
     private http: HttpClient,
     private idbService: IdbService,
     private snackBar: MatSnackBar,
     private businessService: BusinessService
   ) {
-
     this.setCurrentServer();
-
   }
-
 
   setCurrentServer(srv?) {
     let lsServer = localStorage.server;
@@ -59,24 +54,22 @@ export class DataService {
     if (srv) {
       lsServer = srv;
     } else {
-      if (!lsServer || (lsServer.indexOf && lsServer.indexOf('http') !== 0)) {
-
+      if (!lsServer || (lsServer.indexOf && lsServer.indexOf("http") !== 0)) {
         switch (location.hostname) {
-          case 'serendip.ir':
-            lsServer = 'https://serendip.cloud';
+          case "serendip.ir":
+            lsServer = "https://serendip.cloud";
             break;
-          case 'localhost':
-            lsServer = 'http://localhost:2040';
+          case "localhost":
+            lsServer = "http://localhost:2040";
             break;
           default:
-            lsServer = 'https://serendip.cloud'
+            lsServer = "https://serendip.cloud";
             break;
         }
-
       }
     }
 
-    localStorage.setItem('server', lsServer);
+    localStorage.setItem("server", lsServer);
     this.currentServer = lsServer;
   }
   private async requestError(opts: DataRequestInterface, error) {
@@ -116,7 +109,7 @@ export class DataService {
 
         const options: any = {
           headers: {
-            Authorization: "Bearer " + token.access_token,
+            Authorization: "Bearer " + token.access_token
             // clientid: environment.clientId
           }
         };
@@ -141,14 +134,14 @@ export class DataService {
           result = await this.http
             .get(
               opts.host +
-              opts.path +
-              "?" +
-              utils.querystring.fromObject(opts.model),
+                opts.path +
+                "?" +
+                utils.querystring.fromObject(opts.model),
               options
             )
             .toPromise();
 
-            console.log(result);
+          console.log(result);
         }
       } catch (error) {
         await this.requestError(opts, error);
@@ -566,11 +559,11 @@ export class DataService {
 
     console.warn(
       "changes count for " +
-      collection +
-      " is " +
-      changesCount +
-      " since " +
-      lastSync,
+        collection +
+        " is " +
+        changesCount +
+        " since " +
+        lastSync,
       changes
     );
 
@@ -649,73 +642,75 @@ export class DataService {
           return this.pullCollection(collection);
         };
       }),
-      { parallelize: 16 }
+      { parallelize: 1 }
     );
 
     DataService.collectionsSynced = collections;
   }
 
   public async indexCollections() {
-    await Promise.all(
+    await promiseSerial(
       SearchSchema.map(schema => {
-        return new Promise(async (resolve, reject) => {
-          const docIndex = new DocumentIndex({
-            filter: str => {
-              return str;
-            }
+        return () =>
+          new Promise(async (resolve, reject) => {
+            const docIndex = new DocumentIndex({
+              filter: str => {
+                return str;
+              }
+            });
+            const docs: any[] = await this.list(schema.entityName, 0, 0, true);
+
+            schema.fields.forEach(field => {
+              docIndex.addField(field.name, field.opts);
+            });
+
+            const alphabets = {
+              ا: [],
+              ب: [],
+              پ: [],
+              ت: [],
+              ث: [],
+              ج: [],
+              چ: [],
+              ح: [],
+              خ: [],
+              د: [],
+              ذ: [],
+              ر: [],
+              ز: [],
+              ژ: [],
+              س: [],
+              ش: [],
+              ص: [],
+              ض: [],
+              ط: [],
+              ظ: [],
+              ع: [],
+              غ: [],
+              ف: [],
+              ق: [],
+              ک: [],
+              گ: [],
+              ل: [],
+              م: [],
+              ن: [],
+              و: [],
+              ه: [],
+              ی: []
+            };
+
+            Object.keys(alphabets).forEach(k => {});
+
+            docs.forEach(doc => {
+              docIndex.add(doc._id, doc);
+            });
+
+            this.collectionsTextIndexCache[schema.entityName] = docIndex;
+
+            resolve();
           });
-          const docs: any[] = await this.list(schema.entityName, 0, 0, true);
-
-          schema.fields.forEach(field => {
-            docIndex.addField(field.name, field.opts);
-          });
-
-          const alphabets = {
-            ا: [],
-            ب: [],
-            پ: [],
-            ت: [],
-            ث: [],
-            ج: [],
-            چ: [],
-            ح: [],
-            خ: [],
-            د: [],
-            ذ: [],
-            ر: [],
-            ز: [],
-            ژ: [],
-            س: [],
-            ش: [],
-            ص: [],
-            ض: [],
-            ط: [],
-            ظ: [],
-            ع: [],
-            غ: [],
-            ف: [],
-            ق: [],
-            ک: [],
-            گ: [],
-            ل: [],
-            م: [],
-            ن: [],
-            و: [],
-            ه: [],
-            ی: []
-          };
-
-          Object.keys(alphabets).forEach(k => { });
-
-          docs.forEach(doc => {
-            docIndex.add(doc._id, doc);
-          });
-
-          this.collectionsTextIndexCache[schema.entityName] = docIndex;
-
-          resolve();
-        });
-      })
+      }),
+      { parallelize: 1 }
     );
   }
 

@@ -51,8 +51,8 @@ polyfill({
 
 // workaround to make scroll prevent work in iOS Safari > 10
 try {
-  window.addEventListener("touchmove", function () { }, { passive: false });
-} catch (e) { }
+  window.addEventListener("touchmove", function() {}, { passive: false });
+} catch (e) {}
 
 const dynamicComponents = {
   FormComponent,
@@ -679,7 +679,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         widgetIndex
       ] = _.extend(
         this.grid.containers[containerIndex].tabs[tabIndex].widgets[
-        widgetIndex
+          widgetIndex
         ],
         newWidget
       );
@@ -900,12 +900,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!Element.prototype.matches) {
       Element.prototype.matches =
         Element.prototype.webkitMatchesSelector ||
-        function (s) {
+        function(s) {
           let matches = (this.document || this.ownerDocument).querySelectorAll(
-            s
-          ),
+              s
+            ),
             i = matches.length;
-          while (--i >= 0 && matches.item(i) !== this) { }
+          while (--i >= 0 && matches.item(i) !== this) {}
           return i > -1;
         };
     }
@@ -1052,7 +1052,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       //   timeout: 100,
       //   retry: false
       // });
-    } catch (error) { }
+    } catch (error) {}
 
     console.log("remoteGrid", remoteGrid, "localGrid", localGrid);
     if (localGrid && localGrid.version) {
@@ -1088,55 +1088,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     await this.initGrid(this.dashboardService.currentSection.tabs);
   }
-  memorySizeOf(obj) {
-    let bytes = 0;
 
-    function sizeOf(obj) {
-      if (obj !== null && obj !== undefined) {
-        switch (typeof obj) {
-          case "number":
-            bytes += 8;
-            break;
-          case "string":
-            bytes += obj.length * 2;
-            break;
-          case "boolean":
-            bytes += 4;
-            break;
-          case "object":
-            const objClass = Object.prototype.toString.call(obj).slice(8, -1);
-            if (objClass === "Object" || objClass === "Array") {
-              for (const key in obj) {
-                if (!obj.hasOwnProperty(key)) {
-                  continue;
-                }
-                sizeOf(obj[key]);
-              }
-            } else {
-              bytes += obj.toString().length * 2;
-            }
-            break;
-        }
-      }
-      return bytes;
-    }
-
-    function formatByteSize(bytes) {
-      if (bytes < 1024) {
-        return bytes + " bytes";
-      } else if (bytes < 1048576) {
-        return (bytes / 1024).toFixed(3) + " KiB";
-      } else if (bytes < 1073741824) {
-        return (bytes / 1048576).toFixed(3) + " MiB";
-      } else {
-        return (bytes / 1073741824).toFixed(3) + " GiB";
-      }
-    }
-
-    return formatByteSize(sizeOf(obj));
-  }
-
-  wait(timeout) {
+  wait(timeout: number) {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         resolve();
@@ -1144,20 +1097,31 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
   async ngOnInit() {
-
     if (!this.businessService.getActiveBusinessId()) {
-      this.router.navigate(['/business']);
+      this.router.navigate(["/business"]);
       return;
     }
     await this.sync();
+var myBusinesses =  await this.dataService.request({
+  method: "get",
+  retry: false,
+  path: "/api/business/list"
+});
+
+    this.businessService.business = _.findWhere(myBusinesses
+     ,
+      { _id: this.businessService.getActiveBusinessId() }
+    );
+
+    console.log(myBusinesses,this.businessService.business);
 
     await this.wait(500);
 
     this.dashboardReady = true;
 
     this.newDashboardSocket()
-      .then(() => { })
-      .catch(() => { });
+      .then(() => {})
+      .catch(() => {});
 
     this.dashboardService.dashboardCommand.on("command", command => {
       this.dashboardCommand(0, 0, 0)(command);
