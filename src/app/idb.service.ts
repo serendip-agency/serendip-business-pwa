@@ -8,7 +8,6 @@ export class Idb {
   constructor(_dbPromise, _store) {
     this.dbPromise = _dbPromise;
     this.store = _store;
-
   }
 
   async keys() {
@@ -134,6 +133,15 @@ export class Idb {
   }
 }
 
+export const IdbDatabases = ["SYNC", "CACHE", "DATA", "REPORT"];
+
+export const IdbDeleteDatabase = dbName => {
+  return idb.default.delete(dbName);
+};
+
+export const IdbDeleteAllDatabases = () => {
+  return Promise.all(IdbDatabases.map(dbName => IdbDeleteDatabase(dbName)));
+};
 @Injectable()
 export class IdbService {
   constructor() {

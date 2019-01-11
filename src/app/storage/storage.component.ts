@@ -3,6 +3,7 @@ import { WsService } from "../ws.service";
 import { AuthService, userToken } from "../auth.service";
 import * as promise_serial from "promise-serial";
 import * as _ from "underscore";
+import * as serendip_utility from "serendip-utility";
 import { DataService } from "../data.service";
 import { BusinessService } from "../business.service";
 import { DashboardService } from "../dashboard.service";
@@ -14,6 +15,8 @@ import { DashboardService } from "../dashboard.service";
 })
 export class StorageComponent implements OnInit {
   socket: WebSocket;
+
+  sUtils = serendip_utility;
 
   toUpload: any = {};
 
@@ -32,7 +35,7 @@ export class StorageComponent implements OnInit {
     } else {
       lsFolders = obj;
     }
-    console.log(lsFolders);
+
     localStorage.setItem("folders", JSON.stringify(lsFolders));
   }
 
@@ -66,8 +69,15 @@ export class StorageComponent implements OnInit {
   objectKeys(object) {
     return Object.keys(object);
   }
-  goBack(path) {
-    return path.replace(path.split("/").reverse()[0] + "/", "");
+  cdBackDir(path: string) {
+    if (
+      path.split("/")[1] === this.businessService.getActiveBusinessId() ||
+      path.split("/")[1] === this.token.userId
+    ) {
+      return "";
+    }
+
+    return path.replace("/" + path.split("/").reverse()[0], "");
   }
   async refreshFolder() {
     if (!this.folderPath || this.folderPath === "/") {
@@ -106,8 +116,6 @@ export class StorageComponent implements OnInit {
 
     await this.refreshFolder();
 
-    console.log("folders", this.folders);
-
     this.socket.onclose = async closeEv => {
       console.log(closeEv);
       this.socket = null;
@@ -128,7 +136,6 @@ export class StorageComponent implements OnInit {
       .map((v, i) => {
         return () =>
           new Promise((resolve, reject) => {
-            console.log("reading", i);
             const fileReader = new FileReader();
 
             fileReader.readAsDataURL(files.item(i));
@@ -151,8 +158,6 @@ export class StorageComponent implements OnInit {
               // } as StorageCommandInterface));
 
               const path = this.folderPath + "/" + files.item(i).name;
-
-              console.log(path);
 
               this.toUpload[path] = {
                 path,
@@ -205,8 +210,6 @@ export class StorageComponent implements OnInit {
         path: path
       }
     });
-
-    console.log(remoteParts);
 
     let partSize = 1024 * 1024;
 

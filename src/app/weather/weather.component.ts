@@ -60,7 +60,7 @@ export class WeatherComponent implements OnInit {
     });
   }
   async refresh() {
-  // await this.getWeather() ;
+    await this.getWeather();
   }
 
   async ngOnInit() {

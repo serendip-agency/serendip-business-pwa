@@ -154,7 +154,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let foundAnyThing = false;
     Object.keys(this.dataService.collectionsTextIndexCache).forEach(
       entityName => {
-        let result = this.dataService.collectionsTextIndexCache[
+        const result = this.dataService.collectionsTextIndexCache[
           entityName
         ].search(q);
         this.search.results[entityName] = result;
@@ -639,13 +639,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     console.warn("syncing grid ...");
 
-    // if (
-    //   !this.dashboardSocket ||
-    //   (this.dashboardSocket &&
-    //     this.dashboardSocket.readyState !== WebSocket.OPEN)
-    // ) {
-    //   await this.newDashboardSocket();
-    // }
+    if (
+      !this.dashboardSocket ||
+      (this.dashboardSocket &&
+        this.dashboardSocket.readyState !== WebSocket.OPEN)
+    ) {
+      await this.newDashboardSocket();
+    }
 
     localStorage.setItem(
       "grid-" + this.dashboardService.currentSection.name,
@@ -656,15 +656,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       })
     );
 
-    // this.dashboardSocket.send(
-    //   JSON.stringify({
-    //     command: "sync_grid",
-    //     data: JSON.stringify({
-    //       section: this.dashboardService.currentSection.name,
-    //       grid: this.grid
-    //     })
-    //   })
-    // );
+    this.dashboardSocket.send(
+      JSON.stringify({
+        command: "sync_grid",
+        data: JSON.stringify({
+          section: this.dashboardService.currentSection.name,
+          grid: this.grid
+        })
+      })
+    );
   }
 
   widgetChange(containerIndex: number, tabIndex: number, widgetIndex: number) {
@@ -683,6 +683,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         ],
         newWidget
       );
+
+      console.log(newWidget.inputs.model);
 
       this.syncGrid();
     };
@@ -720,6 +722,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.grid.containers[containerIndex].tabs[0].active = true;
       }
     }
+
+    this.syncGrid();
   }
 
   startButtonClick() {
@@ -890,8 +894,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
           resolve();
         })
         .catch(e => {
-          this.dashboardLoadingText = "همگام سازی با خطا مواجه شد.";
+          if (e.statusText === "business invalid") {
+            this.dashboardLoadingText =
+              "کسب و کار انتخاب شده نامعتبر می‌باشد. پس از ورود مجدد دوباره تلاش کنید.";
+          } else {
+            this.dashboardLoadingText = "همگام سازی با خطا مواجه شد.";
+          }
           console.error(e);
+
+          setTimeout(() => {
+           this.authService.logout();
+          }, 3000);
         });
     });
   }
@@ -1015,15 +1028,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
           "grid-" + msg.data.section,
           JSON.stringify(msg.data)
         );
-
+console.log(msg.data,this.grid.version);
         if (
           msg.data.section === this.dashboardService.currentSection.name &&
-          msg.data.version > this.grid.version
+          msg.data.grid.version > this.grid.version
         ) {
           console.log("should chang grid");
-          if (this.dashboardService.currentSection === msg.data.section) {
-            this.grid = msg.data.grid;
-          }
+          this.grid = msg.data.grid;
+       
           this.changeRef.markForCheck();
         }
       }
@@ -1102,18 +1114,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
     await this.sync();
-var myBusinesses =  await this.dataService.request({
-  method: "get",
-  retry: false,
-  path: "/api/business/list"
-});
+    const myBusinesses = await this.dataService.request({
+      method: "get",
+      retry: false,
+      path: "/api/business/list"
+    });
 
-    this.businessService.business = _.findWhere(myBusinesses
-     ,
-      { _id: this.businessService.getActiveBusinessId() }
-    );
+    this.businessService.business = _.findWhere(myBusinesses, {
+      _id: this.businessService.getActiveBusinessId()
+    });
 
-    console.log(myBusinesses,this.businessService.business);
+    console.log(myBusinesses, this.businessService.business);
 
     await this.wait(500);
 

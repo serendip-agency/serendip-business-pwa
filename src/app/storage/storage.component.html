@@ -81,13 +81,19 @@
         </div>
       </li>
     </ul>
+    <!-- 
+    <div
+      style="font-family: Arial, Helvetica, sans-serif;direction: ltr;text-align: left"
+    >
+      {{ folderPath }}
+    </div> -->
 
     <div class="title" *ngIf="!folderPath">
       <img src="assets/icons/folder-archive-open.svg" /> مدیریت فایل
     </div>
     <div
       class="title"
-      *ngIf="folders[folderPath]"
+      *ngIf="folderPath && folderPath != '/' && folders[folderPath]"
       (click)="showUserFolderList = !showUserFolderList"
     >
       <img src="assets/icons/folder-archive-open.svg" />
@@ -100,14 +106,14 @@
     <ul *ngIf="showUserFolderList" class="files to-download">
       <li
         *ngIf="folderPath"
-        (click)="folderPath = folderPath ? '' : cdDir(folderPath)"
+        (click)="folderPath = cdBackDir(folderPath); refreshFolder()"
       >
         <div class="img  no-hover">
           <img class="icon" src="assets/icons/arrow-left-back-10.svg" />
         </div>
 
         <div class="size">&nbsp;</div>
-        <input type="text" name="" value="بازگشت" id="" />
+        <input type="text" name="" readonly disabled value="بازگشت" id="" />
       </li>
       <li
         *ngFor="let item of folders[folderPath || '/']"
@@ -149,11 +155,20 @@
             class="hover selected"
           />
         </div>
-
-        <input type="text" readonly [value]="item.basename" />
+        <input
+          type="text"
+          readonly
+          [class]="
+            sUtils.text.persianKeyChar.indexOf(item.basename[0]) != -1
+              ? 'fa'
+              : 'en'
+          "
+          [value]="item.basename.replace('.' + item.ext,'')"
+        />
 
         <div class="size">
           <span *ngIf="item.sizeInMB">
+            <div class="en">{{ item.ext | uppercase }}</div>
             {{ readableSize(item.sizeInMB) | rpd }}
             <div class="en">MB</div>
           </span>

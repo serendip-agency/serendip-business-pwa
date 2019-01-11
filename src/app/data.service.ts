@@ -145,7 +145,7 @@ export class DataService {
         }
       } catch (error) {
         await this.requestError(opts, error);
-        throw error;
+        reject(error);
       }
 
       resolve(result);
@@ -414,7 +414,8 @@ export class DataService {
       method: "POST",
       path: `/api/entity/changes`,
       timeout: 60000,
-      model: query
+      model: query,
+      retry: false
     });
   }
 
@@ -456,8 +457,14 @@ export class DataService {
     if (result._id) {
       const store = await this.idbService.dataIDB();
       const data = await store.get(controller);
-      data[result._id] = result;
-      await store.set(controller, data);
+      if (!data) {
+        const toSet = {};
+        toSet[result._id] = result;
+        await store.set(controller, toSet);
+      } else {
+        data[result._id] = result;
+        await store.set(controller, data);
+      }
 
       this.obService.publish(controller, "create", result);
     }
@@ -474,8 +481,15 @@ export class DataService {
     const data = await store.get(controller);
 
     if (model._id) {
-      data[model._id] = model;
-      await store.set(controller, data);
+      if (!data) {
+        const toSet = {};
+        toSet[model._id] = model;
+        await store.set(controller, toSet);
+      } else {
+        data[model._id] = model;
+
+        await store.set(controller, data);
+      }
     }
 
     this.obService.publish(controller, "update", model);
@@ -496,9 +510,10 @@ export class DataService {
       const store = await this.idbService.dataIDB();
 
       const data = await store.get(controller);
-      delete data[_id];
-      await store.set(controller, data);
-
+      if (data) {
+        delete data[_id];
+        await store.set(controller, data);
+      }
       this.obService.publish(controller, "delete", model);
     }
 

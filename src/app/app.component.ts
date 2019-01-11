@@ -13,6 +13,7 @@ import { BusinessService } from "./business.service";
 import { Subscription } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import swal from "sweetalert2";
+import { environment } from "src/environments/environment";
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -65,7 +66,9 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.warn("running version of Serendip PWA is " + this.currentPwa);
+    console.warn(
+      "PWA version: " + this.currentPwa + " mode: " + environment.mode
+    );
 
     swal.setDefaults({
       buttonsStyling: false,

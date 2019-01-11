@@ -7,8 +7,7 @@ import {
   RouterStateSnapshot
 } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
-import { environment } from "../environments/environment";
-import swal from "sweetalert2";
+import { IdbDeleteAllDatabases } from "./idb.service";
 export interface userToken {
   // Request
   grant_type?: string;
@@ -42,10 +41,10 @@ export class AuthService {
     this.router = _router;
 
     this.http = _http;
-
   }
-  logout(): void {
+  async logout() {
     localStorage.clear();
+    await IdbDeleteAllDatabases();
     window.location.reload();
   }
   async token(): Promise<userToken> {
@@ -153,7 +152,6 @@ export class AuthService {
     oneTimePassword: string
   ): Promise<userToken> {
     try {
-
       console.log(this.apiUrl);
       const newToken = await this.http
         .post<userToken>(this.apiUrl + "/api/auth/token", {
@@ -205,7 +203,7 @@ export class AuthGuard implements CanActivate {
     private authService: AuthService,
     private businessService: BusinessService,
     private router: Router
-  ) { }
+  ) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -213,10 +211,7 @@ export class AuthGuard implements CanActivate {
   ): boolean {
     const url: string = state.url;
 
-    if (
-      this.authService.loggedIn
-    ) {
-
+    if (this.authService.loggedIn) {
       return true;
     } else {
       // Store the attempted URL for redirecting
