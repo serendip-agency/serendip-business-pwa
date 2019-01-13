@@ -32,7 +32,9 @@ export class FormRadioInputComponent implements OnInit {
   log(input) {
     console.log(input);
   }
-
+  typeof(obj) {
+    return typeof obj;
+  }
   constructor() {}
 
   ngOnInit() {

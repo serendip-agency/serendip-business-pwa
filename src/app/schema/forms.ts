@@ -1,4 +1,5 @@
 import { FormInterface } from "serendip-business-model";
+import { FormTextInputComponent } from "../base/form/form-text-input/form-text-input.component";
 
 export const FormsSchema: FormInterface[] = [
   {
@@ -45,7 +46,6 @@ export const FormsSchema: FormInterface[] = [
       }
     ]
   },
-
   {
     name: "report-field-date",
     parts: [
@@ -72,6 +72,210 @@ export const FormsSchema: FormInterface[] = [
         }
       }
     ]
+  },
+  {
+    name: "dashboard-form",
+    parts: [
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "name",
+        inputs: {
+          label: "نام داشبورد",
+          type: "single-line"
+        }
+      },
+      {
+        propertyName: "tabs",
+        propertyType: "array",
+        label: "تب‌های",
+        parts: [
+          {
+            propertyType: "string",
+            propertyName: "title",
+            componentName: "FormTextInputComponent",
+            inputs: {
+              label: "عنوان تب",
+              type: "single-line"
+            }
+          }
+        ]
+      }
+    ],
+    defaultModel: {}
+  },
+  {
+    name: "form-form",
+    parts: [
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "name",
+        inputs: {
+          label: "نام فرم",
+          type: "single-line"
+        }
+      },
+      {
+        propertyName: "parts",
+        propertyType: "array",
+        label: "اجزای فرم",
+        parts: [
+          {
+            propertyType: "string",
+            propertyName: "propertyName",
+            componentName: "FormTextInputComponent",
+            inputs: {
+              label: "نام فیلد",
+              type: "single-line"
+            }
+          },
+          {
+            propertyName: "propertyType",
+            componentName: "FormRadioInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "نوع فیلد",
+              data: [
+                {
+                  label: "فیلد ورودی",
+                  value: ""
+                },
+                {
+                  label: "آبجکت",
+                  value: "object"
+                },
+                {
+                  label: "آرایه",
+                  value: "array"
+                }
+              ]
+            }
+          },
+          {
+            if: "^form.propertyType == 'array'",
+            propertyType: "string",
+            propertyName: "label",
+            componentName: "FormTextInputComponent",
+            inputs: {
+              label: "لیبل آرایه",
+              type: "single-line"
+            }
+          },
+          {
+            if: "!^form.propertyType",
+            propertyName: "componentName",
+            componentName: "FormSelectInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "ابزار ورود اطلاعات",
+              selectType: "single",
+              data: [
+                {
+                  label: "فیلد متنی",
+                  value: "FormTextInputComponent"
+                },
+                {
+                  label: "رادیو لیست",
+                  value: "FormRadioInputComponent"
+                },
+                {
+                  label: "چک لیست",
+                  value: "FormCheckboxInputComponent"
+                },
+                {
+                  label: "منو کشویی",
+                  value: "FormSelectInputComponent"
+                },
+                {
+                  label: "انتخاب موقعیت جغرافیایی",
+                  value: "FormLatlngInputComponent"
+                }
+              ]
+            }
+          },
+          {
+            if: "^form.componentName == 'FormTextInputComponent'",
+            propertyType: "object",
+            propertyName: "inputs",
+            label: "تنظیمات فیلد متنی",
+            parts: [
+              {
+                propertyType: "string",
+                propertyName: "label",
+                componentName: "FormTextInputComponent",
+                inputs: {
+                  label: "لیبل فیلد",
+                  type: "single-line"
+                }
+              },
+              {
+                propertyName: "type",
+                componentName: "FormRadioInputComponent",
+                inputs: {
+                  data: [
+                    {
+                      label: "تک خط",
+                      value: "single-line"
+                    },
+                    {
+                      label: "چند خط",
+                      value: "multi-line"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            if: "^form.componentName == 'FormTextInputComponent'",
+            propertyType: "object",
+            propertyName: "inputs",
+            label: "تنظیمات فیلد متنی",
+            parts: [
+              {
+                propertyType: "string",
+                propertyName: "label",
+                componentName: "FormTextInputComponent",
+                inputs: {
+                  label: "لیبل فیلد",
+                  type: "single-line"
+                }
+              },
+              {
+                propertyName: "type",
+                componentName: "FormRadioInputComponent",
+                inputs: {
+                  data: [
+                    {
+                      label: "تک خط",
+                      value: "single-line"
+                    },
+                    {
+                      label: "چند خط",
+                      value: "multi-line"
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            if: "^form.propertyType === 'array'",
+            propertyName: "parts",
+            propertyType: "array",
+            label: "اجزای فیلد",
+            parts: "clone-top-parts"
+          }
+        ]
+      }
+    ],
+    defaultModel: {
+      parts: [
+        {
+          propertyType: "",
+          parts: [{}]
+        }
+      ]
+    }
   },
   {
     name: "sms-form",

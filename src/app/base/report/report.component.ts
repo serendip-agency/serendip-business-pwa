@@ -82,6 +82,7 @@ export class ReportComponent implements OnInit {
 
   obServiceActive = true;
   reports: { label: string; value: string }[];
+  formName: any;
   set mode(value: "report" | "data") {
     this._mode = value;
   }
@@ -374,6 +375,7 @@ export class ReportComponent implements OnInit {
   }
 
   async ngOnInit() {
+    console.log("init report component " + this.reportName);
     this.reportStore = await this.idbService.reportIDB();
 
     await this.dashboardService.setDefaultSchema();
@@ -443,7 +445,7 @@ export class ReportComponent implements OnInit {
           {
             component: "FormComponent",
             inputs: {
-              name: "" + this.entityName + "-form",
+              name: this.formName,
               entityName: this.entityName,
               entityLabel: this.entityLabelSingular,
               entityIcon: this.icon
@@ -466,7 +468,7 @@ export class ReportComponent implements OnInit {
             {
               component: "FormComponent",
               inputs: {
-                name: "" + this.entityName + "-form",
+                name: this.formName,
                 documentId: _id,
                 entityName: this.entityName,
                 entityLabel: this.entityLabelSingular,

@@ -1,8 +1,11 @@
-<label *ngIf="label">{{label}}</label>
+<label *ngIf="label">{{ label }}</label>
 <mat-radio-group [(ngModel)]="model">
-  <mat-radio-button [style.display]="display" *ngFor="let item of data || []; let b=index;trackBy:trackByFn" (change)="modelChange.emit($event.value)"
-    [value]="item.value || item">
-    {{item.label || item}}
+  <mat-radio-button
+    [style.display]="display"
+    *ngFor="let item of data || []; let b = index; trackBy: trackByFn"
+    (change)="modelChange.emit($event.value)"
+    [value]="typeof(item.value) == 'undefined' ? item : item.value"
+  >
+    {{ item.label || item }}
   </mat-radio-button>
-
 </mat-radio-group>

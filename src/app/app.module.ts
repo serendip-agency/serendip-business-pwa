@@ -107,6 +107,7 @@ import { PriceViewComponent } from './base/report/price-view/price-view.componen
 import { PersianPipe } from './persian.pipe';
 import { StorageComponent } from './storage/storage.component';
 import { StorageFilesComponent } from './storage/storage-files/storage-files.component';
+import { FormPartsComponent } from './base/form/form-parts/form-parts.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -188,7 +189,7 @@ export const primaryComponents = [
 ];
 
 @NgModule({
-  declarations: [...primaryComponents, ...dynamicComponents, ListComponent, StorageComponent, StorageFilesComponent],
+  declarations: [...primaryComponents, ...dynamicComponents, ListComponent, StorageComponent, StorageFilesComponent, FormPartsComponent],
   entryComponents: [],
   imports: [
     QuillModule,

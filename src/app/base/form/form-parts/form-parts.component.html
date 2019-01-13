@@ -1,0 +1,64 @@
+<div *ngFor="let part of filterParts(formSchema.parts)">
+  <div
+    *ngIf="part.propertyType != 'array' && part.propertyType != 'object'"
+    [class]="part.cssClass"
+  >
+    <ndc-dynamic
+      [ndcDynamicInputs]="
+        extendObj({ model: model[part.propertyName] }, part.inputs || {})
+      "
+      [ndcDynamicOutputs]="{
+        modelChange: dynamicPartModelChange(part.propertyName)
+      }"
+      [ndcDynamicComponent]="getDynamicPart(part.componentName)"
+    ></ndc-dynamic>
+  </div>
+  <div *ngIf="part.propertyType == 'array'">
+    <div class="array-label" *ngIf="part.label">{{ part.label }}</div>
+    <div *ngFor="let item of model[part.propertyName]; let itemIndex = index">
+      <div class="form-array-row">
+        <div class="item">
+          <app-form-parts
+            [formSchema]="
+              part.parts.toString() === 'clone-top-parts' ? formSchema : part
+            "
+            [model]="model[part.propertyName][itemIndex]"
+          >
+          </app-form-parts>
+        </div>
+        <div class="action">
+          <div
+            class="plus"
+            *ngIf="itemIndex == 0"
+            (click)="model[part.propertyName].push({}); detectChange()"
+          >
+            <img src="assets/icons/plus-add-2.svg" />
+          </div>
+          <div
+            class="minus"
+            *ngIf="itemIndex != 0"
+            (click)="
+              model[part.propertyName].splice(itemIndex, 1); detectChange()
+            "
+          >
+            <img src="assets/icons/recycle-bin-trash.svg" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="part.propertyType == 'object'">
+    <div class="form-object-row">
+      <div class="object-label" *ngIf="part.label">{{ part.label }}</div>
+
+      <app-form-parts
+        [formSchema]="
+          part.parts.toString() === 'clone-top-parts' ? formSchema : part
+        "
+        [model]="model[part.propertyName]"
+      >
+      </app-form-parts>
+    </div>
+  </div>
+</div>

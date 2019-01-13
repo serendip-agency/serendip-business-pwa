@@ -38,7 +38,6 @@ import {
 } from "serendip-business-model";
 import { FormDateRangeInputComponent } from "./form-date-range-input/form-date-range-input.component";
 import { FormFileInputComponent } from "./form-file-input/form-file-input.component";
-import { formPartTemplates } from "src/app/schema/formPartTemplates";
 
 @Component({
   selector: "app-form",
@@ -46,29 +45,6 @@ import { formPartTemplates } from "src/app/schema/formPartTemplates";
   styleUrls: ["./form.component.less"]
 })
 export class FormComponent implements OnInit {
-  private DynamicParts = {
-    FormTextInputComponent,
-    FormMultipleTextInputComponent,
-    FormPriceInputComponent,
-    FormMobileInputComponent,
-    FormTelephoneInputComponent,
-    FormCityInputComponent,
-    FormCountryInputComponent,
-    FormStateInputComponent,
-    FormLatlngInputComponent,
-    FormChipsInputComponent,
-    FormSelectInputComponent,
-    FormCheckboxInputComponent,
-    FormRadioInputComponent,
-    FormToggleInputComponent,
-    FormAutoCompleteInputComponent,
-    ContactInputComponent,
-    FormDateInputComponent,
-    FormRelativeDateInputComponent,
-    FormDateRangeInputComponent,
-    FormFileInputComponent
-  };
-
   constructor(
     public dataService: DataService,
     public httpClient: HttpClient,
@@ -86,7 +62,7 @@ export class FormComponent implements OnInit {
   _ = _;
 
   @Input() saveButtonText = "ثبت";
-  @Input() saveButtonIcon: string = "save-backup-1";
+  @Input() saveButtonIcon = "save-backup-1";
 
   @Input() title: string;
   @Input() minimal: boolean;
@@ -98,6 +74,8 @@ export class FormComponent implements OnInit {
   formSchema: FormInterface;
   @Input()
   formsSchema: FormInterface[];
+
+  @Input() formId: string;
 
   @Input()
   entityName: string;
@@ -169,6 +147,26 @@ export class FormComponent implements OnInit {
   }
 
   async reset() {
+    if (!this.formsSchema) {
+      this.formsSchema = this.dashboardService.schema.forms;
+    }
+
+    if (this.name) {
+      this.formSchema = _.findWhere(this.formsSchema, { name: this.name });
+    }
+    if (this.formId) {
+      this.formSchema = (await this.dataService.details(
+        "form",
+        this.formId
+      )) as any;
+    }
+
+    if (!this.entityName) {
+      if (this.formSchema && this.formSchema.entityName) {
+        this.entityName = this.formSchema.entityName;
+      }
+    }
+
     if (this.documentId) {
       this.model = await this.dataService.details(
         this.entityName,
@@ -202,11 +200,6 @@ export class FormComponent implements OnInit {
     console.log("form model reset", this.model);
   }
 
-  async detectChange() {
-    this.ref.detectChanges();
-
-    this.WidgetChange.emit({ inputs: { model: this.model } });
-  }
   trackByFn(index: any, item: any) {
     return index;
   }
@@ -214,84 +207,13 @@ export class FormComponent implements OnInit {
   findFormInSchema(formName): FormInterface {
     return _.findWhere(this.formsSchema, { name: formName });
   }
-  filterParts(parts: FormPartInterface[]) {
-    if (!parts) {
-      return [];
-    }
 
-    parts = parts.map(part => {
-      if (part.templateName && formPartTemplates[part.templateName]) {
-        part.inputs = _.extend(
-          formPartTemplates[part.templateName].inputs,
-          part.inputs
-        );
-        part = _.extend(formPartTemplates[part.templateName], part);
-      }
-      return part;
-    });
-
-    return parts.filter(part => {
-      if (part.if) {
-        let evalResult = false;
-
-        try {
-          // tslint:disable-next-line:no-eval
-          evalResult = eval(
-            part.if.replace(/\^form/g, "(" + JSON.stringify(this.model) + ")")
-          );
-        } catch (error) {}
-
-        return evalResult;
-      }
-      return true;
-    });
-  }
   async ngOnInit() {
     this.loading = true;
-
-    if (!this.formsSchema && !this.formSchema) {
-      this.formsSchema = this.dashboardService.schema.forms;
-    }
-
-    if (!this.formSchema) {
-      this.formSchema = _.findWhere(this.formsSchema, { name: this.name });
-    }
 
     await this.reset();
 
     this.loading = false;
     this.ref.detectChanges();
-  }
-
-  getDynamicPart(componentName) {
-    return this.DynamicParts[componentName];
-  }
-
-  extendObj(obj1, obj2) {
-    return _.extend(obj1, obj2);
-  }
-
-  dynamicPartModelChange(property, subProperty, subPropertyIndexInArray) {
-    return newValue => {
-      console.log("form property change", property, subProperty, newValue);
-
-      if (!subProperty) {
-        this.model[property] = newValue;
-      } else {
-        if (subProperty && typeof subPropertyIndexInArray === "undefined") {
-          if (!this.model[property]) {
-            this.model[property] = {};
-          }
-          this.model[property][subProperty] = newValue;
-        } else {
-          if (!this.model[property]) {
-            this.model[property] = [];
-          }
-
-          this.model[property][subPropertyIndexInArray][subProperty] = newValue;
-        }
-      }
-      this.detectChange();
-    };
   }
 }

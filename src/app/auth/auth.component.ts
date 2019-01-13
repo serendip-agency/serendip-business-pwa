@@ -54,7 +54,7 @@ export class AuthComponent implements OnInit {
     ];
 
     return this.sanitizer.bypassSecurityTrustHtml(
-      input.toString().replace(/\d(?=[^<>]*(<|$))/g, function ($0) {
+      input.toString().replace(/\d(?=[^<>]*(<|$))/g, function($0) {
         return map[$0];
       })
     );
@@ -67,11 +67,13 @@ export class AuthComponent implements OnInit {
     public ref: ChangeDetectorRef,
     public dataService: DataService,
     public sanitizer: DomSanitizer
-  ) {
+  ) {}
 
-  }
+  async login(mode?: string) {
+    if (mode === "user-pass") {
+      this.model.oneTimePassword = this.model.password;
+    }
 
-  async login() {
     try {
       this.loading = true;
       await this.authService.login(
@@ -86,9 +88,8 @@ export class AuthComponent implements OnInit {
 
         localStorage.removeItem("lastUrl");
         this.router.navigateByUrl(url);
-
       } else {
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl("/");
       }
     } catch (error) {
       console.log(error);
@@ -114,7 +115,7 @@ export class AuthComponent implements OnInit {
 
   removeMobileZero() {
     if (typeof this.model.mobile !== "undefined") {
-      this.model.mobile = this.model.mobile.replace(/^0/, "");
+      this.model.mobile = this.model.mobile.replace(/^0/, "").replace(/ /, "");
     }
   }
   async sleep(timeout) {
@@ -354,7 +355,7 @@ export class AuthComponent implements OnInit {
     }
   }
 
-  loginWithCode() { }
+  loginWithCode() {}
   logout() {
     this.authService.logout();
     this.router.navigate(["/auth", "login"]);
@@ -364,12 +365,9 @@ export class AuthComponent implements OnInit {
     this.tab = params.tab || "login";
   }
   async ngOnInit() {
-
-
     try {
       await this.authService.token();
-    } catch (error) { }
-
+    } catch (error) {}
 
     this.handleParams(this.activatedRoute.snapshot.params);
 
@@ -382,15 +380,13 @@ export class AuthComponent implements OnInit {
     if (this.authService.loggedIn) {
       if (localStorage.getItem("lastUrl")) {
         this.router.navigateByUrl(localStorage.getItem("lastUrl"));
-      }
-      else {
-        this.router.navigateByUrl('/');
+      } else {
+        this.router.navigateByUrl("/");
       }
 
-      console.log('has valid token no need to login');
-
+      console.log("has valid token no need to login");
     } else {
-      if (!this.model.mobile) {
+      if (!this.model.mobile && this.tab !== "user-pass") {
         this.router.navigate(["/auth", "login"]);
       }
     }

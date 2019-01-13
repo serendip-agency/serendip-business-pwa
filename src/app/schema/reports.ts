@@ -56,6 +56,32 @@ export const ReportsSchema: ReportInterface[] = [
     ]
   },
   {
+    name: "dashboard-default",
+    entityName: "dashboardSection",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام داشبورد",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "form-default",
+    entityName: "dashboardSection",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام بخش",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
     name: "company-default",
     entityName: "company",
     label: "",
@@ -70,7 +96,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "peoples",
         label: "افراد",
-        templateInputs : { viewType : 'json'},
+        templateInputs: { viewType: "json" },
         template: "ShortTextViewComponent"
       },
       {
