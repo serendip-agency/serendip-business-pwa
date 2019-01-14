@@ -95,6 +95,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dashboardSocket: WebSocket;
   private _grid: DashboardGridInterface;
   tabDragging: DashboardTabInterface;
+  dashboardDateFormat: any;
   public get grid(): DashboardGridInterface {
     if (!this._grid) {
       return { containers: [] };
@@ -179,15 +180,40 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   dashboardDateTimeTick() {
     // this.dashboardDateTimeFormats[0]
-    let format = localStorage.getItem("dashboardDateTimeFormat");
-    if (!format) {
-      format = this.dashboardDateTimeFormats[0];
+
+    if (!this.dashboardDateFormat) {
+      this.dashboardDateFormat = localStorage.getItem(
+        "dashboardDateTimeFormat"
+      );
+    }
+    if (!this.dashboardDateFormat) {
+      this.dashboardDateFormat = this.dashboardDateTimeFormats[0];
     }
 
-    this.dashboardDate = moment().format(format);
-    this.dashboardTime = moment().format("HH-mm-ss");
+    this.dashboardDate = moment().format(this.dashboardDateFormat);
+    const now = new Date();
 
-    this.changeRef.detectChanges();
+    this.dashboardTime = now
+      .getHours()
+      .toString()
+      .padStart(2, "0");
+    this.dashboardTime +=
+      "-" +
+      now
+        .getMinutes()
+        .toString()
+        .padStart(2, "0");
+
+    // this.dashboardTime +=
+    //   "-" +
+    //   now
+    //     .getSeconds()
+    //     .toString()
+    //     .padStart(2, "0");
+
+    setTimeout(() => {
+      this.dashboardDateTimeTick();
+    }, 10000);
   }
 
   toggleDashboardDateTimeFormat() {
@@ -465,12 +491,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.syncGrid();
   }
 
-  getExplorerSections(sections: DashboardSectionInterface[]) {
-    return _.filter(sections, (sec: DashboardSectionInterface) => {
-      return sec.name !== "dashboard";
-    });
-  }
-
   async initGrid(tabs: DashboardTabInterface[]) {
     const tabsToAdd = _.where(tabs, { status: "default" });
 
@@ -559,6 +579,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           return t.widgets;
         })
         .flatten()
+        .filter(p => p.component && p.inputs && p.inputs.documentId)
         .any(w => {
           return (
             w &&
@@ -577,16 +598,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (window.innerWidth > 860) {
         let addedToCurrentContainers = false;
         let containerModifiedId = 0;
-        for (let i = 0; i < this.grid.containers.length; i++) {
-          if (this.grid.containers[i]) {
-            if (this.grid.containers[i].tabs.length === 0) {
-              this.grid.containers[i].tabs.push(options.tab);
-              this.setActive(options.tab, this.grid.containers[i]);
-              containerModifiedId = i;
-              addedToCurrentContainers = true;
-              break;
-            }
-          }
+        // for (let i = 0; i < this.grid.containers.length; i++) {
+        //   if (this.grid.containers[i]) {
+        //     if (this.grid.containers[i].tabs.length === 0) {
+        //       this.grid.containers[i].tabs.push(options.tab);
+        //       this.setActive(options.tab, this.grid.containers[i]);
+        //       containerModifiedId = i;
+        //       addedToCurrentContainers = true;
+        //       break;
+        //     }
+        //   }
+        // }
+
+        if (this.grid.containers[containerIndex + 1]) {
+          this.grid.containers[containerIndex + 1].tabs.push(options.tab);
+          this.setActive(options.tab, this.grid.containers[containerIndex + 1]);
+          containerModifiedId = containerIndex + 1;
+          addedToCurrentContainers = true;
         }
 
         if (!addedToCurrentContainers) {
@@ -695,11 +723,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getWidgets(tab) {
-    if (tab.widgets) {
-      return tab.widgets;
-    } else {
-      return [];
-    }
+    return tab.widgets || [];
   }
 
   ngOnDestroy(): void {
@@ -903,7 +927,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           console.error(e);
 
           setTimeout(() => {
-           this.authService.logout();
+            this.authService.logout();
           }, 3000);
         });
     });
@@ -914,6 +938,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       Element.prototype.matches =
         Element.prototype.webkitMatchesSelector ||
         function(s) {
+          // tslint:disable-next-line:prefer-const
           let matches = (this.document || this.ownerDocument).querySelectorAll(
               s
             ),
@@ -935,6 +960,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let capture = false;
     let lastCapture = 0;
     const grid = document.querySelector(".grid-container") as any;
+
+    if (!grid) {
+      setTimeout(() => {
+        this.handleGridMouseDragScroll();
+      }, 10);
+      return;
+    }
     let last = { x: 0, y: 0 };
     const captureTimeout = null;
     grid.onmousewheel = (ev: MouseWheelEvent) => {
@@ -954,6 +986,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       capture = false;
     };
     grid.onmousedown = (down_ev: MouseEvent) => {
+      console.log(down_ev);
       const target = down_ev.target as HTMLElement;
 
       if (
@@ -970,8 +1003,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
 
-    let gridEdgeTimeout;
-    let gridEdgeScrollInterval;
     grid.onmousemove = (move_ev: MouseEvent) => {
       if (capture) {
         grid.scroll({
@@ -981,6 +1012,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         last = { x: move_ev.clientX, y: move_ev.clientY };
       }
     };
+
+    // let gridEdgeTimeout;
+    // let gridEdgeScrollInterval;
 
     // grid.onmouseover = grid.touchstart = ev => {
     //   if (gridEdgeScrollInterval) { clearInterval(gridEdgeScrollInterval); }
@@ -1028,14 +1062,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
           "grid-" + msg.data.section,
           JSON.stringify(msg.data)
         );
-console.log(msg.data,this.grid.version);
+        console.log(msg.data, this.grid.version);
         if (
           msg.data.section === this.dashboardService.currentSection.name &&
           msg.data.grid.version > this.grid.version
         ) {
           console.log("should chang grid");
           this.grid = msg.data.grid;
-       
+
           this.changeRef.markForCheck();
         }
       }
@@ -1043,10 +1077,11 @@ console.log(msg.data,this.grid.version);
   }
 
   async handleParams(params) {
+    console.log(await this.dataService.list("dashboard", 0, 0));
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
       {
-        name: params.section || "dashboard"
+        name: params.section || "start"
       }
     );
 
@@ -1055,6 +1090,7 @@ console.log(msg.data,this.grid.version);
       localGrid = JSON.parse(localGrid);
     }
 
+    // tslint:disable-next-line:prefer-const
     let remoteGrid;
     try {
       // remoteGrid = await this.dataService.request({
@@ -1098,7 +1134,13 @@ console.log(msg.data,this.grid.version);
       }
     }
 
-    await this.initGrid(this.dashboardService.currentSection.tabs);
+    if (this.dashboardService.currentSection) {
+      await this.initGrid(this.dashboardService.currentSection.tabs);
+    } else {
+      console.warn(
+        "didn't initGrid(), dashboardService.currentSection was not set"
+      );
+    }
   }
 
   wait(timeout: number) {
@@ -1109,6 +1151,8 @@ console.log(msg.data,this.grid.version);
     });
   }
   async ngOnInit() {
+    this.dashboardDateTimeTick();
+
     if (!this.businessService.getActiveBusinessId()) {
       this.router.navigate(["/business"]);
       return;
@@ -1146,7 +1190,7 @@ console.log(msg.data,this.grid.version);
     setTimeout(() => {
       this.adjustLayout();
     }, 1000);
-    this.handleParams(this.activatedRoute.snapshot.params);
+    await this.handleParams(this.activatedRoute.snapshot.params);
 
     this.router.events.subscribe(async (event: any) => {
       if (event instanceof NavigationEnd) {
@@ -1163,18 +1207,14 @@ console.log(msg.data,this.grid.version);
 
     this.gridSizeChange.emit();
 
-    this.handleFullNav();
-    this.handleStartButtonMove();
-    this.dashboardDateTimeTick();
+    // this.handleFullNav();
+    //  this.handleStartButtonMove();
+
     this.handleGridMouseDragScroll();
 
     // // FIXME: for test
     // document.getElementById("start").classList.toggle("fadeIn");
     // document.querySelector("body").classList.toggle("hideScroll");
-
-    this.dashboardDateTimeInterval = setInterval(() => {
-      this.dashboardDateTimeTick();
-    }, 1000);
 
     document.onscroll = () => {
       if (document.scrollingElement.scrollTop > 30) {

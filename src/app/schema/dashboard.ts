@@ -9,7 +9,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       {
         status: "default",
         title: "داشبورد‌ها",
-        icon: "settings-adjust-bold",
+        icon: "tab-3",
         widgets: [
           {
             component: "ReportComponent",
@@ -17,8 +17,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
               minimal: true,
               reportName: "dashboard-default",
               formName: "dashboard-form",
-              icon: "settings-adjust-bold",
-              entityName: "dashboard",
+              icon: "tab-3",
               entityLabelSingular: "داشبورد",
               title: "داشبورد‌ها"
             }
@@ -28,35 +27,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       {
         status: "default",
         title: "فرم‌ها",
-        icon: "settings-adjust-bold",
-        widgets: [
-          {
-            component: "FormComponent",
-            inputs: {
-              icon: "settings-adjust-bold",
-              name: "form-form",
-              entityName: "form"
-            }
-          }
-        ]
-      },
-      {
-        status: "default",
-        title: "فرم‌ها",
-        icon: "settings-adjust-bold",
-        widgets: [
-          {
-            component: "FormComponent",
-            inputs: {
-              formId: "5c3b8d576f84d45d1ed17f44"
-            }
-          }
-        ]
-      },
-      {
-        status: "default",
-        title: "فرم‌ها",
-        icon: "settings-adjust-bold",
+        icon: "copy",
         widgets: [
           {
             component: "ReportComponent",
@@ -64,10 +35,27 @@ export const DashboardSchema: DashboardSectionInterface[] = [
               minimal: true,
               reportName: "form-default",
               formName: "form-form",
-              icon: "settings-adjust-bold",
-              entityName: "form",
+              icon: "copy",
               entityLabelSingular: "فرم",
               title: "فرم‌ها"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "گزارشات",
+        icon: "filter-6",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              minimal: true,
+              reportName: "report-default",
+              formName: "report-form",
+              icon: "filter-6",
+              entityLabelSingular: "گرارش",
+              title: "گزارشات"
             }
           }
         ]

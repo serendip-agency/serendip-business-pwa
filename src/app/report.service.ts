@@ -55,15 +55,16 @@ export class ReportService {
     if (opts.report._id) {
     }
 
-    let data = await this.dataService.list(opts.entity, 0, 0, true);
-    if (!data) data = [];
+    let data = await this.dataService.list(opts.entity, 0, 0, false);
+    if (!data) {
+      data = [];
+    }
 
     data = await Promise.all(
       data.map((document, index) => {
         return this.formatDocument(document, reportFields);
       })
     );
-
 
     const queriedData = [];
     await Promise.all(

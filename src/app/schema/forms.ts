@@ -75,6 +75,7 @@ export const FormsSchema: FormInterface[] = [
   },
   {
     name: "dashboard-form",
+    entityName: "dashboard",
     parts: [
       {
         componentName: "FormTextInputComponent",
@@ -85,9 +86,25 @@ export const FormsSchema: FormInterface[] = [
         }
       },
       {
+        componentName: "FormTextInputComponent",
+        propertyName: "title",
+        inputs: {
+          label: "عنوان داشبورد",
+          type: "single-line"
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "icon",
+        inputs: {
+          label: "آیکون داشبورد",
+          type: "single-line"
+        }
+      },
+      {
         propertyName: "tabs",
         propertyType: "array",
-        label: "تب‌های",
+        label: "تب‌ها",
         parts: [
           {
             propertyType: "string",
@@ -97,8 +114,76 @@ export const FormsSchema: FormInterface[] = [
               label: "عنوان تب",
               type: "single-line"
             }
+          },
+          {
+            componentName: "FormTextInputComponent",
+            propertyName: "icon",
+            inputs: {
+              label: "آیکون تب",
+              type: "single-line"
+            }
+          },
+          {
+            propertyName: "status",
+            componentName: "FormRadioInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "وضعیت",
+              data: [
+                {
+                  label: "نمایش در صفحه",
+                  value: "default"
+                },
+                {
+                  label: "نمایش در منو کناری",
+                  value: "menu"
+                }
+              ]
+            }
+          }
+          {
+            propertyName: "widget",
+            propertyType: "object",
+            label: "ویجت",
+            parts: [
+              {
+                propertyName: "component",
+                componentName: "FormSelectInputComponent",
+                inputs: {
+                  display: "inline-block",
+                  label: "نام",
+                  selectType: "single",
+                  data: [
+                    {
+                      label: "ویجت گزارش‌",
+                      value: "ReportComponent"
+                    },
+                    {
+                      label: "ویجت فرم",
+                      value: "FormComponent"
+                    }
+                  ]
+                }
+              },
+              
+            ]
           }
         ]
+      }
+    ],
+    defaultModel: {}
+  },
+  {
+    name: "entity-form",
+    entityName: "entity",
+    parts: [
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "name",
+        inputs: {
+          label: "نام شی",
+          type: "single-line"
+        }
       }
     ],
     defaultModel: {}
@@ -112,6 +197,20 @@ export const FormsSchema: FormInterface[] = [
         inputs: {
           label: "نام فرم",
           type: "single-line"
+        }
+      },
+
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "entityName",
+        propertyType: "string",
+        cssClass: "w-60",
+        inputs: {
+          entityName: "entity",
+          propertiesToSearch: ["name"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "نام شی"
         }
       },
       {
@@ -226,7 +325,7 @@ export const FormsSchema: FormInterface[] = [
             ]
           },
           {
-            if: "^form.componentName == 'FormTextInputComponent'",
+            if: "^form.componentName == 'FormRadioInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
             label: "تنظیمات فیلد متنی",
@@ -241,19 +340,55 @@ export const FormsSchema: FormInterface[] = [
                 }
               },
               {
-                propertyName: "type",
+                propertyName: "dataType",
                 componentName: "FormRadioInputComponent",
                 inputs: {
                   data: [
                     {
-                      label: "تک خط",
-                      value: "single-line"
+                      label: "ورود دستی مقادیر",
+                      value: "manual-value-list"
                     },
                     {
-                      label: "چند خط",
-                      value: "multi-line"
+                      label: "ورود دستی مقادیر + لیبل",
+                      value: "manual-value-label-list"
                     }
                   ]
+                }
+              },
+              {
+                if: "^form.dataType ==  'manual-value-label-list'",
+                propertyName: "data",
+                propertyType: "array",
+                label: "مقادیر قابل انتخاب",
+                parts: [
+                  {
+                    propertyType: "string",
+                    cssClass: "w-50",
+                    propertyName: "label",
+                    componentName: "FormTextInputComponent",
+                    inputs: {
+                      label: "لیبل",
+                      type: "single-line"
+                    }
+                  },
+                  {
+                    propertyType: "string",
+                    propertyName: "label",
+                    cssClass: "w-50",
+                    componentName: "FormTextInputComponent",
+                    inputs: {
+                      label: "مقدار",
+                      type: "single-line"
+                    }
+                  }
+                ]
+              },
+              {
+                if: "^form.dataType ==  'manual-value-list'",
+                propertyName: "data",
+                componentName: "FormMultipleTextInputComponent",
+                inputs: {
+                  label: "مقادیر قابل انتخاب"
                 }
               }
             ]

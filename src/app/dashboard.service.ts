@@ -14,6 +14,7 @@ import {
 } from "serendip-business-model";
 import { WsService } from "./ws.service";
 import { EventEmitter } from "events";
+import { ObService } from "./ob.service";
 
 @Injectable({
   providedIn: "root"
@@ -30,11 +31,15 @@ export class DashboardService {
 
   dashboardCommand = new EventEmitter();
 
-  constructor() {
+  constructor(private dataService: DataService, private obService: ObService) {
     this.setScreen();
     window.onresize = () => {
       this.setScreen();
     };
+
+    this.obService.listen("dashboard").subscribe(() => {
+      this.setDefaultSchema();
+    });
   }
 
   setScreen() {
@@ -47,6 +52,37 @@ export class DashboardService {
       dashboard: BusinessSchema.DashboardSchema,
       reports: BusinessSchema.ReportsSchema
     };
+    const primaryFields = _.findWhere(this.schema.reports, {
+      name: "primary"
+    }).fields;
+
+    this.schema.reports = this.schema.reports.map(report => {
+      if (report.name !== "primary") {
+        primaryFields.forEach(pf => {
+          if (report.fields.filter(f => f.name == pf.name).length == 0) {
+            report.fields.push(pf);
+          }
+        });
+      }
+      return report;
+    });
+
+    this.schema.dashboard = (await this.dataService.list(
+      "dashboard",
+      0,
+      0
+    )).concat(this.schema.dashboard);
+
+    this.schema.dashboard = this.schema.dashboard.map(dashboard => {
+      dashboard.tabs = dashboard.tabs.map(tab => {
+        if (tab.widget) {
+          tab.widgets = [tab.widget];
+          delete tab.widget;
+        }
+        return tab;
+      });
+      return dashboard;
+    });
   }
   getActiveTabs() {
     if (!this.currentSection) {

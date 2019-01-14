@@ -1,80 +1,129 @@
 <div class="widget" [class.minimal]="minimal">
   <mat-card class="report">
     <mat-card-header>
-
       <div mat-card-avatar class="pull-right">
-        <img [src]="'assets/icons/' + icon  +'.svg'" />
+        <img [src]="'assets/icons/' + icon + '.svg'" />
       </div>
 
-      <mat-card-title>
-        {{title}}
-      </mat-card-title>
+      <mat-card-title> {{ title }} </mat-card-title>
 
-      <mat-card-subtitle>
-        {{subtitle}}
-      </mat-card-subtitle>
+      <mat-card-subtitle> {{ subtitle }} </mat-card-subtitle>
 
       <div *ngIf="!minimal" class="menu">
-        <img [src]="'assets/icons/' + 'office-paper-work-bag'  +'.svg'" />
+        <img [src]="'assets/icons/' + 'office-paper-work-bag' + '.svg'" />
       </div>
 
-      <div *ngIf="!minimal" class="search" [class.spanned]="activeFieldQueries().length > 0" [class.active]="mode == 'report'"
-        (click)="mode = mode == 'report' ? 'data':'report'">
-        <img [src]="'assets/icons/' + 'search'  +'.svg'" />
+      <div
+        *ngIf="!minimal"
+        class="search"
+        [class.spanned]="activeFieldQueries().length > 0"
+        [class.active]="mode == 'report'"
+        (click)="mode = mode == 'report' ? 'data' : 'report'"
+      >
+        <img [src]="'assets/icons/' + 'search' + '.svg'" />
 
         <span *ngIf="activeFieldQueries().length > 0">
-          {{activeFieldQueries().length | rpd}} فیلتر
+          {{ activeFieldQueries().length | rpd }} فیلتر
         </span>
-
       </div>
-
     </mat-card-header>
-    <mat-progress-bar *ngIf="resultLoading" mode="indeterminate"></mat-progress-bar>
+    <mat-progress-bar
+      *ngIf="resultLoading"
+      mode="indeterminate"
+    ></mat-progress-bar>
     <mat-card-content>
-
       <div class="report-model" *ngIf="mode == 'report' && report">
-
-
         <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
         <div class="fields">
+          <app-form-select-input
+            [data]="reports"
+            [selectType]="'single'"
+            [label]="'انتخاب از گزارشات ذخیره شده'"
+            (modelChange)="changeReport($event)"
+            [model]="report._id"
+          ></app-form-select-input>
 
-          <app-form-select-input [data]="reports" [selectType]="'single'" [label]="'انتخاب از گزارشات ذخیره شده'"
-            (modelChange)="changeReport($event)" [model]="report._id"></app-form-select-input>
-
-          <app-form-text-input *ngIf="!report._id" [label]="'نام گزارش جدید'" (modelChange)="report.label = $event"
-            [model]="report.label"></app-form-text-input>
+          <app-form-text-input
+            *ngIf="!report._id"
+            [label]="'نام گزارش جدید'"
+            (modelChange)="report.label = $event"
+            [model]="report.label"
+          ></app-form-text-input>
           <div dndDropzone (dndDrop)="reportFieldDrop($event)">
-            <div class="field" dndEffectAllowed="all" [dndDraggable]="{field : field , index : fieldIndex}" (dndStart)="reportFieldDragStart(field,$event)"
-              *ngFor="let field of report.fields;let fieldIndex = index ">
-              <img dndHandle class="drag-handle" src="assets/icons/menu-6.svg" alt="">
+            <div
+              class="field"
+              dndEffectAllowed="all"
+              [dndDraggable]="{ field: field, index: fieldIndex }"
+              (dndStart)="reportFieldDragStart(field, $event)"
+              *ngFor="let field of report.fields; let fieldIndex = index"
+            >
+              <img
+                dndHandle
+                class="drag-handle"
+                src="assets/icons/menu-6.svg"
+                alt=""
+              />
 
               <div class="field-name">
-
-
-                <mat-slide-toggle [(ngModel)]="field.enabled" (change)="modelChange()">
-                  {{field.label}}
+                <mat-slide-toggle
+                  [(ngModel)]="field.enabled"
+                  (change)="modelChange()"
+                >
+                  {{ field.label }}
                 </mat-slide-toggle>
               </div>
 
-              <div class="template-inputs" *ngIf="field.templateInputsForm && field.enabled">
-                <app-form [defaultModel]="field.templateInputs || {}" (WidgetChange)="field.templateInputs = $event.inputs.model "
-                  [formType]="'inline'" [name]="field.templateInputsForm"></app-form>
+              <div
+                class="template-inputs"
+                *ngIf="field.templateInputsForm && field.enabled"
+              >
+                <app-form
+                  [defaultModel]="field.templateInputs || {}"
+                  (WidgetChange)="field.templateInputs = $event.inputs.model"
+                  [formType]="'inline'"
+                  [name]="field.templateInputsForm"
+                ></app-form>
               </div>
-              <div class="property-query" *ngIf="field.enabled && field.queries && field.queries.length > 0">
-
+              <div
+                class="property-query"
+                *ngIf="
+                  field.enabled && field.queries && field.queries.length > 0
+                "
+              >
                 <div class="double-field">
-                  <app-form-select-input [class.w-100]="findEnabledFieldQuery(field)" [class.w-80]="findEnabledFieldQuery(field)"
-                    [data]="field.queries" [label]="findEnabledFieldQuery(field) ? '' : 'انتخاب از فیلترها'"
-                    [selectType]="'single'" [model]="findEnabledFieldQuery(field)" (modelChange)="fieldQuerySelect(field,$event)"></app-form-select-input>
+                  <app-form-select-input
+                    [class.w-100]="findEnabledFieldQuery(field)"
+                    [class.w-80]="findEnabledFieldQuery(field)"
+                    [data]="field.queries"
+                    [label]="
+                      findEnabledFieldQuery(field) ? '' : 'انتخاب از فیلترها'
+                    "
+                    [selectType]="'single'"
+                    [model]="findEnabledFieldQuery(field)"
+                    (modelChange)="fieldQuerySelect(field, $event)"
+                  ></app-form-select-input>
                   <div class="reset-query w-20">
-                    <img *ngIf="findEnabledFieldQuery(field)" (click)="findEnabledFieldQuery(field).enabled = false"
-                      class="" src="assets/icons/close-4.svg" />
+                    <img
+                      *ngIf="findEnabledFieldQuery(field)"
+                      (click)="findEnabledFieldQuery(field).enabled = false"
+                      class=""
+                      src="assets/icons/close-4.svg"
+                    />
                   </div>
                 </div>
 
-                <app-form *ngIf="findEnabledFieldQuery(field)" [formType]="'inline'" [defaultModel]="findEnabledFieldQuery(field).methodInput || {}"
-                  (WidgetChange)="findEnabledFieldQuery(field).methodInput = $event.inputs.model " [name]="findEnabledFieldQuery(field).methodInputForm"></app-form>
-
+                <app-form
+                  *ngIf="findEnabledFieldQuery(field)"
+                  [formType]="'inline'"
+                  [defaultModel]="
+                    findEnabledFieldQuery(field).methodInput || {}
+                  "
+                  (WidgetChange)="
+                    findEnabledFieldQuery(field).methodInput =
+                      $event.inputs.model
+                  "
+                  [name]="findEnabledFieldQuery(field).methodInputForm"
+                ></app-form>
               </div>
               <!--
             <div class="property-query" *ngFor="let query of !field.enabled ? [] : field.queries ">
@@ -91,105 +140,134 @@
             </div>
 
             <div dndPlaceholderRef>
-
-              <div style="margin:10px;height:40px;border:1px dashed #ccc;border-radius: 10px;" *ngIf="fieldDragging">
-
-              </div>
+              <div
+                style="margin:10px;height:40px;border:1px dashed #ccc;border-radius: 10px;"
+                *ngIf="fieldDragging"
+              ></div>
             </div>
-
           </div>
-
         </div>
-
       </div>
 
-
-      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'" *ngIf="!resultLoading && report && mode == 'data'">
-
-        <div *ngIf="page && page.length > 0" class="report-header">
+      <div
+        class="report-result"
+        [style.overflowX]="resultLoading ? 'hidden' : 'scroll'"
+        *ngIf="!resultLoading && report && mode == 'data'"
+      >
+        <div class="report-header">
           <div class="inner">
             <div class="select">
-              <mat-checkbox  (change)="allSelectChange($event)" [checked]="allSelected()"></mat-checkbox>
+              <mat-checkbox
+                (change)="allSelectChange($event)"
+                [checked]="allSelected()"
+              ></mat-checkbox>
             </div>
-            <div class="field-label" *ngFor="let field of  enabledReportFields()">
-              <ndc-dynamic *ngIf="  field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , viewType : 'label' } )"
-                [ndcDynamicOutputs]="{  widgetCommand : DashboardCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
+            <div
+              class="field-label"
+              *ngFor="let field of enabledReportFields()"
+            >
+              <ndc-dynamic
+                *ngIf="field.template && field.template != 'json'"
+                [ndcDynamicInputs]="
+                  extendObj({ label: field.label, viewType: 'label' })
+                "
+                [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
+                [ndcDynamicComponent]="getViewComponent(field.template)"
+              ></ndc-dynamic>
             </div>
           </div>
         </div>
 
-        <mat-progress-bar *ngIf="resultLoading" [color]="'warn'" [mode]="'indeterminate'">
+        <mat-progress-bar
+          *ngIf="resultLoading"
+          [color]="'warn'"
+          [mode]="'indeterminate'"
+        >
         </mat-progress-bar>
 
         <div class="records" *ngIf="!resultLoading">
-          <div class="record" *ngFor="let record of page;trackBy: trackByFn">
-
+          <div class="record" *ngFor="let record of page; trackBy: trackByFn">
             <div class="select">
-              <mat-checkbox [checked]="selected.indexOf(record._id) != -1" (change)="recordSelectChange(record._id,$event)"></mat-checkbox>
+              <mat-checkbox
+                [checked]="selected.indexOf(record._id) != -1"
+                (change)="recordSelectChange(record._id, $event)"
+              ></mat-checkbox>
             </div>
 
             <div class="field" *ngFor="let field of enabledReportFields()">
-
               <div class="json" *ngIf="field.template == 'json'">
-                {{record[field.name] | json}}
+                {{ record[field.name] | json }}
               </div>
 
               <div class="raw" *ngIf="!field.template">
-                {{record[field.name]}}
+                {{ record[field.name] }}
               </div>
 
-              <ndc-dynamic *ngIf="field.template && field.template != 'json'" [ndcDynamicInputs]="extendObj( { label : field.label , model : record[field.name] }, field.templateInputs ||  field.templateInputs || {})"
-                [ndcDynamicOutputs]="{  widgetCommand : DashboardCommand.emit   }" [ndcDynamicComponent]="getViewComponent(field.template)"></ndc-dynamic>
+              <ndc-dynamic
+                *ngIf="field.template && field.template != 'json'"
+                [ndcDynamicInputs]="
+                  extendObj(
+                    { label: field.label, model: record[field.name] },
+                    field.templateInputs || field.templateInputs || {}
+                  )
+                "
+                [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
+                [ndcDynamicComponent]="getViewComponent(field.template)"
+              ></ndc-dynamic>
             </div>
-
           </div>
 
-          <div class="empty" *ngIf="page && page.length == 0">
+          <!-- <div class="empty" *ngIf="page && page.length == 0">
             تا کنون رکورد {{ entityLabelSingular }} ثبت نشده است.
-          </div>
+          </div> -->
         </div>
       </div>
-
     </mat-card-content>
 
     <mat-card-actions *ngIf="report && mode == 'report'">
-      <button mat-raised-button [color]="'primary'" (click)="mode = 'data';refresh()">
-        <img src="assets/icons/seen-visible-1.svg" />
-        مشاهده نتیجه </button>
-
+      <button
+        mat-raised-button
+        [color]="'primary'"
+        (click)="mode = 'data'; refresh()"
+      >
+        <img src="assets/icons/seen-visible-1.svg" /> مشاهده نتیجه
+      </button>
 
       <div class="clearfix"></div>
     </mat-card-actions>
 
-
     <mat-card-actions *ngIf="report && mode == 'data'">
-
       <button class="sp-button-icon" (click)="new()">
         <img src="assets/icons/plus-add-3.svg" />
       </button>
 
-
-      <button class="sp-button-icon" (click)="edit()" *ngIf="selected.length > 0">
-
+      <button
+        class="sp-button-icon"
+        (click)="edit()"
+        *ngIf="selected.length > 0"
+      >
         <!-- ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }} انتخاب‌شده -->
 
         <img src="assets/icons/office-paper-work-pen.svg" />
-
       </button>
 
-      <button class="sp-button-icon" (click)="delete()" *ngIf="selected.length > 0">
+      <button
+        class="sp-button-icon"
+        (click)="delete()"
+        *ngIf="selected.length > 0"
+      >
         <img src="assets/icons/recycle-bin-trash.svg" />
       </button>
 
-      <div class="paginator pull-left" *ngIf="!resultLoading && report && report.count && pageCount > 0">
-
+      <div
+        class="paginator pull-left"
+        *ngIf="!resultLoading && report && report.count && pageCount > 0"
+      >
         <div class="next" *ngIf="pageIndex < pageCount" (click)="changePage(1)">
           <img src="assets/icons/arrow-left-back-10.svg" />
         </div>
         <div class="current">
-          {{ pageIndex + 1 | rpd }}
-          -
-          {{ pageCount | rpd }}
+          {{ pageIndex + 1 | rpd }} - {{ pageCount | rpd }}
         </div>
         <div class="prev" *ngIf="pageIndex >= 1" (click)="changePage(-1)">
           <img src="assets/icons/arrow-right-next-10.svg" />
@@ -202,7 +280,5 @@
 
       <div class="clearfix"></div>
     </mat-card-actions>
-
-
   </mat-card>
 </div>

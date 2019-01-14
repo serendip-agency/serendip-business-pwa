@@ -171,7 +171,7 @@ export class FormComponent implements OnInit {
       this.model = await this.dataService.details(
         this.entityName,
         this.documentId,
-        true
+        false
       );
 
       Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {

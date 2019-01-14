@@ -30,7 +30,7 @@ export interface DataRequestInterface {
 export class DataService {
   // public collectionsTextIndex: DocumentIndex[];
   public static collectionsSynced: string[] = [];
-  public static collectionsToSync: string[] = ["company", "people"];
+
   collectionsTextIndexCache: { [key: string]: any } = {};
 
   commonEnglishWordsIndexCache: any;

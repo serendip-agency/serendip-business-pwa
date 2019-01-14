@@ -298,12 +298,14 @@ export class ReportComponent implements OnInit {
         name: this.reportName
       }) as any;
 
-      const commonFields = _.findWhere(this.dashboardService.schema.reports, {
-        name: "common"
-      }).fields;
+      if (!this.entityName) {
+        this.entityName = this.report.entityName;
+      }
 
-      this.report.fields = [...this.report.fields, ...commonFields];
+      //   this.report.fields = [...this.report.fields, ...commonFields];
     }
+
+    console.warn("report", this.report);
 
     this.report = await this.reportService.generate({
       entity: this.entityName,

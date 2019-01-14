@@ -2,7 +2,7 @@ import { ReportInterface } from "serendip-business-model";
 
 export const ReportsSchema: ReportInterface[] = [
   {
-    name: "common",
+    name: "primary",
     fields: [
       {
         enabled: true,
@@ -57,7 +57,7 @@ export const ReportsSchema: ReportInterface[] = [
   },
   {
     name: "dashboard-default",
-    entityName: "dashboardSection",
+    entityName: "dashboard",
     label: "",
     fields: [
       {
@@ -69,14 +69,27 @@ export const ReportsSchema: ReportInterface[] = [
     ]
   },
   {
-    name: "form-default",
-    entityName: "dashboardSection",
+    name: "report-default",
+    entityName: "report",
     label: "",
     fields: [
       {
         enabled: true,
         name: "name",
-        label: "نام بخش",
+        label: "نام گزارش",
+        template: "ShortTextViewComponent"
+      }
+    ]
+  },
+  {
+    name: "form-default",
+    entityName: "form",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام فرم",
         template: "ShortTextViewComponent"
       }
     ]

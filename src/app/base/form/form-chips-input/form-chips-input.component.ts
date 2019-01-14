@@ -110,8 +110,6 @@ export class FormChipsInputComponent implements OnInit {
       )
       .onAction()
       .subscribe(() => {
-
-
         this.dashboardService.dashboardCommand.emit("command", {
           command: "open-tab",
           tab: {
@@ -193,7 +191,8 @@ export class FormChipsInputComponent implements OnInit {
           sUtil.text.replacePersianDigitsWithEnglish(input),
           10,
           this.propertiesToSearch,
-          this.propertiesSearchMode
+          this.propertiesSearchMode,
+          false
         ),
         (item: any) => {
           if (!currentValues) return true;
@@ -229,16 +228,20 @@ export class FormChipsInputComponent implements OnInit {
       }
     }
 
-    this.obService.listen(this.entityName).subscribe(async (model: any) => {
-      this.cachedEntities[model._id] = model;
-      this.changeRef.detectChanges();
+    this.obService
+      .listen(this.entityName)
+      .subscribe(async (msg: { eventType: any; model: any }) => {
+        const model = msg.model;
+        console.log("message received from obService", model);
+        this.cachedEntities[model._id] = model;
+        this.changeRef.detectChanges();
 
-      console.log(this.cachedEntities, model);
-      if (this.creatingEntity) {
-        this.selectEntity({ option: { value: model._id } } as any);
+        console.log(this.cachedEntities, model);
+        if (this.creatingEntity) {
+          this.selectEntity({ option: { value: model._id } } as any);
 
-        this.creatingEntity = false;
-      }
-    });
+          this.creatingEntity = false;
+        }
+      });
   }
 }
