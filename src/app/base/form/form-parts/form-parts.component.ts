@@ -135,6 +135,11 @@ export class FormPartsComponent implements OnInit {
           this.model[property][subPropertyIndexInArray][subProperty] = newValue;
         }
       }
+      this.WidgetChange.emit({
+        inputs: {
+          model: this.model
+        }
+      });
       this.detectChange();
     };
   }

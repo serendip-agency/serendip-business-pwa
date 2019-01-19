@@ -1,10 +1,11 @@
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
-import { AuthService, userToken } from "../auth.service";
+import { AuthService } from "../auth.service";
 import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
 import { DomSanitizer } from "@angular/platform-browser";
 import { DataService } from "../data.service";
 import * as _ from "underscore";
 import { MatSnackBar } from "@angular/material";
+import { TokenModel } from "serendip";
 
 @Component({
   selector: "app-auth",
@@ -30,7 +31,7 @@ export class AuthComponent implements OnInit {
 
   message: string;
   messageTimeout: any;
-  token: userToken;
+  token: TokenModel;
   profile: any;
 
   states: any[] = [];
@@ -376,7 +377,6 @@ export class AuthComponent implements OnInit {
         this.handleParams(this.activatedRoute.snapshot.params);
       }
     });
-    console.log(this.authService.loggedIn);
     if (this.authService.loggedIn) {
       if (localStorage.getItem("lastUrl")) {
         this.router.navigateByUrl(localStorage.getItem("lastUrl"));

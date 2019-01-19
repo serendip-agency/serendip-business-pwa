@@ -687,6 +687,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardSocket.send(
       JSON.stringify({
         command: "sync_grid",
+        business: this.businessService.getActiveBusinessId(),
         data: JSON.stringify({
           section: this.dashboardService.currentSection.name,
           grid: this.grid
@@ -702,6 +703,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
           .inputs,
         newWidget.inputs
       );
+
+
+      console.log(newWidget.inputs);
 
       this.grid.containers[containerIndex].tabs[tabIndex].widgets[
         widgetIndex
@@ -921,14 +925,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
           if (e.statusText === "business invalid") {
             this.dashboardLoadingText =
               "کسب و کار انتخاب شده نامعتبر می‌باشد. پس از ورود مجدد دوباره تلاش کنید.";
+            setTimeout(() => {
+              this.authService.logout();
+            }, 3000);
           } else {
             this.dashboardLoadingText = "همگام سازی با خطا مواجه شد.";
+            resolve();
           }
           console.error(e);
-
-          setTimeout(() => {
-            this.authService.logout();
-          }, 3000);
         });
     });
   }
@@ -969,24 +973,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     let last = { x: 0, y: 0 };
     const captureTimeout = null;
-    grid.onmousewheel = (ev: MouseWheelEvent) => {
-      const target = ev.target as HTMLElement;
+    grid.addEventListener(
+      "onmousewheel",
+      (ev: MouseWheelEvent) => {
+        const target = ev.target as HTMLElement;
 
-      if (!this.getClosest(target, ".mat-card-content")) {
-        lastCapture = Date.now();
-        if (ev.deltaY < 0) {
-          grid.scroll({ left: grid.scrollLeft - 100, behavior: "instant" });
-        } else {
-          grid.scroll({ left: grid.scrollLeft + 100, behavior: "instant" });
+        if (!this.getClosest(target, ".mat-card-content")) {
+          lastCapture = Date.now();
+          if (ev.deltaY < 0) {
+            grid.scroll({ left: grid.scrollLeft - 100, behavior: "instant" });
+          } else {
+            grid.scroll({ left: grid.scrollLeft + 100, behavior: "instant" });
+          }
         }
-      }
-    };
+      },
+      {passive : true}
+    );
 
     grid.onmouseleave = () => {
       capture = false;
     };
     grid.onmousedown = (down_ev: MouseEvent) => {
-      console.log(down_ev);
       const target = down_ev.target as HTMLElement;
 
       if (
@@ -1056,13 +1063,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         };
       } = JSON.parse(ev.data);
 
-      msg.data = JSON.parse(msg.data as any);
       if (msg.command === "change_grid") {
         localStorage.setItem(
           "grid-" + msg.data.section,
           JSON.stringify(msg.data)
         );
-        console.log(msg.data, this.grid.version);
         if (
           msg.data.section === this.dashboardService.currentSection.name &&
           msg.data.grid.version > this.grid.version
@@ -1077,7 +1082,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async handleParams(params) {
-    console.log(await this.dataService.list("dashboard", 0, 0));
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
       {
@@ -1085,7 +1089,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     );
 
-    let localGrid: any = localStorage.getItem("grid" + params.section);
+    let localGrid: any = localStorage.getItem("grid-" + params.section);
     if (localGrid) {
       localGrid = JSON.parse(localGrid);
     }
@@ -1093,16 +1097,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // tslint:disable-next-line:prefer-const
     let remoteGrid;
     try {
-      // remoteGrid = await this.dataService.request({
-      //   method: "post",
-      //   path: "/api/business/grid",
-      //   model: { section: params.section },
-      //   timeout: 100,
-      //   retry: false
-      // });
+      remoteGrid = await this.dataService.request({
+        method: "post",
+        path: "/api/business/grid",
+        model: { section: params.section },
+        timeout: 1000,
+        retry: false
+      });
     } catch (error) {}
 
     console.log("remoteGrid", remoteGrid, "localGrid", localGrid);
+
     if (localGrid && localGrid.version) {
       if (remoteGrid) {
         if (localGrid.version > remoteGrid.version) {
@@ -1119,18 +1124,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     }
 
-    if (remoteGrid && remoteGrid.version) {
-      if (!localGrid) {
+    if (!localGrid && remoteGrid) {
+      this.grid = remoteGrid.grid;
+      this.changeRef.detectChanges();
+      return;
+    }
+
+    if (localGrid && remoteGrid) {
+      if (localGrid.version < remoteGrid.version) {
+        console.log("localGrid version lower than remoteGrid");
+
         this.grid = remoteGrid.grid;
         this.changeRef.detectChanges();
-
         return;
       } else {
-        if (localGrid.version < remoteGrid.version) {
-          this.grid = remoteGrid.grid;
-          this.changeRef.detectChanges();
-          return;
-        }
+        this.grid = localGrid.grid;
+        this.changeRef.detectChanges();
+        return;
       }
     }
 
@@ -1158,6 +1168,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
     await this.sync();
+
     const myBusinesses = await this.dataService.request({
       method: "get",
       retry: false,
@@ -1168,7 +1179,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       _id: this.businessService.getActiveBusinessId()
     });
 
-    console.log(myBusinesses, this.businessService.business);
+    await this.dashboardService.setDefaultSchema();
+    await this.handleParams(this.activatedRoute.snapshot.params);
 
     await this.wait(500);
 
@@ -1182,15 +1194,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.dashboardCommand(0, 0, 0)(command);
     });
 
-    await this.dashboardService.setDefaultSchema();
-
     this.gridSizeChange.subscribe(() => {
       this.adjustLayout();
     });
     setTimeout(() => {
       this.adjustLayout();
     }, 1000);
-    await this.handleParams(this.activatedRoute.snapshot.params);
 
     this.router.events.subscribe(async (event: any) => {
       if (event instanceof NavigationEnd) {

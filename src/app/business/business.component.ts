@@ -2,7 +2,7 @@ import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
 import { Component, OnInit, OnDestroy } from "@angular/core";
 import { MatChipInputEvent } from "@angular/material";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { AuthService, userToken } from "../auth.service";
+import { AuthService } from "../auth.service";
 import { HttpClient } from "@angular/common/http";
 import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -24,7 +24,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   list: any[] = [];
-  token: userToken;
+  token: TokenModel;
   businessesToSelect = [];
   currentBusiness = null;
   loading = true;
@@ -38,7 +38,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
     public businessService: BusinessService,
     public dashboardService: DashboardService,
     public dataService: DataService
-  ) { }
+  ) {}
 
   choose(id) {
     localStorage.setItem("business", id);
@@ -65,7 +65,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
   }
   async refresh() {
     if ((this.tab == "new" && this.list.length == 0) || this.tab == "list") {
-
       if (Date.now() - this.lastListReq > 500) {
         this.lastListReq = Date.now();
         this.list = await this.dataService.request({
@@ -75,7 +74,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
         });
 
         console.log(this.list);
-
       }
     }
 

@@ -167,27 +167,29 @@ export class FormComponent implements OnInit {
       }
     }
 
-    if (this.documentId) {
-      this.model = await this.dataService.details(
-        this.entityName,
-        this.documentId,
-        false
-      );
+    if (!this.model) {
+      if (this.documentId) {
+        this.model = await this.dataService.details(
+          this.entityName,
+          this.documentId,
+          false
+        );
 
-      Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
-        console.log(dKey, typeof this.model[dKey]);
-        if (
-          typeof this.model[dKey] === "undefined" ||
-          (this.model[dKey].length && this.model[dKey].length === 0)
-        ) {
-          this.model[dKey] = this.formSchema.defaultModel[dKey];
-        }
-      });
-    } else {
-      if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
-        this.model = _.clone(this.defaultModel);
+        Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
+          console.log(dKey, typeof this.model[dKey]);
+          if (
+            typeof this.model[dKey] === "undefined" ||
+            (this.model[dKey].length && this.model[dKey].length === 0)
+          ) {
+            this.model[dKey] = this.formSchema.defaultModel[dKey];
+          }
+        });
       } else {
-        this.model = _.clone(this.formSchema.defaultModel);
+        if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
+          this.model = _.clone(this.defaultModel);
+        } else {
+          this.model = _.clone(this.formSchema.defaultModel);
+        }
       }
     }
 

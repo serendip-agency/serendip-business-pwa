@@ -6,10 +6,6 @@ import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
   styleUrls: ["./form-radio-input.component.css"]
 })
 export class FormRadioInputComponent implements OnInit {
-  trackByFn(index: any, item: any) {
-    return index;
-  }
-
   private _model: any;
 
   @Input()
@@ -28,7 +24,9 @@ export class FormRadioInputComponent implements OnInit {
   @Input() color: string;
   @Input() disabled: boolean;
   @Output() modelChange = new EventEmitter<any>();
-
+  trackByFn(index: any, item: any) {
+    return index;
+  }
   log(input) {
     console.log(input);
   }

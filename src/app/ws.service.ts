@@ -7,14 +7,19 @@ import { DataService } from "./data.service";
   providedIn: "root"
 })
 export class WsService {
-  constructor(private authService: AuthService, private dataService: DataService) { }
+  constructor(
+    private authService: AuthService,
+    private dataService: DataService
+  ) {}
 
   async newSocket(
     path?,
     retry?: boolean,
     maxRetry?: number
   ): Promise<WebSocket> {
-    if (!path) { path = "/"; }
+    if (!path) {
+      path = "/";
+    }
     let tries = 1;
 
     if (!maxRetry) {
@@ -44,26 +49,33 @@ export class WsService {
                     ev
                   );
 
-                  if (maxRetry && tries === maxRetry) { reject(ev2); } else {
+                  if (maxRetry && tries === maxRetry) {
+                    reject(ev2);
+                  } else {
                     console.log(
                       `Trying again for newSocket at ${path} in 3sec`
                     );
                   }
                 });
             }, 3000);
-          } else { reject(ev); }
+          } else {
+            reject(ev);
+          }
         });
     });
   }
 
   private initiateSocket(path?: string): Promise<WebSocket> {
-
-    console.log('request for websocket');
+    console.log("request for websocket to", path);
     return new Promise(async (resolve, reject) => {
       let wsConnection;
 
-      const wsAddress = path.indexOf('://') !== -1 ?
-        path : this.dataService.currentServer.replace('http:', 'ws:').replace('https:', 'wss:') + (path || "");
+      const wsAddress =
+        path.indexOf("://") !== -1
+          ? path
+          : this.dataService.currentServer
+              .replace("http:", "ws:")
+              .replace("https:", "wss:") + (path || "");
 
       try {
         wsConnection = new WebSocket(wsAddress);
@@ -80,12 +92,12 @@ export class WsService {
       };
 
       wsConnection.onmessage = (ev: MessageEvent) => {
-
         // FIXME: saw this method fired twice. find out why;
         // console.log("ws initiate onmessage", ev);
-        console.log(ev);
 
-        if (ev.data === "authenticated") { resolve(wsConnection); }
+        if (ev.data === "authenticated") {
+          resolve(wsConnection);
+        }
       };
 
       const token = await this.authService.token();

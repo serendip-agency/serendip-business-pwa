@@ -110,7 +110,7 @@ export class ReportService {
     const fieldsToFormat = await Promise.all(
       fields
         .filter(item => {
-          return item.name.indexOf("__") === 0 && item.enabled;
+          return item.method && item.enabled;
         })
         .map(field => {
           return new Promise(async (resolve, reject) => {

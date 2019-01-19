@@ -78,7 +78,7 @@
 
 <ng-template #form>
   <form class="" *ngIf="formSchema">
-    <app-form-parts [formSchema]="formSchema" [model]="model"> </app-form-parts>
+    <app-form-parts [formSchema]="formSchema" [WidgetChange]="WidgetChange" [model]="model"> </app-form-parts>
   </form>
 
   <div *ngIf="!formSchema" class="logbox">

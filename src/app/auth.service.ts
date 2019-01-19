@@ -8,21 +8,7 @@ import {
 } from "@angular/router";
 import { HttpClient } from "@angular/common/http";
 import { IdbDeleteAllDatabases } from "./idb.service";
-export interface userToken {
-  // Request
-  grant_type?: string;
-  username?: string;
-  useragent?: string;
-  userId?: string;
-  // Response
-  token_type?: string;
-  expires_in?: number;
-  expires_at?: number;
-  refresh_token?: string;
-  access_token?: string;
-  groups?: string[];
-}
-
+import { TokenModel } from "serendip";
 @Injectable()
 export class AuthService {
   profileValid = false;
@@ -47,8 +33,8 @@ export class AuthService {
     await IdbDeleteAllDatabases();
     window.location.reload();
   }
-  async token(): Promise<userToken> {
-    let token: userToken = { groups: [] };
+  async token(): Promise<TokenModel> {
+    let token: TokenModel;
     if (localStorage.getItem("token")) {
       token = JSON.parse(localStorage.getItem("token"));
     }
@@ -76,7 +62,7 @@ export class AuthService {
 
   async register(mobile: string, password: string): Promise<any> {
     return this.http
-      .post<userToken>(this.apiUrl + "/api/auth/register", {
+    .post<TokenModel>(this.apiUrl + "/api/auth/register", {
         username: mobile,
         mobile: mobile,
         password: password
@@ -150,11 +136,11 @@ export class AuthService {
     mobile: string,
     password: string,
     oneTimePassword: string
-  ): Promise<userToken> {
+  ): Promise<TokenModel> {
     try {
       console.log(this.apiUrl);
       const newToken = await this.http
-        .post<userToken>(this.apiUrl + "/api/auth/token", {
+        .post<TokenModel>(this.apiUrl + "/api/auth/token", {
           username,
           mobile,
           password,
@@ -180,10 +166,10 @@ export class AuthService {
     }
   }
 
-  async refreshToken(token: userToken): Promise<userToken> {
+  async refreshToken(token: TokenModel): Promise<TokenModel> {
     try {
       const newToken = await this.http
-        .post<userToken>(this.apiUrl + "/api/auth/refreshToken", {
+        .post<TokenModel>(this.apiUrl + "/api/auth/refreshToken", {
           refresh_token: token.refresh_token,
           access_token: token.access_token
         })

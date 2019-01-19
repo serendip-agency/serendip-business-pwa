@@ -46,7 +46,7 @@ export class StorageComponent implements OnInit {
 
   toDownload: any = {};
 
-  public token: userToken;
+  public token: TokenModel;
 
   constructor(
     public wsService: WsService,

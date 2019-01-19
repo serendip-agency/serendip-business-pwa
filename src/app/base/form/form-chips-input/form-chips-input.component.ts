@@ -162,12 +162,15 @@ export class FormChipsInputComponent implements OnInit {
       return;
     }
 
-    this.cachedEntities[event.option.value] = await this.dataService.details<{
-      _id: string;
-    }>(this.entityName, event.option.value);
+    this.cachedEntities[event.option.value] = await this.dataService.details(
+      this.entityName,
+      event.option.value
+    );
 
     if (this.selectType === "multiple") {
-      if (!this.model) this.model = [];
+      if (!this.model) {
+        this.model = [];
+      }
       this.model.push(event.option.value);
     } else {
       this.model = event.option.value;
@@ -195,7 +198,9 @@ export class FormChipsInputComponent implements OnInit {
           false
         ),
         (item: any) => {
-          if (!currentValues) return true;
+          if (!currentValues) {
+            return true;
+          }
           return currentValues.indexOf(item._id) === -1;
         }
       );
@@ -215,11 +220,15 @@ export class FormChipsInputComponent implements OnInit {
   }
 
   async ngOnInit() {
-    if (!this.model) if (this.selectType == "multiple") this.model = [];
+    if (!this.model) {
+      if (this.selectType === "multiple") {
+        this.model = [];
+      }
+    }
     this.filterEntities(" ", []);
 
     if (this.model) {
-      if (this.selectType == "single") {
+      if (this.selectType === "single") {
         this.cachedEntities[this.model] = await this.dataService.details(
           this.entityName,
           this.model,
@@ -235,8 +244,6 @@ export class FormChipsInputComponent implements OnInit {
         console.log("message received from obService", model);
         this.cachedEntities[model._id] = model;
         this.changeRef.detectChanges();
-
-        console.log(this.cachedEntities, model);
         if (this.creatingEntity) {
           this.selectEntity({ option: { value: model._id } } as any);
 

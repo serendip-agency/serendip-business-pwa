@@ -2,7 +2,11 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { MatSnackBar } from "@angular/material";
 import * as JsZip from "jszip";
-import { ReportInterface, ReportModel } from "serendip-business-model";
+import {
+  ReportInterface,
+  ReportModel,
+  EntityModel
+} from "serendip-business-model";
 import * as utils from "serendip-utility";
 import * as _ from "underscore";
 
@@ -141,7 +145,6 @@ export class DataService {
             )
             .toPromise();
 
-          console.log(result);
         }
       } catch (error) {
         await this.requestError(opts, error);
@@ -190,7 +193,7 @@ export class DataService {
     skip,
     limit,
     offline?: boolean
-  ): Promise<any> {
+  ): Promise<EntityModel> {
     if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB();
@@ -373,11 +376,11 @@ export class DataService {
     }
   }
 
-  async details<A>(
+  async details(
     controller: string,
     _id: string,
     offline?: boolean
-  ): Promise<A> {
+  ): Promise<EntityModel> {
     if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
       const store = await this.idbService.dataIDB();
       const data = await store.get(controller);
@@ -392,7 +395,7 @@ export class DataService {
         });
       } catch (error) {
         if (!offline) {
-          return await this.details<A>(controller, _id, true);
+          return await this.details(controller, _id, true);
         }
       }
     }
@@ -440,17 +443,12 @@ export class DataService {
     });
   }
 
-  async insert(
-    controller: string,
-    model: any,
-    modelName?: string
-  ): Promise<any> {
+  async insert(controller: string, model: EntityModel): Promise<EntityModel> {
     const result = await this.request({
       method: "POST",
       path: `/api/entity/${controller}/insert`,
       timeout: 1000,
       model: model,
-      modelName: modelName,
       retry: true
     });
 
@@ -472,11 +470,7 @@ export class DataService {
     return result;
   }
 
-  async update(
-    controller: string,
-    model: any,
-    modelName?: string
-  ): Promise<any> {
+  async update(controller: string, model: EntityModel): Promise<EntityModel> {
     const store = await this.idbService.dataIDB();
     const data = await store.get(controller);
 
@@ -498,12 +492,11 @@ export class DataService {
       method: "POST",
       path: `/api/entity/${controller}/update`,
       model: model,
-      modelName: modelName,
       retry: true
     });
   }
 
-  async delete<A>(controller: string, _id: string): Promise<A> {
+  async delete(controller: string, _id: string): Promise<EntityModel> {
     const model = { _id: _id };
 
     if (_id) {
@@ -673,7 +666,7 @@ export class DataService {
                 return str;
               }
             });
-            const docs: any[] = await this.list(schema.entityName, 0, 0, true);
+            const docs = await this.list(schema.entityName, 0, 0, true);
 
             schema.fields.forEach(field => {
               docIndex.addField(field.name, field.opts);

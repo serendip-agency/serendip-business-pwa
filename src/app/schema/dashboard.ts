@@ -32,7 +32,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "ReportComponent",
             inputs: {
-              minimal: true,
+              minimal: false,
               reportName: "form-default",
               formName: "form-form",
               icon: "copy",

@@ -140,7 +140,7 @@ export const FormsSchema: FormInterface[] = [
                 }
               ]
             }
-          }
+          },
           {
             propertyName: "widget",
             propertyType: "object",
@@ -165,13 +165,24 @@ export const FormsSchema: FormInterface[] = [
                   ]
                 }
               },
-              
+              {
+                componentName: "FormChipsInputComponent",
+                propertyName: "reportIds",
+                propertyType: "string",
+                cssClass: "w-60",
+                inputs: {
+                  entityName: "report",
+                  propertiesToSearch: ["name"],
+                  propertiesSearchMode: "mix",
+                  selectType: "multiple",
+                  label: "گزارشات مرتبط"
+                }
+              }
             ]
           }
         ]
       }
-    ],
-    defaultModel: {}
+    ]
   },
   {
     name: "entity-form",
@@ -199,10 +210,17 @@ export const FormsSchema: FormInterface[] = [
           type: "single-line"
         }
       },
-
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "_id",
+        inputs: {
+          label: "آیدی فرم",
+          type: "single-line"
+        }
+      },
       {
         componentName: "FormChipsInputComponent",
-        propertyName: "entityName",
+        propertyName: "entityId",
         propertyType: "string",
         cssClass: "w-60",
         inputs: {

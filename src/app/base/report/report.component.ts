@@ -305,7 +305,6 @@ export class ReportComponent implements OnInit {
       //   this.report.fields = [...this.report.fields, ...commonFields];
     }
 
-    console.warn("report", this.report);
 
     this.report = await this.reportService.generate({
       entity: this.entityName,
@@ -377,7 +376,6 @@ export class ReportComponent implements OnInit {
   }
 
   async ngOnInit() {
-    console.log("init report component " + this.reportName);
     this.reportStore = await this.idbService.reportIDB();
 
     await this.dashboardService.setDefaultSchema();

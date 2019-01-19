@@ -19,6 +19,7 @@
       <div class="form-array-row">
         <div class="item">
           <app-form-parts
+            [WidgetChange]="WidgetChange"
             [formSchema]="
               part.parts.toString() === 'clone-top-parts' ? formSchema : part
             "
@@ -53,6 +54,7 @@
       <div class="object-label" *ngIf="part.label">{{ part.label }}</div>
 
       <app-form-parts
+        [WidgetChange]="WidgetChange"
         [formSchema]="
           part.parts.toString() === 'clone-top-parts' ? formSchema : part
         "

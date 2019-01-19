@@ -31,11 +31,11 @@ export class WeatherComponent implements OnInit {
         try {
           this.model = (await this.dataService.request({
             method: "GET",
-            host: "http://weather.serendip.cloud",
+            host: "https://weather.serendip.cloud",
             path: "/api/search",
             model: { q: "Tehran, Iran" }
           }))[0];
-          if (this.model) this.model.ajaxDate = Date.now();
+          if (this.model) { this.model.ajaxDate = Date.now(); }
           resolve(this.model);
         } catch (e) {
           reject(e);
