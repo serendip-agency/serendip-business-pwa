@@ -233,8 +233,8 @@
             [dndDraggable]="{ containerIndex: c, tabIndex: i }"
           >
             <div class="tab-icon">
-              <img [src]="'assets/icons/location-pin.svg'" />
-              <!-- <img [src]="'assets/icons/' + tab.icon + '.svg'" /> -->
+              <!-- <img [src]="'assets/icons/location-pin.svg'" /> -->
+              <img [src]="'assets/icons/' + tab.icon + '.svg'" />
             </div>
             <div class="tab-title">{{ tab.title }}</div>
             <div class="tab-close" (click)="closeTab(c, i)">
