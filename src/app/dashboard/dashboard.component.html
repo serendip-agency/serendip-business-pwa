@@ -220,7 +220,7 @@
             isNavTabFull('nav-tab-' + c) && !container.showTabs
               ? ''
               : setActive(tab, container);
-            container.showTabs = false
+            container.showTabs = false;syncGrid()
           "
         >
           <a
@@ -243,7 +243,7 @@
           </a>
         </li>
 
-        <li class="full-nav" (click)="container.showTabs = true">
+        <li class="full-nav" (click)="container.showTabs = true;syncGrid()">
           <a class="tab-handle">
             <div class="tab-icon">{{ rpd(container.tabs.length) }}</div>
             <div class="tab-title">تب باز</div>
