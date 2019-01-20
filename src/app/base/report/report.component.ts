@@ -83,6 +83,7 @@ export class ReportComponent implements OnInit {
   obServiceActive = true;
   reports: { label: string; value: string }[];
   formName: any;
+  @Input() formId: any;
   set mode(value: "report" | "data") {
     this._mode = value;
   }
@@ -305,7 +306,6 @@ export class ReportComponent implements OnInit {
       //   this.report.fields = [...this.report.fields, ...commonFields];
     }
 
-
     this.report = await this.reportService.generate({
       entity: this.entityName,
       skip: skip,
@@ -386,7 +386,7 @@ export class ReportComponent implements OnInit {
     this.checkLabel();
 
     this.obService.listen(this.entityName).subscribe(event => {
-      if (event.eventType != "delete" && this.obServiceActive) {
+      if (event.eventType !== "delete" && this.obServiceActive) {
         this.refresh();
       }
     });
@@ -446,9 +446,9 @@ export class ReportComponent implements OnInit {
             component: "FormComponent",
             inputs: {
               name: this.formName,
-              entityName: this.entityName,
               entityLabel: this.entityLabelSingular,
-              entityIcon: this.icon
+              entityIcon: this.icon,
+              formId: this.formId
             }
           }
         ]
@@ -469,8 +469,8 @@ export class ReportComponent implements OnInit {
               component: "FormComponent",
               inputs: {
                 name: this.formName,
+                formId: this.formId,
                 documentId: _id,
-                entityName: this.entityName,
                 entityLabel: this.entityLabelSingular,
                 entityIcon: this.icon
               }
@@ -482,25 +482,15 @@ export class ReportComponent implements OnInit {
   }
 
   async delete() {
-    this.obServiceActive = false;
-    await Promise.all(
-      this.selected.map(_id => {
-        return new Promise(async (resolve, reject) => {
-          try {
-            this.dataService.delete(this.report.entityName, _id);
-          } catch (error) {}
-
-          resolve();
-        });
-      })
-    );
+    for (let i = 0; i < this.selected.length; i++) {
+      await this.dataService.delete(this.report.entityName, this.selected[i]);
+    }
 
     this.page = _.filter(this.page, item => {
       return this.selected.indexOf(item._id) === -1;
     });
 
     this.selected = [];
-    this.obServiceActive = true;
 
     this.changeRef.detectChanges();
   }

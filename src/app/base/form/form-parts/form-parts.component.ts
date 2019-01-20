@@ -33,11 +33,6 @@ import { FormPartInterface } from "serendip-business-model";
   styleUrls: ["./form-parts.component.css"]
 })
 export class FormPartsComponent implements OnInit {
-  @Input() public parents: {
-    part: FormPartInterface;
-    model: any;
-    index?: number;
-  }[];
   @Input() public model: any;
   @Input() public WidgetChange: any;
   @Input() public formSchema: any;
@@ -122,13 +117,7 @@ export class FormPartsComponent implements OnInit {
 
   dynamicPartModelChange(property, subProperty, subPropertyIndexInArray) {
     return newValue => {
-      console.log(
-        "form property change",
-        this.parents,
-        property,
-        subProperty,
-        newValue
-      );
+      console.log("form property change", property, subProperty, newValue);
 
       if (!subProperty) {
         this.model[property] = newValue;

@@ -1,8 +1,20 @@
 <mat-form-field>
-  <input *ngIf="type == 'single-line'" matInput [placeholder]="label" [name]="SelectId" [(ngModel)]="model" (change)="modelChange.emit($event.target.value)" />
+  <input
+    *ngIf="type == 'single-line'"
+    [attr.dir]="dir ? dir : null"
+    matInput
+    [placeholder]="label"
+    [name]="SelectId"
+    [(ngModel)]="model"
+    (change)="modelChange.emit($event.target.value)"
+  />
 
-
-  <textarea *ngIf="type == 'multi-line'" matInput [placeholder]="label " [name]="SelectId" [(ngModel)]="model" (change)="modelChange.emit(model)"></textarea>
-
-
+  <textarea
+    *ngIf="type == 'multi-line'"
+    matInput
+    [placeholder]="label"
+    [name]="SelectId"
+    [(ngModel)]="model"
+    (change)="modelChange.emit(model)"
+  ></textarea>
 </mat-form-field>

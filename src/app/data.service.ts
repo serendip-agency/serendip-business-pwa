@@ -511,6 +511,9 @@ export class DataService {
   }
 
   async delete(controller: string, _id: string): Promise<EntityModel> {
+
+
+    console.log('delete',controller,_id);
     const model = { _id: _id };
 
     if (_id) {

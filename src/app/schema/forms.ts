@@ -208,13 +208,13 @@ export const FormsSchema: FormInterface[] = [
 
         componentName: "FormTextInputComponent",
         inputs: {
-          label: "نام گزارش (اختیاری)",
+          label: "نام گزارش",
           type: "single-line"
         }
       },
       {
         propertyType: "array",
-        propertyName: "fields",
+        propertyName: "test",
         label: "فیلد‌ها",
         parts: [
           {
@@ -222,7 +222,45 @@ export const FormsSchema: FormInterface[] = [
             componentName: "FormTextInputComponent",
             inputs: {
               label: "نام فیلد",
+              type: "single-line",
+              dir: "ltr"
+            }
+          },
+          {
+            propertyName: "label",
+            componentName: "FormTextInputComponent",
+            inputs: {
+              label: "لیبل فیلد",
               type: "single-line"
+            }
+          },
+          {
+            propertyName: "template",
+            componentName: "FormSelectInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "تمپلیت نمایش",
+              selectType: "single",
+              data: [
+                {
+                  label: "تاریخ",
+                  value: {
+                    component: "DateViewComponent"
+                  }
+                },
+                {
+                  label: "متن کوتاه",
+                  value: {
+                    component: "ShortTextViewComponent"
+                  }
+                },
+                {
+                  label: "متن بلند",
+                  value: {
+                    component: "ShortTextViewComponent"
+                  }
+                }
+              ]
             }
           },
           {

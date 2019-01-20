@@ -1,19 +1,20 @@
-
-
-
-import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
 
 @Component({
-  selector: 'app-form-text-input',
-  templateUrl: './form-text-input.component.html',
-  styleUrls: ['./form-text-input.component.css']
+  selector: "app-form-text-input",
+  templateUrl: "./form-text-input.component.html",
+  styleUrls: ["./form-text-input.component.css"]
 })
 export class FormTextInputComponent implements OnInit {
+  SelectId = `text-${
+    Math.random()
+      .toString()
+      .split(".")[1]
+  }`;
 
-  SelectId = `text-${Math.random().toString().split('.')[1]}`;
+  @Input() type: "single-line" | "multi-line";
 
-  @Input() type: 'single-line' | 'multi-line';
-
+  @Input() dir;
 
   private _model: string;
 
@@ -28,23 +29,20 @@ export class FormTextInputComponent implements OnInit {
   @Input() label: string;
   @Output() modelChange = new EventEmitter<any>();
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
-
-    if (!this.type)
-      this.type = "single-line";
-
+    if (!this.type) this.type = "single-line";
   }
 
   inputsChange() {
     this.modelChange.emit(this.model);
   }
 
-
-
   rpd(input) {
-    if (!input) { input = ""; }
+    if (!input) {
+      input = "";
+    }
     const convert = a => {
       return ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"][a];
     };
@@ -52,6 +50,5 @@ export class FormTextInputComponent implements OnInit {
   }
   log(input) {
     console.log(input);
-
   }
 }

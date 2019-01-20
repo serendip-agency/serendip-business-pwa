@@ -320,11 +320,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
           activeTabsInContainer.length === 0 ||
           activeTabsInContainer.length > 1
         ) {
-          cont.tabs.forEach(tab => {
+          this.definedItemsOfArray(cont.tabs).forEach(tab => {
             tab.active = false;
           });
 
-          cont.tabs[0].active = true;
+          if (cont.tabs[0]) cont.tabs[0].active = true;
         }
       }
     });
@@ -418,9 +418,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
   definedItemsOfArray(array) {
-    return _.filter(array, (item: any) => {
-      return item !== undefined;
-    });
+    return _.filter(array, x => !!x);
   }
 
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
@@ -553,7 +551,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     tab: DashboardTabInterface,
     container: DashboardContainerInterface
   ) {
-    _.forEach(container.tabs, (t: any) => {
+    _.forEach(this.definedItemsOfArray( container.tabs), (t: any) => {
       t.active = false;
     });
 
@@ -574,11 +572,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // FIXME:S
       const existInGrid = _.chain(this.grid.containers)
         .map((c: DashboardContainerInterface) => {
-          return c.tabs;
+          return this.definedItemsOfArray( c.tabs);
         })
         .flatten()
         .map((t: DashboardTabInterface) => {
-          return t.widgets;
+          return  this.definedItemsOfArray(t.widgets);
         })
         .flatten()
         .filter(p => p.component && p.inputs && p.inputs.documentId)
@@ -728,6 +726,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getWidgets(tab) {
+    if (!tab) return [];
+
     return tab.widgets || [];
   }
 
@@ -977,23 +977,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     let last = { x: 0, y: 0 };
     const captureTimeout = null;
-    grid.addEventListener(
-      "onmousewheel",
-      (ev: MouseWheelEvent) => {
-        const target = ev.target as HTMLElement;
 
-        if (!this.getClosest(target, ".mat-card-content")) {
-          lastCapture = Date.now();
-          if (ev.deltaY < 0) {
-            grid.scroll({ left: grid.scrollLeft - 100, behavior: "instant" });
-          } else {
-            grid.scroll({ left: grid.scrollLeft + 100, behavior: "instant" });
-          }
+    grid.onmousewheel = (ev: MouseWheelEvent) => {
+      const target = ev.target as HTMLElement;
+
+      if (!this.getClosest(target, ".mat-card-content")) {
+        lastCapture = Date.now();
+        if (ev.deltaY < 0) {
+          grid.scroll({ left: grid.scrollLeft - 100, behavior: "instant" });
+        } else {
+          grid.scroll({ left: grid.scrollLeft + 100, behavior: "instant" });
         }
-      },
-      { passive: true }
-    );
-
+      }
+    };
     grid.onmouseleave = () => {
       capture = false;
     };
@@ -1220,7 +1216,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.gridSizeChange.emit();
 
-    // this.handleFullNav();
+     this.handleFullNav();
     //  this.handleStartButtonMove();
 
     this.handleGridMouseDragScroll();

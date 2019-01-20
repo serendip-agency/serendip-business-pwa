@@ -196,7 +196,7 @@
           *ngFor="let tab of definedItemsOfArray(container.tabs); let i = index"
           [style.top]="container.showTabs ? i * 40 + 10 + 'px' : 'unset'"
           [class.last-item]="i == container.tabs.length - 1"
-          [style.z-index]="i"
+          [style.z-index]="!container.showTabs && tab.active ? 1000 :  i"
           [style.left]="container.showTabs ? 10 + 'px' : 'unset'"
           [style.right]="container.showTabs ? 10 + 'px' : 'unset'"
           [id]="'tab-' + c + '-' + i"
@@ -243,14 +243,14 @@
           </a>
         </li>
 
-        <li class="full-nav prevIsActive" (click)="container.showTabs = true">
+        <li class="full-nav" (click)="container.showTabs = true">
           <a class="tab-handle">
             <div class="tab-icon">{{ rpd(container.tabs.length) }}</div>
             <div class="tab-title">تب باز</div>
           </a>
         </li>
 
-        <li
+        <!-- <li
           [class.prevIsActive]="
             container.tabs[container.tabs.length - 1] &&
             container.tabs[container.tabs.length - 1].active
@@ -261,11 +261,11 @@
           "
         >
           <a class="tab-handle"> &nbsp; </a>
-        </li>
+        </li> -->
       </ul>
 
       <div
-        *ngFor="let tab of container.tabs; let t = index"
+        *ngFor="let tab of definedItemsOfArray(container.tabs); let t = index"
         [hidden]="!tab.active || container.showTabs"
       >
         <div
