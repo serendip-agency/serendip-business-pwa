@@ -78,7 +78,7 @@ export class ReportComponent implements OnInit {
 
   _mode: "report" | "data" = "data";
   reportStore: Idb;
-  page: any[] = [];
+  @Input() page: any[];
 
   obServiceActive = true;
   reports: { label: string; value: string }[];
@@ -95,7 +95,7 @@ export class ReportComponent implements OnInit {
 
   moment: typeof Moment = MomentJalaali;
 
-  pageCount = 1;
+  @Input() pageCount = 1;
 
   @Input()
   _report: ReportModel;
@@ -183,6 +183,8 @@ export class ReportComponent implements OnInit {
   }
 
   checkLabel() {
+    if (!this.report) return;
+
     if (
       !this.report._id &&
       (!this.report.label ||
@@ -299,11 +301,11 @@ export class ReportComponent implements OnInit {
         name: this.reportName
       }) as any;
 
-      if (!this.entityName) {
-        this.entityName = this.report.entityName;
-      }
-
       //   this.report.fields = [...this.report.fields, ...commonFields];
+    }
+
+    if (!this.entityName) {
+      this.entityName = this.report.entityName;
     }
 
     this.report = await this.reportService.generate({
@@ -319,6 +321,15 @@ export class ReportComponent implements OnInit {
     this.pageCount = Math.floor(this.report.count / this.pageSize);
 
     this.resultLoading = false;
+
+
+    // this.WidgetChange.emit({
+    //   inputs: {
+    //     entityName: this.entityName,
+    //     page: this.page,
+    //     pageCount: this.pageCount
+    //   }
+    // });
   }
 
   async refreshReports() {
@@ -382,12 +393,13 @@ export class ReportComponent implements OnInit {
 
     await this.refreshReports();
 
+    //   if (!this.page) await this.changePage(0);
     await this.changePage(0);
     this.checkLabel();
 
     this.obService.listen(this.entityName).subscribe(event => {
       if (event.eventType !== "delete" && this.obServiceActive) {
-        this.refresh();
+        this.changePage(0);
       }
     });
     // setInterval(() => {

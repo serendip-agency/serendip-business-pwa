@@ -59,6 +59,7 @@ export class ReportService {
     if (!data) {
       data = [];
     }
+ 
 
     data = await Promise.all(
       data.map((document, index) => {

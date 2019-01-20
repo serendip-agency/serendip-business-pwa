@@ -96,6 +96,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private _grid: DashboardGridInterface;
   tabDragging: DashboardTabInterface;
   dashboardDateFormat: any;
+  _lastGridSync: number;
+
+  get lastGridSync() {
+    if (this._lastGridSync) {
+      return this._lastGridSync;
+    } else {
+      const fromLs = localStorage.getItem("last-grid-sync");
+      if (fromLs) {
+        this._lastGridSync = parseInt(fromLs, 10);
+        return this._lastGridSync;
+      } else {
+        return 0;
+      }
+    }
+  }
+
+  set lastGridSync(val) {
+    localStorage.setItem("last-grid-sync", val.toString());
+    this._lastGridSync = val;
+  }
+
   public get grid(): DashboardGridInterface {
     if (!this._grid) {
       return { containers: [] };
@@ -419,7 +440,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       visible: this.gmapsService.dashboardMapVisible
     });
   }
-  definedItemsOfArray(array) {
+  definedItemsOfArray(array): any[] {
     return _.filter(array, x => !!x);
   }
 
@@ -667,6 +688,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async syncGrid() {
+    if (this.lastGridSync) {
+      if (Date.now() - this.lastGridSync < 1000) {
+        return;
+      }
+    }
     this.grid.version = Date.now();
 
     console.warn("syncing grid ...");
@@ -698,6 +724,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         })
       })
     );
+
+    this.lastGridSync = Date.now();
   }
 
   widgetChange(containerIndex: number, tabIndex: number, widgetIndex: number) {
@@ -1084,10 +1112,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
           msg.data.section === this.dashboardService.currentSection.name &&
           msg.data.grid.version > this.grid.version
         ) {
-          console.log("should chang grid");
+
+          if(Date.now() - this.lastGridSync > 1000){
+          console.log("should change grid");
+
+          this.lastGridSync = Date.now();
           this.grid = msg.data.grid;
 
           this.changeRef.markForCheck();
+        }
         }
       }
     };
