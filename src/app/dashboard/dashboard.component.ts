@@ -324,7 +324,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
             tab.active = false;
           });
 
-          if (cont.tabs[0]) cont.tabs[0].active = true;
+          if (cont.tabs[0]) {
+            cont.tabs[0].active = true;
+          }
         }
       }
     });
@@ -456,14 +458,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.grid.containers[eventData.containerIndex].tabs[eventData.tabIndex];
 
     _.forEach(
-      this.grid.containers[dropToContainerIndex].tabs,
+      this.definedItemsOfArray(this.grid.containers[dropToContainerIndex].tabs),
       (tab: { active: boolean }) => {
         tab.active = false;
       }
     );
 
-    if (eventData.containerIndex !== dropToContainerIndex) {
-      toDrop.active = true;
+    if (toDrop) {
+      if (eventData.containerIndex !== dropToContainerIndex) {
+        toDrop.active = true;
+      }
     }
 
     if (eventData.containerIndex !== undefined) {
@@ -551,7 +555,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     tab: DashboardTabInterface,
     container: DashboardContainerInterface
   ) {
-    _.forEach(this.definedItemsOfArray( container.tabs), (t: any) => {
+    _.forEach(this.definedItemsOfArray(container.tabs), (t: any) => {
       t.active = false;
     });
 
@@ -572,11 +576,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // FIXME:S
       const existInGrid = _.chain(this.grid.containers)
         .map((c: DashboardContainerInterface) => {
-          return this.definedItemsOfArray( c.tabs);
+          return this.definedItemsOfArray(c.tabs);
         })
         .flatten()
         .map((t: DashboardTabInterface) => {
-          return  this.definedItemsOfArray(t.widgets);
+          return this.definedItemsOfArray(t.widgets);
         })
         .flatten()
         .filter(p => p.component && p.inputs && p.inputs.documentId)
@@ -697,6 +701,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   widgetChange(containerIndex: number, tabIndex: number, widgetIndex: number) {
+    if (!this.grid.containers[containerIndex]) {
+      return;
+    }
+    if (!this.grid.containers[containerIndex].tabs[tabIndex]) {
+      return;
+    }
     return (newWidget: DashboardWidgetInterface) => {
       newWidget.inputs = _.extend(
         this.grid.containers[containerIndex].tabs[tabIndex].widgets[widgetIndex]
@@ -726,7 +736,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   getWidgets(tab) {
-    if (!tab) return [];
+    if (!tab) {
+      return [];
+    }
 
     return tab.widgets || [];
   }
@@ -1216,7 +1228,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.gridSizeChange.emit();
 
-     this.handleFullNav();
+    this.handleFullNav();
     //  this.handleStartButtonMove();
 
     this.handleGridMouseDragScroll();
