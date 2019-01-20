@@ -63,7 +63,7 @@
         <!-- {{saveButtonText}} -->
       </button>
 
-      <button class="pull-left sp-button-icon" (click)="reset()">
+      <button class="pull-left sp-button-icon" (click)="init()">
         <img [src]="'assets/icons/refresh.svg'" />
       </button>
 
@@ -78,7 +78,12 @@
 
 <ng-template #form>
   <form class="" *ngIf="formSchema">
-    <app-form-parts [formSchema]="formSchema" [WidgetChange]="WidgetChange" [model]="model"> </app-form-parts>
+    <app-form-parts
+      [formSchema]="formSchema"
+      [WidgetChange]="ProxyWidgetChange"
+      [model]="model"
+    >
+    </app-form-parts>
   </form>
 
   <div *ngIf="!formSchema" class="logbox">

@@ -10,6 +10,7 @@ import { BusinessService } from "../business.service";
 import { environment } from "../../environments/environment";
 import { DataService } from "../data.service";
 import { DashboardService } from "../dashboard.service";
+import { TokenModel } from "serendip";
 
 @Component({
   selector: "app-business",
@@ -64,7 +65,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
     });
   }
   async refresh() {
-    if ((this.tab == "new" && this.list.length == 0) || this.tab == "list") {
+    if ((this.tab === "new" && this.list.length === 0) || this.tab === "list") {
       if (Date.now() - this.lastListReq > 500) {
         this.lastListReq = Date.now();
         this.list = await this.dataService.request({

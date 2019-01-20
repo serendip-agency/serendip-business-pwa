@@ -200,6 +200,44 @@ export const FormsSchema: FormInterface[] = [
     defaultModel: {}
   },
   {
+    name: "report-form",
+    entityName: "report",
+    parts: [
+      {
+        propertyName: "name",
+
+        componentName: "FormTextInputComponent",
+        inputs: {
+          label: "نام گزارش (اختیاری)",
+          type: "single-line"
+        }
+      },
+      {
+        propertyType: "array",
+        propertyName: "fields",
+        label: "فیلد‌ها",
+        parts: [
+          {
+            propertyName: "name",
+            componentName: "FormTextInputComponent",
+            inputs: {
+              label: "نام فیلد",
+              type: "single-line"
+            }
+          },
+          {
+            propertyName: "enable",
+            componentName: "FormToggleInputComponent",
+            inputs: {
+              label: "فعال به صورت پیش‌فرض"
+            }
+          }
+        ]
+      }
+    ],
+    defaultModel: {}
+  },
+  {
     name: "form-form",
     parts: [
       {

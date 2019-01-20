@@ -39,6 +39,15 @@ export class DataService {
 
   commonEnglishWordsIndexCache: any;
 
+  serversToSelect = [
+    { label: "سرور ایران", value: "https://business.serendip.ir" },
+    { label: "سرور ابری آلمان", value: "https://business.serendip.cloud" },
+    { label: "سرور ابری لیارا", value: "https://serendip.liara.run" },
+    { label: "سرور باکس سرندیپ", value: "box" },
+    { label: "سرور توسعه کلاد", value: "http://dev.serendip.cloud:2040" },
+    { label: "سرور توسعه محلی", value: "http://localhost:2040" }
+  ];
+
   currentServer = "localhost:2040";
 
   constructor(
@@ -55,19 +64,25 @@ export class DataService {
   setCurrentServer(srv?) {
     let lsServer = localStorage.server;
 
+    if (lsServer) {
+      if (this.serversToSelect.filter(p => p.value === lsServer).length === 0) {
+        lsServer = null;
+      }
+    }
+
     if (srv) {
       lsServer = srv;
     } else {
       if (!lsServer || (lsServer.indexOf && lsServer.indexOf("http") !== 0)) {
         switch (location.hostname) {
           case "serendip.ir":
-            lsServer = "https://serendip.cloud";
+            lsServer = "https://business.serendip.ir";
             break;
           case "localhost":
             lsServer = "http://localhost:2040";
             break;
           default:
-            lsServer = "https://serendip.cloud";
+            lsServer = "https://business.serendip.cloud";
             break;
         }
       }
@@ -144,7 +159,6 @@ export class DataService {
               options
             )
             .toPromise();
-
         }
       } catch (error) {
         await this.requestError(opts, error);

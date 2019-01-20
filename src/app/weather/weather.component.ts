@@ -35,7 +35,9 @@ export class WeatherComponent implements OnInit {
             path: "/api/search",
             model: { q: "Tehran, Iran" }
           }))[0];
-          if (this.model) { this.model.ajaxDate = Date.now(); }
+          if (this.model) {
+            this.model.ajaxDate = Date.now();
+          }
           resolve(this.model);
         } catch (e) {
           reject(e);
@@ -64,6 +66,17 @@ export class WeatherComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.refresh();
+    this.model = {};
+    this.model.ajaxDate = 0;
+    await this.refresh();
+
+    if (this.model && this.model.forecast) {
+      this.model.forecast = this.model.forecast.filter(f => {
+        return (
+          this.moment(f.date, "YYYY-MM-DD").diff(this.moment(), "hour") + 3.5 >
+          -24
+        );
+      });
+    }
   }
 }

@@ -13,14 +13,6 @@ import { TokenModel } from "serendip";
   styleUrls: ["./auth.component.less"]
 })
 export class AuthComponent implements OnInit {
-  serversToSelect = [
-    { label: "سرور ایران", value: "https://serendip.ir" },
-    { label: "سرور ابری آلمان", value: "https://serendip.cloud" },
-    { label: "سرور ابری لیارا", value: "https://serendip.liara.run" },
-    { label: "سرور باکس سرندیپ", value: "box" },
-    { label: "سرور توسعه کلاد", value: "http://dev.serendip.cloud:2040" },
-    { label: "سرور توسعه محلی", value: "http://localhost:2040" }
-  ];
   loading = false;
   tab = "login";
   model: any = {};

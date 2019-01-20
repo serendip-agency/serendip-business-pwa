@@ -1,14 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 
 @Component({
-  selector: 'app-form-toggle-input',
-  templateUrl: './form-toggle-input.component.html',
-  styleUrls: ['./form-toggle-input.component.css']
+  selector: "app-form-toggle-input",
+  templateUrl: "./form-toggle-input.component.html",
+  styleUrls: ["./form-toggle-input.component.css"]
 })
 export class FormToggleInputComponent implements OnInit {
-
-
-
   private _model: boolean;
 
   @Input() set model(value: boolean) {
@@ -24,16 +21,10 @@ export class FormToggleInputComponent implements OnInit {
   @Input() disabled: boolean;
   @Output() modelChange = new EventEmitter<any>();
 
-
-  log(input){
+  log(input) {
     console.log(input);
   }
-  constructor() { }
+  constructor() {}
 
-  ngOnInit() {
-
-
-
-  }
-
+  ngOnInit() {}
 }

@@ -1,12 +1,13 @@
 import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
 import { WsService } from "../ws.service";
-import { AuthService, userToken } from "../auth.service";
+import { AuthService } from "../auth.service";
 import * as promise_serial from "promise-serial";
 import * as _ from "underscore";
 import * as serendip_utility from "serendip-utility";
 import { DataService } from "../data.service";
 import { BusinessService } from "../business.service";
 import { DashboardService } from "../dashboard.service";
+import { TokenModel } from "serendip";
 
 @Component({
   selector: "app-storage",

@@ -242,7 +242,7 @@
           <app-form-radio-input
             [model]="dataService.currentServer"
             (modelChange)="dataService.setCurrentServer($event)"
-            [data]="serversToSelect"
+            [data]="dataService.serversToSelect"
             [display]="'block'"
           ></app-form-radio-input>
         </div>

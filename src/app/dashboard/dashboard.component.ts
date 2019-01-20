@@ -204,6 +204,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         .toString()
         .padStart(2, "0");
 
+    this.changeRef.detectChanges();
     // this.dashboardTime +=
     //   "-" +
     //   now
@@ -223,6 +224,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.dashboardDateTimeFormats[0]
     );
 
+    this.dashboardDateFormat = this.dashboardDateTimeFormats[0];
     this.dashboardDateTimeTick();
   }
 
@@ -704,7 +706,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         newWidget.inputs
       );
 
-
       console.log(newWidget.inputs);
 
       this.grid.containers[containerIndex].tabs[tabIndex].widgets[
@@ -922,16 +923,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
           resolve();
         })
         .catch(e => {
-          if (e.statusText === "business invalid") {
-            this.dashboardLoadingText =
-              "کسب و کار انتخاب شده نامعتبر می‌باشد. پس از ورود مجدد دوباره تلاش کنید.";
-            setTimeout(() => {
-              this.authService.logout();
-            }, 3000);
-          } else {
-            this.dashboardLoadingText = "همگام سازی با خطا مواجه شد.";
-            resolve();
-          }
+          // if (e.statusText === "business invalid") {
+          //   this.dashboardLoadingText =
+          //     "کسب و کار انتخاب شده نامعتبر می‌باشد. پس از ورود مجدد دوباره تلاش کنید.";
+          //   setTimeout(() => {
+          //     this.authService.logout();
+          //   }, 3000);
+          // } else {
+          //   this.dashboardLoadingText = "همگام سازی با خطا مواجه شد.";
+          //   resolve();
+          // }
+          localStorage.removeItem("business");
+          location.reload();
+
           console.error(e);
         });
     });
@@ -987,7 +991,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }
       },
-      {passive : true}
+      { passive: true }
     );
 
     grid.onmouseleave = () => {

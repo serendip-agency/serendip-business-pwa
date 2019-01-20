@@ -51,7 +51,12 @@ export class FormComponent implements OnInit {
     public ref: ChangeDetectorRef,
     private dashboardService: DashboardService,
     public idbService: IdbService
-  ) {}
+  ) {
+    this.ProxyWidgetChange.subscribe(item => {
+      this.WidgetChange.emit({ inputs: { model: this.model } });
+      console.warn("ProxyWidgetChange", item, this.model);
+    });
+  }
 
   @Output()
   DashboardCommand = new EventEmitter<{
@@ -61,6 +66,7 @@ export class FormComponent implements OnInit {
 
   _ = _;
 
+  public ProxyWidgetChange = new EventEmitter();
   @Input() saveButtonText = "ثبت";
   @Input() saveButtonIcon = "save-backup-1";
 
@@ -128,8 +134,7 @@ export class FormComponent implements OnInit {
     if (!this.model._id) {
       const insertResult = await this.dataService.insert(
         this.entityName,
-        this.model,
-        this.entityName
+        this.model
       );
       this.WidgetChange.emit({
         inputs: {
@@ -138,15 +143,11 @@ export class FormComponent implements OnInit {
         }
       });
     } else {
-      await this.dataService.update(
-        this.entityName,
-        this.model,
-        this.entityName
-      );
+      await this.dataService.update(this.entityName, this.model);
     }
   }
 
-  async reset() {
+  async init() {
     if (!this.formsSchema) {
       this.formsSchema = this.dashboardService.schema.forms;
     }
@@ -167,29 +168,29 @@ export class FormComponent implements OnInit {
       }
     }
 
-    if (!this.model) {
-      if (this.documentId) {
-        this.model = await this.dataService.details(
-          this.entityName,
-          this.documentId,
-          false
-        );
+    if (this.documentId) {
+      this.model = await this.dataService.details(
+        this.entityName,
+        this.documentId,
+        false
+      );
 
-        Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
-          console.log(dKey, typeof this.model[dKey]);
-          if (
-            typeof this.model[dKey] === "undefined" ||
-            (this.model[dKey].length && this.model[dKey].length === 0)
-          ) {
-            this.model[dKey] = this.formSchema.defaultModel[dKey];
-          }
-        });
-      } else {
-        if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
-          this.model = _.clone(this.defaultModel);
-        } else {
-          this.model = _.clone(this.formSchema.defaultModel);
+      Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
+        console.log(dKey, typeof this.model[dKey]);
+        if (
+          typeof this.model[dKey] === "undefined" ||
+          (this.model[dKey].length && this.model[dKey].length === 0)
+        ) {
+          this.model[dKey] = this.formSchema.defaultModel[dKey];
         }
+      });
+    } else {
+      if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
+        this.model = _.clone(this.defaultModel);
+      } else {
+        if (this.formSchema.defaultModel) {
+          this.model = _.clone(this.formSchema.defaultModel);
+        } else { this.model = {}; }
       }
     }
 
@@ -213,7 +214,7 @@ export class FormComponent implements OnInit {
   async ngOnInit() {
     this.loading = true;
 
-    await this.reset();
+    await this.init();
 
     this.loading = false;
     this.ref.detectChanges();
