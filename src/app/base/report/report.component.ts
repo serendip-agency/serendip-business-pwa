@@ -84,6 +84,7 @@ export class ReportComponent implements OnInit {
   reports: { label: string; value: string }[];
   formName: any;
   @Input() formId: any;
+  @Input() reportId: string;
   set mode(value: "report" | "data") {
     this._mode = value;
   }
@@ -166,8 +167,6 @@ export class ReportComponent implements OnInit {
       eventData.field
     );
 
-    this.checkLabel();
-
     this.changeRef.detectChanges();
   }
 
@@ -177,38 +176,14 @@ export class ReportComponent implements OnInit {
   modelChange() {
     this.report._id = null;
     this.report.label = null;
-    this.checkLabel();
 
     this.changeRef.detectChanges();
   }
 
-  checkLabel() {
-    if (!this.report) return;
-
-    if (
-      !this.report._id &&
-      (!this.report.label ||
-        (this.report.label.indexOf("_فیلدها: ") === 0 &&
-          this.report.label.endsWith("_")))
-    ) {
-      this.report.label =
-        "_فیلدها: " +
-        this.report.fields
-          .filter(item => {
-            return item.enabled;
-          })
-          .map(item => {
-            return item.label;
-          })
-          .join(", ")
-          .trim() +
-        "_";
-    }
-  }
   reportFieldInputsChange(name, newInputs) {
     this.report.fields = _.map(this.report.fields, item => {
       if (item.name === name) {
-        item.templateInputs = newInputs;
+        item.template.inputs = newInputs;
       }
 
       return item;
@@ -296,7 +271,7 @@ export class ReportComponent implements OnInit {
 
     const skip = this.pageIndex * this.pageSize;
 
-    if (!this.report) {
+    if (!this.report && this.reportName) {
       this.report = _.findWhere(this.dashboardService.schema.reports, {
         name: this.reportName
       }) as any;
@@ -304,8 +279,20 @@ export class ReportComponent implements OnInit {
       //   this.report.fields = [...this.report.fields, ...commonFields];
     }
 
-    if (!this.entityName) {
-      this.entityName = this.report.entityName;
+    if (!this.report && this.reportId) {
+      this.report = (await this.dataService.details(
+        "report",
+        this.reportId
+      )) as any;
+
+      console.log(this.report);
+      //   this.report.fields = [...this.report.fields, ...commonFields];
+    }
+
+    if (this.report) {
+      if (!this.entityName) {
+        this.entityName = this.report.entityName;
+      }
     }
 
     this.report = await this.reportService.generate({
@@ -321,7 +308,6 @@ export class ReportComponent implements OnInit {
     this.pageCount = Math.floor(this.report.count / this.pageSize);
 
     this.resultLoading = false;
-
 
     // this.WidgetChange.emit({
     //   inputs: {
@@ -395,7 +381,6 @@ export class ReportComponent implements OnInit {
 
     //   if (!this.page) await this.changePage(0);
     await this.changePage(0);
-    this.checkLabel();
 
     this.obService.listen(this.entityName).subscribe(event => {
       if (event.eventType !== "delete" && this.obServiceActive) {

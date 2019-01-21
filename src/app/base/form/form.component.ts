@@ -147,7 +147,7 @@ export class FormComponent implements OnInit {
     }
   }
 
-  async init(reset? : boolean) {
+  async init(reset?: boolean) {
     if (!this.formsSchema) {
       this.formsSchema = this.dashboardService.schema.forms;
     }
@@ -174,26 +174,25 @@ export class FormComponent implements OnInit {
         this.documentId,
         false
       );
+    }
 
-      if (!this.model || reset) {
-        Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
-          console.log(dKey, typeof this.model[dKey]);
-          if (
-            typeof this.model[dKey] === "undefined" ||
-            (this.model[dKey].length && this.model[dKey].length === 0)
-          ) {
-            this.model[dKey] = this.formSchema.defaultModel[dKey];
-          }
-        });
+    if (!this.model || reset) {
+      // Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
+      //   if (
+      //     typeof this.model[dKey] === "undefined" ||
+      //     (this.model[dKey].length && this.model[dKey].length === 0)
+      //   ) {
+      //     this.model[dKey] = this.formSchema.defaultModel[dKey];
+      //   }
+      // });
+
+      if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
+        this.model = _.clone(this.defaultModel);
       } else {
-        if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
-          this.model = _.clone(this.defaultModel);
+        if (this.formSchema.defaultModel) {
+          this.model = _.clone(this.formSchema.defaultModel);
         } else {
-          if (this.formSchema.defaultModel) {
-            this.model = _.clone(this.formSchema.defaultModel);
-          } else {
-            this.model = {};
-          }
+          this.model = {};
         }
       }
     }
@@ -203,7 +202,6 @@ export class FormComponent implements OnInit {
 
     this.WidgetChange.emit({ inputs: { model: this.model } });
 
-    console.log("form model reset", this.model);
   }
 
   trackByFn(index: any, item: any) {

@@ -34,6 +34,18 @@ export class FormSelectInputComponent implements OnInit {
     return this._model;
   }
 
+  compareObjects(o1,o2){
+    if(!o1,!o2){
+      return false
+    }
+
+    try {
+      return JSON.stringify(o1) === JSON.stringify(o2)
+    } catch (error) {
+      return false;
+    }
+
+  }
   rpd(input) {
     if (!input) { input = ""; }
     const convert = a => {

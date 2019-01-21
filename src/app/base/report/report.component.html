@@ -75,13 +75,17 @@
 
               <div
                 class="template-inputs"
-                *ngIf="field.templateInputsForm && field.enabled"
+                *ngIf="
+                  field.template &&
+                  (field.template.formId || field.template.formName) &&
+                  field.enabled
+                "
               >
                 <app-form
-                  [defaultModel]="field.templateInputs || {}"
-                  (WidgetChange)="field.templateInputs = $event.inputs.model"
+                  (WidgetChange)="field.template.inputs = $event.inputs.model"
                   [formType]="'inline'"
-                  [name]="field.templateInputsForm"
+                  [name]="field.template.formName"
+                  [formId]="field.template.formId"
                 ></app-form>
               </div>
               <div
@@ -167,12 +171,17 @@
               *ngFor="let field of enabledReportFields()"
             >
               <ndc-dynamic
-                *ngIf="field.template && field.template != 'json'"
+                *ngIf="field.template"
                 [ndcDynamicInputs]="
-                  extendObj({ label: field.label, viewType: 'label' })
+                  extendObj(field.template.inputs || {}, {
+                    label: field.label,
+                    viewType: 'label'
+                  })
                 "
                 [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
-                [ndcDynamicComponent]="getViewComponent(field.template)"
+                [ndcDynamicComponent]="
+                  getViewComponent(field.template.component)
+                "
               ></ndc-dynamic>
             </div>
           </div>
@@ -195,20 +204,16 @@
             </div>
 
             <div class="field" *ngFor="let field of enabledReportFields()">
-              <div class="json" *ngIf="field.template == 'json'">
+              <div class="raw" *ngIf="!field.template">
                 {{ record[field.name] | json }}
               </div>
 
-              <div class="raw" *ngIf="!field.template">
-                {{ record[field.name] }}
-              </div>
-
               <ndc-dynamic
-                *ngIf="field.template && field.template != 'json'"
+                *ngIf="field.template"
                 [ndcDynamicInputs]="
                   extendObj(
                     { label: field.label, model: record[field.name] },
-                    field.templateInputs || field.templateInputs || {}
+                    field.template.inputs || {}
                   )
                 "
                 [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
@@ -223,18 +228,6 @@
         </div>
       </div>
     </mat-card-content>
-
-    <mat-card-actions *ngIf="report && mode == 'report'">
-      <button
-        mat-raised-button
-        [color]="'primary'"
-        (click)="mode = 'data'; refresh()"
-      >
-        <img src="assets/icons/seen-visible-1.svg" /> مشاهده نتیجه
-      </button>
-
-      <div class="clearfix"></div>
-    </mat-card-actions>
 
     <mat-card-actions *ngIf="report && mode == 'data'">
       <button class="sp-button-icon" (click)="new()">

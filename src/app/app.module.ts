@@ -108,6 +108,7 @@ import { PersianPipe } from './persian.pipe';
 import { StorageComponent } from './storage/storage.component';
 import { StorageFilesComponent } from './storage/storage-files/storage-files.component';
 import { FormPartsComponent } from './base/form/form-parts/form-parts.component';
+import { SyncComponent } from './sync/sync.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -189,7 +190,7 @@ export const primaryComponents = [
 ];
 
 @NgModule({
-  declarations: [...primaryComponents, ...dynamicComponents, ListComponent, StorageComponent, StorageFilesComponent, FormPartsComponent],
+  declarations: [...primaryComponents, ...dynamicComponents, ListComponent, StorageComponent, StorageFilesComponent, FormPartsComponent, SyncComponent],
   entryComponents: [],
   imports: [
     QuillModule,

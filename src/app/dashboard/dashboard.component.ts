@@ -83,7 +83,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   dashboardDate = "";
   dashboardTime = "";
   dashboardLoadingText = "";
-  dashboardDateTimeInterval;
+  dashboardDateTimeTimeout;
   dashboardDateTimeFormats = [
     "dddd jD jMMMM jYYYY",
     "dddd D MMMM YYYY",
@@ -233,7 +233,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //     .toString()
     //     .padStart(2, "0");
 
-    setTimeout(() => {
+    this.dashboardDateTimeTimeout = setTimeout(() => {
       this.dashboardDateTimeTick();
     }, 10000);
   }
@@ -772,8 +772,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.dashboardDateTimeInterval) {
-      clearInterval(this.dashboardDateTimeInterval);
+    if (this.dashboardDateTimeTimeout) {
+      clearTimeout(this.dashboardDateTimeTimeout);
     }
   }
 
@@ -1018,18 +1018,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let last = { x: 0, y: 0 };
     const captureTimeout = null;
 
-    grid.onmousewheel = (ev: MouseWheelEvent) => {
-      const target = ev.target as HTMLElement;
+    // grid.onmousewheel = (ev: MouseWheelEvent) => {
+    //   const target = ev.target as HTMLElement;
 
-      if (!this.getClosest(target, ".mat-card-content")) {
-        lastCapture = Date.now();
-        if (ev.deltaY < 0) {
-          grid.scroll({ left: grid.scrollLeft - 100, behavior: "instant" });
-        } else {
-          grid.scroll({ left: grid.scrollLeft + 100, behavior: "instant" });
-        }
-      }
-    };
+    //   if (!this.getClosest(target, ".mat-card-content")) {
+    //     lastCapture = Date.now();
+    //     if (ev.deltaY < 0) {
+    //       grid.scroll({ left: grid.scrollLeft - 100, behavior: "instant" });
+    //     } else {
+    //       grid.scroll({ left: grid.scrollLeft + 100, behavior: "instant" });
+    //     }
+    //   }
+    // };
     grid.onmouseleave = () => {
       capture = false;
     };
@@ -1112,15 +1112,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
           msg.data.section === this.dashboardService.currentSection.name &&
           msg.data.grid.version > this.grid.version
         ) {
+          if (Date.now() - this.lastGridSync > 1000) {
+            console.log("should change grid");
 
-          if(Date.now() - this.lastGridSync > 1000){
-          console.log("should change grid");
+            this.lastGridSync = Date.now();
+            this.grid = msg.data.grid;
 
-          this.lastGridSync = Date.now();
-          this.grid = msg.data.grid;
-
-          this.changeRef.markForCheck();
-        }
+            this.changeRef.markForCheck();
+          }
         }
       }
     };

@@ -82,7 +82,8 @@ export const FormsSchema: FormInterface[] = [
         propertyName: "name",
         inputs: {
           label: "نام داشبورد",
-          type: "single-line"
+          type: "single-line",
+          dir: "ltr"
         }
       },
       {
@@ -98,7 +99,8 @@ export const FormsSchema: FormInterface[] = [
         propertyName: "icon",
         inputs: {
           label: "آیکون داشبورد",
-          type: "single-line"
+          type: "single-line",
+          dir: "ltr"
         }
       },
       {
@@ -120,7 +122,8 @@ export const FormsSchema: FormInterface[] = [
             propertyName: "icon",
             inputs: {
               label: "آیکون تب",
-              type: "single-line"
+              type: "single-line",
+              dir: "ltr"
             }
           },
           {
@@ -166,17 +169,37 @@ export const FormsSchema: FormInterface[] = [
                 }
               },
               {
-                componentName: "FormChipsInputComponent",
-                propertyName: "reportIds",
-                propertyType: "string",
-                cssClass: "w-60",
-                inputs: {
-                  entityName: "report",
-                  propertiesToSearch: ["name"],
-                  propertiesSearchMode: "mix",
-                  selectType: "multiple",
-                  label: "گزارشات مرتبط"
-                }
+                propertyName: "inputs",
+                propertyType: "object",
+                label: "ورودی‌های ویجت",
+                parts: [
+                  {
+                    componentName: "FormChipsInputComponent",
+                    propertyName: "reportId",
+                    propertyType: "string",
+                    cssClass: "w-60",
+                    inputs: {
+                      entityName: "report",
+                      propertiesToSearch: ["name"],
+                      propertiesSearchMode: "mix",
+                      selectType: "single",
+                      label: "گزارش مرتبط"
+                    }
+                  },
+                  {
+                    componentName: "FormChipsInputComponent",
+                    propertyName: "formId",
+                    propertyType: "string",
+                    cssClass: "w-60",
+                    inputs: {
+                      entityName: "form",
+                      propertiesToSearch: ["name"],
+                      propertiesSearchMode: "mix",
+                      selectType: "single",
+                      label: "فرم ثبت و ویرایش"
+                    }
+                  }
+                ]
               }
             ]
           }
@@ -213,8 +236,17 @@ export const FormsSchema: FormInterface[] = [
         }
       },
       {
+        propertyName: "entityName",
+        componentName: "FormTextInputComponent",
+        inputs: {
+          label: "نام شی",
+          type: "single-line",
+          dir: "ltr"
+        }
+      },
+      {
         propertyType: "array",
-        propertyName: "test",
+        propertyName: "fields",
         label: "فیلد‌ها",
         parts: [
           {
@@ -257,14 +289,14 @@ export const FormsSchema: FormInterface[] = [
                 {
                   label: "متن بلند",
                   value: {
-                    component: "ShortTextViewComponent"
+                    component: "LongTextViewComponent"
                   }
                 }
               ]
             }
           },
           {
-            propertyName: "enable",
+            propertyName: "enabled",
             componentName: "FormToggleInputComponent",
             inputs: {
               label: "فعال به صورت پیش‌فرض"
@@ -288,23 +320,11 @@ export const FormsSchema: FormInterface[] = [
       },
       {
         componentName: "FormTextInputComponent",
-        propertyName: "_id",
+        propertyName: "entityName",
         inputs: {
-          label: "آیدی فرم",
-          type: "single-line"
-        }
-      },
-      {
-        componentName: "FormChipsInputComponent",
-        propertyName: "entityId",
-        propertyType: "string",
-        cssClass: "w-60",
-        inputs: {
-          entityName: "entity",
-          propertiesToSearch: ["name"],
-          propertiesSearchMode: "mix",
-          selectType: "single",
-          label: "نام شی"
+          label: "نام شی",
+          type: "single-line",
+          dir: "ltr"
         }
       },
       {
@@ -318,7 +338,8 @@ export const FormsSchema: FormInterface[] = [
             componentName: "FormTextInputComponent",
             inputs: {
               label: "نام فیلد",
-              type: "single-line"
+              type: "single-line",
+              dir: "ltr"
             }
           },
           {
