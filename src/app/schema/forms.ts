@@ -174,6 +174,14 @@ export const FormsSchema: FormInterface[] = [
                 label: "ورودی‌های ویجت",
                 parts: [
                   {
+                    componentName: "FormTextInputComponent",
+                    propertyName: "title",
+                    inputs: {
+                      label: "عنوان ویجت",
+                      type: "single-line",
+                    }
+                  },
+                  {
                     componentName: "FormChipsInputComponent",
                     propertyName: "reportId",
                     propertyType: "string",
@@ -197,6 +205,13 @@ export const FormsSchema: FormInterface[] = [
                       propertiesSearchMode: "mix",
                       selectType: "single",
                       label: "فرم ثبت و ویرایش"
+                    }
+                  },
+                  {
+                    propertyName: "minimal",
+                    componentName: "FormToggleInputComponent",
+                    inputs: {
+                      label: "حالت ساده"
                     }
                   }
                 ]

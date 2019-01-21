@@ -8,7 +8,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "_id",
         label: "شناسه سند",
-        template: "ObjectidViewComponent",
+        template: { component: "ObjectidViewComponent" },
         queries: [
           {
             label: "برابر باشد با",
@@ -26,7 +26,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: false,
         name: "_cdate",
         label: "تاریخ ثبت",
-        template: "DateViewComponent",
+        template: { component: "DateViewComponent" },
         templateInputsForm: "report-field-date",
         templateInputs: {
           format: "jYYYY/jMM/jDD HH:mm:ss"
@@ -63,8 +63,14 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: true,
         name: "name",
-        label: "نام داشبورد",
-        template: "ShortTextViewComponent"
+        label: "نام",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "title",
+        label: "عنوان  ",
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -77,7 +83,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام گزارش",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -90,7 +96,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام فرم",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -103,20 +109,20 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام شرکت",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "peoples",
         label: "افراد",
         templateInputs: { viewType: "json" },
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "contacts",
         label: "اطلاعات تماس",
-        template: "ContactsViewComponent"
+        template: { component: "ContactsViewComponent" }
       }
     ]
   },
@@ -129,7 +135,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام دسته بندی",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
@@ -148,7 +154,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام عنوان شعلی",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -161,7 +167,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "موضوع تیکت",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -174,7 +180,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "subject",
         label: "موضوع ",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -187,7 +193,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "subject",
         label: "موضوع ",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -200,7 +206,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "subject",
         label: "موضوع ",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -213,7 +219,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "body",
         label: "متن ",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -226,7 +232,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "pages",
         label: "صفحات ",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -239,7 +245,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "subject",
         label: "عنوان فاکتور",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -252,7 +258,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام نوع ارتباط",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -265,7 +271,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام نوع ارتباط",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -278,7 +284,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام عنوان شعلی",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -291,7 +297,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام عنوان شعلی",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -304,7 +310,7 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "gender",
         label: "جنسیت",
-        template: "ShortTextViewComponent",
+        template: { component: "ShortTextViewComponent" },
         templateInputs: {
           replace: {
             male: "آقا",
@@ -316,13 +322,13 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "firstName",
         label: "نام ",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "lastName",
         label: "نام خانوادگی",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
@@ -331,25 +337,25 @@ export const ReportsSchema: ReportInterface[] = [
         method: "joinFields",
         methodOptions: { fields: ["firstName", "lastName"], seperator: " " },
         queries: [],
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "mobiles",
         label: "موبایل",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: false,
         name: "emails",
         label: "ایمیل",
-        template: "ShortTextViewComponent"
+        template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: false,
         name: "contacts",
         label: "اطلاعات تماس",
-        template: "ContactsViewComponent"
+        template: { component: "ContactsViewComponent" }
       }
     ]
   },

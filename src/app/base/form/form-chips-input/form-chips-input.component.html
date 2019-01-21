@@ -21,12 +21,13 @@
 <div *ngIf="selectType == 'single'">
 
   <div class="single-chip" *ngIf="model">
+    
     <div class="text">
       <span (click)="goEntity(model)" *ngIf="getEntity(model)">
-        <span *ngFor="let prop of propertiesToSearch"> {{ cachedEntities[model][prop] | rpd }} </span>
+        <span *ngFor="let prop of propertiesToSearch"> {{label}}: {{ cachedEntities[model][prop] | rpd }} </span>
       </span>
       <span (click)="goEntity(model)" *ngIf="!getEntity(model)">
-        {{ model | json}}
+          {{label}}: {{ model | json}}
       </span>
     </div>
     <div class="icon" (click)="model = null; modelChange.emit(null)">

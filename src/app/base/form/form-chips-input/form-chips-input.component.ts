@@ -95,13 +95,15 @@ export class FormChipsInputComponent implements OnInit {
     this.snackBar
       .open(
         "اطلاعات موجود از " +
-          this.rpd(
-            this.propertiesToSearch
-              .map(key => {
-                return model[key] || "";
-              })
-              .join(" ")
-          ) +
+          (model
+            ? this.rpd(
+                this.propertiesToSearch
+                  .map(key => {
+                    return model[key] || "";
+                  })
+                  .join(" ")
+              )
+            : _id) +
           " را میخواهید؟",
         "بله",
         {
@@ -122,6 +124,7 @@ export class FormChipsInputComponent implements OnInit {
                 inputs: {
                   name: "" + this.entityName + "-form",
                   documentId: _id,
+                  model: { _id },
                   entityName: this.entityName,
                   entityLabel: this.label
                 }

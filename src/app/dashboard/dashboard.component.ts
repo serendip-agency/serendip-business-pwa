@@ -371,32 +371,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     // If handle is near left side of container its possible he needs another container
 
-    if (handlerPosition.top > 100) {
-      if (
-        handlerPosition.left - targetPosition.left < 200 &&
-        handlerPosition.left - targetPosition.left > 0
-      ) {
-        const notEmptyContainersCount = _.filter(
-          this.grid.containers,
-          container => {
-            return container.tabs && container.tabs.length > 0;
-          }
-        ).length;
+    // if (handlerPosition.top > 100) {
+    //   if (
+    //     handlerPosition.left - targetPosition.left < 200 &&
+    //     handlerPosition.left - targetPosition.left > 0
+    //   ) {
+    //     const notEmptyContainersCount = _.filter(
+    //       this.grid.containers,
+    //       container => {
+    //         return container.tabs && container.tabs.length > 0;
+    //       }
+    //     ).length;
 
-        // if (this.grid.containers.length < 3)
-        if (
-          notEmptyContainersCount - containerIndex === 1 &&
-          !this.grid.containers[containerIndex + 1]
-        ) {
-          this.addContainer();
-        }
+    //     // if (this.grid.containers.length < 3)
+    //     if (
+    //       notEmptyContainersCount - containerIndex === 1 &&
+    //       !this.grid.containers[containerIndex + 1]
+    //     ) {
+    //       this.addContainer();
+    //     }
 
-        const grid = document.querySelector(".grid-container");
-        if (containerIndex > 1) {
-          grid.scroll({ left: grid.scrollLeft - 200, behavior: "smooth" });
-        }
-      }
-    }
+    //     const grid = document.querySelector(".grid-container");
+    //     if (containerIndex > 1) {
+    //       grid.scroll({ left: grid.scrollLeft - 200, behavior: "smooth" });
+    //     }
+    //   }
+    // }
   }
 
   toggleCalendar() {
