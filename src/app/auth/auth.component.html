@@ -104,7 +104,7 @@
         <div class="submit">
           <button
             [class.loading]="loading"
-            (click)="login()"
+            (click)="login('one-time')"
             mat-raised-button
             color="secondary"
           >
@@ -125,9 +125,8 @@
         </ul>
       </form>
 
-      <form *ngIf="tab == 'password'" class="form-password">
+      <form *ngIf="tab == 'two-factor'" class="form-password">
         <div class="title">رمز عبور حساب خود را وارد کنید</div>
-
         <mat-form-field>
           <input
             type="text"
@@ -153,7 +152,7 @@
         <div class="submit">
           <button
             [class.loading]="loading"
-            (click)="login()"
+            (click)="login('two-factor')"
             mat-raised-button
             color="secondary"
           >

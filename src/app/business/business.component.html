@@ -1,36 +1,123 @@
-<div id="space">
+<div class="business-settings" *ngIf="businessService.getActiveBusinessId()">
+  <mat-card>
+    <mat-card-content>
+      <div class="top-box">
+        <div class="logo">
+          <img
+            *ngIf="businessService.business.logo"
+            [src]="businessService.business.logo"
+            alt=""
+          />
+          <img
+            class="default"
+            src="assets/icons/building-production-unit-1.svg"
+            title="برای آپلود لوگو کلیک کنید"
+          />
+        </div>
+        <div class="info">
+          <app-form-text-input
+            [label]="'نام کسب‌وکار'"
+            [model]="businessService.business.title"
+          ></app-form-text-input>
+        </div>
+
+        <div class="clearfix"></div>
+      </div>
+      <div class="members">
+        <div class="title">کاربران</div>
+        <div class="member" *ngFor="let m of businessService.business.members">
+          <div class="profile" *ngIf="m.profile">
+            <div class="pic">
+              <img
+                *ngIf="m.profile.profilePicture"
+                [src]="businessService.business.logo"
+                alt=""
+              />
+              <img class="default" src="assets/icons/account-profile-user-4.svg" />
+            </div>
+          </div>
+
+          <div class="no-profile" *ngIf="m.userId && !m.profile">
+            <div class="pic">
+              <img class="default" src="assets/icons/account-profile-user-4.svg" />
+            </div>
+
+            کاربر
+
+            <span *ngIf="m.mobile" class="ltr en">{{
+              m.mobileCountryCode + m.mobile
+            }}</span>
+            <span class="id ltr" *ngIf="!m.mobile"> m.userId</span> پروفایل خود
+            را تکمیل نکرده است.
+          </div>
+
+          <div class="no-user" *ngIf="m.mobile && !m.userId">
+            شماره
+            <span class="ltr en">{{ m.mobileCountryCode + m.mobile }}</span>
+
+            تا کنون وارد سیستم نشده است.
+          </div>
+        </div>
+      </div>
+
+      <div class="invite">
+        <div class="title">کاربر جدید</div>
+
+        <div class="invite-form">
+          <div class="code">
+            <app-form-text-input
+              [label]="'کد کشور'"
+              [model]="memberToAdd.code"
+              (modelChange)="memberToAdd.code = $event"
+              [dir]="'ltr'"
+            ></app-form-text-input>
+          </div>
+          <div class="mobile">
+            <app-form-text-input
+              [label]="'شماره موبایل کاربر جدید'"
+              [model]="memberToAdd.mobile"
+              (modelChange)="memberToAdd.mobile = $event"
+              [dir]="'ltr'"
+            ></app-form-text-input>
+          </div>
+          <button type="button" (click)="addMember()">ثبت</button>
+          <div class="clearfix"></div>
+        </div>
+        <p>نیازی نیست کاربر از قبل ثبت‌نام کرده باشد.</p>
+      </div>
+ 
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div id="space" *ngIf="!businessService.getActiveBusinessId()">
   <div class="moon">
-
     <div class="logo-loader">
-
       <div class="loader" [style.opacity]="loading ? '1' : '0'"></div>
 
       <div class="logo">
         <a href="https://serendip.agency" target="_blank">
-
-          <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="">
+          <img
+            src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg"
+            alt=""
+          />
         </a>
-
       </div>
-
     </div>
 
-    <div class="wirzard">
-      <form *ngIf="tab == 'new'" class="">
+    <div class="wizard" *ngIf="offline">
+      <form action="">
+        <div class="title">دسترسی به سرور امکان پذیر نبود</div>
 
-
-        <div class="title">
-          نام کسب‌وکار جدید را وارد کنید
-        </div>
-        <mat-form-field>
-          <input matInput placeholder="نام کسب و کار" name="title" [(ngModel)]="model.title" />
-        </mat-form-field>
-
+        <div class="subtitle">لطفا لحظاتی دیگر دوباره تلاش کنید</div>
 
         <div class="submit">
-
-
-          <button (click)="saveBusiness()" [class.loading]="loading" mat-raised-button color="secondary">
+          <button
+            (click)="refresh()"
+            [class.loading]="loading"
+            mat-raised-button
+            color="secondary"
+          >
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -38,61 +125,89 @@
               <div class="rect4"></div>
               <div class="rect5"></div>
             </div>
-            <span *ngIf="!loading">
-              ادامه</span>
+            <span *ngIf="!loading"> تلاش مجدد</span>
           </button>
+        </div>
+      </form>
+    </div>
+    <div class="wirzard" *ngIf="!offline">
+      <form *ngIf="tab == 'new'" class="">
+        <div class="title">نام کسب‌وکار جدید را وارد کنید</div>
+        <mat-form-field>
+          <input
+            matInput
+            placeholder="نام کسب و کار"
+            name="title"
+            [(ngModel)]="model.title"
+          />
+        </mat-form-field>
 
+        <div class="submit">
+          <button
+            (click)="saveBusiness()"
+            [class.loading]="loading"
+            mat-raised-button
+            color="secondary"
+          >
+            <div class="spinner" *ngIf="loading">
+              <div class="rect1"></div>
+              <div class="rect2"></div>
+              <div class="rect3"></div>
+              <div class="rect4"></div>
+              <div class="rect5"></div>
+            </div>
+            <span *ngIf="!loading"> ادامه</span>
+          </button>
         </div>
 
         <ul class="links">
-          <li>
-            <a [routerLink]="['/business','list']" *ngIf="list.length > 0">
-              لیست کسب‌وکارها </a>
-          </li>
+          <li><a [routerLink]="['/business', 'list']"> لیست کسب‌وکارها </a></li>
         </ul>
-
       </form>
 
-      <form  *ngIf="tab == 'schema'" class="schema">
-
-
+      <form *ngIf="tab == 'schema'" class="schema">
         <ul class="schema-sections">
-          <li *ngFor="
-                let item of dashboardService.schema
-                  ? dashboardService.schema.dashboard
-                  : []
-              "
-            [class.active]=" dashboardService.currentSection.name == item.name">
-            <a [routerLink]="['/dashboard', item.name == 'dashboard' ? '' : item.name]">
+          <li
+            *ngFor="
+              let item of dashboardService.schema
+                ? dashboardService.schema.dashboard
+                : []
+            "
+            [class.active]="dashboardService.currentSection.name == item.name"
+          >
+            <a
+              [routerLink]="[
+                '/dashboard',
+                item.name == 'dashboard' ? '' : item.name
+              ]"
+            >
               <img [src]="'assets/icons/' + item.icon + '.svg'" />
               <span> {{ item.title }} </span>
             </a>
           </li>
         </ul>
-
       </form>
 
       <form class="list" *ngIf="tab == 'list'">
+        <div class="title">کسب‌وکار مورد نظر را انتخاب کنید.</div>
 
-
-        <div class="title">
-          کسب‌وکار مورد نظر را انتخاب کنید.
-        </div>
-
-
-        <div class="id">
-
-          {{currentBusiness | uppercase}}
-        </div>
-
+        <div class="id">{{ currentBusiness | uppercase }}</div>
 
         <div class="radio-list">
-          <app-form-radio-input (modelChange)="currentBusiness = $event" [data]="businessesToSelect" [display]="'block'"></app-form-radio-input>
+          <app-form-radio-input
+            (modelChange)="currentBusiness = $event"
+            [data]="businessesToSelect"
+            [display]="'block'"
+          ></app-form-radio-input>
         </div>
 
-
         <div class="submit">
-          <button (click)="choose(currentBusiness)" [class.loading]="loading" mat-raised-button color="secondary">
+          <button
+            (click)="choose(currentBusiness)"
+            [class.loading]="loading"
+            mat-raised-button
+            color="secondary"
+          >
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -101,27 +216,16 @@
               <div class="rect5"></div>
             </div>
 
-            <span *ngIf="!loading">
-              ادامه</span>
+            <span *ngIf="!loading"> ادامه</span>
           </button>
 
           <ul class="links">
-
-
             <li>
-              <a [routerLink]="['/business','new']">
-                ثبت کسب‌و‌کار جدید </a>
+              <a [routerLink]="['/business', 'new']"> ثبت کسب‌و‌کار جدید </a>
             </li>
-
-
           </ul>
-
         </div>
-
-
       </form>
-
     </div>
   </div>
-
 </div>

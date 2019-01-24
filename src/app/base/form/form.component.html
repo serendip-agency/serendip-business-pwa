@@ -5,17 +5,17 @@
         <img [src]="'assets/icons/' + entityIcon + '.svg'" />
       </div>
       <mat-card-title *ngIf="!minimal"
-        >فرم اطلاعات {{ entityLabel }}
+        >فرم اطلاعات {{ entityLabel || entityName }}
       </mat-card-title>
 
       <mat-card-title *ngIf="minimal"> {{ title }} </mat-card-title>
 
       <mat-card-subtitle *ngIf="!model._id && !minimal">
-        ثبت {{ entityLabel }} جدید
+        ثبت {{ entityLabel|| entityName }} جدید
       </mat-card-subtitle>
 
       <mat-card-subtitle *ngIf="model._id && !minimal">
-        ویرایش {{ entityLabel }}
+        ویرایش {{ entityLabel || entityName }}
       </mat-card-subtitle>
 
       <div

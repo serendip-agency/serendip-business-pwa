@@ -14,7 +14,7 @@ import { WeatherService } from "../weather.service";
 export class WeatherComponent implements OnInit {
   model: any = {};
   moment: typeof Moment;
-
+  refreshing = false;
   lastKey: number;
   keys;
   ajaxTimeout;
@@ -61,20 +61,32 @@ export class WeatherComponent implements OnInit {
       }
     });
   }
+  wait(timeout: number) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
+    });
+  }
   async refresh() {
+    this.refreshing = true;
+
+    await this.wait(1000);
+
     await this.getWeather();
+    this.refreshing = false;
   }
 
   async ngOnInit() {
     this.model = {};
     this.model.ajaxDate = 0;
+
     await this.refresh();
 
     if (this.model && this.model.forecast) {
       this.model.forecast = this.model.forecast.filter(f => {
         return (
-          this.moment(f.date, "YYYY-MM-DD").diff(this.moment(), "hour") + 3.5 >
-          -24
+          this.moment(f.date, "YYYY-MM-DD").diff(this.moment(), "hour") >= -36
         );
       });
     }

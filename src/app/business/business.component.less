@@ -1,8 +1,116 @@
-.id{
-
-  letter-spacing: 2px;
+.id {
   font-size: 8px;
   font-family: monospace;
   user-select: text;
-color:#B5B4B8;
+  color: #a29597;
+  text-transform: uppercase;
+  direction: ltr;
+}
+
+.business-settings {
+  max-width: 420px;
+
+.invite-form {
+    .code,
+    .mobile,
+    button {
+      float: left;
+      padding: 5px;
+      vertical-align: top;
+      box-sizing: border-box;
+    }
+
+    .code {
+      width: 60px;
+    }
+    .mobile {
+      width: calc(~"100% - 120px");
+    }
+    button {
+      width: 60px;
+      border: none;
+      background: #6c87c3;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 5px;
+      font-size: 11px;
+
+      margin-top: 20px;
+      height: 20px;
+      line-height: 20px;
+      padding: 0;
+    }
+  }
+  .invite,
+  .members {
+    padding: 10px 0;
+
+    .title {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 30px;
+    }
+
+    p {
+      padding-top: 0;
+      margin-top: 0;
+      color: #6b6898;
+    }
+    .member {
+      padding: 10px;
+      border-bottom: 1px solid #d8d5ce;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      .pic{
+        display: inline-block;
+        vertical-align: middle;
+        width:32px;
+        height:32px;
+        border-radius: 100%;
+        background: #fff;
+        box-sizing: border-box;
+        padding:2px;
+      }
+    }
+  }
+
+  .logo {
+    border: 2px dashed #d8d5ce;
+    border-radius: 100%;
+    background: #fff;
+    width: 100px;
+    height: 100px;
+    float: right;
+    box-sizing: border-box;
+    padding: 15px;
+    position: relative;
+    margin: 15px 0 10px 20px;
+    &:after {
+      position: absolute;
+      top: 10px;
+      left: calc(~"50% - 20px");
+      background: #eee;
+      border-radius: 5px;
+      display: block;
+      z-index: 2;
+      width: 40px;
+      text-align: center;
+      line-height: 18px;
+      font-size: 9px;
+      content: "آپلود لوگو";
+    }
+
+    img.default {
+      opacity: 0.3;
+      position: relative;
+    }
+  }
+
+  .info {
+    padding-top: 20px;
+    float: left;
+    width: calc(~"100% - 120px");
+    font-size: 14px;
+    font-weight: 500;
+  }
 }

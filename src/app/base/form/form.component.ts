@@ -85,10 +85,7 @@ export class FormComponent implements OnInit {
 
   @Input()
   entityName: string;
-  @Input()
-  entityModelName: string;
-  @Input()
-  entityLabel: string;
+
   @Input()
   entityIcon = "folder-archive-open";
   @Input()
@@ -201,7 +198,6 @@ export class FormComponent implements OnInit {
     }
 
     this.WidgetChange.emit({ inputs: { model: this.model } });
-
   }
 
   trackByFn(index: any, item: any) {

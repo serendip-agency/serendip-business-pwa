@@ -1,46 +1,62 @@
 <div class="widget">
   <mat-card>
-
-<!--
     <mat-card-content>
-      <div class="logbox">
-        {{ userForm.value | json }}
-      </div>
-      <form [formGroup]="userForm" class="">
-
-        <label for="">تصویر پروفایل</label>
+      <form class="">
         <div class="file-upload">
-          <input type="file" accept="image/*" (change)="fileChanged($event,'profilePicture')" />
-          <img [src]="userForm.get('profilePicture').value" *ngIf="userForm.get('profilePicture').value" alt="" />
-          <img src="assets/icons/account-profile-user-4.svg" class="default" *ngIf="!userForm.get('profilePicture').value" alt="" />
-
-
+          <input
+            type="file"
+            accept="image/*"
+            (change)="fileChanged($event, 'profilePicture')"
+          />
+          <img
+            [src]="profile.profilePicture"
+            *ngIf="profile.profilePicture"
+            alt=""
+          />
+          <img
+            src="assets/icons/account-profile-user-4.svg"
+            class="default"
+            *ngIf="!profile.profilePicture"
+            alt=""
+          />
         </div>
 
-
         <mat-form-field>
-          <input matInput placeholder="نام" formControlName="firstName" />
+          <input
+            matInput
+            placeholder="نام"
+            name="firstName"
+            [(ngModel)]="profile.firstName"
+          />
         </mat-form-field>
 
         <mat-form-field>
-          <input matInput placeholder="نام‌خانوادگی" formControlName="lastName" />
+          <input
+            matInput
+            placeholder="نام‌خانوادگی"
+            [(ngModel)]="profile.lastName"
+            name="lastName"
+          />
         </mat-form-field>
 
         <div class="form-group">
-          <mat-label>
-            جنسیت:
-          </mat-label>
-          <mat-radio-group formControlName="gender">
+          <mat-label> جنسیت </mat-label>
+          <mat-radio-group [(ngModel)]="profile.gender" name="gender">
             <mat-radio-button value="male">مرد</mat-radio-button>
             <mat-radio-button value="female">زن</mat-radio-button>
           </mat-radio-group>
         </div>
       </form>
-
     </mat-card-content>
     <mat-card-actions>
-      <button mat-raised-button color="primary" (click)="save()">ثبت</button>
-      <button mat-button type="reset" (click)="reset()">ریست</button>
-    </mat-card-actions> -->
+      <button (click)="save()" class="sp-button-icon">
+        <img [src]="'/assets/icons/save-backup-1.svg'" />
+        <!-- {{saveButtonText}} -->
+      </button>
+
+      <button class="pull-left sp-button-icon" (click)="refresh()">
+        <img [src]="'/assets/icons/refresh.svg'" />
+      </button>
+    </mat-card-actions>
   </mat-card>
 </div>

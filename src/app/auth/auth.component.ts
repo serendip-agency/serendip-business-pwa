@@ -62,19 +62,40 @@ export class AuthComponent implements OnInit {
     public sanitizer: DomSanitizer
   ) {}
 
-  async login(mode?: string) {
+  async login(mode?: "user-pass" | "two-factor" | "one-time") {
     if (mode === "user-pass") {
       this.model.oneTimePassword = this.model.password;
     }
 
     try {
       this.loading = true;
-      await this.authService.login(
-        this.model.username,
-        this.model.mobile,
-        this.model.password,
-        this.model.oneTimePassword
-      );
+
+      if (mode === "user-pass") {
+        await this.authService.login(
+          this.model.username,
+          "",
+          this.model.password,
+          ""
+        );
+      }
+
+      if (mode === "one-time") {
+        await this.authService.login(
+          "",
+          this.model.mobile,
+          "",
+          this.model.oneTimePassword
+        );
+      }
+
+      if (mode === "two-factor") {
+        await this.authService.login(
+          "",
+          this.model.mobile,
+          this.model.password,
+          this.model.oneTimePassword
+        );
+      }
 
       if (localStorage.getItem("lastUrl")) {
         const url = localStorage.getItem("lastUrl");
@@ -84,22 +105,26 @@ export class AuthComponent implements OnInit {
       } else {
         this.router.navigateByUrl("/");
       }
-    } catch (error) {
-      console.log(error);
-
-      switch (error.status) {
-        case 0:
-          this.showMessage("ارتباط شما با سرور یا اینترنت قطع است.");
-          break;
-        case 400:
-          this.showMessage("شماره موبایل یا رمز عبور وارد شده اشتباه است.");
-          break;
-        case 403:
-          this.showMessage("حساب کاربری خود را فعال کنید.");
-          break;
-        default:
-          this.showMessage("سرور قادر به پاسخگویی نیست لطفا دوباره تلاش کنید.");
-          break;
+    } catch (res) {
+      if (res.error && res.error.description == "include password") {
+        this.router.navigate(["/auth", "two-factor"]);
+      } else {
+        switch (res.status) {
+          case 0:
+            this.showMessage("ارتباط شما با سرور یا اینترنت قطع است.");
+            break;
+          case 400:
+            this.showMessage("شماره موبایل یا رمز عبور وارد شده اشتباه است.");
+            break;
+          case 403:
+            this.showMessage("حساب کاربری خود را فعال کنید.");
+            break;
+          default:
+            this.showMessage(
+              "سرور قادر به پاسخگویی نیست لطفا دوباره تلاش کنید."
+            );
+            break;
+        }
       }
     }
 
@@ -356,6 +381,12 @@ export class AuthComponent implements OnInit {
 
   handleParams(params) {
     this.tab = params.tab || "login";
+
+    if (this.tab === "user-pass") {
+      if (this.model.mobile) {
+        this.model.username = this.model.mobile;
+      }
+    }
   }
   async ngOnInit() {
     try {

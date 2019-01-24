@@ -1,5 +1,6 @@
 import { DataService } from "src/app/data.service";
 import { Component, OnInit } from "@angular/core";
+import { UserProfileModel } from "serendip-business-model";
 
 @Component({
   selector: "app-account-profle",
@@ -7,10 +8,18 @@ import { Component, OnInit } from "@angular/core";
   styleUrls: ["./account-profile.component.css"]
 })
 export class AccountProfileComponent implements OnInit {
+  profile: UserProfileModel = {} as any;
   constructor(private dataService: DataService) {}
 
+  async refresh() {
+    this.profile = await this.dataService.profile();
+  }
   async ngOnInit() {}
 
+
+  async save(){
+    
+  }
   handleParams(): any {}
 
   fileChanged(event, property, resizeWidth?) {

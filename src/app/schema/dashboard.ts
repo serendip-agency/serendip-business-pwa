@@ -7,6 +7,31 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     icon: "settings-1",
     tabs: [
       {
+        active : true,
+        title : 'کسب‌وکار',
+        icon : 'building-production-unit-1',
+        status: "default",
+        widget: {
+          component: "BusinessComponent"
+        }
+      },
+      {
+        active : true,
+        title : 'پروفایل',
+        icon : 'account-profile-user-4',
+        status: "default",
+        widget: {
+          component: "AccountProfileComponent"
+        }
+      }
+    ]
+  },
+  {
+    name: "configurations",
+    title: "پیکربندی",
+    icon: "dashboard-1",
+    tabs: [
+      {
         status: "default",
         title: "داشبورد‌ها",
         icon: "tab-3",

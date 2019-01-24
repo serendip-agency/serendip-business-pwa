@@ -52,20 +52,6 @@ export class DashboardService {
       dashboard: BusinessSchema.DashboardSchema,
       reports: BusinessSchema.ReportsSchema
     };
-    const primaryFields = _.findWhere(this.schema.reports, {
-      name: "primary"
-    }).fields;
-
-    this.schema.reports = this.schema.reports.map(report => {
-      if (report.name !== "primary") {
-        primaryFields.forEach(pf => {
-          if (report.fields.filter(f => f.name == pf.name).length == 0) {
-            report.fields.push(pf);
-          }
-        });
-      }
-      return report;
-    });
 
     this.schema.dashboard = (await this.dataService.list(
       "dashboard",
@@ -73,6 +59,7 @@ export class DashboardService {
       0
     )).concat(this.schema.dashboard);
 
+    console.log('set default schema');
     this.schema.dashboard = this.schema.dashboard.map(dashboard => {
       dashboard.tabs = dashboard.tabs.map(tab => {
         if (tab.widget) {

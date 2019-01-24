@@ -1,23 +1,18 @@
-
-import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
 
 @Component({
-  selector: 'app-form-select-input',
-  templateUrl: './form-select-input.component.html',
-  styleUrls: ['./form-select-input.component.css']
+  selector: "app-form-select-input",
+  templateUrl: "./form-select-input.component.html",
+  styleUrls: ["./form-select-input.component.css"]
 })
 export class FormSelectInputComponent implements OnInit {
+  SelectId = `form-select-${
+    Math.random()
+      .toString()
+      .split(".")[1]
+  }`;
 
-  SelectId = `form-select-${Math.random().toString().split('.')[1]}`
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-  trackByFn(index: any, item: any) { return index; }
-
-  
-  @Input() selectType: 'single' | 'multiple' = 'multiple';
+  @Input() selectType: "single" | "multiple" = "multiple";
 
   @Input() label: string;
   @Input() data: any;
@@ -33,25 +28,30 @@ export class FormSelectInputComponent implements OnInit {
   get model(): any {
     return this._model;
   }
+  constructor() {}
 
-  compareObjects(o1,o2){
-    if(!o1,!o2){
-      return false
-    }
-
-    try {
-      return JSON.stringify(o1) === JSON.stringify(o2)
-    } catch (error) {
+  ngOnInit() {}
+  trackByFn(index: any, item: any) {
+    return index;
+  }
+  compareObjects(o1, o2) {
+    if (!o1 && !o2) {
       return false;
     }
 
+    try {
+      return JSON.stringify(o1) === JSON.stringify(o2);
+    } catch (error) {
+      return false;
+    }
   }
   rpd(input) {
-    if (!input) { input = ""; }
+    if (!input) {
+      input = "";
+    }
     const convert = a => {
       return ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"][a];
     };
     return input.toString().replace(/\d/g, convert);
   }
-
 }

@@ -180,7 +180,7 @@ export const FormsSchema: FormInterface[] = [
                       label: "عنوان ویجت",
                       type: "single-line",
                     }
-                  },
+                  },                  
                   {
                     componentName: "FormChipsInputComponent",
                     propertyName: "reportId",

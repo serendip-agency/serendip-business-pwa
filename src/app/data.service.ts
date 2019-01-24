@@ -5,7 +5,8 @@ import * as JsZip from "jszip";
 import {
   ReportInterface,
   ReportModel,
-  EntityModel
+  EntityModel,
+  UserProfileModel
 } from "serendip-business-model";
 import * as utils from "serendip-utility";
 import * as _ from "underscore";
@@ -33,7 +34,6 @@ export interface DataRequestInterface {
 @Injectable()
 export class DataService {
   // public collectionsTextIndex: DocumentIndex[];
-  public static collectionsSynced: string[] = [];
 
   collectionsTextIndexCache: { [key: string]: any } = {};
 
@@ -61,6 +61,19 @@ export class DataService {
     this.setCurrentServer();
   }
 
+  async loadBusiness() {
+    try {
+      const myBusinesses = await this.request({
+        method: "get",
+        retry: false,
+        path: "/api/business/list"
+      });
+
+      this.businessService.business = _.findWhere(myBusinesses, {
+        _id: this.businessService.getActiveBusinessId()
+      });
+    } catch (error) {}
+  }
   setCurrentServer(srv?) {
     let lsServer = localStorage.server;
 
@@ -99,6 +112,23 @@ export class DataService {
     console.error(error, opts);
   }
 
+  async profile(): Promise<UserProfileModel> {
+    let profileLs = localStorage.getItem("profile");
+
+    try {
+      const res = await this.request({ path: "/api/profile", method: "get" });
+      if (res) {
+        profileLs = res;
+        localStorage.setItem("profile", JSON.stringify(profileLs));
+      }
+    } catch (error) {
+      if (profileLs) {
+        return JSON.parse(profileLs);
+      } else {
+        throw error;
+      }
+    }
+  }
   public request(opts: DataRequestInterface): Promise<any> {
     return new Promise(async (resolve, reject) => {
       setTimeout(() => {
@@ -208,7 +238,7 @@ export class DataService {
     limit,
     offline?: boolean
   ): Promise<EntityModel> {
-    if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
+    if (offline) {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB();
       let data = await store.get(controller);
@@ -234,7 +264,7 @@ export class DataService {
       return data;
     } else {
       try {
-        return this.request({
+        return await this.request({
           method: "POST",
           path: `/api/entity/${controller}/list`,
           timeout: 1000,
@@ -317,7 +347,7 @@ export class DataService {
     propertiesSearchMode: string,
     offline?: boolean
   ): Promise<any> {
-    if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
+    if (offline) {
       const storeName = controller.toLowerCase().trim();
 
       const store = await this.idbService.dataIDB();
@@ -370,14 +400,14 @@ export class DataService {
   }
 
   async count(controller: string, offline?: boolean): Promise<number> {
-    if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
+    if (offline) {
       const store = await this.idbService.dataIDB();
       const data = await store.get(controller);
 
       return data.length;
     } else {
       try {
-        return this.request({
+        return await this.request({
           method: "POST",
           timeout: 1000,
           path: `/api/entity/${controller}/count`
@@ -395,13 +425,13 @@ export class DataService {
     _id: string,
     offline?: boolean
   ): Promise<EntityModel> {
-    if (DataService.collectionsSynced.indexOf(controller) !== -1 || offline) {
+    if (offline) {
       const store = await this.idbService.dataIDB();
       const data = await store.get(controller);
       return data[_id];
     } else {
       try {
-        return this.request({
+        return await this.request({
           method: "POST",
           timeout: 1000,
           path: `/api/entity/${controller}/details`,
@@ -511,9 +541,7 @@ export class DataService {
   }
 
   async delete(controller: string, _id: string): Promise<EntityModel> {
-
-
-    console.log('delete',controller,_id);
+    console.log("delete", controller, _id);
     const model = { _id: _id };
 
     if (_id) {
@@ -669,8 +697,6 @@ export class DataService {
       }),
       { parallelize: 1 }
     );
-
-    DataService.collectionsSynced = collections;
   }
 
   public async indexCollections() {

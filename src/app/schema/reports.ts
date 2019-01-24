@@ -26,11 +26,14 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: false,
         name: "_cdate",
         label: "تاریخ ثبت",
-        template: { component: "DateViewComponent" },
-        templateInputsForm: "report-field-date",
-        templateInputs: {
-          format: "jYYYY/jMM/jDD HH:mm:ss"
+        template: {
+          component: "DateViewComponent",
+          inputs: {
+            format: "jYYYY/jMM/jDD HH:mm:ss"
+          },
+          formName: "report-field-date"
         },
+
         queries: [
           {
             label: "در این بازه زمانی باشد",
@@ -43,15 +46,6 @@ export const ReportsSchema: ReportInterface[] = [
             methodInputForm: "report-query-eq"
           }
         ]
-      },
-      {
-        enabled: false,
-        name: "_vdate",
-        label: "تاریخ ورژن",
-        template: "DateViewComponent",
-        templateInputs: {
-          format: "jYYYY/jMM/jDD HH:mm:ss"
-        }
       }
     ]
   },
@@ -96,103 +90,6 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام فرم",
-        template: { component: "ShortTextViewComponent" }
-      }
-    ]
-  },
-  {
-    name: "company-default",
-    entityName: "company",
-    label: "",
-    fields: [
-      {
-        enabled: true,
-        name: "name",
-        label: "نام شرکت",
-        template: { component: "ShortTextViewComponent" }
-      },
-      {
-        enabled: true,
-        name: "peoples",
-        label: "افراد",
-        templateInputs: { viewType: "json" },
-        template: { component: "ShortTextViewComponent" }
-      },
-      {
-        enabled: true,
-        name: "contacts",
-        label: "اطلاعات تماس",
-        template: { component: "ContactsViewComponent" }
-      }
-    ]
-  },
-  {
-    name: "service-type-default",
-    entityName: "serviceType",
-    label: "",
-    fields: [
-      {
-        enabled: true,
-        name: "name",
-        label: "نام دسته بندی",
-        template: { component: "ShortTextViewComponent" }
-      },
-      {
-        enabled: true,
-        name: "price",
-        label: "قیمت",
-        template: "PriceViewComponent"
-      }
-    ]
-  },
-  {
-    name: "job-title-default",
-    entityName: "jobTitle",
-    label: "",
-    fields: [
-      {
-        enabled: true,
-        name: "name",
-        label: "نام عنوان شعلی",
-        template: { component: "ShortTextViewComponent" }
-      }
-    ]
-  },
-  {
-    name: "support-ticket-default",
-    entityName: "supportTicket",
-    label: "",
-    fields: [
-      {
-        enabled: true,
-        name: "name",
-        label: "موضوع تیکت",
-        template: { component: "ShortTextViewComponent" }
-      }
-    ]
-  },
-  {
-    name: "complaint-default",
-    entityName: "complaint",
-    label: "",
-    fields: [
-      {
-        enabled: true,
-        name: "subject",
-        label: "موضوع ",
-        template: { component: "ShortTextViewComponent" }
-      }
-    ]
-  },
-  {
-    name: "sale-default",
-    entityName: "sale",
-    label: "",
-    fields: [
-      {
-        enabled: true,
-        name: "subject",
-        label: "موضوع ",
         template: { component: "ShortTextViewComponent" }
       }
     ]
@@ -310,12 +207,14 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "gender",
         label: "جنسیت",
-        template: { component: "ShortTextViewComponent" },
-        templateInputs: {
-          replace: {
-            male: "آقا",
-            female: "خانم"
-          }
+        template: {
+          inputs: {
+            replace: {
+              male: "آقا",
+              female: "خانم"
+            }
+          },
+          component: "ShortTextViewComponent"
         }
       },
       {

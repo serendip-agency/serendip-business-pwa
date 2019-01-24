@@ -6,7 +6,7 @@ import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot
 } from "@angular/router";
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { IdbDeleteAllDatabases } from "./idb.service";
 import { TokenModel } from "serendip";
 @Injectable()
@@ -62,7 +62,7 @@ export class AuthService {
 
   async register(mobile: string, password: string): Promise<any> {
     return this.http
-    .post<TokenModel>(this.apiUrl + "/api/auth/register", {
+      .post<TokenModel>(this.apiUrl + "/api/auth/register", {
         username: mobile,
         mobile: mobile,
         password: password
@@ -137,33 +137,28 @@ export class AuthService {
     password: string,
     oneTimePassword: string
   ): Promise<TokenModel> {
-    try {
-      console.log(this.apiUrl);
-      const newToken = await this.http
-        .post<TokenModel>(this.apiUrl + "/api/auth/token", {
-          username,
-          mobile,
-          password,
-          oneTimePassword,
-          grant_type: "password"
-        })
-        .toPromise();
+    console.log(this.apiUrl);
+    const newToken = await this.http
+      .post<TokenModel>(this.apiUrl + "/api/auth/token", {
+        username,
+        mobile,
+        password,
+        oneTimePassword,
+        grant_type: "password"
+      })
+      .toPromise();
 
-      if (!newToken) {
-        throw new Error("empty token");
-      }
-
-      // console.log("newToken", newToken);
-
-      this.loggedIn = true;
-
-      localStorage.setItem("token", JSON.stringify(newToken));
-
-      return newToken;
-    } catch (error) {
-      console.error("newToken", error);
-      return;
+    if (!newToken) {
+      throw new Error("empty token");
     }
+
+    // console.log("newToken", newToken);
+
+    this.loggedIn = true;
+
+    localStorage.setItem("token", JSON.stringify(newToken));
+
+    return newToken;
   }
 
   async refreshToken(token: TokenModel): Promise<TokenModel> {
@@ -177,8 +172,10 @@ export class AuthService {
 
       localStorage.setItem("token", JSON.stringify(newToken));
       return newToken;
-    } catch (error) {
-      return null;
+    } catch (res) {
+      if (res.status === 400) {
+        return null;
+      } else { return token; }
     }
   }
 }

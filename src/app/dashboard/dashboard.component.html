@@ -21,7 +21,23 @@
 <div class="dashboard-wrapper" *ngIf="dashboardReady">
   <header id="header">
     <div class="inner">
-      <div class="logo"><img src="assets/graphics/brand/logo-6.svg" /></div>
+      <div class="logo" (click)="logoClick()">
+        <img src="assets/graphics/brand/logo-6.svg" />
+      </div>
+
+      <div
+        [class.hide-mobile]="
+          weatherService.weatherVisible ||
+          calendarService.calendarVisible ||
+          gmapsService.dashboardMapVisible ||
+          startActive
+        "
+        class="explorer-toggle"
+        (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()"
+        [class.active]="explorerVisible"
+      >
+        <img [src]="'assets/icons/arrow-right-next-2.svg'" />
+      </div>
 
       <div class="quick" (click)="toggleDashboardDateTimeFormat()">
         <div class="datetime">
@@ -35,7 +51,7 @@
           <span class="date"> {{ rpd(dashboardDate) }} </span>
         </div>
       </div>
-      <div class="title" *ngIf="dashboardService.currentSection">
+      <!-- <div class="title" *ngIf="dashboardService.currentSection">
         <div class="icon">
           <img
             [src]="
@@ -45,15 +61,7 @@
         </div>
 
         {{ dashboardService.currentSection.title }}
-      </div>
-
-      <div
-        class="explorer-toggle"
-        (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()"
-        [class.active]="explorerVisible"
-      >
-        <img [src]="'assets/icons/arrow-right-next-2.svg'" />
-      </div>
+      </div> -->
 
       <ng-container *ngTemplateOutlet="shortcuts"></ng-container>
 
@@ -196,7 +204,7 @@
           *ngFor="let tab of definedItemsOfArray(container.tabs); let i = index"
           [style.top]="container.showTabs ? i * 40 + 10 + 'px' : 'unset'"
           [class.last-item]="i == container.tabs.length - 1"
-          [style.z-index]="!container.showTabs && tab.active ? 1000 :  i"
+          [style.z-index]="!container.showTabs && tab.active ? 1000 : i"
           [style.left]="container.showTabs ? 10 + 'px' : 'unset'"
           [style.right]="container.showTabs ? 10 + 'px' : 'unset'"
           [id]="'tab-' + c + '-' + i"
@@ -220,7 +228,8 @@
             isNavTabFull('nav-tab-' + c) && !container.showTabs
               ? ''
               : setActive(tab, container);
-            container.showTabs = false;syncGrid()
+            container.showTabs = false;
+            syncGrid()
           "
         >
           <a
@@ -243,7 +252,7 @@
           </a>
         </li>
 
-        <li class="full-nav" (click)="container.showTabs = true;syncGrid()">
+        <li class="full-nav" (click)="container.showTabs = true; syncGrid()">
           <a class="tab-handle">
             <div class="tab-icon">{{ rpd(container.tabs.length) }}</div>
             <div class="tab-title">تب باز</div>

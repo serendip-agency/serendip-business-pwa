@@ -80,7 +80,7 @@ This set of fonts are used in this project under the license: (.....)
 
 .en,
 .en * {
-  font-family: "Roboto", sans-serif !important;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif !important;
 }
 
 .text-left {
@@ -93,6 +93,11 @@ This set of fonts are used in this project under the license: (.....)
 
 .text-center {
   text-align: center !important;
+}
+
+.ltr {
+  direction: ltr;
+  display: inline-block;
 }
 
 a,
@@ -154,8 +159,8 @@ button.sp-button-icon {
   z-index: 5600;
 
   width: 100%;
-  height: calc("100% - 50px");
-  top: 50px;
+  height: 100%;
+  top: 0;
   left: 0;
   position: fixed;
   border-radius: none !important;
@@ -363,17 +368,20 @@ label {
 
 .file-upload {
   position: relative;
-  height: 120px;
-  border: 1px dashed rgba(0, 0, 0, 0.1);
+  border: 2px dashed #d8d5ce;
+
+  width: 100px;
+  height: 100px;
   box-sizing: border-box;
   border-radius: 5px;
+  padding: 15px;
   margin-bottom: 10px;
   overflow: hidden;
   img {
-    height: 100px;
-    width: auto;
+    width: 100%;
+    height: auto;
     display: block;
-    margin: 10px auto;
+
     &.default {
       opacity: 0.2;
     }
@@ -465,7 +473,6 @@ label {
         li.full-nav {
           display: none;
         }
-        background: #e3e0db;
         position: absolute;
         top: 0;
         left: 0;
@@ -608,7 +615,7 @@ label {
           line-height: 22px;
           font-weight: 900;
           border-radius: 100%;
-          padding:2px;
+          padding: 2px;
           vertical-align: middle;
           position: absolute;
           top: 5px;
@@ -739,7 +746,7 @@ label {
       padding-top: 50px;
     }
     &.docScrolled {
-      right: -60px;
+      right: -60px !important;
     }
   }
   .grid-container {
@@ -747,6 +754,14 @@ label {
     width: calc(100% - 50px);
     &.docScrolled {
       width: 100%;
+
+      .tabs-container {
+        padding: 0 0 140px 0;
+
+        .mat-card {
+          border-radius: 0;
+        }
+      }
     }
     .tabs-container {
       padding: 5px 5px 0 0;
@@ -867,7 +882,6 @@ body {
   overflow-x: hidden;
   user-select: none;
 }
-
 
 body {
   .mat-card-subtitle,

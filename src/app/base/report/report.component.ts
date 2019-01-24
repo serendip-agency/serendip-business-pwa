@@ -289,11 +289,19 @@ export class ReportComponent implements OnInit {
       //   this.report.fields = [...this.report.fields, ...commonFields];
     }
 
-    if (this.report) {
-      if (!this.entityName) {
-        this.entityName = this.report.entityName;
-      }
+    if (!this.entityName) {
+      this.entityName = this.report.entityName;
     }
+
+    const primaryFields = _.findWhere(this.dashboardService.schema.reports, {
+      name: "primary"
+    }).fields;
+
+    primaryFields.forEach(pf => {
+      if (this.report.fields.filter(f => f.name === pf.name).length === 0) {
+        this.report.fields.push(pf);
+      }
+    });
 
     this.report = await this.reportService.generate({
       entity: this.entityName,
@@ -435,7 +443,7 @@ export class ReportComponent implements OnInit {
     this.DashboardCommand.emit({
       command: "open-tab",
       tab: {
-        title: "ثبت " + this.entityLabelSingular,
+        title: "ثبت " + this.title,
         active: true,
         icon: "office-paper-work-pen",
         widgets: [
@@ -443,7 +451,6 @@ export class ReportComponent implements OnInit {
             component: "FormComponent",
             inputs: {
               name: this.formName,
-              entityLabel: this.entityLabelSingular,
               entityIcon: this.icon,
               formId: this.formId
             }
@@ -458,7 +465,7 @@ export class ReportComponent implements OnInit {
       this.DashboardCommand.emit({
         command: "open-tab",
         tab: {
-          title: "ویرایش " + this.entityLabelSingular,
+          title: "ویرایش " + this.title,
           active: true,
           icon: "office-paper-work-pen",
           widgets: [
@@ -468,7 +475,6 @@ export class ReportComponent implements OnInit {
                 name: this.formName,
                 formId: this.formId,
                 documentId: _id,
-                entityLabel: this.entityLabelSingular,
                 entityIcon: this.icon
               }
             }

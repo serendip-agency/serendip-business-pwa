@@ -42,6 +42,10 @@ import { AuthService } from "../auth.service";
 import { MatSnackBar } from "@angular/material";
 import swal from "sweetalert2";
 import { text, validate } from "serendip-utility";
+import { BusinessComponent } from "../business/business.component";
+import { AccountProfileComponent } from "../account/account-profile/account-profile.component";
+import { AccountPasswordComponent } from "../account/account-password/account-password.component";
+import { AccountSessionsComponent } from "../account/account-sessions/account-sessions.component";
 
 // optional import of scroll behavior
 polyfill({
@@ -57,7 +61,11 @@ try {
 const dynamicComponents = {
   FormComponent,
   ReportComponent,
-  TriggersComponent
+  BusinessComponent,
+  TriggersComponent,
+  AccountProfileComponent,
+  AccountPasswordComponent,
+  AccountSessionsComponent
 };
 
 @Component({
@@ -92,11 +100,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ];
   screen: "mobile" | "desktop";
   gridSizeChange = new EventEmitter();
-  dashboardSocket: WebSocket;
+  socket: WebSocket;
   private _grid: DashboardGridInterface;
   tabDragging: DashboardTabInterface;
   dashboardDateFormat: any;
   _lastGridSync: number;
+  startActive: any;
 
   get lastGridSync() {
     if (this._lastGridSync) {
@@ -271,6 +280,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   clickOnStartWrapper(event: MouseEvent) {
     if ((event.target as HTMLElement).getAttribute("id") === "start") {
       document.getElementById("start").classList.remove("fadeIn");
+      this.startActive = false;
     }
   }
 
@@ -399,6 +409,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // }
   }
 
+  logoClick() {
+    if (
+      this.weatherService.weatherVisible ||
+      this.calendarService.calendarVisible ||
+      this.gmapsService.dashboardMapVisible
+    ) {
+      this.weatherService.weatherVisible = false;
+      this.calendarService.calendarVisible = false;
+      this.gmapsService.dashboardMapVisible = false;
+    } else {
+      this.startButtonClick();
+    }
+  }
   toggleCalendar() {
     this.weatherService.weatherVisible = false;
     this.hideStart();
@@ -514,6 +537,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     this.syncGrid();
+
+    this.handleFullNav();
   }
 
   async initGrid(tabs: DashboardTabInterface[]) {
@@ -698,11 +723,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     console.warn("syncing grid ...");
 
     if (
-      !this.dashboardSocket ||
-      (this.dashboardSocket &&
-        this.dashboardSocket.readyState !== WebSocket.OPEN)
+      !this.socket ||
+      (this.socket && this.socket.readyState !== WebSocket.OPEN)
     ) {
-      await this.newDashboardSocket();
+      await this.newsocket();
     }
 
     localStorage.setItem(
@@ -714,7 +738,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.dashboardSocket.send(
+    this.socket.send(
       JSON.stringify({
         command: "sync_grid",
         business: this.businessService.getActiveBusinessId(),
@@ -796,6 +820,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   startButtonClick() {
+    this.startActive = !this.startActive;
     document.getElementById("start").classList.toggle("fadeIn");
     document.querySelector("body").classList.toggle("hideScroll");
   }
@@ -878,10 +903,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   hideStart() {
     document.getElementById("start").classList.remove("fadeIn");
+    this.startActive = false;
   }
 
   showStart() {
     document.getElementById("start").classList.add("fadeIn");
+    this.startActive = true;
   }
   isNavTabFull(navTabId) {
     return this.fullNavTabs.indexOf(navTabId) !== -1;
@@ -904,7 +931,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   handleFullNav() {
-    setInterval(() => {
+    setTimeout(() => {
       _.forEach(document.querySelectorAll("ul.tabs-nav"), navTab => {
         const navTabId = navTab.getAttribute("id");
 
@@ -926,7 +953,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         );
 
         const isFull =
-          navTab.getBoundingClientRect().width - listItemsWith < 10;
+          navTab.getBoundingClientRect().width - listItemsWith < 50;
 
         // var isFull = navTab.getBoundingClientRect().width <= _.reduceRight(navTab.querySelectorAll("li"), (memo, item: HTMLElement) => {
         //   return memo + item.getBoundingClientRect().width;
@@ -944,7 +971,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }
       });
-    }, 100);
+    }, 1);
   }
 
   sync() {
@@ -962,21 +989,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
           resolve();
         })
-        .catch(e => {
-          // if (e.statusText === "business invalid") {
-          //   this.dashboardLoadingText =
-          //     "کسب و کار انتخاب شده نامعتبر می‌باشد. پس از ورود مجدد دوباره تلاش کنید.";
-          //   setTimeout(() => {
-          //     this.authService.logout();
-          //   }, 3000);
-          // } else {
-          //   this.dashboardLoadingText = "همگام سازی با خطا مواجه شد.";
-          //   resolve();
-          // }
-          localStorage.removeItem("business");
-          location.reload();
-
-          console.error(e);
+        .catch(res => {
+          if (res.status === 0 || res.status === 500) {
+            resolve();
+          } else {
+            localStorage.removeItem("business");
+            location.reload();
+          }
         });
     });
   }
@@ -1006,7 +1025,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   handleGridMouseDragScroll() {
     let capture = false;
-    let lastCapture = 0;
+    // let lastCapture = 0;
     const grid = document.querySelector(".grid-container") as any;
 
     if (!grid) {
@@ -1090,10 +1109,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  async newDashboardSocket() {
-    this.dashboardSocket = await this.wsService.newSocket("/dashboard", true);
+  async newsocket() {
+    this.socket = await this.wsService.newSocket("/dashboard", true);
 
-    this.dashboardSocket.onmessage = (ev: MessageEvent) => {
+    this.socket.onclose = async closeEv => {
+      this.socket = null;
+      this.socket = await this.wsService.newSocket("/dashboard", true);
+    };
+    this.socket.onmessage = (ev: MessageEvent) => {
       const msg: {
         command: "change_grid";
         data: {
@@ -1211,26 +1234,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.router.navigate(["/business"]);
       return;
     }
-    await this.sync();
 
-    const myBusinesses = await this.dataService.request({
-      method: "get",
-      retry: false,
-      path: "/api/business/list"
-    });
-
-    this.businessService.business = _.findWhere(myBusinesses, {
-      _id: this.businessService.getActiveBusinessId()
-    });
+    await this.dataService.loadBusiness();
 
     await this.dashboardService.setDefaultSchema();
     await this.handleParams(this.activatedRoute.snapshot.params);
 
-    await this.wait(500);
-
     this.dashboardReady = true;
 
-    this.newDashboardSocket()
+    this.newsocket()
       .then(() => {})
       .catch(() => {});
 
@@ -1270,16 +1282,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // document.querySelector("body").classList.toggle("hideScroll");
 
     document.onscroll = () => {
-      if (document.scrollingElement.scrollTop > 30) {
-        document.querySelector("aside#explorer").classList.add("docScrolled");
-        document.querySelector(".grid-container").classList.add("docScrolled");
+      const toNotify = ["aside#explorer", ".grid-container", "header"];
+
+      if (document.scrollingElement.scrollTop > 1) {
+        toNotify.forEach(s =>
+          document.querySelector(s).classList.add("docScrolled")
+        );
       } else {
-        document
-          .querySelector("aside#explorer")
-          .classList.remove("docScrolled");
-        document
-          .querySelector(".grid-container")
-          .classList.remove("docScrolled");
+        toNotify.forEach(s =>
+          document.querySelector(s).classList.remove("docScrolled")
+        );
       }
     };
   }

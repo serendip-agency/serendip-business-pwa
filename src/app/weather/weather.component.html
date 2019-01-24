@@ -1,48 +1,52 @@
-<div id="weather" *ngIf="model &&  weatherService.weatherVisible" >
+<div id="weather" *ngIf="model && weatherService.weatherVisible">
   <div class="box">
     <div class="today" *ngIf="model.current">
       <div class="icon-degree">
         <div class="icon">
-          <img [src]="'assets/weather/' + model.current.skycode +'.svg'" />
+          <img [src]="'assets/weather/' + model.current.skycode + '.svg'" />
         </div>
         <div class="degree">
-          {{model.current.temperature | rpd}}
-          <img src='assets/weather/centigrade.svg' />
+          {{ model.current.temperature | rpd }}
+          <img src="assets/weather/centigrade.svg" />
         </div>
       </div>
       <div class="info">
         <div class="location en">
-          <img alt="" src="assets/icons/location-province.svg"> {{model.location.name}}
+          <img alt="" src="assets/icons/location-province.svg" />
+          {{ model.location.name }}
         </div>
-        <div class="last-update">
-          <img alt="" src="assets/icons/refresh.svg">
-          به روزرسانی در {{moment(model.ajaxDate).fromNow()}}
+        <div class="last-update"  (click)="refresh()">
+          <img
+            alt=""
+            src="assets/icons/refresh.svg"
+            [class.refreshing]="refreshing"
+          />
+          به روزرسانی   {{ moment(model.ajaxDate).fromNow() }}
         </div>
-
       </div>
     </div>
 
     <ul class="forecast">
-      <li *ngFor="let forecast of model.forecast;index as i">
-
+      <li *ngFor="let forecast of model.forecast; index as i">
         <div class="day">
-          <div class="weekday"> {{moment.weekdays()[moment( forecast.date).weekday()] }}</div>
+          <div class="weekday">
+            {{ moment.weekdays()[moment(forecast.date).weekday()] }}
+          </div>
 
-          <div class="day-month"> {{moment( forecast.date).format('jDD jMMMM') | rpd}} </div>
+          <div class="day-month">
+            {{ moment(forecast.date).format("jDD jMMMM") | rpd }}
+          </div>
         </div>
         <div class="icon">
-          <img [src]="'assets/weather/' + forecast.skycodeday +'.svg'" />
+          <img [src]="'assets/weather/' + forecast.skycodeday + '.svg'" />
         </div>
 
         <div class="low">
-          <img src='assets/weather/centigrade.svg' />
-          {{forecast.low | rpd}}
+          <img src="assets/weather/centigrade.svg" /> {{ forecast.low | rpd }}
         </div>
         <div class="high">
-          <img src='assets/weather/centigrade.svg' />
-          {{forecast.high | rpd}}
+          <img src="assets/weather/centigrade.svg" /> {{ forecast.high | rpd }}
         </div>
-
       </li>
     </ul>
   </div>

@@ -1,5 +1,5 @@
 .dashboard-wrapper {
-  background-image: url("http://a.desktopprassets.com/wallpapers/d223c66afbcadc80fe80c09bfe853ab3d4107224/1351539477068.jpg");
+  background-image: url("/assets/wallpaper.jpg");
 
   background-size: cover;
   padding-top: 50px;
@@ -75,19 +75,21 @@
 }
 
 header {
-  position: relative;
+  position: fixed;
   z-index: 5500;
   box-sizing: border-box;
   height: 50px;
   overflow: hidden;
   user-select: none;
-  background: #453E5D;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-  position: absolute;
+  background: #453e5d;
   top: 0;
   left: 0;
   width: 100%;
 
+transition: top linear .3s;
+  &.docScrolled{
+    top:-50px;
+  }
   nav {
     padding: 15px 30px;
     padding-bottom: 0;
@@ -178,7 +180,7 @@ header {
       }
       .datetime {
         box-sizing: border-box;
-        padding: 5px;
+        padding: 0 5px;
         top: 0px; //top: 50px;
       }
       .date {
@@ -224,9 +226,7 @@ header {
         width: auto;
       }
     }
-    .explorer-toggle,
-    .container-add,
-    .grid-layout {
+    .explorer-toggle {
       float: right;
       height: 40px;
       width: 40px;
@@ -672,8 +672,8 @@ header .shortcuts .search {
     float: left;
     vertical-align: middle;
     margin: 0 auto;
-    margin-top: 12px;
-    padding: 0 15px;
+    margin-top: 6px;
+    padding: 0 0 0 10px;
     width: 100%;
     box-sizing: border-box;
 
@@ -851,7 +851,7 @@ header .shortcuts .search {
     max-width: 420px;
     width: 100%;
     margin: 0 auto;
-    background: #453E5D url(../../assets/graphics/astro-small.svg) no-repeat
+    background: #453e5d url(../../assets/graphics/astro-small.svg) no-repeat
       center bottom;
     background-size: 64px;
     min-height: 100%;
@@ -903,7 +903,7 @@ header .shortcuts .search {
   //////////////
 
   nav {
-    padding: 0 10px;
+    padding: 10px;
     ul {
       width: 100%;
       padding: 0;
@@ -991,13 +991,17 @@ header .shortcuts .search {
 }
 
 @media (max-width: 600px) {
+  .hide-mobile {
+    display: none;
+  }
   header {
     .inner .shortcuts {
       display: none;
     }
     .inner .quick {
+      position: relative;
+      float: right;
       left: unset;
-      right: 50px;
       .datetime {
         text-align: right;
       }
@@ -1015,23 +1019,6 @@ header .shortcuts .search {
         border: 1px solid rgba(255, 255, 255, 1);
         border-radius: 15px;
       }
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  #start {
-    top: 0;
-    min-height: 100%;
-  }
-}
-
-@media (max-width: 380px) {
-  header .inner .shortcuts ul li.capture {
-    display: none;
-  }
-  #start {
-    nav {
     }
   }
 }
