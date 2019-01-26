@@ -11,7 +11,7 @@
       <mat-card-title *ngIf="minimal"> {{ title }} </mat-card-title>
 
       <mat-card-subtitle *ngIf="!model._id && !minimal">
-        ثبت {{ entityLabel|| entityName }} جدید
+        ثبت {{ entityLabel || entityName }} جدید
       </mat-card-subtitle>
 
       <mat-card-subtitle *ngIf="model._id && !minimal">
@@ -85,6 +85,4 @@
     >
     </app-form-parts>
   </form>
-
-  
 </ng-template>

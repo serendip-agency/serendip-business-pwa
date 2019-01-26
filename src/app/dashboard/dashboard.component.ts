@@ -558,8 +558,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
 
     this.syncGrid();
-
-    this.handleFullNav();
   }
 
   async initGrid(tabs: DashboardTabInterface[]) {
@@ -990,6 +988,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
           }
         }
       });
+
+      setTimeout(() => {
+        this.handleFullNav();
+      }, 300);
     }, 1);
   }
 
@@ -1268,7 +1270,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.socket.onmessage = () => this.onSocketMessage;
   }
   async ngOnInit() {
-  //  await this.initSocket();
+    //  await this.initSocket();
 
     if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
       try {
@@ -1295,6 +1297,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     await this.handleParams(this.activatedRoute.snapshot.params);
 
     this.dashboardReady = true;
+    this.handleFullNav();
 
     this.dashboardLoadingText = "Connecting to socket ...";
 
@@ -1328,7 +1331,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.gridSizeChange.emit();
 
-    this.handleFullNav();
     //  this.handleStartButtonMove();
 
     this.handleGridMouseDragScroll();
