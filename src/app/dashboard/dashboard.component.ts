@@ -104,9 +104,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private _grid: DashboardGridInterface;
   tabDragging: DashboardTabInterface;
   dashboardDateFormat: any;
-  _lastGridSync: number;
+  _lastGridSync = 0;
   startActive: any;
+  _lastDataSync = 0;
+  get lastDataSync() {
+    if (this._lastDataSync) {
+      return this._lastDataSync;
+    } else {
+      const fromLs = localStorage.getItem("last-data-sync");
+      if (fromLs) {
+        this._lastDataSync = parseInt(fromLs, 10);
+        return this._lastDataSync;
+      } else {
+        return 0;
+      }
+    }
+  }
 
+  set lastDataSync(val) {
+    localStorage.setItem("last-data-sync", val.toString());
+    this._lastDataSync = val;
+  }
   get lastGridSync() {
     if (this._lastGridSync) {
       return this._lastGridSync;
@@ -974,7 +992,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }, 1);
   }
 
-  sync() {
+  dataSync() {
     return new Promise((resolve, reject) => {
       this.dashboardLoadingText = "Syncing dashboard ...";
 
@@ -1232,9 +1250,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
   async ngOnInit() {
-    try {
-      await this.sync();
-    } catch (error) {}
+    if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
+      try {
+        await this.dataSync();
+        this.lastDataSync = Date.now();
+      } catch (error) {}
+    }
 
     this.dashboardLoadingText = "Initiating dashboard ...";
     this.dashboardDateTimeTick();

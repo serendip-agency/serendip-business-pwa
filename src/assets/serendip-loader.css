@@ -29,23 +29,24 @@
   vertical-align: middle;
   text-align: center;
 }
-#serendip-loader .logo-wrapper .logo {
+.logo-wrapper .logo {
   margin: 0 auto;
   margin-top: -110px;
   width: 100px;
   height: 100px;
 }
-#serendip-loader .logo-wrapper .logo img {
+.logo-wrapper .logo img,
+.logo-wrapper .logo svg {
   width: 100%;
   height: 100%;
 }
-#serendip-loader .logo-wrapper .loader,
-#serendip-loader .logo-wrapper .loader:after {
+.logo-wrapper .loader,
+.logo-wrapper .loader:after {
   border-radius: 50%;
   width: 100px;
   height: 100px;
 }
-#serendip-loader .logo-wrapper .loader {
+.logo-wrapper .loader {
   margin: 0 auto;
   font-size: 10px;
   position: relative;
