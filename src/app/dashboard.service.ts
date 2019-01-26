@@ -39,7 +39,7 @@ export class DashboardService {
       this.setScreen();
     };
 
-    this.obService.listen("dashboard").subscribe(() => {
+    this.obService.listen("dashboard").subscribe(msg => {
       this.setDefaultSchema();
     });
   }

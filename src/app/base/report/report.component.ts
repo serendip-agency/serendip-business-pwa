@@ -383,8 +383,6 @@ export class ReportComponent implements OnInit {
   async ngOnInit() {
     this.reportStore = await this.idbService.reportIDB();
 
-    await this.dashboardService.setDefaultSchema();
-
     await this.refreshReports();
 
     //   if (!this.page) await this.changePage(0);

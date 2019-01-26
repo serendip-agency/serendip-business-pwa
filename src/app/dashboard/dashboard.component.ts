@@ -102,13 +102,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ];
   screen: "mobile" | "desktop";
   gridSizeChange = new EventEmitter();
-  socket: WebSocket;
   private _grid: DashboardGridInterface;
   tabDragging: DashboardTabInterface;
   dashboardDateFormat: any;
   _lastGridSync = 0;
   startActive: any;
   _lastDataSync = 0;
+  entitySocket: WebSocket;
+  dashboardSocket: WebSocket;
   get lastDataSync() {
     if (this._lastDataSync) {
       return this._lastDataSync;
@@ -739,13 +740,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     console.warn("syncing grid ...");
 
-    if (
-      !this.socket ||
-      (this.socket && this.socket.readyState !== WebSocket.OPEN)
-    ) {
-      await this.newsocket();
-    }
-
     localStorage.setItem(
       "grid-" + this.dashboardService.currentSection.name,
       JSON.stringify({
@@ -755,7 +749,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.socket.send(
+    this.dashboardSocket.send(
       JSON.stringify({
         command: "sync_grid",
         business: this.businessService.getActiveBusinessId(),
@@ -783,8 +777,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         newWidget.inputs
       );
 
-      console.log(newWidget.inputs);
-
       this.grid.containers[containerIndex].tabs[tabIndex].widgets[
         widgetIndex
       ] = _.extend(
@@ -793,8 +785,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         ],
         newWidget
       );
-
-      console.log(newWidget.inputs.model);
 
       this.syncGrid();
     };
@@ -1134,45 +1124,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
 
-  async newsocket() {
-    this.socket = await this.wsService.newSocket("/dashboard", true);
-
-    this.socket.onclose = async closeEv => {
-      this.socket = null;
-      this.socket = await this.wsService.newSocket("/dashboard", true);
-    };
-    this.socket.onmessage = (ev: MessageEvent) => {
-      const msg: {
-        command: "change_grid";
-        data: {
-          version: number;
-          section: string;
-          grid: DashboardGridInterface;
-        };
-      } = JSON.parse(ev.data);
-
-      if (msg.command === "change_grid") {
-        localStorage.setItem(
-          "grid-" + msg.data.section,
-          JSON.stringify(msg.data)
-        );
-        if (
-          msg.data.section === this.dashboardService.currentSection.name &&
-          msg.data.grid.version > this.grid.version
-        ) {
-          if (Date.now() - this.lastGridSync > 1000) {
-            console.log("should change grid");
-
-            this.lastGridSync = Date.now();
-            this.grid = msg.data.grid;
-
-            this.changeRef.markForCheck();
-          }
-        }
-      }
-    };
-  }
-
   async handleParams(params) {
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
@@ -1253,24 +1204,57 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
 
-  onSocketMessage(msg) {
-    const data: {
-      event: "update" | "delete" | "insert";
-      model: EntityModel;
-    } = JSON.parse(msg.data);
+  async initDashboardSocket() {
+    this.dashboardSocket = await this.wsService.newSocket("/dashboard", true);
 
-    console.log(msg);
-    // this.obService.publish(data.model._business, data.event, data.model);
+    this.dashboardSocket.onclose = () => this.initDashboardSocket();
+    this.dashboardSocket.onmessage = (ev: MessageEvent) => {
+      const msg: {
+        command: "change_grid";
+        data: {
+          version: number;
+          section: string;
+          grid: DashboardGridInterface;
+        };
+      } = JSON.parse(ev.data);
+
+      if (msg.command === "change_grid") {
+        localStorage.setItem(
+          "grid-" + msg.data.section,
+          JSON.stringify(msg.data)
+        );
+        if (
+          msg.data.section === this.dashboardService.currentSection.name &&
+          msg.data.grid.version > this.grid.version
+        ) {
+          if (Date.now() - this.lastGridSync > 1000) {
+            console.log("should change grid");
+
+            this.lastGridSync = Date.now();
+            this.grid = msg.data.grid;
+
+            this.changeRef.markForCheck();
+          }
+        }
+      }
+    };
   }
+  async initEntitySocket() {
+    this.entitySocket = await this.wsService.newSocket("/entity", true);
+    this.entitySocket.onclose = () => this.initEntitySocket();
+    this.entitySocket.onmessage = msg => {
+      const data: {
+        event: "update" | "delete" | "insert";
+        model: EntityModel;
+      } = JSON.parse(msg.data);
+      console.log(data);
 
-  async initSocket() {
-    this.socket = null;
-    this.socket = await this.wsService.newSocket("/entity", true);
-    this.socket.onclose = () => this.initSocket;
-    this.socket.onmessage = () => this.onSocketMessage;
+      // this.obService.publish(data.model._business, data.event, data.model);
+    };
   }
   async ngOnInit() {
-    //  await this.initSocket();
+    await this.initEntitySocket();
+    await this.initDashboardSocket();
 
     if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
       try {
@@ -1297,13 +1281,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     await this.handleParams(this.activatedRoute.snapshot.params);
 
     this.dashboardReady = true;
+
     this.handleFullNav();
 
     this.dashboardLoadingText = "Connecting to socket ...";
-
-    this.newsocket()
-      .then(() => {})
-      .catch(() => {});
 
     this.dashboardService.dashboardCommand.on("command", command => {
       this.dashboardCommand(0, 0, 0)(command);

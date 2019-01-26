@@ -18,7 +18,7 @@
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   direction: ltr;
   max-width: 180px;
-  margin: 30px auto;
+  margin: 20px auto 0 auto;
   text-align: center;
 }
 #serendip-loader .box {
@@ -29,9 +29,12 @@
   vertical-align: middle;
   text-align: center;
 }
+.logo-wrapper {
+  line-height: 0;
+}
 .logo-wrapper .logo {
   margin: 0 auto;
-  margin-top: -110px;
+  margin-top: -111px;
   width: 100px;
   height: 100px;
 }
