@@ -599,10 +599,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
           swal.getConfirmButton().innerText = "در حال خروج";
 
           this.authService.logout();
-
-          setTimeout(() => {
-            resolve();
-          }, 1000);
+          this.router.navigate(["/auth"]);
+          resolve();
         });
       }
     });
@@ -1012,7 +1010,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.dashboardLoadingText = "Postponing Sync ...";
             resolve();
           } else {
-            this.dashboardLoadingText = "Sync failed. re-choose business ...";
+            this.dashboardLoadingText = "Choose business for Syncing ...";
             setTimeout(() => {
               localStorage.removeItem("business");
               this.router.navigate(["/business"]);
