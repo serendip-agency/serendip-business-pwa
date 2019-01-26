@@ -128,20 +128,25 @@ export class FormComponent implements OnInit {
 
   stateDb: Idb;
   async save() {
-    if (!this.model._id) {
-      const insertResult = await this.dataService.insert(
-        this.entityName,
-        this.model
-      );
-      this.WidgetChange.emit({
-        inputs: {
-          model: insertResult,
-          documentId: insertResult._id
-        }
-      });
-    } else {
-      await this.dataService.update(this.entityName, this.model);
-    }
+    this.loading = true;
+
+    // if (!this.model._id) {
+    //   const insertResult = await this.dataService.insert(
+    //     this.entityName,
+    //     this.model
+    //   );
+
+    // } else {
+    //   await this.dataService.update(this.entityName, this.model);
+    // }
+    const doc = await this.dataService.update(this.entityName, this.model);
+    this.WidgetChange.emit({
+      inputs: {
+        model: doc,
+        documentId: doc._id
+      }
+    });
+    this.loading = false;
   }
 
   async init(reset?: boolean) {

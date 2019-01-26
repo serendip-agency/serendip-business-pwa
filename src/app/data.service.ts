@@ -19,6 +19,8 @@ import * as promiseSerial from "promise-serial";
 import { FormsSchema, ReportsSchema } from "./schema";
 import { DocumentIndex } from "ndx";
 import { SearchSchema } from "./schema/search";
+import ObjectID from "bson-objectid";
+
 export interface DataRequestInterface {
   method: string | "POST" | "GET";
   path: string;
@@ -487,7 +489,7 @@ export class DataService {
     });
   }
 
-  async upsertToIDB(model: EntityModel, controller: string) {
+  async updateIDB(model: EntityModel, controller: string) {
     const store = await this.idbService.dataIDB();
     let data = await store.get(controller);
     if (!data) {
@@ -497,10 +499,13 @@ export class DataService {
 
     await store.set(controller, data);
 
-    this.obService.publish(controller, "create", model);
+    this.obService.publish(controller, "insert", model);
   }
 
   async insert(controller: string, model: EntityModel): Promise<EntityModel> {
+    if (!model._id) {
+      model._id = new ObjectID().str;
+    }
     const result = await this.request({
       method: "POST",
       path: `/api/entity/${controller}/insert`,
@@ -510,7 +515,7 @@ export class DataService {
     });
 
     if (result._id) {
-      await this.upsertToIDB(result, controller);
+      await this.updateIDB(result, controller);
     }
 
     return result;
@@ -519,17 +524,16 @@ export class DataService {
   async update(controller: string, model: EntityModel): Promise<EntityModel> {
     const store = await this.idbService.dataIDB();
     const data = await store.get(controller);
+    if (!model._id) { model._id = new ObjectID().str; }
 
-    if (model._id) {
-      if (!data) {
-        const toSet = {};
-        toSet[model._id] = model;
-        await store.set(controller, toSet);
-      } else {
-        data[model._id] = model;
+    if (!data) {
+      const toSet = {};
+      toSet[model._id] = model;
+      await store.set(controller, toSet);
+    } else {
+      data[model._id] = model;
 
-        await store.set(controller, data);
-      }
+      await store.set(controller, data);
     }
 
     this.obService.publish(controller, "update", model);

@@ -3,6 +3,7 @@ import { Subject, Subscription, Observable } from "rxjs";
 
 import { map, filter, scan } from "rxjs/operators";
 import { EventEmitter } from "events";
+import { EntityModel } from "serendip-business-model";
 
 /** The subject type, wrapping a channel, the message payload and optional targets */
 export interface Message {
@@ -44,8 +45,8 @@ export class ObService {
   }
   public publish<T>(
     channel: string,
-    eventType: "create" | "delete" | "update",
-    model: T
+    eventType: "insert" | "delete" | "update",
+    model: EntityModel
   ) {
     this.eventEmitter.emit(channel, eventType, model);
   }

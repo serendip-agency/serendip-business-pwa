@@ -29,7 +29,8 @@ import {
   DashboardGridInterface,
   DashboardSectionInterface,
   DashboardTabInterface,
-  DashboardWidgetInterface
+  DashboardWidgetInterface,
+  EntityModel
 } from "serendip-business-model";
 import { WidgetService } from "../widget.service";
 import { WsService } from "../ws.service";
@@ -46,6 +47,7 @@ import { BusinessComponent } from "../business/business.component";
 import { AccountProfileComponent } from "../account/account-profile/account-profile.component";
 import { AccountPasswordComponent } from "../account/account-password/account-password.component";
 import { AccountSessionsComponent } from "../account/account-sessions/account-sessions.component";
+import { ObService } from "../ob.service";
 
 // optional import of scroll behavior
 polyfill({
@@ -285,6 +287,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private changeRef: ChangeDetectorRef,
     private widgetService: WidgetService,
     private wsService: WsService,
+    public obService: ObService,
     public calendarService: CalendarService,
     public weatherService: WeatherService,
     public authService: AuthService,
@@ -1247,7 +1250,26 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }, timeout);
     });
   }
+
+  onSocketMessage(msg) {
+    const data: {
+      event: "update" | "delete" | "insert";
+      model: EntityModel;
+    } = JSON.parse(msg.data);
+
+    console.log(msg);
+    // this.obService.publish(data.model._business, data.event, data.model);
+  }
+
+  async initSocket() {
+    this.socket = null;
+    this.socket = await this.wsService.newSocket("/entity", true);
+    this.socket.onclose = () => this.initSocket;
+    this.socket.onmessage = () => this.onSocketMessage;
+  }
   async ngOnInit() {
+  //  await this.initSocket();
+
     if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
       try {
         await this.dataSync();

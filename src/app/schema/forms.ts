@@ -169,6 +169,7 @@ export const FormsSchema: FormInterface[] = [
                 }
               },
               {
+                if : "^form.component == 'ReportComponent'",
                 propertyName: "inputs",
                 propertyType: "object",
                 label: "ورودی‌های ویجت",
@@ -180,7 +181,7 @@ export const FormsSchema: FormInterface[] = [
                       label: "عنوان ویجت",
                       type: "single-line",
                     }
-                  },                  
+                  },
                   {
                     componentName: "FormChipsInputComponent",
                     propertyName: "reportId",

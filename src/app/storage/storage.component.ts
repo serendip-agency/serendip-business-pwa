@@ -112,10 +112,6 @@ export class StorageComponent implements OnInit {
   }
   async ngOnInit() {
     this.socket = await this.wsService.newSocket("/storage", true);
-    this.socket.send(new Date().toString());
-    this.token = await this.authService.token();
-
-    await this.refreshFolder();
 
     this.socket.onclose = async closeEv => {
       console.log(closeEv);
@@ -126,6 +122,10 @@ export class StorageComponent implements OnInit {
     this.socket.onmessage = msg => {
       console.log(msg);
     };
+
+    this.token = await this.authService.token();
+
+    await this.refreshFolder();
   }
   async uploadZoneChange(zoneChangeEv) {
     console.log(zoneChangeEv);
