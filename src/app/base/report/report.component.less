@@ -150,7 +150,6 @@
     position: absolute;
     top: 0;
     right: 0;
-    width: 100%;
     border-bottom: 1px solid #ddd;
     .inner {
     }
@@ -194,5 +193,13 @@
     font-size: 17px;
     font-weight: bold;
     width: auto;
+  }
+}
+
+@media (max-width: 860px) {
+  .report-result {
+    .records {
+      overflow: visible;
+    }
   }
 }

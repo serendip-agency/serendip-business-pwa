@@ -3,9 +3,9 @@
 
 <app-storage *ngIf="dashboardReady"></app-storage>
 <app-map [mapId]="'dashboard-map'"></app-map>
-<div id="pwa-loader" *ngIf="!dashboardReady">
+<div id="serendip-loader" *ngIf="!dashboardReady">
   <div class="box">
-    <div class="logo-loader">
+    <div class="logo-wrapper">
       <div class="loader"></div>
 
       <div class="logo">
@@ -15,7 +15,7 @@
         />
       </div>
     </div>
-    <div class="text">{{ dashboardLoadingText }}</div>
+    <div class="text" *ngIf="dashboardLoadingText">{{ dashboardLoadingText }}</div>
   </div>
 </div>
 <div class="dashboard-wrapper" *ngIf="dashboardReady">
@@ -128,21 +128,25 @@
         </ul>
       -->
 
-      <div class="splitter">مدیریت مشتری</div>
-      <ul class="crm">
+      <!-- <div class="splitter">مدیریت مشتری</div> -->
+      <ul>
         <li *ngFor="let section of dashboardService.schema.dashboard">
           <a (click)="section.toggleUl = !section.toggleUl">
             <img [src]="'assets/icons/' + section.icon + '.svg'" />
             <span> {{ section.title }} </span>
 
             <img
+              *ngIf="section.tabs && section.tabs.length > 0"
               class="toggle-ul"
               [class.active]="section.toggleUl"
               [src]="'assets/icons/arrow-right-next-8.svg'"
             />
           </a>
 
-          <ul [class.show]="section.toggleUl">
+          <ul
+            [class.show]="section.toggleUl"
+            *ngIf="section.tabs && section.tabs.length > 0"
+          >
             <li *ngFor="let tab of getExplorerTabs(section.tabs)">
               <a
                 [dndEffectAllowed]="'all'"

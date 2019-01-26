@@ -976,25 +976,29 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   sync() {
     return new Promise((resolve, reject) => {
-      this.dashboardLoadingText = "همگام سازی شروع شد ...";
+      this.dashboardLoadingText = "Syncing dashboard ...";
 
       const syncStart = Date.now();
       this.dataService
         .sync()
         .then(() => {
           const seconds = ((Date.now() - syncStart) / 1000).toFixed(1);
-          this.dashboardLoadingText = `همگام سازی در ${this.rpd(
+          this.dashboardLoadingText = `Syncing took ${this.rpd(
             seconds
-          )} ثانیه انجام شد.`;
+          )} seconds.`;
 
           resolve();
         })
         .catch(res => {
           if (res.status === 0 || res.status === 500) {
+            this.dashboardLoadingText = "Postponing Sync ...";
             resolve();
           } else {
-            localStorage.removeItem("business");
-            location.reload();
+            this.dashboardLoadingText = "Sync failed. re-choose business ...";
+            setTimeout(() => {
+              localStorage.removeItem("business");
+              this.router.navigate(["/business"]);
+            }, 2500);
           }
         });
     });
@@ -1228,6 +1232,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     });
   }
   async ngOnInit() {
+    try {
+      await this.sync();
+    } catch (error) {}
+
+    this.dashboardLoadingText = "Initiating dashboard ...";
     this.dashboardDateTimeTick();
 
     if (!this.businessService.getActiveBusinessId()) {
@@ -1235,12 +1244,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.dashboardLoadingText = "Loading business ...";
+
     await this.dataService.loadBusiness();
+
+    this.dashboardLoadingText = "Loading schemas ...";
 
     await this.dashboardService.setDefaultSchema();
     await this.handleParams(this.activatedRoute.snapshot.params);
 
     this.dashboardReady = true;
+
+    this.dashboardLoadingText = "Connecting to socket ...";
 
     this.newsocket()
       .then(() => {})

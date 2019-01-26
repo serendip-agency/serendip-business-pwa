@@ -487,6 +487,19 @@ export class DataService {
     });
   }
 
+  async upsertToIDB(model: EntityModel, controller: string) {
+    const store = await this.idbService.dataIDB();
+    let data = await store.get(controller);
+    if (!data) {
+      data = {};
+    }
+    data[model._id] = model;
+
+    await store.set(controller, data);
+
+    this.obService.publish(controller, "create", model);
+  }
+
   async insert(controller: string, model: EntityModel): Promise<EntityModel> {
     const result = await this.request({
       method: "POST",
@@ -497,18 +510,7 @@ export class DataService {
     });
 
     if (result._id) {
-      const store = await this.idbService.dataIDB();
-      const data = await store.get(controller);
-      if (!data) {
-        const toSet = {};
-        toSet[result._id] = result;
-        await store.set(controller, toSet);
-      } else {
-        data[result._id] = result;
-        await store.set(controller, data);
-      }
-
-      this.obService.publish(controller, "create", result);
+      await this.upsertToIDB(result, controller);
     }
 
     return result;

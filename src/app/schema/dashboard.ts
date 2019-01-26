@@ -2,6 +2,12 @@ import { DashboardSectionInterface } from "serendip-business-model";
 
 export const DashboardSchema: DashboardSectionInterface[] = [
   {
+    name: "start",
+    title: "شروع",
+    icon: "expand-1",
+    tabs : []
+  },
+  {
     name: "settings",
     title: "تنظیمات",
     icon: "settings-1",

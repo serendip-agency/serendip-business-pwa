@@ -26,6 +26,8 @@ export class DashboardService {
     dashboard: DashboardSectionInterface[];
   };
 
+  syncVisible = false;
+
   currentSection: DashboardSectionInterface = { name: "", tabs: [] };
   screen: "desktop" | "mobile" = "desktop";
 
@@ -59,7 +61,7 @@ export class DashboardService {
       0
     )).concat(this.schema.dashboard);
 
-    console.log('set default schema');
+    console.log("set default schema");
     this.schema.dashboard = this.schema.dashboard.map(dashboard => {
       dashboard.tabs = dashboard.tabs.map(tab => {
         if (tab.widget) {

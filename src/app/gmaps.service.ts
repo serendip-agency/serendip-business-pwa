@@ -11,7 +11,7 @@ export interface GmapEventInterface {
   providedIn: "root"
 })
 export class GmapsService {
-  private scriptUrl: string = `https://maps.googleapis.com/maps/api/js?language=fa-IR&key=${
+  private scriptUrl = `https://maps.googleapis.com/maps/api/js?language=fa-IR&key=${
     environment.googleApiKey
   }`;
 
@@ -20,9 +20,19 @@ export class GmapsService {
   mapClickListener: google.maps.MapsEventListener;
 
   initializedMaps: string[] = [];
-  scriptLoaded: boolean = false;
+  scriptLoaded = false;
 
-  dashboardMapVisible = false;
+  _dashboardMapVisible = false;
+  set dashboardMapVisible(val) {
+    if (this._dashboardMapVisible !== val) {
+      this._dashboardMapVisible = val;
+      this.emitSetVisible({ mapId: "dashboard-map", visible: val });
+    }
+  }
+
+  get dashboardMapVisible() {
+    return this._dashboardMapVisible;
+  }
   private addScripts(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (!document.querySelectorAll(`[src="${this.scriptUrl}"]`).length) {
@@ -85,7 +95,7 @@ export class GmapsService {
       this.eventEmitter.on(
         "selectSingle",
         (event: { mapId: string; positions: any }) => {
-          if (event.mapId == mapId) obServer.next(event.positions);
+          if (event.mapId === mapId) { obServer.next(event.positions); }
         }
       );
     });
@@ -96,7 +106,7 @@ export class GmapsService {
       this.eventEmitter.on(
         "setMode",
         (event: { mapId: string; mode: string }) => {
-          if (event.mapId == mapId) obServer.next(event.mode);
+          if (event.mapId === mapId) { obServer.next(event.mode); }
         }
       );
     });
@@ -109,7 +119,7 @@ export class GmapsService {
       this.eventEmitter.on(
         "setMarkers",
         (event: { mapId: string; positions: any }) => {
-          if (event.mapId == mapId) obServer.next(event.positions);
+          if (event.mapId === mapId) { obServer.next(event.positions); }
         }
       );
     });
@@ -120,7 +130,7 @@ export class GmapsService {
       this.eventEmitter.on(
         "setVisible",
         (event: { mapId: string; visible: boolean }) => {
-          if (event.mapId == mapId) obServer.next(event.visible);
+          if (event.mapId === mapId) { obServer.next(event.visible); }
         }
       );
     });
@@ -134,7 +144,7 @@ export class GmapsService {
           mapId: string;
           positions: { lat: number; lng: number }[];
         }) => {
-          if (event.mapId == mapId) resolve(event.positions);
+          if (event.mapId === mapId) { resolve(event.positions); }
         }
       );
     });
@@ -151,8 +161,7 @@ export class GmapsService {
   }): Promise<google.maps.Map> {
     await this.addScripts();
 
-
-    var _opts = {
+    const _opts = {
       center: {
         lat: opts.center ? opts.center.lat : false || 35.739435,
         lng: opts.center ? opts.center.lng : false || 51.218017

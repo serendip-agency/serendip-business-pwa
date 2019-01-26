@@ -28,6 +28,7 @@ export class AuthComponent implements OnInit {
 
   states: any[] = [];
   cities: any[] = [];
+  initiating = true;
 
   replacePersianDigits(input) {
     if (!input) {
@@ -389,6 +390,7 @@ export class AuthComponent implements OnInit {
     }
   }
   async ngOnInit() {
+    this.initiating = true;
     try {
       await this.authService.token();
     } catch (error) {}
@@ -413,5 +415,7 @@ export class AuthComponent implements OnInit {
         this.router.navigate(["/auth", "login"]);
       }
     }
+
+    this.initiating = false;
   }
 }
