@@ -11,11 +11,8 @@ import { Observable } from "rxjs";
 })
 export class CalendarService {
   CalendarsToShow: string[];
- public calendarVisible = false;
-  weekDays = {
-    persian: MomentJalaali.weekdays(true),
-    gregorian: Moment.weekdays()
-  };
+  public calendarVisible = true;
+  public weekDays: { persian: string[]; gregorian: string[] };
 
   today = {
     "YYYY/MM/DD": MomentJalaali().format("YYYY/MM/DD"),
@@ -51,11 +48,20 @@ export class CalendarService {
     //   //this.downloadObjectAsJson(months,"calendar.cache.json")
     // });
 
+    MomentJalaali.loadPersian({ dialect: "persian-modern" });
+
+    this.weekDays = {
+      persian: MomentJalaali.weekdays(true),
+      gregorian: Moment.weekdays()
+    };
+
+    console.log(MomentJalaali.weekdays());
+
     this.eventsChangeEventEmitter = new EventEmitter(true);
 
     IranCalendarEvents.forEach(ymRec => {
       ymRec.days.forEach(dRec => {
-        let key = `${ymRec.year}/${ymRec.month
+        const key = `${ymRec.year}/${ymRec.month
           .toString()
           .padStart(2, "0")}/${dRec.day.toString().padStart(2, "0")}`;
 
@@ -125,7 +131,6 @@ export class CalendarService {
       formats: any;
     }[]
   > {
-
     const cacheKey = `calendar-month-days-${calendarType}-${year}-${month}`;
 
     return new Promise(async (resolve, reject) => {
@@ -163,8 +168,8 @@ export class CalendarService {
 
       if (calendarType === "persian") {
         daysInMonth = moment.jDaysInMonth(
-          parseInt(startOfTheMonth.format("jYYYY")),
-          parseInt(startOfTheMonth.format("jMM")) - 1
+          parseInt(startOfTheMonth.format("jYYYY"), 10),
+          parseInt(startOfTheMonth.format("jMM"), 10) - 1
         );
       }
 
@@ -178,7 +183,8 @@ export class CalendarService {
       for (let i = startOfTheMonthWeekday; i > 0; i--) {
         monthView.push({
           date: new Date(
-            parseInt(startOfTheMonth.format("x")) + i * -1 * 1000 * 60 * 60 * 24
+            parseInt(startOfTheMonth.format("x"), 10) +
+              i * -1 * 1000 * 60 * 60 * 24
           ),
           class: ["prevMonth"]
         });
@@ -187,7 +193,7 @@ export class CalendarService {
       for (let i = 0; i < daysInMonth; i++) {
         //  var day = moment(startOfTheMonth.toDate()).add(i, 'd');
         const day = new Date(
-          parseInt(startOfTheMonth.format("x")) + i * 1000 * 60 * 60 * 24
+          parseInt(startOfTheMonth.format("x"), 10) + i * 1000 * 60 * 60 * 24
         );
 
         //  var dayEvents = this.findIranEvent(MomentJalaali(day).jYear(), MomentJalaali(day).jMonth() + 1, i + 1);
@@ -203,11 +209,23 @@ export class CalendarService {
       for (let i = endOfMonthWeekday; i <= 6; i++) {
         monthView.push({
           date: new Date(
-            parseInt(endOfMonth.format("x")) + ia * 1000 * 60 * 60 * 24
+            parseInt(endOfMonth.format("x"), 10) + ia * 1000 * 60 * 60 * 24
           ),
           class: ["nextMonth"]
         });
         ia++;
+      }
+
+      const lastItem = moment(monthView[monthView.length - 1].date).format("x");
+      const lastLength = monthView.length;
+
+      for (let i = 42; i > lastLength; i--) {
+        monthView.push({
+          date: new Date(
+            parseInt(lastItem, 10) + (43 - i) * 1000 * 60 * 60 * 24
+          ),
+          class: ["nextMonth"]
+        });
       }
 
       monthView = _.map(monthView, item => {

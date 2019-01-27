@@ -449,6 +449,7 @@ label {
       white-space: nowrap;
       overflow: hidden;
       width: 100%;
+
       li.full-nav {
         display: none;
       }
@@ -549,20 +550,17 @@ label {
           }
         }
 
-        &:first-child       .tab-handle:before {
-            display: none;
+        &:first-child .tab-handle:before {
+          display: none;
         }
 
         &.active {
           .tab-handle {
             background: #fff;
+            opacity: 1;
             &:after,
             &:before {
               background-image: url(/assets/graphics/tab-corner.svg) !important;
-            }
-
-            &:before {
-              transform: rotateY(180deg);
             }
           }
         }
@@ -589,6 +587,7 @@ label {
 
           &:before {
             right: -12px;
+            transform: rotateY(180deg);
           }
           &:after {
             left: -12px;
@@ -1086,5 +1085,30 @@ form {
   .object-label {
     font-size: 14px;
     line-height: 30px;
+  }
+}
+
+#calendar {
+  color: #fff;
+  aside {
+    .month-view.mini {
+
+      margin:30px  auto; 
+
+      .month-view-title {
+        color: #fff;
+      }
+    }
+
+    .mat-checkbox-label {
+      color: #fff;
+    }
+    .mat-radio-label-content {
+      color: #fff;
+    }
+
+    .mat-radio-outer-circle {
+      border-color: #fff;
+    }
   }
 }

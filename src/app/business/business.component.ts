@@ -26,7 +26,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
   model = { title: "" };
   routerSubscription: Subscription;
-
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   list: any[] = [];
   token: TokenModel;
@@ -38,7 +37,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
   currentBusiness = null;
   loading = true;
-
   lastListReq = 0;
   offline: boolean;
   constructor(
@@ -74,20 +72,20 @@ export class BusinessComponent implements OnInit, OnDestroy {
       })
       .catch(res => {
         if (res.error) {
-          if (res.error.description == "duplicate") {
+          if (res.error.description === "duplicate") {
             this.snackBar.open(
               "این کاربر قبلا به کسب‌وکار اضافه شده است!",
               "",
               { duration: 3000 }
             );
           } else {
-            if (res.status == 400) {
+            if (res.status === 400) {
               return this.snackBar.open("موبایل و کد رو بازبینی کنید!", "", {
                 duration: 3000
               });
             }
 
-            if (res.status == 0) {
+            if (res.status === 0) {
               return this.snackBar.open("اتصال شبکه شما قطع است!", "", {
                 duration: 3000
               });
@@ -195,7 +193,9 @@ export class BusinessComponent implements OnInit, OnDestroy {
             }
           }
         );
-      } else await this.refresh();
+      } else {
+        await this.refresh();
+      }
     } catch (error) {
       this.router.navigate(["/auth"]);
     }

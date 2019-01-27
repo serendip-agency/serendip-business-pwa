@@ -24,7 +24,8 @@ export class CalendarComponent implements OnInit {
     return this.calendarService.calendarType;
   }
   public set calendarType(v: string) {
-    this.calendarService.calendarType = v as any;
+    if (this.calendarService.calendarType != v)
+      this.calendarService.calendarType = v as any;
   }
 
   calendars = [
@@ -64,7 +65,15 @@ export class CalendarComponent implements OnInit {
     return input.toString().replace(/\d/g, convert);
   }
 
-  typeChange() {}
+  typeChange(type) {
+
+    this.calendarType = type;
+  }
+
+  viewChange(type) {
+
+    this.calendarView = type;
+  }
 
   nextMonth() {
     this.date.add(1, "month");
@@ -83,6 +92,10 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
+    setInterval(() => {
+      this.changeRef.detectChanges();
+    }, 1000);
+
     this.calendarsToShow = { iran: true };
     this.calendarsToShowChange();
 

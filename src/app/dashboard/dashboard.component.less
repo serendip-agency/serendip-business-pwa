@@ -1,7 +1,19 @@
 .dashboard-wrapper {
-  background-image: url("/assets/wallpapers/1.jpg");
-  background-size: cover;
   padding-top: 50px;
+
+  &:before {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-image: url("/assets/wallpapers/1.jpg");
+    background-size: cover;
+    content: " ";
+
+
+
+  }
 }
 
 .dashboard-loader {
@@ -195,7 +207,7 @@ header {
         display: block;
         height: 20px;
         line-height: 20px;
-        margin-top:5px;
+        margin-top: 5px;
         img {
           display: inline-block;
           width: 8px;
@@ -314,7 +326,7 @@ aside#explorer {
   right: 0;
   // box-shadow: 0 0 10px #ccc, -150px 0 100px #eee inset;
   border-left: 1px solid #eee;
-  box-shadow: 0 0 15px rgba(0,0,0,.5);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
   overflow-y: hidden;
   overflow-x: hidden; // transition: width cubic-bezier(0.68, -0.55, 0.265, 1.55) .3s; //  transition: width linear .3s;
@@ -1005,7 +1017,7 @@ header .shortcuts .search {
       left: unset;
       .datetime {
         text-align: right;
-        .time{
+        .time {
           margin-top: 0;
         }
       }

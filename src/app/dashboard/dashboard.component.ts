@@ -485,6 +485,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       visible: this.gmapsService.dashboardMapVisible
     });
   }
+
   definedItemsOfArray(array): any[] {
     return _.filter(array, x => !!x);
   }

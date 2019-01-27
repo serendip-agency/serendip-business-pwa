@@ -11,7 +11,7 @@
     }
     .month-view-title {
         line-height: 40px;
-        color: #999;
+        color: #666;
         font-size: 17px;
         font-weight: 100;
         margin: 0 auto;
@@ -19,6 +19,8 @@
     .grid {
         grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
         grid-template-rows: 0.5fr 1fr 1fr 1fr 1fr 1fr;
+
+        grid-row-gap: 5px;
         display: grid;
     }
     .block,
@@ -46,9 +48,9 @@
     }
     .block {
         .day {
-            font-weight: bolder;
+            font-weight: 100;
             font-size: 26px;
-            color: rgba(0, 0, 0, 0.30);
+            color: #333;
             line-height: 34px;
             &.holiday {
                 color: red;
@@ -90,8 +92,9 @@
         &.prevMonth,
         &.nextMonth {
             background: rgba(0, 0, 0, 0.02);
-            .day {
-                color: rgba(0, 0, 0, 0.15);
+            .day { 
+                color: #999;
+
             }
             .month {
                 display: block;
@@ -135,7 +138,8 @@
     .block {
         .day {
             font-size: 13px;
-            color: rgba(0, 0, 0, 0.5);
+            color:#333;
+           
             width: 28px;
             height: 28px;
             line-height: 28px;
@@ -155,7 +159,7 @@
         &.nextMonth {
             background: none;
             .day {
-                color: rgba(0, 0, 0, 0.15);
+                color: #999;
                 background: rgb(235, 235, 235);
             }
         }
@@ -167,6 +171,8 @@
     .weekday {
         .day {
             background: rgb(236, 221, 207);
+            font-weight: 900;
+            color:#555;
         }
     }
 }

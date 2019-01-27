@@ -1,6 +1,6 @@
-<section class="month-view {{size}}" [id]="viewId">
+<section class="month-view {{ size }}" [id]="viewId">
   <div class="month-view-title" *ngIf="size == 'mini'">
-    {{getMonthName(month)}}
+    {{ getMonthName(month) }}
     <span *ngIf="showYearTitle && calendarType == 'persian'">
       {{ rpd(year) }}
     </span>
@@ -9,40 +9,54 @@
       {{ year }}
     </span>
   </div>
-
+ 
   <div class="grid">
-    <div class="weekday" *ngFor="let day of calendarService.weekDays[calendarType]">
-      <div class="day">
-        {{size == 'mini' ? day.split('')[0] : day}}
-      </div>
-
+    <div
+      class="weekday"
+      *ngFor="let day of calendarService.weekDays[calendarType]"
+    >
+      <div class="day">{{ size == "mini" ? day.split("")[0] : day }}</div>
     </div>
 
-
-    <div *ngFor="let item of monthView" class="block {{item.class.join(' ')}}" [class.today]="item.today">
-
-      <div class="day en" [class.holiday]="item.holiday" *ngIf="calendarType == 'gregorian'">
-        {{ item.formats['DD'] }} </div>
-      <div class="day" [class.holiday]="item.holiday" *ngIf="calendarType == 'persian'">
-        {{
-        item.formats['jDD']
-        }} </div>
+    <div
+      *ngFor="let item of monthView"
+      class="block {{ item.class.join(' ') }}"
+      [class.today]="item.today"
+    >
+      <div
+        class="day en"
+        [class.holiday]="item.holiday"
+        *ngIf="calendarType == 'gregorian'"
+      >
+        {{ item.formats["DD"] }}
+      </div>
+      <div
+        class="day"
+        [class.holiday]="item.holiday"
+        *ngIf="calendarType == 'persian'"
+      >
+        {{ item.formats["jDD"] }}
+      </div>
 
       <div class="month" *ngIf="calendarType == 'gregorian'">
-        {{item.formats['MMMM']}}
+        {{ item.formats["MMMM"] }}
       </div>
 
       <div class="month" *ngIf="calendarType == 'persian'">
-        {{item.formats['jMMMM']}}
+        {{ item.formats["jMMMM"] }}
       </div>
 
-      <div class="events" *ngIf="item.class.indexOf('prevMonth') == -1 && item.class.indexOf('nextMonth') == -1 ">
-        <div class="event" *ngFor="let ev of item.events">
-          {{ev.text}}
-        </div>
+      <div
+        class="events"
+        *ngIf="
+          item.class.indexOf('prevMonth') == -1 &&
+          item.class.indexOf('nextMonth') == -1
+        "
+      >
+        <div class="event" *ngFor="let ev of item.events">{{ ev.text }}</div>
       </div>
 
-      <br>
+      <br />
     </div>
   </div>
 </section>

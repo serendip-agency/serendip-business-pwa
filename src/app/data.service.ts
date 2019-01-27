@@ -524,7 +524,9 @@ export class DataService {
   async update(controller: string, model: EntityModel): Promise<EntityModel> {
     const store = await this.idbService.dataIDB();
     const data = await store.get(controller);
-    if (!model._id) { model._id = new ObjectID().str; }
+    if (!model._id) {
+      model._id = new ObjectID().str;
+    }
 
     if (!data) {
       const toSet = {};
@@ -720,43 +722,6 @@ export class DataService {
             schema.fields.forEach(field => {
               docIndex.addField(field.name, field.opts);
             });
-
-            const alphabets = {
-              ا: [],
-              ب: [],
-              پ: [],
-              ت: [],
-              ث: [],
-              ج: [],
-              چ: [],
-              ح: [],
-              خ: [],
-              د: [],
-              ذ: [],
-              ر: [],
-              ز: [],
-              ژ: [],
-              س: [],
-              ش: [],
-              ص: [],
-              ض: [],
-              ط: [],
-              ظ: [],
-              ع: [],
-              غ: [],
-              ف: [],
-              ق: [],
-              ک: [],
-              گ: [],
-              ل: [],
-              م: [],
-              ن: [],
-              و: [],
-              ه: [],
-              ی: []
-            };
-
-            Object.keys(alphabets).forEach(k => {});
 
             docs.forEach(doc => {
               docIndex.add(doc._id, doc);

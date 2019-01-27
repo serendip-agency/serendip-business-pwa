@@ -15,7 +15,9 @@
         />
       </div>
     </div>
-    <div class="text" *ngIf="dashboardLoadingText">{{ dashboardLoadingText }}</div>
+    <div class="text" *ngIf="dashboardLoadingText">
+      {{ dashboardLoadingText }}
+    </div>
   </div>
 </div>
 <div class="dashboard-wrapper" *ngIf="dashboardReady">
@@ -26,11 +28,11 @@
       </div>
 
       <div
-        [class.hide-mobile]="
-          weatherService.weatherVisible ||
-          calendarService.calendarVisible ||
-          gmapsService.dashboardMapVisible ||
-          startActive
+        *ngIf="
+          !weatherService.weatherVisible &&
+          !calendarService.calendarVisible &&
+          !gmapsService.dashboardMapVisible &&
+          !startActive
         "
         class="explorer-toggle"
         (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()"
@@ -164,7 +166,7 @@
         </li>
 
         <li class="sync">
-          <a (click)="sync()">
+          <a (click)="dataSync()">
             <img [src]="'assets/icons/sync-6.svg'" /> <span>همگام سازی</span>
           </a>
         </li>
@@ -446,7 +448,8 @@
           [class.active]="calendarService.calendarVisible"
         >
           <img
-            src="assets/icon-crm-header/icons-crm-header-calendar.svg"
+            src="assets/icon-crm-header/calendar-2.svg"
+            style="filter:invert(1)"
             alt=""
           />
         </a>
