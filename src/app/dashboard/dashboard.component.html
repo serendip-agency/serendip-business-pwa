@@ -28,17 +28,18 @@
       </div>
 
       <div
-        *ngIf="
-          !weatherService.weatherVisible &&
-          !calendarService.calendarVisible &&
-          !gmapsService.dashboardMapVisible &&
-          !startActive
-        "
         class="explorer-toggle"
-        (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()"
+        (click)="explorerToggleClick()"
         [class.active]="explorerVisible"
       >
-        <img src="assets/icons/arrow-right-next-4.svg" />
+        <img
+          *ngIf="!anyServiceComponentVisible()"
+          src="assets/icons/arrow-right-next-4.svg"
+        />
+        <img
+          *ngIf="anyServiceComponentVisible()"
+          src="assets/icons/close-2.svg"
+        />
       </div>
 
       <div class="quick" (click)="toggleDashboardDateTimeFormat()">

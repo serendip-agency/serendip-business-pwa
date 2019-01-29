@@ -94,6 +94,18 @@ header {
   left: 0;
   width: 100%;
 
+  &:after {
+    display: block;
+    display: none;
+    width: 110%;
+    height: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 1);
+    content: " ";
+    position: absolute;
+    bottom: -5px;
+    right: -5%;
+  }
+
   transition: top linear 0.3s;
   &.docScrolled {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
@@ -157,7 +169,7 @@ header {
 
   .inner {
     width: 100%;
-    padding: 5px;
+
     height: 50px;
     box-sizing: border-box;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -178,7 +190,7 @@ header {
       position: absolute;
       top: 0;
       box-sizing: border-box;
-      left: calc(~"50% - 100px");
+      right: calc(~"50% - 100px");
       direction: ltr; //   font-family: monospace !important;
       cursor: default;
       .datetime {
@@ -187,26 +199,25 @@ header {
         left: 0;
         width: 100%;
         height: 100%;
+        box-sizing: border-box;
+        padding: 5px 10px;
         transition: all cubic-bezier(0.6, -0.25, 0.735, 0.045) 0.3s;
       }
-      .datetime {
-        box-sizing: border-box;
-        padding: 0 5px;
-        top: 0px; //top: 50px;
-      }
+
       .date {
         display: block;
         line-height: 20px;
         height: 20px;
-        font-size: 13px;
+        font-size: 9px;
         font-weight: 900;
         color: rgba(255, 255, 255, 0.5);
       }
+
       .time {
         display: block;
         height: 20px;
         line-height: 20px;
-        margin-top: 5px;
+
         img {
           display: inline-block;
           width: 8px;
@@ -217,6 +228,7 @@ header {
         }
       }
     }
+
     .logo {
       float: left;
       position: relative;
@@ -232,8 +244,8 @@ header {
       img {
         vertical-align: top;
         display: inline-block;
-        height: 40px;
-        padding: 10px;
+        height: 50px;
+        padding: 16px 10px;
         box-sizing: border-box;
         width: auto;
       }
@@ -326,7 +338,7 @@ header {
 aside#explorer {
   background: #fff;
   padding: 10px;
-  padding-top:0;
+  padding-top: 0;
   width: 180px;
   height: calc(~"100% - 50px");
 
@@ -611,13 +623,13 @@ header,
   .shortcuts {
     width: 370px;
     margin: 0 auto;
-    line-height: 40px;
+    line-height: 0;
     height: 50px;
     text-transform: uppercase;
     text-align: right;
     position: absolute;
     top: 0;
-    right: 40px;
+    right: 50px;
     direction: ltr;
     transition: opacity ease 0.5s;
     z-index: 100;
@@ -629,11 +641,11 @@ header,
       box-sizing: border-box;
       height: 50px;
       margin: 0;
-      margin-right: 15px;
 
       li {
         display: inline-block;
         vertical-align: middle;
+        margin-left: 2px;
         a {
           padding: 2px;
           display: block;
@@ -1030,9 +1042,8 @@ header .shortcuts .search {
       display: none;
     }
     .inner .quick {
-      position: relative;
-      float: right;
-      left: unset;
+      right: 50px;
+
       .datetime {
         text-align: right;
         .time {
@@ -1062,7 +1073,7 @@ header .shortcuts .search {
     width: 120px;
   }
   header .inner .logo img {
-    padding: 10px 5px;
+    padding: 15px 5px;
   }
   header .inner .quick .datetime {
   } // header .shortcuts {

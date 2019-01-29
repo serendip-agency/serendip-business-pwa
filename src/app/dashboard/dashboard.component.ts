@@ -173,6 +173,25 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return input.toString().replace(/\d/g, convert);
   }
 
+  explorerToggleClick() {
+    if (this.anyServiceComponentVisible()) {
+      this.hideAllServiceComponents();
+    } else {
+      if (this.explorerVisible) {
+        this.explorerMouseOut();
+      } else {
+        this.explorerMouseIn();
+      }
+    }
+  }
+  anyServiceComponentVisible() {
+    return (
+      this.weatherService.weatherVisible ||
+      this.calendarService.calendarVisible ||
+      this.gmapsService.dashboardMapVisible ||
+      this.startActive
+    );
+  }
   getModeIcon(mode) {
     const section = _.findWhere(this.dashboardService.schema.dashboard, {
       name: mode
@@ -431,15 +450,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // }
   }
 
+  hideAllServiceComponents() {
+    this.weatherService.weatherVisible = false;
+    this.calendarService.calendarVisible = false;
+    this.gmapsService.dashboardMapVisible = false;
+    this.hideStart();
+  }
   logoClick() {
     if (
       this.weatherService.weatherVisible ||
       this.calendarService.calendarVisible ||
       this.gmapsService.dashboardMapVisible
     ) {
-      this.weatherService.weatherVisible = false;
-      this.calendarService.calendarVisible = false;
-      this.gmapsService.dashboardMapVisible = false;
+      this.hideAllServiceComponents();
     } else {
       this.startButtonClick();
     }
