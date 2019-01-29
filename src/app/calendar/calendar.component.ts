@@ -24,8 +24,9 @@ export class CalendarComponent implements OnInit {
     return this.calendarService.calendarType;
   }
   public set calendarType(v: string) {
-    if (this.calendarService.calendarType != v)
+    if (this.calendarService.calendarType !== v) {
       this.calendarService.calendarType = v as any;
+    }
   }
 
   calendars = [
@@ -66,12 +67,10 @@ export class CalendarComponent implements OnInit {
   }
 
   typeChange(type) {
-
     this.calendarType = type;
   }
 
   viewChange(type) {
-
     this.calendarView = type;
   }
 

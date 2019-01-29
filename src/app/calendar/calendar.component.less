@@ -19,8 +19,6 @@
     width: calc(~"100% - 420px");
     padding: 15px 0 30px 0;
     box-sizing: border-box;
-
-
   }
 
   aside,
@@ -43,9 +41,34 @@
       center bottom;
     background-size: 64px;
 
-    *{
-        color: #fff!important;
+    * {
+      color: #fff !important;
+    }
 
+    .calendar-view {
+      margin:15px;
+      text-align: center;
+
+      &:after{
+        clear: both;
+        display: block;
+        content: ' ';
+      }
+      .icon {
+        line-height: 0;
+        width: 20%;
+        float: right;
+
+        img {
+          filter: invert(1);
+          width: 100%;
+        }
+
+        span {
+          color: #fff;
+          line-height: 20px;
+        }
+      }
     }
     .inner {
       max-width: 320px;

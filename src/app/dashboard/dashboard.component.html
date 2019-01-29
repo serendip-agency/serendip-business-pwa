@@ -38,7 +38,7 @@
         (click)="explorerVisible ? explorerMouseOut() : explorerMouseIn()"
         [class.active]="explorerVisible"
       >
-        <img [src]="'assets/icons/arrow-right-next-2.svg'" />
+        <img src="assets/icons/arrow-right-next-4.svg" />
       </div>
 
       <div class="quick" (click)="toggleDashboardDateTimeFormat()">
@@ -432,14 +432,10 @@
         </div>
       </div>
     </div>
+
     <ul>
       <li>
-        <a>
-          <img
-            src="assets/icon-crm-header/icons-crm-header-note-2.svg"
-            alt=""
-          />
-        </a>
+        <a> <img src="assets/icon-crm-header/note-1.svg" alt="" /> </a>
       </li>
 
       <li>
@@ -447,11 +443,7 @@
           (click)="toggleCalendar()"
           [class.active]="calendarService.calendarVisible"
         >
-          <img
-            src="assets/icon-crm-header/calendar-2.svg"
-            style="filter:invert(1)"
-            alt=""
-          />
+          <img src="assets/icon-crm-header/calendar-2.svg" alt="" />
         </a>
       </li>
 
@@ -460,7 +452,7 @@
           (click)="toggleMap()"
           [class.active]="gmapsService.dashboardMapVisible"
         >
-          <img src="assets/icon-crm-header/icons-crm-header-map.svg" alt="" />
+          <img src="assets/icon-crm-header/map-1.svg" alt="" />
         </a>
       </li>
 
@@ -469,10 +461,7 @@
           (click)="toggleWeather()"
           [class.active]="weatherService.weatherVisible"
         >
-          <img
-            src="assets/icon-crm-header/icons-crm-header-weather.svg"
-            alt=""
-          />
+          <img src="assets/icon-crm-header/weather-1.svg" alt="" />
         </a>
       </li>
     </ul>
