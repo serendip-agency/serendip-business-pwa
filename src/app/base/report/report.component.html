@@ -18,7 +18,7 @@
         class="search"
         [class.spanned]="activeFieldQueries().length > 0"
         [class.active]="mode == 'report'"
-        (click)="mode = mode == 'report' ? 'data' : 'report'"
+        (click)="mode = mode == 'report' ? 'data' : 'report'; refresh()"
       >
         <img [src]="'assets/icons/' + 'search' + '.svg'" />
 
@@ -81,66 +81,45 @@
                   field.enabled
                 "
               >
-                <app-form
-                  (WidgetChange)="field.template.inputs = $event.inputs.model"
-                  [formType]="'inline'"
-                  [name]="field.template.formName"
-                  [formId]="field.template.formId"
-                ></app-form>
+                <div class="form">
+                  <app-form
+                    (WidgetChange)="field.template.inputs = $event.inputs.model"
+                    [formType]="'inline'"
+                    [name]="field.template.formName"
+                    [formId]="field.template.formId"
+                  ></app-form>
+                </div>
               </div>
+
               <div
-                class="property-query"
                 *ngIf="
                   field.enabled && field.queries && field.queries.length > 0
                 "
+                class="queries"
               >
-                <div class="double-field">
-                  <app-form-select-input
-                    [class.w-100]="findEnabledFieldQuery(field)"
-                    [class.w-80]="findEnabledFieldQuery(field)"
-                    [data]="field.queries"
-                    [label]="
-                      findEnabledFieldQuery(field) ? '' : 'انتخاب از فیلترها'
-                    "
-                    [selectType]="'single'"
-                    [model]="findEnabledFieldQuery(field)"
-                    (modelChange)="fieldQuerySelect(field, $event)"
-                  ></app-form-select-input>
-                  <div class="reset-query w-20">
-                    <img
-                      *ngIf="findEnabledFieldQuery(field)"
-                      (click)="findEnabledFieldQuery(field).enabled = false"
-                      class=""
-                      src="assets/icons/close-4.svg"
-                    />
+                <label for="">فیلترها:</label>
+                <div
+                  [class]="query.enabled ? 'property-query' : ''"
+                  *ngFor="let query of field.queries"
+                >
+                  <app-form-checkbox-input
+                    [label]="field.label + ' ' + query.label"
+                    [model]="query.enabled"
+                    (modelChange)="query.enabled = $event"
+                  ></app-form-checkbox-input>
+                  <!-- <label for=""> {{ field.label }} {{ query.label }} </label>
+                <div class="en">{{ query.methodInputForm }}</div> -->
+                  <div class="form">
+                    <app-form
+                      *ngIf="query.enabled"
+                      [formType]="'inline'"
+                      [defaultModel]="query.methodInput || {}"
+                      (WidgetChange)="query.methodInput = $event.inputs.model"
+                      [name]="query.methodInputForm"
+                    ></app-form>
                   </div>
                 </div>
-
-                <app-form
-                  *ngIf="findEnabledFieldQuery(field)"
-                  [formType]="'inline'"
-                  [defaultModel]="
-                    findEnabledFieldQuery(field).methodInput || {}
-                  "
-                  (WidgetChange)="
-                    findEnabledFieldQuery(field).methodInput =
-                      $event.inputs.model
-                  "
-                  [name]="findEnabledFieldQuery(field).methodInputForm"
-                ></app-form>
               </div>
-              <!--
-            <div class="property-query" *ngFor="let query of !field.enabled ? [] : field.queries ">
-
-              {{query.methodInputForm}}
-              <label for="">
-                {{query.label}}
-              </label>
-
-              <app-form [formType]="'inline'" [defaultModel]="query.methodInput || {}" (WidgetChange)="query.methodInput = $event.inputs.model "
-                [name]="query.methodInputForm"></app-form>
-
-            </div> -->
             </div>
 
             <div dndPlaceholderRef>
@@ -217,7 +196,9 @@
                   )
                 "
                 [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
-                [ndcDynamicComponent]="getViewComponent(field.template.component)"
+                [ndcDynamicComponent]="
+                  getViewComponent(field.template.component)
+                "
               ></ndc-dynamic>
             </div>
           </div>

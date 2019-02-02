@@ -45,7 +45,6 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "ReportComponent",
             inputs: {
-              minimal: true,
               reportName: "dashboard-default",
               formName: "dashboard-form",
               icon: "tab-3",
@@ -63,7 +62,6 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "ReportComponent",
             inputs: {
-              minimal: false,
               reportName: "form-default",
               formName: "form-form",
               icon: "copy",
@@ -81,7 +79,6 @@ export const DashboardSchema: DashboardSectionInterface[] = [
           {
             component: "ReportComponent",
             inputs: {
-              minimal: true,
               reportName: "report-default",
               formName: "report-form",
               icon: "filter-6",

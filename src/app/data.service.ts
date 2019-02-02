@@ -4,7 +4,6 @@ import { MatSnackBar } from "@angular/material";
 import * as JsZip from "jszip";
 import {
   ReportInterface,
-  ReportModel,
   EntityModel,
   UserProfileModel
 } from "serendip-business-model";
@@ -298,7 +297,7 @@ export class DataService {
     );
   }
 
-  // async report<A>(opts: reportOptionsInterface): Promise<ReportModel> {
+  // async report<A>(opts: ReportOptionsInterface): Promise<ReportModel> {
   //   if (!opts.online) {
   //     return this.offlineReport(opts);
   //   }

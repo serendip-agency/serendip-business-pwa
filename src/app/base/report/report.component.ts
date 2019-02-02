@@ -9,9 +9,9 @@ import {
 } from "@angular/core";
 import { PageEvent } from "@angular/material";
 import {
-  ReportModel,
   ReportFieldInterface,
-  FieldQueryInterface
+  FieldQueryInterface,
+  ReportInterface
 } from "serendip-business-model";
 import * as sUtils from "serendip-utility";
 import { ClubRatingViewComponent } from "src/app/crm/club-rating-view/club-rating-view.component";
@@ -77,7 +77,6 @@ export class ReportComponent implements OnInit {
   @Input() selected = [];
 
   _mode: "report" | "data" = "data";
-  reportStore: Idb;
   @Input() page: any[];
 
   obServiceActive = true;
@@ -99,8 +98,8 @@ export class ReportComponent implements OnInit {
   @Input() pageCount = 1;
 
   @Input()
-  _report: ReportModel;
-  set report(value: ReportModel) {
+  _report: ReportInterface;
+  set report(value: ReportInterface) {
     this._report = value;
 
     this.page = [];
@@ -179,18 +178,7 @@ export class ReportComponent implements OnInit {
 
     this.changeRef.detectChanges();
   }
-
-  reportFieldInputsChange(name, newInputs) {
-    this.report.fields = _.map(this.report.fields, item => {
-      if (item.name === name) {
-        item.template.inputs = newInputs;
-      }
-
-      return item;
-    });
-
-    this.modelChange();
-  }
+ 
 
   objectKeys(obj) {
     return Object.keys(obj);
@@ -228,23 +216,26 @@ export class ReportComponent implements OnInit {
 
   fieldQuerySelect(
     field: ReportFieldInterface,
-    selectedQuery: FieldQueryInterface
+    selectedQueries: FieldQueryInterface[]
   ) {
+    console.log(selectedQueries);
     field.queries = _.map(field.queries, q => {
-      q.enabled = false;
+      if (selectedQueries.indexOf(q) === -1) {
+        q.enabled = false;
+      } else {
+        q.enabled = true;
+      }
       return q;
     });
-
-    selectedQuery.enabled = true;
   }
 
-  findEnabledFieldQuery(field: ReportFieldInterface) {
-    return _.findWhere(field.queries, { enabled: true });
+  findEnabledFieldQueries(field: ReportFieldInterface) {
+    return _.where(field.queries, { enabled: true });
   }
 
   async deleteReport() {
     this.report.offline = false;
-    await this.reportStore.delete(this.report.name);
+    //  await this.reportStore.delete(this.report.name);
   }
   async refresh() {
     // if (this.report.name === this.report.entityName + "-default") {
@@ -303,11 +294,10 @@ export class ReportComponent implements OnInit {
       }
     });
 
-    this.report = await this.reportService.generate({
+    this.report = await this.reportService.generate(this.report, {
       entity: this.entityName,
       skip: skip,
       limit: this.pageSize,
-      report: this.report,
       save: false
     });
 
@@ -329,14 +319,6 @@ export class ReportComponent implements OnInit {
   async refreshReports() {
     const onlineReports = [];
     const offlineReports = [];
-
-    // try {
-    //   onlineReports = await this.dataService.reports(this.entityName);
-    // } catch (error) {}
-
-    // try {
-    //   offlineReports = await this.reportStore.list(0, 100);
-    // } catch (error) {}
 
     this.reports = _.chain([...offlineReports, ...onlineReports])
       .map(item => {
@@ -368,7 +350,7 @@ export class ReportComponent implements OnInit {
   async changeReport(reportId) {
     this.report = null;
 
-    this.report = await this.reportStore.get(reportId);
+    this.report = await this.dataService.details("report", reportId);
     if (this.report) {
       this.report.offline = true;
     }
@@ -381,11 +363,7 @@ export class ReportComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.reportStore = await this.idbService.reportIDB();
-
     await this.refreshReports();
-
-    //   if (!this.page) await this.changePage(0);
     await this.changePage(0);
 
     this.obService.listen(this.entityName).subscribe(event => {
@@ -393,11 +371,6 @@ export class ReportComponent implements OnInit {
         this.changePage(0);
       }
     });
-    // setInterval(() => {
-    //   this.WidgetChange.emit({
-    //     inputs: { mode: this.mode, report: _.omit(this.report, ["data"]) }
-    //   });
-    // }, 1000);
   }
 
   activeFieldQueries() {

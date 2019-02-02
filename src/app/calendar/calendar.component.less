@@ -46,18 +46,24 @@
     }
 
     .calendar-view {
-      margin:15px;
+      margin: 15px;
       text-align: center;
 
-      &:after{
+      &:after {
         clear: both;
         display: block;
-        content: ' ';
+        content: " ";
       }
       .icon {
         line-height: 0;
         width: 20%;
         float: right;
+
+        opacity: 0.5;
+
+        &.active {
+          opacity: 1;
+        }
 
         img {
           filter: invert(1);

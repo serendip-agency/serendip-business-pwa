@@ -32,8 +32,37 @@ export const FormsSchema: FormInterface[] = [
       }
     ]
   },
+
   {
-    name: "report-query-eq",
+    name: "report-sync-field-query-range",
+    parts: [
+      {
+        propertyName: "value",
+        cssClass: "double-field",
+        propertyType: "object",
+        parts: [
+          {
+            cssClass: "w-50",
+            componentName: "FormDateInputComponent",
+            propertyName: "from",
+            inputs: {
+              label: "از تاریخ"
+            }
+          },
+          {
+            cssClass: "w-50",
+            componentName: "FormDateInputComponent",
+            propertyName: "to",
+            inputs: {
+              label: "تا تاریخ"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "report-sync-field-query-eq",
 
     parts: [
       {
@@ -47,7 +76,7 @@ export const FormsSchema: FormInterface[] = [
     ]
   },
   {
-    name: "report-field-date",
+    name: "report-async-field-format-date",
     parts: [
       {
         componentName: "FormSelectInputComponent",
@@ -169,7 +198,7 @@ export const FormsSchema: FormInterface[] = [
                 }
               },
               {
-                if : "^form.component == 'ReportComponent'",
+                if: "^form.component == 'ReportComponent'",
                 propertyName: "inputs",
                 propertyType: "object",
                 label: "ورودی‌های ویجت",
@@ -179,7 +208,7 @@ export const FormsSchema: FormInterface[] = [
                     propertyName: "title",
                     inputs: {
                       label: "عنوان ویجت",
-                      type: "single-line",
+                      type: "single-line"
                     }
                   },
                   {
@@ -283,6 +312,46 @@ export const FormsSchema: FormInterface[] = [
             }
           },
           {
+            propertyName: "method",
+            componentName: "FormSelectInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "روش نمایش",
+              selectType: "single",
+              data: [
+                {
+                  label: "نمایش مستقیم از سند",
+                  value: ""
+                },
+                {
+                  label: "اتصال چند فیلد",
+                  value: "joinFields"
+                }
+              ]
+            }
+          },
+          {
+            if: "^form.method === 'joinFields' ",
+            propertyName: "methodOptions",
+            propertyType: "object",
+            parts: [
+              {
+                propertyName: "fields",
+                componentName: "FormMultipleTextInputComponent",
+                inputs: {
+                  label: "نام فیلد برای اتصال"
+                }
+              },
+              {
+                propertyName: "separator",
+                componentName: "FormTextInputComponent",
+                inputs: {
+                  label: "جدا کننده فیلدها"
+                }
+              }
+            ]
+          },
+          {
             propertyName: "template",
             componentName: "FormSelectInputComponent",
             inputs: {
@@ -293,7 +362,11 @@ export const FormsSchema: FormInterface[] = [
                 {
                   label: "تاریخ",
                   value: {
-                    component: "DateViewComponent"
+                    component: "DateViewComponent",
+                    inputs: {
+                      format: "jYYYY/jMM/jDD HH:mm:ss"
+                    },
+                    formName: "report-async-field-format-date"
                   }
                 },
                 {
@@ -306,6 +379,55 @@ export const FormsSchema: FormInterface[] = [
                   label: "متن بلند",
                   value: {
                     component: "LongTextViewComponent"
+                  }
+                },
+                {
+                  label: "شناسه",
+                  value: {
+                    component: "ObjectidViewComponent"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            propertyName: "queries",
+            componentName: "FormSelectInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "فیلترها",
+              selectType: "multiple",
+              data: [
+                {
+                  label: "برابر باشد ",
+                  value: {
+                    label: "برابر باشد با",
+                    method: "eq",
+                    methodInputForm: "report-sync-field-query-eq"
+                  }
+                },
+                {
+                  label: "برابر نباشد ",
+                  value: {
+                    label: "برابر نباشد با",
+                    method: "neq",
+                    methodInputForm: "report-sync-field-query-eq"
+                  }
+                },
+                {
+                  label: "در بازه زمانی باشد",
+                  value: {
+                    label: "در این بازه زمانی باشد",
+                    method: "range",
+                    methodInputForm: "report-sync-field-query-range"
+                  }
+                },
+                {
+                  label: "در   بازه زمانی نباشد",
+                  value: {
+                    label: "در این بازه زمانی نباشد",
+                    method: "range",
+                    methodInputForm: "report-sync-field-query-range"
                   }
                 }
               ]

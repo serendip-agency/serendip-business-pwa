@@ -21,7 +21,6 @@ import { ContactInputComponent } from "src/app/crm/contact-input/contact-input.c
 import { DashboardService } from "src/app/dashboard.service";
 import { FormDateInputComponent } from "../form-date-input/form-date-input.component";
 import { FormRelativeDateInputComponent } from "../form-relative-date-input/form-relative-date-input.component";
-import { FormDateRangeInputComponent } from "../form-date-range-input/form-date-range-input.component";
 import { FormFileInputComponent } from "../form-file-input/form-file-input.component";
 import { DataService } from "src/app/data.service";
 import { formPartTemplates } from "src/app/schema/formPartTemplates";
@@ -55,7 +54,6 @@ export class FormPartsComponent implements OnInit {
     ContactInputComponent,
     FormDateInputComponent,
     FormRelativeDateInputComponent,
-    FormDateRangeInputComponent,
     FormFileInputComponent
   };
   constructor(public ref: ChangeDetectorRef) {}

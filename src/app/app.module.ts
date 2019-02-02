@@ -57,7 +57,6 @@ import { FormChipsInputComponent } from "./base/form/form-chips-input/form-chips
 import { FormCityInputComponent } from "./base/form/form-city-input/form-city-input.component";
 import { FormCountryInputComponent } from "./base/form/form-country-input/form-country-input.component";
 import { FormDateInputComponent } from "./base/form/form-date-input/form-date-input.component";
-import { FormDateRangeInputComponent } from "./base/form/form-date-range-input/form-date-range-input.component";
 import { FormLatlngInputComponent } from "./base/form/form-latlng-input/form-latlng-input.component";
 import { FormMobileInputComponent } from "./base/form/form-mobile-input/form-mobile-input.component";
 import { FormMultipleTextInputComponent } from "./base/form/form-multiple-text-input/form-multiple-text-input.component";
@@ -154,7 +153,6 @@ export const dynamicComponents = [
   FormAutoCompleteInputComponent,
   FormDateInputComponent,
   FormRelativeDateInputComponent,
-  FormDateRangeInputComponent,
   FormFileInputComponent,
   // Business related form parts
 

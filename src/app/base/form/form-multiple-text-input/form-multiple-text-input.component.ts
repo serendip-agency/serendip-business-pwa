@@ -2,7 +2,7 @@ import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
 @Component({
   selector: "app-form-multiple-text-input",
   templateUrl: "./form-multiple-text-input.component.html",
-  styleUrls: ["./form-multiple-text-input.component.css"]
+  styleUrls: ["./form-multiple-text-input.component.less"]
 })
 export class FormMultipleTextInputComponent implements OnInit {
   SelectId = `multiple-text-${
@@ -33,8 +33,8 @@ export class FormMultipleTextInputComponent implements OnInit {
       this.type = "single-line";
     }
 
-    if ( this.model && this.model[0] && typeof this.model[0] === "object") {
-      this.model = [''];
+    if (!this.model || (this.model && !this.model[0])) {
+      this.model = [""];
       this.modelChange.emit(this.model);
     }
   }

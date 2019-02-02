@@ -50,7 +50,7 @@
   </div>
 
   <div *ngIf="part.propertyType == 'object'">
-    <div class="form-object-row">
+    <div class="form-object-row" [class]="part.cssClass">
       <div class="object-label" *ngIf="part.label">{{ part.label }}</div>
 
       <app-form-parts

@@ -1,23 +1,22 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Input } from "@angular/core";
 import {
   EntityModel,
   ReportFieldInterface,
   FieldQueryInterface,
-  ReportModel,
-  ReportInterface
+  ReportInterface,
+  ReportFormatInterface
 } from "serendip-business-model";
 import * as _ from "underscore";
 import { DataService } from "./data.service";
 import { IdbService } from "./idb.service";
 import { WebWorkerService } from "./web-worker.service";
 
-export interface reportOptionsInterface {
+export interface ReportOptionsInterface {
   entity: string;
   skip?: number;
   limit?: number;
   zip?: boolean;
   save?: boolean;
-  report: ReportInterface;
   online?: boolean;
 }
 
@@ -32,8 +31,8 @@ export class ReportService {
   ) {}
 
   async reports(entityName: string) {
-    let onlineReports: reportOptionsInterface[] = [];
-    let offlineReports: reportOptionsInterface[] = [];
+    let onlineReports: ReportOptionsInterface[] = [];
+    let offlineReports: ReportOptionsInterface[] = [];
     try {
       onlineReports = await this.dataService.request({
         path: "/api/entity/reports",
@@ -49,21 +48,18 @@ export class ReportService {
     } catch (error) {}
   }
 
-  async generate(opts: reportOptionsInterface) {
-    const reportFields: ReportFieldInterface[] = opts.report.fields || [];
-    let model: ReportModel = null;
-    if (opts.report._id) {
+  async generate(report: ReportInterface, opts: ReportOptionsInterface) {
+    if (!report.fields) {
+      report.fields = [];
     }
-
     let data = await this.dataService.list(opts.entity, 0, 0, false);
     if (!data) {
       data = [];
     }
- 
 
     data = await Promise.all(
       data.map((document, index) => {
-        return this.formatDocument(document, reportFields);
+        return this.formatDocument(document, report.fields);
       })
     );
 
@@ -73,8 +69,9 @@ export class ReportService {
         return new Promise(async (resolve, reject) => {
           const isMatch = await this.documentMatchFieldQueries(
             document,
-            reportFields
+            report.fields
           );
+
           if (isMatch) {
             queriedData.push(document);
           }
@@ -83,49 +80,43 @@ export class ReportService {
       })
     );
 
-    model = {
-      entityName: opts.report.entityName,
-      name: opts.report.name,
-      count: queriedData.length,
-      data: queriedData,
-      fields: reportFields,
-      createDate: new Date(),
-      label: opts.report.label
-    };
+    report.data = queriedData;
+    report.count = report.data.length;
 
     if (opts.save) {
       //   model = (await this.idbService.reportIDB()).(model);
     }
 
-    let result = _.rest(model.data, opts.skip);
+    report.data = _.rest(report.data, opts.skip);
 
     if (opts.limit) {
-      result = _.take(result, opts.limit);
+      report.data = _.take(report.data, opts.limit);
     }
 
-    model.data = result;
-
-    return model;
+    return report;
   }
+
+  async formatReport(document: EntityModel, report: ReportInterface) {}
+
   async formatDocument(document: EntityModel, fields: ReportFieldInterface[]) {
+    // iterate throw fields in document
     const fieldsToFormat = await Promise.all(
       fields
-        .filter(item => {
-          return item.method && item.enabled;
+        .filter(field => {
+          return (
+            field.enabled && this.getAsyncFieldFormatMethods()[field.method]
+          );
         })
+        // map each field to get value from
         .map(field => {
           return new Promise(async (resolve, reject) => {
             let value = null;
 
-            if (this.displayFormats()[field.method]) {
-              value = await this.displayFormats()[field.method](
-                document,
-                field.methodOptions,
-                field
-              );
-            } else {
-              value = field.method + " not found.";
-            }
+            // check if field method exists
+            value = await this.getAsyncFieldFormatMethods()[field.method]({
+              document,
+              field
+            });
 
             const fieldToSet = {};
             fieldToSet[field.name] = value;
@@ -137,6 +128,45 @@ export class ReportService {
     return _.extend(document, ...fieldsToFormat);
   }
 
+  async documentMatchFieldQuery(
+    record: EntityModel,
+    fields: ReportFieldInterface[],
+    field: ReportFieldInterface,
+    query: FieldQueryInterface
+  ) {
+    if (!query.enabled) {
+      return true;
+    }
+
+    if (!query.methodInput) {
+      query.methodInput = {};
+    }
+
+    if (this.getSyncFieldQueryMethods()[query.method]) {
+      if (!query.methodInput.value) {
+        query.methodInput.value = "";
+      }
+      return this.getSyncFieldQueryMethods()[query.method](
+        record[field.name],
+        query.methodInput.value
+      );
+    }
+    if (this.getAsyncFieldQueryMethods[query.method]) {
+      return await this.getAsyncFieldQueryMethods()[query.method]({
+        document: record,
+        field,
+        query
+      });
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   *
+   * @param record Document record to check
+   * @param fields Fields to check their queries
+   */
   async documentMatchFieldQueries(
     record: EntityModel,
     fields: ReportFieldInterface[]
@@ -150,37 +180,9 @@ export class ReportService {
           return true;
         }
         return Promise.all(
-          field.queries.map(query => {
-            return new Promise(async (resolve, reject) => {
-              if (!query.enabled) {
-                return resolve(true);
-              }
-
-              if (!query.methodInput) {
-                query.methodInput = {};
-              }
-
-              if (this.syncQueries()[query.method]) {
-                if (!query.methodInput.value) {
-                  query.methodInput.value = "";
-                }
-                return resolve(
-                  this.syncQueries()[query.method](
-                    record[field.name],
-                    query.methodInput.value
-                  )
-                );
-              }
-              if (this.asyncQueries[query.method]) {
-                return resolve(
-                  await this.asyncQueries()[query.method](record, query)
-                );
-              } else {
-                resolve(false);
-                console.error("query-method-notfound", query);
-              }
-            });
-          })
+          field.queries.map(query =>
+            this.documentMatchFieldQuery(record, fields, field, query)
+          )
         );
       })
     );
@@ -192,73 +194,133 @@ export class ReportService {
     );
   }
 
-  displayFormats(): {
-    [key: string]: (
-      record: any,
-      options: any,
-      field: ReportFieldInterface
-    ) => Promise<any>;
+  getAsyncReportFormatMethods(): {
+    [key: string]: (input: {
+      report: ReportInterface;
+      format: ReportFormatInterface;
+    }) => Promise<ReportInterface>;
   } {
     return {
-      joinFields: async (
-        record: any,
-        opts: { fields: string[]; seperator: string },
-        field
-      ) => {
-        return _.map(opts.fields, field => record[field]).join(opts.seperator);
+      groupByQueries: async input => {
+        const formatOptions: { queries: FieldQueryInterface[] } = {
+          queries: input.format.options.queries
+        };
+
+        return input.report;
+      }
+    };
+  }
+  /**
+   * will return al async field formatting method available. each method takes document and field as input and return value to set on field
+   */
+  getAsyncFieldFormatMethods(): {
+    [key: string]: (input: {
+      document: EntityModel;
+      field: ReportFieldInterface;
+    }) => Promise<any>;
+  } {
+    return {
+      joinFields: async input => {
+        console.log(input.field.methodOptions);
+        const methodOptions: { fields: string[]; separator: string } =
+          input.field.methodOptions;
+
+        return _.map(methodOptions.fields, f => input.document[f]).join(
+          methodOptions.separator
+        );
+      },
+      javascript: async input => {
+        const methodOptions = { code: input.field.methodOptions.code };
+
+        let evaluatedCode;
+        try {
+          // tslint:disable-next-line:no-eval
+          evaluatedCode = eval(methodOptions.code);
+          if (typeof evaluatedCode !== "function") {
+            return "evaluated code is not a function";
+          }
+        } catch (error) {
+          return error.message || error;
+        }
       }
     };
   }
 
-  asyncQueries(): {
-    [key: string]: (
-      record: any,
-      query: FieldQueryInterface
-    ) => Promise<boolean>;
-  } {
-    return {};
-  }
-
-  syncQueries(): {
-    [key: string]: (input1: any, input2: any) => boolean;
+  getAsyncFieldQueryMethods(): {
+    [key: string]: (opts: {
+      document: EntityModel;
+      field: ReportFieldInterface;
+      query: FieldQueryInterface;
+    }) => Promise<boolean>;
   } {
     return {
-      eq: (input1, input2) => {
-        return input1 === input2;
+      javascript: async opts => {
+        return true;
+      }
+    };
+  }
+
+  getSyncFieldQueryMethods(): {
+    [key: string]: (value: any, input: any) => boolean;
+  } {
+    return {
+      eq: (value, input) => {
+        return value === input;
       },
 
-      neq: (input1, input2) => {
-        return input1 !== input2;
+      neq: (value, input) => {
+        return value !== input;
       },
 
-      gt: (input1, input2) => {
-        return input1 < input2;
+      gt: (value, input) => {
+        return value < input;
       },
 
-      gte: (input1, input2) => {
-        return input1 <= input2;
+      gte: (value, input) => {
+        return value <= input;
       },
 
-      lt: (input1, input2) => {
-        return input1 > input2;
+      lt: (value, input) => {
+        return value > input;
       },
 
-      lte: (input1, input2) => {
-        return input1 >= input2;
+      lte: (value, input) => {
+        return value >= input;
       },
 
-      nin: (input1, input2) => {
-        if (!input1.indexOf) {
+      nin: (value, input) => {
+        if (!value.indexOf) {
           return false;
         }
-        return input1.indexOf(input2) === -1;
+        return value.indexOf(input) === -1;
       },
+      inDateRange: (value, input) => {
+        value = new Date(value).getTime();
 
-      in: (input1, input2) => {
-        if (!input1.indexOf) {
+        const from = new Date(input.from).getTime();
+        const to = new Date(input.to).getTime();
+
+        if (from && to) {
+          return (
+            (value >= from && value <= to) || (value >= to && value <= from)
+          );
+        }
+
+        if (from) {
+          return value >= from;
+        }
+
+        if (to) {
+          return value <= to;
+        }
+
+        return false;
+      },
+      in: (value, input) => {
+        if (!value.indexOf) {
           return false;
         }
-        return input1.indexOf(input2) !== -1;
+        return value.indexOf(input) !== -1;
       }
     };
   }

@@ -174,6 +174,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   explorerToggleClick() {
+    if (this.startActive) {
+      return this.hideStart();
+    }
+
     if (this.anyServiceComponentVisible()) {
       this.hideAllServiceComponents();
     } else {
@@ -457,6 +461,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.hideStart();
   }
   logoClick() {
+    if (this.startActive) {
+      return this.hideStart();
+    }
     if (
       this.weatherService.weatherVisible ||
       this.calendarService.calendarVisible ||
@@ -1167,7 +1174,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       remoteGrid = await this.dataService.request({
         method: "post",
         path: "/api/business/grid",
-        model: { section: params.section },
+        model: { section: params.section || 'start' },
         timeout: 1000,
         retry: false
       });

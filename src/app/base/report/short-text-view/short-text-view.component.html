@@ -1,17 +1,13 @@
 <div class="view">
-
   <div class="label" *ngIf="viewType == 'label'">
-    {{label | rpd}}
+    {{ label | rpd }}
   </div>
-
 
   <div class="cell" *ngIf="viewType != 'label' && viewType != 'json'">
-    {{replace[model] || model | rpd}}
+    {{ (replace ? replace[model] : model) | rpd }}
   </div>
-
 
   <div class="cell" *ngIf="viewType == 'json'">
-    {{ model | json}}
+    {{ model | json }}
   </div>
-
 </div>

@@ -13,17 +13,17 @@ export const ReportsSchema: ReportInterface[] = [
           {
             label: "برابر باشد با",
             method: "eq",
-            methodInputForm: "report-query-eq"
+            methodInputForm: "report-sync-field-query-eq"
           },
           {
             label: "برابر نباشد با",
             method: "neq",
-            methodInputForm: "report-query-eq"
+            methodInputForm: "report-sync-field-query-eq"
           }
         ]
       },
       {
-        enabled: false,
+        enabled: true,
         name: "_cdate",
         label: "تاریخ ثبت",
         template: {
@@ -31,19 +31,42 @@ export const ReportsSchema: ReportInterface[] = [
           inputs: {
             format: "jYYYY/jMM/jDD HH:mm:ss"
           },
-          formName: "report-field-date"
+          formName: "report-async-field-format-date"
         },
-
         queries: [
           {
             label: "در این بازه زمانی باشد",
             method: "range",
-            methodInputForm: "report-query-eq"
+            methodInputForm: "report-sync-field-query-range"
           },
           {
             label: "در این بازه زمانی نباشد",
             method: "range",
-            methodInputForm: "report-query-eq"
+            methodInputForm: "report-sync-field-query-range"
+          }
+        ]
+      },
+      {
+        enabled: true,
+        name: "_vdate",
+        label: "آخرین تغییر",
+        template: {
+          component: "DateViewComponent",
+          inputs: {
+            format: "jYYYY/jMM/jDD HH:mm:ss"
+          },
+          formName: "report-async-field-format-date"
+        },
+        queries: [
+          {
+            label: "در این بازه زمانی باشد",
+            method: "range",
+            methodInputForm: "report-sync-field-query-range"
+          },
+          {
+            label: "در این بازه زمانی نباشد",
+            method: "range",
+            methodInputForm: "report-sync-field-query-range"
           }
         ]
       }

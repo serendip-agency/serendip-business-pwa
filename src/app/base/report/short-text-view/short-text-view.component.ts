@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef
+} from "@angular/core";
 
 @Component({
   selector: "app-short-text-view",
@@ -6,15 +13,12 @@ import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } fro
   styleUrls: ["./short-text-view.component.less"]
 })
 export class ShortTextViewComponent implements OnInit {
-
   @Input() model: any;
   @Input() label: any;
   @Input() viewType: string;
 
-  @Input() replace: { [key: string]: string } = {};
-  constructor(private changeRef:ChangeDetectorRef) {}
+  @Input() replace: { [key: string]: string };
+  constructor(private changeRef: ChangeDetectorRef) {}
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 }
