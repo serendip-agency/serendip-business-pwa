@@ -23,6 +23,7 @@ export class CalendarService {
   memCache = {};
   irEventsCache = {};
   idbCache: Idb;
+
   private eventsChangeEventEmitter: EventEmitter<{}>;
 
   subscribeToEventsChange(viewId) {
@@ -33,6 +34,9 @@ export class CalendarService {
     });
   }
 
+  get moment() {
+    return this.calendarType === "gregorian" ? Moment : MomentJalaali;
+  }
   emitCalendarsChange() {
     this.eventsChangeEventEmitter.emit();
   }

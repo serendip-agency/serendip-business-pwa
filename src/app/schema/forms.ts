@@ -124,12 +124,10 @@ export const FormsSchema: FormInterface[] = [
         }
       },
       {
-        componentName: "FormTextInputComponent",
+        componentName: "FormIconInputComponent",
         propertyName: "icon",
         inputs: {
-          label: "آیکون داشبورد",
-          type: "single-line",
-          dir: "ltr"
+          label: "آیکون داشبورد"
         }
       },
       {
@@ -147,12 +145,10 @@ export const FormsSchema: FormInterface[] = [
             }
           },
           {
-            componentName: "FormTextInputComponent",
+            componentName: "FormIconInputComponent",
             propertyName: "icon",
             inputs: {
-              label: "آیکون تب",
-              type: "single-line",
-              dir: "ltr"
+              label: "آیکون تب"
             }
           },
           {
@@ -545,7 +541,7 @@ export const FormsSchema: FormInterface[] = [
             }
           },
           {
-            if: "^form.componentName == 'FormTextInputComponent'",
+            if: "!^form.propertyType && ^form.componentName == 'FormTextInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
             label: "تنظیمات فیلد متنی",
@@ -578,7 +574,7 @@ export const FormsSchema: FormInterface[] = [
             ]
           },
           {
-            if: "^form.componentName == 'FormRadioInputComponent'",
+            if: "!^form.propertyType && ^form.componentName == 'FormRadioInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
             label: "تنظیمات فیلد متنی",
@@ -647,7 +643,7 @@ export const FormsSchema: FormInterface[] = [
             ]
           },
           {
-            if: "^form.propertyType === 'array'",
+            if: "^form.propertyType === 'array' || ^form.propertyType === 'object'",
             propertyName: "parts",
             propertyType: "array",
             label: "اجزای فیلد",

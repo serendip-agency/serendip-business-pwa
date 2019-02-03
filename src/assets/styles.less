@@ -113,13 +113,15 @@ textarea {
 }
 
 button.sp-button-icon {
-  width: 34px;
   height: 34px;
+  line-height: 26px;
+  width: auto;
   border: none;
   background: #d8d5ce;
-
+  display: inline-block;
   box-shadow: -1px 1px 5px #a29597, 5px -5px 5px #f3e0c2 inset;
   cursor: pointer;
+  vertical-align: middle;
 
   outline: none;
   border-radius: 100%;
@@ -130,6 +132,19 @@ button.sp-button-icon {
   transition: all linear 0.1s;
   overflow: hidden;
   position: relative;
+  font-size: 11px;
+
+  &.with-text {
+    border-radius: 10px;
+    padding-right: 5px;
+  }
+
+  span {
+    font-weight: 100;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 5px;
+  }
 
   &:after {
     width: 100%;
@@ -149,7 +164,9 @@ button.sp-button-icon {
     }
   }
   img {
-    width: 100%;
+    width: auto;
+    display: inline-block;
+    vertical-align: top;
     opacity: 0.7;
     height: 100%;
   }
@@ -449,7 +466,7 @@ label {
       white-space: nowrap;
       overflow: hidden;
       width: 100%;
-
+      margin-bottom: -0.1px;
       li.full-nav {
         display: none;
       }
@@ -669,10 +686,14 @@ label {
         box-sizing: border-box;
         overflow-x: hidden;
         overflow-y: hidden;
-        padding: 10px 15px;
         margin-bottom: 0;
         padding-top: 0;
         border-left: 2px solid transparent;
+
+        form {
+          padding: 15px;
+          box-sizing: border-box;
+        }
         &:hover {
           overflow-y: scroll;
           border-left: none;
@@ -1092,8 +1113,7 @@ form {
   color: #fff;
   aside {
     .month-view.mini {
-
-      margin:30px  auto; 
+      margin: 30px auto;
 
       .month-view-title {
         color: #fff;

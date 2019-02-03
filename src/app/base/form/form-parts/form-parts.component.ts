@@ -1,30 +1,28 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from "@angular/core";
+import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
+import { FormPartInterface } from "serendip-business-model";
+import { ContactInputComponent } from "src/app/crm/contact-input/contact-input.component";
+import { formPartTemplates } from "src/app/schema/formPartTemplates";
 import * as _ from "underscore";
 
-import { FormTextInputComponent } from "../form-text-input/form-text-input.component";
-import { FormPriceInputComponent } from "../form-price-input/form-price-input.component";
-import { FormMobileInputComponent } from "../form-mobile-input/form-mobile-input.component";
-import { FormTelephoneInputComponent } from "../form-telephone-input/form-telephone-input.component";
+import { FormAutoCompleteInputComponent } from "../form-auto-complete-input/form-auto-complete-input.component";
+import { FormCheckboxInputComponent } from "../form-checkbox-input/form-checkbox-input.component";
+import { FormChipsInputComponent } from "../form-chips-input/form-chips-input.component";
 import { FormCityInputComponent } from "../form-city-input/form-city-input.component";
 import { FormCountryInputComponent } from "../form-country-input/form-country-input.component";
-import { FormStateInputComponent } from "../form-state-input/form-state-input.component";
-import { FormLatlngInputComponent } from "../form-latlng-input/form-latlng-input.component";
-import { FormChipsInputComponent } from "../form-chips-input/form-chips-input.component";
-import { FormSelectInputComponent } from "../form-select-input/form-select-input.component";
-import { FormCheckboxInputComponent } from "../form-checkbox-input/form-checkbox-input.component";
-import { FormRadioInputComponent } from "../form-radio-input/form-radio-input.component";
-import { FormAutoCompleteInputComponent } from "../form-auto-complete-input/form-auto-complete-input.component";
-import { FormToggleInputComponent } from "../form-toggle-input/form-toggle-input.component";
-import { FormMultipleTextInputComponent } from "../form-multiple-text-input/form-multiple-text-input.component";
-import { HttpClient } from "@angular/common/http";
-import { ContactInputComponent } from "src/app/crm/contact-input/contact-input.component";
-import { DashboardService } from "src/app/dashboard.service";
 import { FormDateInputComponent } from "../form-date-input/form-date-input.component";
-import { FormRelativeDateInputComponent } from "../form-relative-date-input/form-relative-date-input.component";
 import { FormFileInputComponent } from "../form-file-input/form-file-input.component";
-import { DataService } from "src/app/data.service";
-import { formPartTemplates } from "src/app/schema/formPartTemplates";
-import { FormPartInterface } from "serendip-business-model";
+import { FormIconInputComponent } from "../form-icon-input/form-icon-input.component";
+import { FormLatlngInputComponent } from "../form-latlng-input/form-latlng-input.component";
+import { FormMobileInputComponent } from "../form-mobile-input/form-mobile-input.component";
+import { FormMultipleTextInputComponent } from "../form-multiple-text-input/form-multiple-text-input.component";
+import { FormPriceInputComponent } from "../form-price-input/form-price-input.component";
+import { FormRadioInputComponent } from "../form-radio-input/form-radio-input.component";
+import { FormRelativeDateInputComponent } from "../form-relative-date-input/form-relative-date-input.component";
+import { FormSelectInputComponent } from "../form-select-input/form-select-input.component";
+import { FormStateInputComponent } from "../form-state-input/form-state-input.component";
+import { FormTelephoneInputComponent } from "../form-telephone-input/form-telephone-input.component";
+import { FormTextInputComponent } from "../form-text-input/form-text-input.component";
+import { FormToggleInputComponent } from "../form-toggle-input/form-toggle-input.component";
 
 @Component({
   selector: "app-form-parts",
@@ -54,7 +52,8 @@ export class FormPartsComponent implements OnInit {
     ContactInputComponent,
     FormDateInputComponent,
     FormRelativeDateInputComponent,
-    FormFileInputComponent
+    FormFileInputComponent,
+    FormIconInputComponent
   };
   constructor(public ref: ChangeDetectorRef) {}
   filterParts(parts: FormPartInterface[]) {

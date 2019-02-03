@@ -32,6 +32,22 @@
       mode="indeterminate"
     ></mat-progress-bar>
     <mat-card-content>
+      <div class="report-save" *ngIf="mode == 'save' && report">
+        <form action="">
+          <app-form-text-input
+            [label]="'نام گزارش'"
+            (modelChange)="report.label = $event"
+            [model]="report.label"
+          ></app-form-text-input>
+          <app-form-radio-input
+            (modelChange)="saveMode = $event"
+            [data]="[
+              { value: 'report', label: 'ذخیره گزارش' },
+              { value: 'data', label: 'ذخیره گزارش و نتیجه' }
+            ]"
+          ></app-form-radio-input>
+        </form>
+      </div>
       <div class="report-model" *ngIf="mode == 'report' && report">
         <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
         <div class="fields">
@@ -43,12 +59,6 @@
             [model]="report._id"
           ></app-form-select-input>
 
-          <app-form-text-input
-            *ngIf="!report._id"
-            [label]="'نام گزارش جدید'"
-            (modelChange)="report.label = $event"
-            [model]="report.label"
-          ></app-form-text-input>
           <div dndDropzone (dndDrop)="reportFieldDrop($event)">
             <div
               class="field"
@@ -150,16 +160,17 @@
               *ngFor="let field of enabledReportFields()"
             >
               <ndc-dynamic
-                *ngIf="field.template"
                 [ndcDynamicInputs]="
-                  extendObj(field.template.inputs || {}, {
+                  extendObj(field.template?.inputs || {}, {
                     label: field.label,
                     viewType: 'label'
                   })
                 "
                 [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
                 [ndcDynamicComponent]="
-                  getViewComponent(field.template.component)
+                  getViewComponent(
+                    field.template?.component || 'ShortTextViewComponent'
+                  )
                 "
               ></ndc-dynamic>
             </div>
@@ -183,21 +194,18 @@
             </div>
 
             <div class="field" *ngFor="let field of enabledReportFields()">
-              <div class="raw" *ngIf="!field.template">
-                {{ record[field.name] | json }}
-              </div>
-
               <ndc-dynamic
-                *ngIf="field.template"
                 [ndcDynamicInputs]="
                   extendObj(
                     { label: field.label, model: record[field.name] },
-                    field.template.inputs || {}
+                    field.template?.inputs || {}
                   )
                 "
                 [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
                 [ndcDynamicComponent]="
-                  getViewComponent(field.template.component)
+                  getViewComponent(
+                    field.template?.component || 'ShortTextViewComponent'
+                  )
                 "
               ></ndc-dynamic>
             </div>
@@ -209,7 +217,12 @@
         </div>
       </div>
     </mat-card-content>
-
+    <mat-card-actions *ngIf="report && (mode == 'report' || mode == 'save')">
+      <button class="sp-button-icon with-text" (click)="save()">
+        <img src="assets/icons/save-backup-1.svg" />
+        <span>ذخیره گزارش</span>
+      </button>
+    </mat-card-actions>
     <mat-card-actions *ngIf="report && mode == 'data'">
       <button class="sp-button-icon" (click)="new()">
         <img src="assets/icons/plus-add-3.svg" />

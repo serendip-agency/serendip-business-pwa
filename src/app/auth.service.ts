@@ -19,19 +19,14 @@ export class AuthService {
   get apiUrl() {
     return localStorage.server;
   }
-  http: HttpClient;
-  router: Router;
+
   profile: any = {};
 
-  constructor(private _http: HttpClient, private _router: Router) {
-    this.router = _router;
-
-    this.http = _http;
-  }
+  constructor(private http: HttpClient, private router: Router) {}
   async logout() {
     localStorage.clear();
     await IdbDeleteAllDatabases();
-    window.location.reload();
+   window.location.reload();
   }
   async token(): Promise<TokenModel> {
     let token: TokenModel;
@@ -173,9 +168,11 @@ export class AuthService {
       localStorage.setItem("token", JSON.stringify(newToken));
       return newToken;
     } catch (res) {
-      if (res.status === 400) {
-        return null;
-      } else { return token; }
+      if (res.status === 401 || res.status === 400) {
+        this.logout();
+      } else {
+        return token;
+      }
     }
   }
 }

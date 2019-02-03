@@ -1174,7 +1174,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       remoteGrid = await this.dataService.request({
         method: "post",
         path: "/api/business/grid",
-        model: { section: params.section || 'start' },
+        model: { section: params.section || "start" },
         timeout: 1000,
         retry: false
       });
@@ -1284,8 +1284,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
   async ngOnInit() {
-    await this.initEntitySocket();
-    await this.initDashboardSocket();
+    this.initEntitySocket().then().catch();
+    this.initDashboardSocket().then().catch();
 
     if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
       try {

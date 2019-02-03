@@ -39,6 +39,7 @@ import * as sUtil from "serendip-utility";
 import { ObService } from "src/app/ob.service";
 import { ReportService } from "src/app/report.service";
 import { PriceViewComponent } from "./price-view/price-view.component";
+import { CalendarService } from "src/app/calendar.service";
 
 @Component({
   selector: "app-report",
@@ -49,6 +50,8 @@ export class ReportComponent implements OnInit {
   fieldDragging: ReportFieldInterface;
   @Output()
   WidgetChange = new EventEmitter<DashboardWidgetInterface>();
+
+  saveMode = "report";
 
   @Output()
   DashboardCommand = new EventEmitter<{
@@ -76,7 +79,7 @@ export class ReportComponent implements OnInit {
 
   @Input() selected = [];
 
-  _mode: "report" | "data" = "data";
+  _mode: string | "report" | "data" = "data";
   @Input() page: any[];
 
   obServiceActive = true;
@@ -84,7 +87,7 @@ export class ReportComponent implements OnInit {
   formName: any;
   @Input() formId: any;
   @Input() reportId: string;
-  set mode(value: "report" | "data") {
+  set mode(value: string) {
     this._mode = value;
   }
 
@@ -92,8 +95,6 @@ export class ReportComponent implements OnInit {
     return this._mode;
   }
   _ = _;
-
-  moment: typeof Moment = MomentJalaali;
 
   @Input() pageCount = 1;
 
@@ -132,6 +133,7 @@ export class ReportComponent implements OnInit {
     private idbService: IdbService,
     private reportService: ReportService,
     private changeRef: ChangeDetectorRef,
+    private calendarService: CalendarService,
     private obService: ObService
   ) {}
 
@@ -178,7 +180,6 @@ export class ReportComponent implements OnInit {
 
     this.changeRef.detectChanges();
   }
- 
 
   objectKeys(obj) {
     return Object.keys(obj);
@@ -297,8 +298,7 @@ export class ReportComponent implements OnInit {
     this.report = await this.reportService.generate(this.report, {
       entity: this.entityName,
       skip: skip,
-      limit: this.pageSize,
-      save: false
+      limit: this.pageSize
     });
 
     this.page = this.report.data;
@@ -316,24 +316,52 @@ export class ReportComponent implements OnInit {
     // });
   }
 
-  async refreshReports() {
-    const onlineReports = [];
-    const offlineReports = [];
+  async save() {
+    if (this.mode !== "save") {
+      return (this.mode = "save");
+    }
 
-    this.reports = _.chain([...offlineReports, ...onlineReports])
+    this.resultLoading = true;
+
+    let reportToSave;
+    if (this.saveMode === "data") {
+      reportToSave = await this.reportService.generate(this.report, {
+        limit: 0,
+        entity: this.report.entityName
+      });
+    } else {
+      reportToSave = _.omit(this.report, "data");
+    }
+
+    const newReport = await this.dataService.insert("report", reportToSave);
+
+    this.reportId = newReport._id;
+
+    this.changePage(0);
+    await this.refreshReports();
+
+    this.mode = "report";
+    this.resultLoading = false;
+  }
+
+  async refreshReports() {
+    const reportsQuery = (await this.dataService.list("report")).filter(
+      p => p.entityName === this.entityName
+    );
+
+    this.reports = _.chain(reportsQuery)
       .map(item => {
+        console.log(item._cdate);
         return {
           label:
-            item.label.trim() +
-            " | " +
-            sUtil.text.replaceEnglishDigitsWithPersian(
-              this.moment(item.createDate).fromNow()
-            ) +
-            " | توسط " +
-            item.user +
-            item.offline
-              ? " | آفلاین "
-              : "",
+            (item.label ? item.label.trim() : item._id) +
+            "  ساخته شده در" +
+            this.calendarService
+              .moment(item._cdate)
+              .format("YYYY-MM-DD HH:mm:ss") +
+            " توسط " +
+            item._cuser +
+            (item.offline ? "ذخیره شده با نتیجه " : ""),
           value: item._id
         };
       })
@@ -350,6 +378,8 @@ export class ReportComponent implements OnInit {
   async changeReport(reportId) {
     this.report = null;
 
+    this.reportId = reportId;
+
     this.report = await this.dataService.details("report", reportId);
     if (this.report) {
       this.report.offline = true;
@@ -359,12 +389,14 @@ export class ReportComponent implements OnInit {
       this.report = { _id: reportId } as any;
     }
 
+    this.WidgetChange.emit({ inputs: { reportId: reportId } });
+
     await this.refresh();
   }
 
   async ngOnInit() {
-    await this.refreshReports();
     await this.changePage(0);
+    await this.refreshReports();
 
     this.obService.listen(this.entityName).subscribe(event => {
       if (event.eventType !== "delete" && this.obServiceActive) {

@@ -10,13 +10,13 @@ import * as _ from "underscore";
 import { DataService } from "./data.service";
 import { IdbService } from "./idb.service";
 import { WebWorkerService } from "./web-worker.service";
+import { TypeScriptEmitter } from "@angular/compiler";
 
 export interface ReportOptionsInterface {
   entity: string;
   skip?: number;
   limit?: number;
   zip?: boolean;
-  save?: boolean;
   online?: boolean;
 }
 
@@ -52,51 +52,97 @@ export class ReportService {
     if (!report.fields) {
       report.fields = [];
     }
-    let data = await this.dataService.list(opts.entity, 0, 0, false);
-    if (!data) {
-      data = [];
-    }
 
-    data = await Promise.all(
-      data.map((document, index) => {
-        return this.formatDocument(document, report.fields);
-      })
-    );
+    console.log("generate report", report);
+    if (!report.data) {
+      let data = await this.dataService.list(opts.entity, 0, 0, false);
+      if (!data) {
+        data = [];
+      }
 
-    const queriedData = [];
-    await Promise.all(
-      data.map((document, index) => {
-        return new Promise(async (resolve, reject) => {
-          const isMatch = await this.documentMatchFieldQueries(
-            document,
-            report.fields
-          );
+      data = await Promise.all(
+        data.map((document, index) => {
+          return this.formatDocument(document, report.fields);
+        })
+      );
 
-          if (isMatch) {
-            queriedData.push(document);
+      const queriedData = [];
+      await Promise.all(
+        data.map((document, index) => {
+          return new Promise(async (resolve, reject) => {
+            const isMatch = await this.documentMatchFieldQueries(
+              document,
+              report.fields
+            );
+
+            if (isMatch) {
+              queriedData.push(document);
+            }
+            resolve();
+          });
+        })
+      );
+
+      report.data = queriedData;
+      report.count = report.data.length;
+
+      const groupMethod = `(modules) => async (r) => {
+      const _ = modules._;
+      r.data = _.groupBy(r.data, p => p.gender);
+
+      r.data = Object.keys(r.data).map(p => {
+        return { name: p, count: r.data[p].length, data: r.data[p] };
+      });
+
+      r.fields = [
+        { label: "جنسیت", name: "name", enabled: true },
+        { label: "تعداد", name: "count", enabled: true }
+      ];
+
+      r.count = r.data.length;
+
+      return r;
+    };`;
+      report.formats = [
+        {
+          method: "javascript",
+          options: {
+            code: groupMethod.toString()
           }
-          resolve();
-        });
-      })
-    );
-
-    report.data = queriedData;
-    report.count = report.data.length;
-
-    if (opts.save) {
-      //   model = (await this.idbService.reportIDB()).(model);
+        }
+        // {
+        //   method : 'groupByQueries',
+        //   options : {
+        //     queries : [{method : 'eq',}] as FieldQueryInterface[]
+        //   }
+        // }
+      ];
+      report = await this.formatReport(report);
     }
 
-    report.data = _.rest(report.data, opts.skip);
+    if ((!report.formats || report.formats.length === 0) && opts.skip) {
+      report.data = _.rest(report.data, opts.skip);
+    }
 
-    if (opts.limit) {
+    if ((!report.formats || report.formats.length === 0) && opts.limit) {
       report.data = _.take(report.data, opts.limit);
     }
 
     return report;
   }
 
-  async formatReport(document: EntityModel, report: ReportInterface) {}
+  async formatReport(report: ReportInterface) {
+    for (const format of report.formats) {
+      report = await this.getAsyncReportFormatMethods()[format.method]({
+        report,
+        format
+      });
+    }
+
+    console.log(report);
+
+    return report;
+  }
 
   async formatDocument(document: EntityModel, fields: ReportFieldInterface[]) {
     // iterate throw fields in document
@@ -201,6 +247,20 @@ export class ReportService {
     }) => Promise<ReportInterface>;
   } {
     return {
+      javascript: async input => {
+        const formatOptions: { code: string } = input.format.options;
+
+        // tslint:disable-next-line:no-eval
+        const methodContainer = eval(formatOptions.code);
+
+        const method = methodContainer({ _ });
+
+        //    try {
+        return await method(input.report);
+        // } catch (error) {
+        //   return input.report;
+        // }
+      },
       groupByQueries: async input => {
         const formatOptions: { queries: FieldQueryInterface[] } = {
           queries: input.format.options.queries
@@ -221,7 +281,6 @@ export class ReportService {
   } {
     return {
       joinFields: async input => {
-        console.log(input.field.methodOptions);
         const methodOptions: { fields: string[]; separator: string } =
           input.field.methodOptions;
 

@@ -33,13 +33,19 @@
                 [src]="businessService.business.logo"
                 alt=""
               />
-              <img class="default" src="assets/icons/account-profile-user-4.svg" />
+              <img
+                class="default"
+                src="assets/icons/account-profile-user-4.svg"
+              />
             </div>
           </div>
 
           <div class="no-profile" *ngIf="m.userId && !m.profile">
             <div class="pic">
-              <img class="default" src="assets/icons/account-profile-user-4.svg" />
+              <img
+                class="default"
+                src="assets/icons/account-profile-user-4.svg"
+              />
             </div>
 
             کاربر
@@ -85,7 +91,6 @@
         </div>
         <p>نیازی نیست کاربر از قبل ثبت‌نام کرده باشد.</p>
       </div>
- 
     </mat-card-content>
   </mat-card>
 </div>
@@ -162,6 +167,7 @@
 
         <ul class="links">
           <li><a [routerLink]="['/business', 'list']"> لیست کسب‌وکارها </a></li>
+          <li><a (click)="authService.logout()"> خروج از حساب </a></li>
         </ul>
       </form>
 
@@ -221,7 +227,10 @@
 
           <ul class="links">
             <li>
-              <a [routerLink]="['/business', 'new']"> ثبت کسب‌و‌کار جدید </a>
+              <a [routerLink]="['/business', 'new']">ثبت کسب‌و‌کار جدید</a>
+            </li>
+            <li>
+              <a (click)="authService.logout()">خروج از حساب</a>
             </li>
           </ul>
         </div>

@@ -40,7 +40,9 @@ export class DashboardService {
     };
 
     this.obService.listen("dashboard").subscribe(msg => {
-      this.setDefaultSchema();
+      setTimeout(() => {
+        this.setDefaultSchema();
+      }, 10);
     });
   }
 
@@ -55,11 +57,11 @@ export class DashboardService {
       reports: BusinessSchema.ReportsSchema
     };
 
-    this.schema.dashboard = (await this.dataService.list(
+    this.schema.dashboard = ((await this.dataService.list(
       "dashboard",
       0,
       0
-    )).concat(this.schema.dashboard);
+    )) as any).concat(this.schema.dashboard);
 
     console.log("set default schema");
     this.schema.dashboard = this.schema.dashboard.map(dashboard => {

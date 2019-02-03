@@ -235,10 +235,10 @@ export class DataService {
 
   async list<A>(
     controller: string,
-    skip,
-    limit,
+    skip?,
+    limit?,
     offline?: boolean
-  ): Promise<EntityModel> {
+  ): Promise<EntityModel[]> {
     if (offline) {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB();
@@ -680,24 +680,37 @@ export class DataService {
   }
 
   public async pullCollections(onCollectionSync?: Function) {
-    const collections = [];
-    FormsSchema.forEach(schema => {
-      if (schema.entityName) {
-        if (collections.indexOf(schema.entityName) === -1) {
-          collections.push(schema.entityName);
-        }
-      }
-    });
-    ReportsSchema.forEach(schema => {
-      if (schema.entityName) {
-        if (collections.indexOf(schema.entityName) === -1) {
-          collections.push(schema.entityName);
-        }
-      }
-    });
+    const baseCollections = ["dashboard", "entity", "form", "people", "report"];
+    // FormsSchema.forEach(schema => {
+    //   if (schema.entityName) {
+    //     if (collections.indexOf(schema.entityName) === -1) {
+    //       collections.push(schema.entityName);
+    //     }
+    //   }
+    // });
+    // ReportsSchema.forEach(schema => {
+    //   if (schema.entityName) {
+    //     if (collections.indexOf(schema.entityName) === -1) {
+    //       collections.push(schema.entityName);
+    //     }
+    //   }
+    // });
 
     await promiseSerial(
-      _.map(collections, collection => {
+      _.map(baseCollections, collection => {
+        return () => {
+          return this.pullCollection(collection);
+        };
+      }),
+      { parallelize: 1 }
+    );
+
+    const entityCollections = (await this.list("entity"))
+      .filter(p => p.offline)
+      .map(p => p.name);
+
+    await promiseSerial(
+      _.map(entityCollections, collection => {
         return () => {
           return this.pullCollection(collection);
         };
