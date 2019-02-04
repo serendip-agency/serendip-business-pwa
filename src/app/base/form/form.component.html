@@ -4,18 +4,18 @@
       <div mat-card-avatar>
         <img [src]="'assets/icons/' + entityIcon + '.svg'" />
       </div>
-      <mat-card-title *ngIf="!minimal"
-        >فرم اطلاعات {{ entityLabel || entityName }}
+      <mat-card-title *ngIf="!minimal">
+        فرم اطلاعات {{ title }}
       </mat-card-title>
 
       <mat-card-title *ngIf="minimal"> {{ title }} </mat-card-title>
 
       <mat-card-subtitle *ngIf="!model._id && !minimal">
-        ثبت {{ entityLabel || entityName }} جدید
+        ثبت {{ entityName }} جدید
       </mat-card-subtitle>
 
       <mat-card-subtitle *ngIf="model._id && !minimal">
-        ویرایش {{ entityLabel || entityName }}
+        ویرایش {{ entityName }}
       </mat-card-subtitle>
 
       <div
@@ -48,8 +48,9 @@
 
     <mat-card-content *ngIf="mode == 'form'">
       <!-- <textarea class="logbox">{{ model | json }}</textarea> -->
-
-      <ng-container *ngTemplateOutlet="form"></ng-container>
+      <div class="form-wrapper">
+        <ng-container *ngTemplateOutlet="form"></ng-container>
+      </div>
     </mat-card-content>
 
     <mat-card-content *ngIf="mode == 'triggers'"> </mat-card-content>

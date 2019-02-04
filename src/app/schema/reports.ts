@@ -101,6 +101,12 @@ export const ReportsSchema: ReportInterface[] = [
         name: "name",
         label: "نام گزارش",
         template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "label",
+        label: "لیبل گزارش",
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },

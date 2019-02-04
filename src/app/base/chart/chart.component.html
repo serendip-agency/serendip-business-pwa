@@ -1,0 +1,25 @@
+<!-- <ngx-charts-line-chart
+  [id]="chartId + '2'"
+  [xAxis]="true"
+  [yAxis]="true"
+  [legendTitle]="'کاربران'"
+  [legend]="true"
+  [view]="[500, 400]"
+  class="chart-container"
+  [class.loading]="loading"
+  [results]="data"
+>
+</ngx-charts-line-chart> -->
+
+<ngx-charts-pie-chart
+  [id]="chartId + '2'"
+  [legendTitle]="'کاربران'"
+  [legend]="false"
+  [view]="[400, 400]"
+  [doughnut]="true"
+  [labels]="true"
+  class="chart-container"
+  [class.loading]="loading"
+  [results]="data"
+>
+</ngx-charts-pie-chart>

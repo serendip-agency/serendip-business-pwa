@@ -4,6 +4,7 @@
     [class]="part.cssClass"
   >
     <ndc-dynamic
+      *ngIf="getDynamicPart(part.componentName)"
       [ndcDynamicInputs]="
         extendObj({ model: model[part.propertyName] }, part.inputs || {})
       "
@@ -12,6 +13,11 @@
       }"
       [ndcDynamicComponent]="getDynamicPart(part.componentName)"
     ></ndc-dynamic>
+
+    <div *ngIf="!getDynamicPart(part.componentName)" class="logbox auto-height"  >
+      {{ part.componentName }} not found.
+    </div>
+    
   </div>
   <div *ngIf="part.propertyType == 'array'">
     <div class="array-label" *ngIf="part.label">{{ part.label }}</div>

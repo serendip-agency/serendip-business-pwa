@@ -295,14 +295,14 @@ ngx-charts-number-card .cell .trimmed-label {
   display: block;
   width: 100%;
   height: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+  max-width: 420px;
+
+  margin: 15px auto;
   position: relative;
-  opacity: 0;
   transition: all ease 0.5s;
   user-select: none;
-  &.fadeIn {
-    opacity: 1;
+  &.loading {
+    opacity: 0;
   }
   &:after {
     display: block;
@@ -690,10 +690,6 @@ label {
         padding-top: 0;
         border-left: 2px solid transparent;
 
-        form {
-          padding: 15px;
-          box-sizing: border-box;
-        }
         &:hover {
           overflow-y: scroll;
           border-left: none;
@@ -871,6 +867,11 @@ div.timepicker {
   resize: none;
   height: 120px;
   border-radius: 5px;
+
+  &.auto-height {
+    min-height: auto;
+    height: auto;
+  }
 }
 
 #start {
@@ -908,7 +909,6 @@ p,
 input,
 textarea,
 label,
-span,
 a,
 h1,
 h2,
@@ -1033,6 +1033,11 @@ form {
 }
 
 .widget.form {
+  .form-wrapper {
+    padding: 15px;
+    box-sizing: border-box;
+  }
+
   .form-object-row {
     padding: 10px;
     margin: 5px 0 10px 0;
@@ -1129,6 +1134,20 @@ form {
 
     .mat-radio-outer-circle {
       border-color: #fff;
+    }
+  }
+}
+.code-input .codeflask {
+  background: transparent !important;
+  background: #ddd !important;
+
+  .codeflask__code,
+  .codeflask__flatten,
+  .codeflask__textarea {
+    &,
+    * {
+      font-family: monospace !important;
+      font-size: 11px !important;
     }
   }
 }

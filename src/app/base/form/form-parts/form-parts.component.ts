@@ -23,6 +23,7 @@ import { FormStateInputComponent } from "../form-state-input/form-state-input.co
 import { FormTelephoneInputComponent } from "../form-telephone-input/form-telephone-input.component";
 import { FormTextInputComponent } from "../form-text-input/form-text-input.component";
 import { FormToggleInputComponent } from "../form-toggle-input/form-toggle-input.component";
+import { FormCodeInputComponent } from "../form-code-input/form-code-input.component";
 
 @Component({
   selector: "app-form-parts",
@@ -53,7 +54,8 @@ export class FormPartsComponent implements OnInit {
     FormDateInputComponent,
     FormRelativeDateInputComponent,
     FormFileInputComponent,
-    FormIconInputComponent
+    FormIconInputComponent,
+    FormCodeInputComponent
   };
   constructor(public ref: ChangeDetectorRef) {}
   filterParts(parts: FormPartInterface[]) {

@@ -79,7 +79,7 @@ export class ReportComponent implements OnInit {
 
   @Input() selected = [];
 
-  _mode: string | "report" | "data" = "data";
+  _mode: string | "save" | "chart" | "report" | "data" = "data";
   @Input() page: any[];
 
   obServiceActive = true;

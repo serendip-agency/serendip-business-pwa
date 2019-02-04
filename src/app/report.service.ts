@@ -90,33 +90,39 @@ export class ReportService {
       const _ = modules._;
       r.data = _.groupBy(r.data, p => p.gender);
 
+      console.log(r.data);
+
+      r.data["n/a"] = [...r.data[""], ...r.data["undefined"]];
+      delete r.data[""];
+      delete r.data["undefined"];
+
       r.data = Object.keys(r.data).map(p => {
-        return { name: p, count: r.data[p].length, data: r.data[p] };
+        return { name: p, value: r.data[p].length, data: r.data[p] };
       });
 
       r.fields = [
         { label: "جنسیت", name: "name", enabled: true },
-        { label: "تعداد", name: "count", enabled: true }
+        { label: "تعداد", name: "value", enabled: true }
       ];
 
       r.count = r.data.length;
 
       return r;
     };`;
-      report.formats = [
-        {
-          method: "javascript",
-          options: {
-            code: groupMethod.toString()
-          }
-        }
-        // {
-        //   method : 'groupByQueries',
-        //   options : {
-        //     queries : [{method : 'eq',}] as FieldQueryInterface[]
-        //   }
-        // }
-      ];
+      // report.formats = [
+      //   {
+      //     method: "javascript",
+      //     options: {
+      //       code: groupMethod.toString()
+      //     }
+      //   }
+      //   // {
+      //   //   method : 'groupByQueries',
+      //   //   options : {
+      //   //     queries : [{method : 'eq',}] as FieldQueryInterface[]
+      //   //   }
+      //   // }
+      // ];
       report = await this.formatReport(report);
     }
 
@@ -132,14 +138,12 @@ export class ReportService {
   }
 
   async formatReport(report: ReportInterface) {
-    for (const format of report.formats) {
+    for (const format of report.formats || []) {
       report = await this.getAsyncReportFormatMethods()[format.method]({
         report,
         format
       });
     }
-
-    console.log(report);
 
     return report;
   }

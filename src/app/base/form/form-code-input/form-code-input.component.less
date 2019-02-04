@@ -1,0 +1,21 @@
+.code-input {
+  direction: ltr;
+  text-align: left;
+  height: 500px;
+  background:#fff;
+  overflow: auto;
+  border-radius: 10px;
+  position: relative;
+  width: 700px;
+
+  * {
+    direction: rtl;
+  }
+
+  &:after {
+    clear: both;
+    display: block;
+    content: " ";
+  }
+}
+

@@ -1,4 +1,4 @@
-<div class="widget" [class.minimal]="minimal">
+<div class="widget" class="minimal">
   <mat-card class="report">
     <mat-card-header>
       <div mat-card-avatar class="pull-right">
@@ -9,18 +9,21 @@
 
       <mat-card-subtitle> {{ subtitle }} </mat-card-subtitle>
 
-      <div *ngIf="!minimal" class="menu">
-        <img [src]="'assets/icons/' + 'office-paper-work-bag' + '.svg'" />
+      <div
+        class="menu"
+        [class.active]="mode == 'chart'"
+        (click)="mode == 'chart' ? (mode = 'report') : (mode = 'chart')"
+      >
+        <img src="assets/icons/efficiency-chart-3.svg" />
       </div>
 
       <div
-        *ngIf="!minimal"
         class="search"
         [class.spanned]="activeFieldQueries().length > 0"
         [class.active]="mode == 'report'"
         (click)="mode = mode == 'report' ? 'data' : 'report'; refresh()"
       >
-        <img [src]="'assets/icons/' + 'search' + '.svg'" />
+        <img [src]="'assets/icons/filter-6.svg'" />
 
         <span *ngIf="activeFieldQueries().length > 0">
           {{ activeFieldQueries().length | rpd }} فیلتر
@@ -32,22 +35,28 @@
       mode="indeterminate"
     ></mat-progress-bar>
     <mat-card-content>
-      <div class="report-save" *ngIf="mode == 'save' && report">
-        <form action="">
-          <app-form-text-input
-            [label]="'نام گزارش'"
-            (modelChange)="report.label = $event"
-            [model]="report.label"
-          ></app-form-text-input>
-          <app-form-radio-input
-            (modelChange)="saveMode = $event"
-            [data]="[
-              { value: 'report', label: 'ذخیره گزارش' },
-              { value: 'data', label: 'ذخیره گزارش و نتیجه' }
-            ]"
-          ></app-form-radio-input>
-        </form>
+      <div class="form report-save" *ngIf="mode == 'save' && report">
+        <app-form-text-input
+          [label]="'نام گزارش'"
+          (modelChange)="report.label = $event"
+          [model]="report.label"
+        ></app-form-text-input>
+        <app-form-radio-input
+          (modelChange)="saveMode = $event"
+          [data]="[
+            { value: 'report', label: 'ذخیره گزارش' },
+            { value: 'data', label: 'ذخیره گزارش و نتیجه' }
+          ]"
+        ></app-form-radio-input>
       </div>
+
+      <div
+        class="report-chart"
+        *ngIf="mode == 'chart' && report && report.data"
+      >
+        <app-chart [data]="report.data"></app-chart>
+      </div>
+
       <div class="report-model" *ngIf="mode == 'report' && report">
         <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
         <div class="fields">
@@ -151,6 +160,7 @@
           <div class="inner">
             <div class="select">
               <mat-checkbox
+                *ngIf="page && page[0] && page[0]._id"
                 (change)="allSelectChange($event)"
                 [checked]="allSelected()"
               ></mat-checkbox>
@@ -188,6 +198,7 @@
           <div class="record" *ngFor="let record of page; trackBy: trackByFn">
             <div class="select">
               <mat-checkbox
+                *ngIf="record._id"
                 [checked]="selected.indexOf(record._id) != -1"
                 (change)="recordSelectChange(record._id, $event)"
               ></mat-checkbox>

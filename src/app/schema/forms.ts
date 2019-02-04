@@ -269,7 +269,6 @@ export const FormsSchema: FormInterface[] = [
     parts: [
       {
         propertyName: "name",
-
         componentName: "FormTextInputComponent",
         inputs: {
           label: "نام گزارش",
@@ -284,6 +283,48 @@ export const FormsSchema: FormInterface[] = [
           type: "single-line",
           dir: "ltr"
         }
+      },
+      {
+        propertyType: "array",
+        propertyName: "formats",
+        label: "نتایج ثانویه",
+        parts: [
+          {
+            propertyName: "label",
+            componentName: "FormTextInputComponent",
+            inputs: {
+              label: "عنوان نتیجه‌گیری",
+              type: "single-line"
+            }
+          },
+          {
+            propertyName: "method",
+            componentName: "FormSelectInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "شیوه نتیجه‌گیری",
+              selectType: "single",
+              data: [
+                {
+                  label: "شیوه نتیجه‌گیری را انتخاب کنید",
+                  value: ""
+                },
+                {
+                  label: "کد جاوااسکریپت",
+                  value: "javascript"
+                }
+              ]
+            }
+          },
+          {
+            propertyName: "code",
+            componentName: "FormCodeInputComponent",
+            inputs: {
+              label: "کد",
+              type: "javascript"
+            }
+          }
+        ]
       },
       {
         propertyType: "array",
@@ -541,7 +582,8 @@ export const FormsSchema: FormInterface[] = [
             }
           },
           {
-            if: "!^form.propertyType && ^form.componentName == 'FormTextInputComponent'",
+            if:
+              "!^form.propertyType && ^form.componentName == 'FormTextInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
             label: "تنظیمات فیلد متنی",
@@ -574,7 +616,8 @@ export const FormsSchema: FormInterface[] = [
             ]
           },
           {
-            if: "!^form.propertyType && ^form.componentName == 'FormRadioInputComponent'",
+            if:
+              "!^form.propertyType && ^form.componentName == 'FormRadioInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
             label: "تنظیمات فیلد متنی",
@@ -643,7 +686,8 @@ export const FormsSchema: FormInterface[] = [
             ]
           },
           {
-            if: "^form.propertyType === 'array' || ^form.propertyType === 'object'",
+            if:
+              "^form.propertyType === 'array' || ^form.propertyType === 'object'",
             propertyName: "parts",
             propertyType: "array",
             label: "اجزای فیلد",

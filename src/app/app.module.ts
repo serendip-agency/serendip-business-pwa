@@ -112,7 +112,9 @@ import { StorageComponent } from "./storage/storage.component";
 import { StorageFilesComponent } from "./storage/storage-files/storage-files.component";
 import { FormPartsComponent } from "./base/form/form-parts/form-parts.component";
 import { SyncComponent } from "./sync/sync.component";
-import { FormIconInputComponent } from './base/form/form-icon-input/form-icon-input.component';
+import { FormIconInputComponent } from "./base/form/form-icon-input/form-icon-input.component";
+import { ChartComponent } from "./base/chart/chart.component";
+import { FormCodeInputComponent } from "./base/form/form-code-input/form-code-input.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -156,6 +158,7 @@ export const dynamicComponents = [
   FormRelativeDateInputComponent,
   FormFileInputComponent,
   FormIconInputComponent,
+  FormCodeInputComponent,
 
   // Business related form parts
 
@@ -203,6 +206,8 @@ export const primaryComponents = [
     StorageFilesComponent,
     FormPartsComponent,
     SyncComponent,
+    ChartComponent,
+    FormCodeInputComponent
   ],
   entryComponents: [],
   imports: [
