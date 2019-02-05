@@ -86,29 +86,6 @@ export class ReportService {
       report.data = queriedData;
       report.count = report.data.length;
 
-      const groupMethod = `(modules) => async (r) => {
-      const _ = modules._;
-      r.data = _.groupBy(r.data, p => p.gender);
-
-      console.log(r.data);
-
-      r.data["n/a"] = [...r.data[""], ...r.data["undefined"]];
-      delete r.data[""];
-      delete r.data["undefined"];
-
-      r.data = Object.keys(r.data).map(p => {
-        return { name: p, value: r.data[p].length, data: r.data[p] };
-      });
-
-      r.fields = [
-        { label: "جنسیت", name: "name", enabled: true },
-        { label: "تعداد", name: "value", enabled: true }
-      ];
-
-      r.count = r.data.length;
-
-      return r;
-    };`;
       // report.formats = [
       //   {
       //     method: "javascript",
@@ -123,7 +100,6 @@ export class ReportService {
       //   //   }
       //   // }
       // ];
-      report = await this.formatReport(report);
     }
 
     if ((!report.formats || report.formats.length === 0) && opts.skip) {
@@ -137,8 +113,11 @@ export class ReportService {
     return report;
   }
 
-  async formatReport(report: ReportInterface) {
-    for (const format of report.formats || []) {
+  async formatReport(
+    report: ReportInterface,
+    formats: ReportFormatInterface[]
+  ) {
+    for (const format of formats || []) {
       report = await this.getAsyncReportFormatMethods()[format.method]({
         report,
         format
@@ -255,7 +234,7 @@ export class ReportService {
         const formatOptions: { code: string } = input.format.options;
 
         // tslint:disable-next-line:no-eval
-        const methodContainer = eval(formatOptions.code);
+        const methodContainer = eval((input.format as any).code);
 
         const method = methodContainer({ _ });
 

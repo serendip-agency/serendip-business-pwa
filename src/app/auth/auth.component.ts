@@ -390,6 +390,7 @@ export class AuthComponent implements OnInit {
     }
   }
   async ngOnInit() {
+    this.dataService.setCurrentServer();
     this.initiating = true;
     try {
       await this.authService.token();

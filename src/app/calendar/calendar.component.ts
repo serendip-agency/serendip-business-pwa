@@ -91,9 +91,9 @@ export class CalendarComponent implements OnInit {
   }
 
   ngOnInit() {
-    setInterval(() => {
-      this.changeRef.detectChanges();
-    }, 1000);
+    // setInterval(() => {
+    //   this.changeRef.detectChanges();
+    // }, 1000);
 
     this.calendarsToShow = { iran: true };
     this.calendarsToShowChange();

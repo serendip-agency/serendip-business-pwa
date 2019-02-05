@@ -1,4 +1,11 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  Input,
+  ChangeDetectorRef,
+  EventEmitter,
+  Output
+} from "@angular/core";
 import * as _ from "underscore";
 import CodeFlask from "codeflask";
 
@@ -12,41 +19,45 @@ export class FormCodeInputComponent implements OnInit {
 
   @Input() language = "js";
 
+  @Output() modelChange = new EventEmitter<any>();
+
   flask: any;
+  model: string;
   constructor(private changeRef: ChangeDetectorRef) {}
 
+  cleanCodeSpaces(input: string) {
+    const result = [];
+    input = input.toString().replace(/^\s*$(?:\r\n?|\n)/gm, "");
+
+    let spacesToRemoveForIndenting = 0;
+
+    for (const line of input.split(/\n/)) {
+      if (line.trim()) {
+        if (!spacesToRemoveForIndenting) {
+          spacesToRemoveForIndenting = line.match(/^(\s){0,}/)[0].length;
+        }
+
+        result.push(
+          line.replace(new RegExp(`^(\\s){${spacesToRemoveForIndenting}}`), "")
+        );
+      }
+    }
+
+    return result.join("\n");
+  }
   ngOnInit() {
-    setTimeout(() => {
+    requestAnimationFrame(() => {
       this.flask = new CodeFlask("#" + this.selector, {
         language: this.language,
         lineNumbers: true
       });
 
-      this.flask.updateCode(`
-      (modules) => async (r) => {
-        const _ = modules._;
-        r.data = _.groupBy(r.data, p => p.gender);
-  
-        console.log(r.data);
-  
-        r.data["n/a"] = [...r.data[""], ...r.data["undefined"]];
-        delete r.data[""];
-        delete r.data["undefined"];
-  
-        r.data = Object.keys(r.data).map(p => {
-          return { name: p, value: r.data[p].length, data: r.data[p] };
-        });
-  
-        r.fields = [
-          { label: "جنسیت", name: "name", enabled: true },
-          { label: "تعداد", name: "value", enabled: true }
-        ];
-  
-        r.count = r.data.length;
-  
-        return r;
-      };
-      `);
-    }, 1000);
+      this.flask.onUpdate(code => {
+        this.modelChange.emit(code);
+      });
+
+      this.flask.updateCode(this.cleanCodeSpaces(this.model));
+    });
+    //  }, 1000);
   }
 }

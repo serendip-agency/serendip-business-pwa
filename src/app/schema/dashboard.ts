@@ -5,7 +5,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "start",
     title: "شروع",
     icon: "expand-1",
-    tabs : []
+    tabs: []
   },
   {
     name: "settings",
@@ -13,18 +13,18 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     icon: "settings-1",
     tabs: [
       {
-        active : true,
-        title : 'کسب‌وکار',
-        icon : 'building-production-unit-1',
+        active: true,
+        title: "کسب‌وکار",
+        icon: "building-production-unit-1",
         status: "default",
         widget: {
           component: "BusinessComponent"
         }
       },
       {
-        active : true,
-        title : 'پروفایل',
-        icon : 'account-profile-user-4',
+        active: true,
+        title: "پروفایل",
+        icon: "account-profile-user-4",
         status: "default",
         widget: {
           component: "AccountProfileComponent"
@@ -37,6 +37,23 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     title: "پیکربندی",
     icon: "dashboard-1",
     tabs: [
+      {
+        status: "default",
+        title: "اشیا",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "entity-default",
+              formName: "entity-form",
+              icon: "tab-4",
+              entityLabelSingular: "شی",
+              title: "اشیا"
+            }
+          }
+        ]
+      },
       {
         status: "default",
         title: "داشبورد‌ها",
@@ -84,6 +101,22 @@ export const DashboardSchema: DashboardSectionInterface[] = [
               icon: "filter-6",
               entityLabelSingular: "گرارش",
               title: "گزارشات"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "روش‌های نتیجه‌گیری",
+        icon: "efficiency-chart-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "format-default",
+              formName: "format-form",
+              icon: "efficiency-chart-1",
+              title: "روش‌های نتیجه‌گیری"
             }
           }
         ]

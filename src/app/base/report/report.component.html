@@ -12,7 +12,7 @@
       <div
         class="menu"
         [class.active]="mode == 'chart'"
-        (click)="mode == 'chart' ? (mode = 'report') : (mode = 'chart')"
+        (click)="mode == 'chart' ? (mode = 'data') : (mode = 'chart')"
       >
         <img src="assets/icons/efficiency-chart-3.svg" />
       </div>
@@ -54,7 +54,88 @@
         class="report-chart"
         *ngIf="mode == 'chart' && report && report.data"
       >
-        <app-chart [data]="report.data"></app-chart>
+        <div *ngIf="!formattedReport">
+          <div class="formats">
+            <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label>
+            <div class="list">
+              <app-form-radio-input
+                [display]="'block'"
+                [data]="getReportFormatForRadioList()"
+                (modelChange)="format = $event"
+              ></app-form-radio-input>
+            </div>
+          </div>
+
+          <div class="chart-types">
+            <label for="">
+              ابزار نمایش نتیجه را انتخاب کنید:
+            </label>
+
+            <div class="list">
+              <div class="chart-type">
+                <img src="/assets/charts/bar-chart-horizon-1.svg" alt="" />
+              </div>
+              <div class="chart-type">
+                <img src="/assets/charts/bar-chart-vert.svg" alt="" />
+              </div>
+              <div class="chart-type">
+                <img src="/assets/charts/doughnut-1.svg" alt="" />
+              </div>
+
+              <div class="chart-type">
+                <img src="/assets/charts/gauge-2.svg" alt="" />
+              </div>
+
+              <div class="chart-type">
+                <img src="/assets/charts/pie-chart-1.svg" alt="" />
+              </div>
+              <div class="chart-type">
+                <img src="/assets/charts/pie-advanced-1.svg" alt="" />
+              </div>
+              <div class="chart-type">
+                <img src="/assets/charts/line-chart-1.svg" alt="" />
+              </div>
+
+              <div class="chart-type">
+                <img
+                  src="/assets/charts/line-chart-grouped-horizon.svg"
+                  alt=""
+                />
+              </div>
+
+              <div class="chart-type">
+                <img src="/assets/charts/line-chart-grouped-vert.svg" alt="" />
+              </div>
+
+              <div class="chart-type">
+                <img src="/assets/charts/polar-chart-1.svg" alt="" />
+              </div>
+
+              <div class="chart-type">
+                <img
+                  src="/assets/charts/line-chart-grouped-horizon.svg"
+                  alt=""
+                />
+              </div>
+
+              <div class="chart-type">
+                <img src="/assets/charts/stacked-horizontal.svg" alt="" />
+              </div>
+
+              <div class="chart-type">
+                <img src="/assets/charts/stacked-vertical.svg" alt="" />
+              </div>
+
+              <div class="chart-type">
+                <img src="/assets/charts/tree-map.svg" alt="" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <app-chart
+          *ngIf="format && formattedReport"
+          [data]="formattedReport.data"
+        ></app-chart>
       </div>
 
       <div class="report-model" *ngIf="mode == 'report' && report">
@@ -228,12 +309,21 @@
         </div>
       </div>
     </mat-card-content>
+
+    <mat-card-actions *ngIf="report && mode == 'chart'">
+      <button class="sp-button-icon with-text" (click)="generateFormat()">
+        <img src="assets/icons/seen-visible-1.svg" />
+        <span>نمایش نتیجه</span>
+      </button>
+    </mat-card-actions>
+
     <mat-card-actions *ngIf="report && (mode == 'report' || mode == 'save')">
       <button class="sp-button-icon with-text" (click)="save()">
         <img src="assets/icons/save-backup-1.svg" />
         <span>ذخیره گزارش</span>
       </button>
     </mat-card-actions>
+
     <mat-card-actions *ngIf="report && mode == 'data'">
       <button class="sp-button-icon" (click)="new()">
         <img src="assets/icons/plus-add-3.svg" />

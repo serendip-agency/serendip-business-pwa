@@ -32,7 +32,9 @@ export class FormTextInputComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
-    if (!this.type) this.type = "single-line";
+    if (!this.type) {
+      this.type = "single-line";
+    }
   }
 
   inputsChange() {

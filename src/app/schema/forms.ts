@@ -257,11 +257,71 @@ export const FormsSchema: FormInterface[] = [
         propertyName: "name",
         inputs: {
           label: "نام شی",
-          type: "single-line"
+          type: "single-line",
+          dir: "ltr"
+        }
+      },
+      {
+        componentName: "FormIconInputComponent",
+        propertyName: "icon",
+        inputs: {
+          label: "آیکون شی"
         }
       }
     ],
     defaultModel: {}
+  },
+  {
+    name: "format-form",
+    entityName: "format",
+    parts: [
+      {
+        propertyName: "label",
+        componentName: "FormTextInputComponent",
+        inputs: {
+          label: "عنوان نتیجه‌گیری",
+          type: "single-line"
+        }
+      },
+      {
+        propertyName: "entityName",
+        componentName: "FormTextInputComponent",
+        inputs: {
+          label: "نام شی",
+          type: "single-line",
+          dir: "ltr"
+        }
+      },
+
+      {
+        propertyName: "method",
+        componentName: "FormSelectInputComponent",
+        inputs: {
+          display: "inline-block",
+          label: "شیوه نتیجه‌گیری",
+          selectType: "single",
+          data: [
+            {
+              label: "شیوه نتیجه‌گیری را انتخاب کنید",
+              value: ""
+            },
+            {
+              label: "کد جاوااسکریپت",
+              value: "javascript"
+            }
+          ]
+        }
+      },
+      {
+        if: "^form.method == 'javascript'",
+        propertyName: "code",
+        componentName: "FormCodeInputComponent",
+        inputs: {
+          label: "کد",
+          language: "js"
+        }
+      }
+    ]
   },
   {
     name: "report-form",
@@ -283,48 +343,6 @@ export const FormsSchema: FormInterface[] = [
           type: "single-line",
           dir: "ltr"
         }
-      },
-      {
-        propertyType: "array",
-        propertyName: "formats",
-        label: "نتایج ثانویه",
-        parts: [
-          {
-            propertyName: "label",
-            componentName: "FormTextInputComponent",
-            inputs: {
-              label: "عنوان نتیجه‌گیری",
-              type: "single-line"
-            }
-          },
-          {
-            propertyName: "method",
-            componentName: "FormSelectInputComponent",
-            inputs: {
-              display: "inline-block",
-              label: "شیوه نتیجه‌گیری",
-              selectType: "single",
-              data: [
-                {
-                  label: "شیوه نتیجه‌گیری را انتخاب کنید",
-                  value: ""
-                },
-                {
-                  label: "کد جاوااسکریپت",
-                  value: "javascript"
-                }
-              ]
-            }
-          },
-          {
-            propertyName: "code",
-            componentName: "FormCodeInputComponent",
-            inputs: {
-              label: "کد",
-              type: "javascript"
-            }
-          }
-        ]
       },
       {
         propertyType: "array",

@@ -1156,6 +1156,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async handleParams(params) {
+    if (this.dashboardService.currentSection.name === params.section) {
+      return;
+    }
+
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
       {
@@ -1284,8 +1288,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
   async ngOnInit() {
-    this.initEntitySocket().then().catch();
-    this.initDashboardSocket().then().catch();
+    this.initEntitySocket()
+      .then()
+      .catch();
+    this.initDashboardSocket()
+      .then()
+      .catch();
 
     if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
       try {
@@ -1309,6 +1317,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardLoadingText = "Loading schemas ...";
 
     await this.dashboardService.setDefaultSchema();
+
     await this.handleParams(this.activatedRoute.snapshot.params);
 
     this.dashboardReady = true;

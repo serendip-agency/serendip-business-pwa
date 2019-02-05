@@ -7,12 +7,16 @@ import {
   OnInit,
   Output
 } from "@angular/core";
+
 import { PageEvent } from "@angular/material";
+
 import {
   ReportFieldInterface,
   FieldQueryInterface,
-  ReportInterface
+  ReportInterface,
+  ReportFormatInterface
 } from "serendip-business-model";
+
 import * as sUtils from "serendip-utility";
 import { ClubRatingViewComponent } from "src/app/crm/club-rating-view/club-rating-view.component";
 import { ContactsViewComponent } from "src/app/crm/contacts-view/contacts-view.component";
@@ -40,6 +44,7 @@ import { ObService } from "src/app/ob.service";
 import { ReportService } from "src/app/report.service";
 import { PriceViewComponent } from "./price-view/price-view.component";
 import { CalendarService } from "src/app/calendar.service";
+import { IconViewComponent } from "./icon-view/icon-view.component";
 
 @Component({
   selector: "app-report",
@@ -51,6 +56,7 @@ export class ReportComponent implements OnInit {
   @Output()
   WidgetChange = new EventEmitter<DashboardWidgetInterface>();
 
+  formatLoaded = false;
   saveMode = "report";
 
   @Output()
@@ -64,6 +70,7 @@ export class ReportComponent implements OnInit {
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
 
+  @Input() format: ReportFormatInterface;
   @Input() title: string;
   @Input() entityName: string;
   @Input() subtitle: string;
@@ -73,13 +80,13 @@ export class ReportComponent implements OnInit {
   @Input() entityLabelPlural: string;
 
   @Input() reportName: string;
-
   @Input() pageSize = 20;
   @Input() pageIndex = 0;
 
   @Input() selected = [];
 
-  _mode: string | "save" | "chart" | "report" | "data" = "data";
+  @Input() mode: string | "save" | "chart" | "format" | "report" | "data" =
+    "data";
   @Input() page: any[];
 
   obServiceActive = true;
@@ -87,19 +94,15 @@ export class ReportComponent implements OnInit {
   formName: any;
   @Input() formId: any;
   @Input() reportId: string;
-  set mode(value: string) {
-    this._mode = value;
-  }
+  formats: EntityModel[];
 
-  get mode() {
-    return this._mode;
-  }
   _ = _;
 
   @Input() pageCount = 1;
 
   @Input()
   _report: ReportInterface;
+  formattedReport: ReportInterface;
   set report(value: ReportInterface) {
     this._report = value;
 
@@ -120,6 +123,7 @@ export class ReportComponent implements OnInit {
     DateViewComponent,
     CurrencyViewComponent,
     PriceViewComponent,
+    IconViewComponent,
     // Business related  report views
     ClubRatingViewComponent,
     ContactsViewComponent
@@ -145,6 +149,14 @@ export class ReportComponent implements OnInit {
     this.fieldDragging = null;
   }
 
+  async generateFormat() {
+    if (this.format) {
+      this.formattedReport = await this.reportService.formatReport(
+        this.report,
+        [this.format]
+      );
+    }
+  }
   reportFieldDrop(event) {
     this.fieldDragging = null;
     if (!event) {
@@ -173,6 +185,15 @@ export class ReportComponent implements OnInit {
 
   allSelected() {
     return this.selected.length === this.pageSize;
+  }
+
+  getReportFormatForRadioList() {
+    if (!this.formats) {
+      return [];
+    }
+    return this.formats.map(p => {
+      return { label: p.label, value: p };
+    });
   }
   modelChange() {
     this.report._id = null;
@@ -234,6 +255,11 @@ export class ReportComponent implements OnInit {
     return _.where(field.queries, { enabled: true });
   }
 
+  async refreshFormats() {
+    this.formats = _.where(await this.dataService.list("format"), {
+      entityName: this.report.entityName
+    });
+  }
   async deleteReport() {
     this.report.offline = false;
     //  await this.reportStore.delete(this.report.name);
@@ -397,6 +423,7 @@ export class ReportComponent implements OnInit {
   async ngOnInit() {
     await this.changePage(0);
     await this.refreshReports();
+    await this.refreshFormats();
 
     this.obService.listen(this.entityName).subscribe(event => {
       if (event.eventType !== "delete" && this.obServiceActive) {

@@ -1,0 +1,9 @@
+<div class="view">
+  <div class="label" *ngIf="viewType == 'label'">
+    {{ label }}
+  </div>
+
+  <div class="cell" *ngIf="viewType != 'label'">
+    <img [src]="'/assets/icons/' + (model || 'close-5') + '.svg'" alt="" />
+  </div>
+</div>

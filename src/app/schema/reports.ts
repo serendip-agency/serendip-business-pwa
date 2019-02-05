@@ -100,12 +100,62 @@ export const ReportsSchema: ReportInterface[] = [
         enabled: true,
         name: "name",
         label: "نام گزارش",
-        template: { component: "ShortTextViewComponent" }
+        template: { component: "LongTextViewComponent" }
       },
       {
         enabled: true,
         name: "label",
         label: "لیبل گزارش",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "entityName",
+        label: "نام شی",
+        template: { component: "ShortTextViewComponent" }
+      }
+    ]
+  },
+  {
+    name: "entity-default",
+    entityName: "entity",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام شی",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "access",
+        label: "دسترسی",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "icon",
+        label: "آیکون",
+        template: { component: "IconViewComponent" }
+      }
+    ]
+  },
+  {
+    name: "format-default",
+    entityName: "format",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "label",
+        label: "عنوان نتیجه‌گیری",
+        template: { component: "LongTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "entityName",
+        label: "نام شی",
         template: { component: "ShortTextViewComponent" }
       }
     ]

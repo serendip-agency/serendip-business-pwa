@@ -115,6 +115,7 @@ import { SyncComponent } from "./sync/sync.component";
 import { FormIconInputComponent } from "./base/form/form-icon-input/form-icon-input.component";
 import { ChartComponent } from "./base/chart/chart.component";
 import { FormCodeInputComponent } from "./base/form/form-code-input/form-code-input.component";
+import { IconViewComponent } from "./base/report/icon-view/icon-view.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -176,6 +177,8 @@ export const dynamicComponents = [
   ClubRatingViewComponent,
   ContactsViewComponent,
   PriceViewComponent,
+  IconViewComponent,
+
   // Other services
   WeatherComponent,
   EmailComponent,
