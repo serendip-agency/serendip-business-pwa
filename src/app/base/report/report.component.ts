@@ -14,7 +14,8 @@ import {
   ReportFieldInterface,
   FieldQueryInterface,
   ReportInterface,
-  ReportFormatInterface
+  ReportFormatInterface,
+  EntityModel
 } from "serendip-business-model";
 
 import * as sUtils from "serendip-utility";
@@ -58,6 +59,85 @@ export class ReportComponent implements OnInit {
 
   formatLoaded = false;
   saveMode = "report";
+
+  @Input() chartType: string;
+
+  charts: {
+    name: string;
+    icon: string;
+    dataType: "name-value" | "name-series";
+  }[] = [
+    {
+      name: "horizontal-bar",
+      icon: "bar-chart-horizon-1",
+      dataType: "name-value"
+    },
+    {
+      name: "vertical-bar",
+      icon: "bar-chart-vert",
+      dataType: "name-value"
+    },
+    {
+      name: "doughnut",
+      icon: "doughnut-1",
+      dataType: "name-value"
+    },
+    {
+      name: "gauge",
+      icon: "gauge-2",
+      dataType: "name-value"
+    },
+    {
+      name: "pie",
+      icon: "pie-chart-1",
+      dataType: "name-value"
+    },
+    {
+      name: "pie-grid",
+      icon: "pie-grid",
+      dataType: "name-value"
+    },
+    {
+      name: "advanced-pie",
+      icon: "pie-advanced-1",
+      dataType: "name-value"
+    },
+    {
+      name: "line",
+      icon: "line-chart-1",
+      dataType: "name-value"
+    },
+    {
+      name: "horizontal-grouped-bar",
+      icon: "line-chart-grouped-horizon",
+      dataType: "name-series"
+    },
+    {
+      name: "vertical-grouped-bar",
+      icon: "line-chart-grouped-vert",
+      dataType: "name-series"
+    },
+    {
+      name: "horizontal-stacked-bar",
+      icon: "stacked-horizontal",
+      dataType: "name-series"
+    },
+    {
+      name: "vertical-grouped-bar",
+      icon: "stacked-vertical",
+      dataType: "name-series"
+    },
+    {
+      name: "polar",
+      icon: "polar-chart-1",
+      dataType: "name-value"
+    },
+    {
+      name: "tree-map",
+      icon: "tree-map",
+      dataType: "name-value"
+    }
+  ];
 
   @Output()
   DashboardCommand = new EventEmitter<{
@@ -141,6 +221,17 @@ export class ReportComponent implements OnInit {
     private obService: ObService
   ) {}
 
+
+  setChartType(type) {
+    this.chartType = type;
+
+    this.WidgetChange.emit({inputs : {
+      chartType : type
+    } })
+  }
+  filterChartsByDataType(dataType): any[] {
+   return _.where(this.charts, { dataType: dataType };
+  }
   reportFieldDragStart(field, index, event) {
     this.fieldDragging = field;
   }
@@ -150,12 +241,14 @@ export class ReportComponent implements OnInit {
   }
 
   async generateFormat() {
+    this.resultLoading = true;
     if (this.format) {
       this.formattedReport = await this.reportService.formatReport(
-        this.report,
+       this.report,
         [this.format]
       );
     }
+    this.resultLoading = false;
   }
   reportFieldDrop(event) {
     this.fieldDragging = null;
@@ -187,6 +280,17 @@ export class ReportComponent implements OnInit {
     return this.selected.length === this.pageSize;
   }
 
+  setMode(mode: string) {
+    this.mode = mode;
+
+    this.WidgetChange.emit({ inputs: { mode } });
+  }
+
+  setFormat(format: any) {
+    this.format = format;
+    this.WidgetChange.emit({ inputs: { format : format } });
+
+  }
   getReportFormatForRadioList() {
     if (!this.formats) {
       return [];
@@ -256,9 +360,12 @@ export class ReportComponent implements OnInit {
   }
 
   async refreshFormats() {
+    this.resultLoading = true;
     this.formats = _.where(await this.dataService.list("format"), {
       entityName: this.report.entityName
     });
+
+    this.resultLoading = false;
   }
   async deleteReport() {
     this.report.offline = false;
@@ -425,6 +532,11 @@ export class ReportComponent implements OnInit {
     await this.refreshReports();
     await this.refreshFormats();
 
+    if(this.format && this.chartType) {
+    await this.generateFormat();
+    }
+
+
     this.obService.listen(this.entityName).subscribe(event => {
       if (event.eventType !== "delete" && this.obServiceActive) {
         this.changePage(0);
@@ -483,6 +595,28 @@ export class ReportComponent implements OnInit {
               name: this.formName,
               entityIcon: this.icon,
               formId: this.formId
+            }
+          }
+        ]
+      }
+    });
+  }
+
+  addFormat() {
+    this.DashboardCommand.emit({
+      command: "open-tab",
+      tab: {
+        title: "ثبت روش نتیجه‌گیری",
+        active: true,
+        icon: "plus-add-3",
+        widgets: [
+          {
+            component: "FormComponent",
+            inputs: {
+              name: "format-form",
+              model: {
+                entityName: this.entityName
+              }
             }
           }
         ]

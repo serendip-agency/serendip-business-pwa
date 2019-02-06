@@ -105,13 +105,6 @@ export class DataService {
     localStorage.setItem("server", lsServer);
     this.currentServer = lsServer;
   }
-  private async requestError(opts: DataRequestInterface, error) {
-    if (error.status === 401) {
-      this.authService.logout();
-    }
-
-    console.error(error, opts);
-  }
 
   async profile(): Promise<UserProfileModel> {
     let profileLs = localStorage.getItem("profile");
@@ -192,8 +185,17 @@ export class DataService {
             .toPromise();
         }
       } catch (error) {
-        await this.requestError(opts, error);
-        reject(error);
+        if (error.status === 401) {
+          this.authService.logout();
+        }
+
+        if (opts.retry) {
+          // TODO: add request to push collection
+
+          resolve();
+        } else {
+          reject(error);
+        }
       }
 
       resolve(result);
@@ -513,61 +515,55 @@ export class DataService {
       retry: true
     });
 
-    if (result._id) {
-      await this.updateIDB(result, controller);
-    }
+    await this.updateIDB(model, controller);
+    this.obService.publish(controller, "insert", model);
 
     return result;
   }
 
   async update(controller: string, model: EntityModel): Promise<EntityModel> {
-    const store = await this.idbService.dataIDB();
-    const data = await store.get(controller);
     if (!model._id) {
       model._id = new ObjectID().str;
     }
 
-    if (!data) {
-      const toSet = {};
-      toSet[model._id] = model;
-      await store.set(controller, toSet);
-    } else {
-      data[model._id] = model;
-
-      await store.set(controller, data);
-    }
+    await this.updateIDB(model, controller);
 
     this.obService.publish(controller, "update", model);
 
-    return this.request({
+    await this.request({
       method: "POST",
       path: `/api/entity/${controller}/update`,
       model: model,
       retry: true
     });
+    return model;
   }
 
   async delete(controller: string, _id: string): Promise<EntityModel> {
     console.log("delete", controller, _id);
-    const model = { _id: _id };
 
+    let model;
     if (_id) {
       const store = await this.idbService.dataIDB();
 
       const data = await store.get(controller);
       if (data) {
+        model = data[_id];
+        this.obService.publish(controller, "delete", model);
+
         delete data[_id];
         await store.set(controller, data);
       }
-      this.obService.publish(controller, "delete", model);
     }
 
-    return this.request({
+    await this.request({
       method: "POST",
       path: `/api/entity/${controller}/delete`,
-      model: model,
+      model: { _id },
       retry: true
     });
+
+    return model;
   }
 
   public async pullCollection(collection) {

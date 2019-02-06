@@ -292,6 +292,25 @@ export const FormsSchema: FormInterface[] = [
           dir: "ltr"
         }
       },
+      {
+        propertyName: "dataType",
+        componentName: "FormSelectInputComponent",
+        inputs: {
+          display: "inline-block",
+          label: "مدل خروجی",
+          selectType: "single",
+          data: [
+            {
+              label: "نام و مقدار",
+              value: "name-value"
+            },
+            {
+              label: "نام و آرایه‌ای از نام و مقدار",
+              value: "name-series"
+            }
+          ]
+        }
+      },
 
       {
         propertyName: "method",
@@ -313,13 +332,19 @@ export const FormsSchema: FormInterface[] = [
         }
       },
       {
+        propertyName: "options",
+        propertyType: "object",
         if: "^form.method == 'javascript'",
-        propertyName: "code",
-        componentName: "FormCodeInputComponent",
-        inputs: {
-          label: "کد",
-          language: "js"
-        }
+        parts: [
+          {
+            propertyName: "code",
+            componentName: "FormCodeInputComponent",
+            inputs: {
+              label: "کد",
+              language: "js"
+            }
+          }
+        ]
       }
     ]
   },

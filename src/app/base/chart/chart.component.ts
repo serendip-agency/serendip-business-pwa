@@ -10,6 +10,7 @@ export class ChartComponent implements OnInit {
   constructor() {}
   chartId = `chart-${Date.now()}`;
 
+  @Input() chartType: string;
   loading = true;
   @Input() data = [
     {

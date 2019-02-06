@@ -6,16 +6,10 @@ import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
   styleUrls: ["./form-radio-input.component.css"]
 })
 export class FormRadioInputComponent implements OnInit {
-  private _model: any;
+  stringify = JSON.stringify;
 
   @Input()
-  set model(value: any) {
-    this._model = value;
-  }
-
-  get model(): any {
-    return this._model;
-  }
+  public model: any;
 
   @Input() data: { label: string; value: string }[] | string[];
 
@@ -33,6 +27,7 @@ export class FormRadioInputComponent implements OnInit {
   typeof(obj) {
     return typeof obj;
   }
+
   constructor() {}
 
   ngOnInit() {

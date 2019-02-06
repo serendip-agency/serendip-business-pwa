@@ -12,7 +12,7 @@
       <div
         class="menu"
         [class.active]="mode == 'chart'"
-        (click)="mode == 'chart' ? (mode = 'data') : (mode = 'chart')"
+        (click)="mode == 'chart' ? setMode('data') : setMode('chart')"
       >
         <img src="assets/icons/efficiency-chart-3.svg" />
       </div>
@@ -21,7 +21,7 @@
         class="search"
         [class.spanned]="activeFieldQueries().length > 0"
         [class.active]="mode == 'report'"
-        (click)="mode = mode == 'report' ? 'data' : 'report'; refresh()"
+        (click)="setMode(mode == 'report' ? 'data' : 'report'); refresh()"
       >
         <img [src]="'assets/icons/filter-6.svg'" />
 
@@ -52,88 +52,54 @@
 
       <div
         class="report-chart"
-        *ngIf="mode == 'chart' && report && report.data"
+        *ngIf="!resultLoading && mode == 'chart' && report && report.data"
       >
-        <div *ngIf="!formattedReport">
+        <div class="empty" *ngIf="!formats || formats.length == 0">
+          شیوه‌ای برای نتیجه گیری از
+          <b>
+            {{ title }}
+          </b>
+          تعریف نشده است.
+        </div>
+
+        <div *ngIf="!formattedReport && formats && formats.length > 0">
           <div class="formats">
             <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label>
             <div class="list">
               <app-form-radio-input
                 [display]="'block'"
+                [model]="format"
                 [data]="getReportFormatForRadioList()"
-                (modelChange)="format = $event"
+                (modelChange)="setFormat($event)"
               ></app-form-radio-input>
             </div>
           </div>
 
-          <div class="chart-types">
+          <div class="chart-types" *ngIf="format">
             <label for="">
               ابزار نمایش نتیجه را انتخاب کنید:
             </label>
 
             <div class="list">
-              <div class="chart-type">
-                <img src="/assets/charts/bar-chart-horizon-1.svg" alt="" />
-              </div>
-              <div class="chart-type">
-                <img src="/assets/charts/bar-chart-vert.svg" alt="" />
-              </div>
-              <div class="chart-type">
-                <img src="/assets/charts/doughnut-1.svg" alt="" />
-              </div>
-
-              <div class="chart-type">
-                <img src="/assets/charts/gauge-2.svg" alt="" />
-              </div>
-
-              <div class="chart-type">
-                <img src="/assets/charts/pie-chart-1.svg" alt="" />
-              </div>
-              <div class="chart-type">
-                <img src="/assets/charts/pie-advanced-1.svg" alt="" />
-              </div>
-              <div class="chart-type">
-                <img src="/assets/charts/line-chart-1.svg" alt="" />
-              </div>
-
-              <div class="chart-type">
-                <img
-                  src="/assets/charts/line-chart-grouped-horizon.svg"
-                  alt=""
-                />
-              </div>
-
-              <div class="chart-type">
-                <img src="/assets/charts/line-chart-grouped-vert.svg" alt="" />
-              </div>
-
-              <div class="chart-type">
-                <img src="/assets/charts/polar-chart-1.svg" alt="" />
-              </div>
-
-              <div class="chart-type">
-                <img
-                  src="/assets/charts/line-chart-grouped-horizon.svg"
-                  alt=""
-                />
-              </div>
-
-              <div class="chart-type">
-                <img src="/assets/charts/stacked-horizontal.svg" alt="" />
-              </div>
-
-              <div class="chart-type">
-                <img src="/assets/charts/stacked-vertical.svg" alt="" />
-              </div>
-
-              <div class="chart-type">
-                <img src="/assets/charts/tree-map.svg" alt="" />
+              <div
+                *ngFor="let item of filterChartsByDataType(format.dataType)"
+                class="chart-type"
+                (click)="
+                  chartType == item.name
+                    ? setChartType('')
+                    : setChartType(item.name)
+                "
+                [class.selected]="chartType == item.name"
+              >
+                <img [src]="'/assets/charts/' + item.icon + '.svg'" alt="" />
               </div>
             </div>
           </div>
         </div>
+
         <app-chart
-          *ngIf="format && formattedReport"
+          [chartType]="chartType"
+          *ngIf="chartType && format && formattedReport"
           [data]="formattedReport.data"
         ></app-chart>
       </div>
@@ -311,10 +277,33 @@
     </mat-card-content>
 
     <mat-card-actions *ngIf="report && mode == 'chart'">
-      <button class="sp-button-icon with-text" (click)="generateFormat()">
+      <button
+        *ngIf="format && !formattedReport"
+        class="sp-button-icon with-text"
+        (click)="generateFormat()"
+      >
         <img src="assets/icons/seen-visible-1.svg" />
         <span>نمایش نتیجه</span>
       </button>
+
+      <button
+        *ngIf="format && formattedReport"
+        class="sp-button-icon pull-left"
+        (click)="generateFormat()"
+      >
+        <img src="assets/icons/refresh.svg" />
+      </button>
+
+      <button
+        *ngIf="!formats || formats.length == 0"
+        class="sp-button-icon with-text pull-left"
+        (click)="addFormat()"
+      >
+        <img src="assets/icons/plus-add-3.svg" />
+        <span>ثبت روش نتیجه‌گیری</span>
+      </button>
+
+      <div class="clearfix"></div>
     </mat-card-actions>
 
     <mat-card-actions *ngIf="report && (mode == 'report' || mode == 'save')">

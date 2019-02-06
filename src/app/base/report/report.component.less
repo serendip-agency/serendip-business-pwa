@@ -3,6 +3,15 @@
   max-width: 100%;
 }
 
+.report-chart {
+  .empty {
+    margin: 30px;
+    padding: 10px;
+    border-radius: 10px;
+    background: #f3e0c2;
+  }
+}
+
 .formats {
   padding: 15px;
   padding-bottom: 0;
@@ -10,17 +19,19 @@
 
   .list {
     padding: 10px;
+    padding-top: 0;
   }
 }
 
 .chart-types {
   padding: 15px;
+  padding-top: 0;
+
   box-sizing: border-box;
 
   .list {
     max-width: 360px;
     margin: 0 auto;
-    text-align: center;
   }
 
   .chart-type {
@@ -28,6 +39,18 @@
     width: 50px;
     height: 50px;
     vertical-align: top;
+    user-select: none;
+    opacity: 0.65;
+    border-radius: 100%;
+    transition: all ease-in-out 0.1s;
+    &.selected {
+      opacity: 1;
+      background: #dbe8ff;
+    }
+
+    &:hover{
+      opacity: 1;
+    }
     img {
       width: 100%;
       height: 100%;

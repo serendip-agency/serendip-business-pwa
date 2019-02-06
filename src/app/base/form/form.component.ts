@@ -107,25 +107,32 @@ export class FormComponent implements OnInit {
   name: string;
 
   stateDb: Idb;
+
+  wait(timeout) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
+    });
+  }
   async save() {
     this.loading = true;
+    let doc;
+    if (!this.model._id) {
+      doc = await this.dataService.insert(this.entityName, this.model);
+    } else {
+      doc = await this.dataService.update(this.entityName, this.model);
+    }
 
-    // if (!this.model._id) {
-    //   const insertResult = await this.dataService.insert(
-    //     this.entityName,
-    //     this.model
-    //   );
-
-    // } else {
-    //   await this.dataService.update(this.entityName, this.model);
-    // }
-    const doc = await this.dataService.update(this.entityName, this.model);
     this.WidgetChange.emit({
       inputs: {
         model: doc,
         documentId: doc._id
       }
     });
+
+    await this.wait(1500);
+
     this.loading = false;
   }
 

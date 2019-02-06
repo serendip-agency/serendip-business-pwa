@@ -119,7 +119,7 @@ export class ReportService {
   ) {
     for (const format of formats || []) {
       report = await this.getAsyncReportFormatMethods()[format.method]({
-        report,
+        report: _.clone(report),
         format
       });
     }
@@ -234,7 +234,7 @@ export class ReportService {
         const formatOptions: { code: string } = input.format.options;
 
         // tslint:disable-next-line:no-eval
-        const methodContainer = eval((input.format as any).code);
+        const methodContainer = eval(formatOptions.code);
 
         const method = methodContainer({ _ });
 
