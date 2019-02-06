@@ -59,7 +59,6 @@ export class CalendarService {
       gregorian: Moment.weekdays()
     };
 
-    console.log(MomentJalaali.weekdays());
 
     this.eventsChangeEventEmitter = new EventEmitter(true);
 

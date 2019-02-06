@@ -339,7 +339,6 @@ export class ReportComponent implements OnInit {
     field: ReportFieldInterface,
     selectedQueries: FieldQueryInterface[]
   ) {
-    console.log(selectedQueries);
     field.queries = _.map(field.queries, q => {
       if (selectedQueries.indexOf(q) === -1) {
         q.enabled = false;
@@ -368,26 +367,10 @@ export class ReportComponent implements OnInit {
     //  await this.reportStore.delete(this.report.name);
   }
   async refresh() {
-    // if (this.report.name === this.report.entityName + "-default") {
-    //   this.result = {
-    //     fields: this.report.fields,
-    //     name: "",
-    //     data: [],
-    //     entityName: this.report.entityName,
-    //     count: 0,
-    //     createDate: new Date()
-    //   };
+    if (this.report && !this.report.offline) {
+      delete this.report.data;
+    }
 
-    //   this.result.count = await this.dataService.count(this.report.entityName);
-    //   this.pageCount = Math.floor(this.result.count / this.pageSize);
-    //   this.changeRef.detectChanges();
-
-    //   this.result.data = await this.dataService.list(
-    //     this.report.entityName,
-    //     skip,
-    //     this.pageSize
-    //   );
-    // }
     this.resultLoading = true;
 
     const skip = this.pageIndex * this.pageSize;
@@ -396,8 +379,6 @@ export class ReportComponent implements OnInit {
       this.report = _.findWhere(this.dashboardService.schema.reports, {
         name: this.reportName
       }) as any;
-
-      //   this.report.fields = [...this.report.fields, ...commonFields];
     }
 
     if (!this.report && this.reportId) {
@@ -405,9 +386,6 @@ export class ReportComponent implements OnInit {
         "report",
         this.reportId
       )) as any;
-
-      console.log(this.report);
-      //   this.report.fields = [...this.report.fields, ...commonFields];
     }
 
     if (!this.entityName) {
@@ -480,7 +458,6 @@ export class ReportComponent implements OnInit {
 
     this.reports = _.chain(reportsQuery)
       .map(item => {
-        console.log(item._cdate);
         return {
           label:
             (item.label ? item.label.trim() : item._id) +

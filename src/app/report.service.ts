@@ -26,6 +26,7 @@ export interface ReportOptionsInterface {
 })
 export class ReportService {
   formatReportQueue: any;
+  formatterBusy: boolean;
   constructor(
     private dataService: DataService,
     private idbService: IdbService,
@@ -56,7 +57,6 @@ export class ReportService {
       report.fields = [];
     }
 
-    console.log("generate report", report);
     if (!report.data) {
       let data = await this.dataService.list(opts.entity, 0, 0, false);
       if (!data) {
@@ -121,18 +121,33 @@ export class ReportService {
       this.formatReportQueue = ObjectID.generate();
     });
   }
+
+  wait(timeout) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
+    });
+  }
   async formatReport(report: ReportInterface, format: ReportFormatInterface) {
-    report = await this.generate(_.omit(report, "data"), {
-      entity: report.entityName
-    });
+    if (!this.formatterBusy) {
+      this.formatterBusy = true;
+      report = await this.generate(_.omit(report, "data"), {
+        entity: report.entityName
+      });
 
-    // TODO: if for offline reports
-    report = await this.getAsyncReportFormatMethods()[format.method]({
-      report: _.clone(report),
-      format
-    });
+      // TODO: if for offline reports
+      report = await this.getAsyncReportFormatMethods()[format.method]({
+        report: _.clone(report),
+        format
+      });
 
-    return report;
+      this.formatterBusy = false;
+      return report;
+    } else {
+      await this.wait(1000);
+      return this.formatReport(report, format);
+    }
   }
 
   async formatDocument(document: EntityModel, fields: ReportFieldInterface[]) {

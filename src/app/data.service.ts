@@ -542,24 +542,26 @@ export class DataService {
   async delete(controller: string, _id: string): Promise<EntityModel> {
     console.log("delete", controller, _id);
 
-    let model;
-    if (_id) {
-      const store = await this.idbService.dataIDB();
+    let model = { _id: _id };
 
-      const data = await store.get(controller);
-      if (data) {
-        model = data[_id];
-        this.obService.publish(controller, "delete", model);
+    const store = await this.idbService.dataIDB();
 
-        delete data[_id];
-        await store.set(controller, data);
-      }
+    const data = await store.get(controller);
+    console.log(data);
+
+    if (data && data[_id]) {
+      model = data[_id];
+      delete data[_id];
+      await store.set(controller, data);
     }
 
+    this.obService.publish(controller, "delete", model);
+
+    console.log("model to delete", model);
     await this.request({
       method: "POST",
       path: `/api/entity/${controller}/delete`,
-      model: { _id },
+      model: model,
       retry: true
     });
 
