@@ -1,4 +1,3 @@
-import { HttpClient } from "@angular/common/http";
 import {
   ChangeDetectorRef,
   Component,
@@ -7,22 +6,24 @@ import {
   OnInit,
   Output
 } from "@angular/core";
-
-import { PageEvent } from "@angular/material";
-
 import {
-  ReportFieldInterface,
+  DashboardTabInterface,
+  DashboardWidgetInterface,
+  EntityModel,
   FieldQueryInterface,
-  ReportInterface,
+  ReportFieldInterface,
   ReportFormatInterface,
-  EntityModel
+  ReportInterface
 } from "serendip-business-model";
-
 import * as sUtils from "serendip-utility";
+import { CalendarService } from "src/app/calendar.service";
 import { ClubRatingViewComponent } from "src/app/crm/club-rating-view/club-rating-view.component";
 import { ContactsViewComponent } from "src/app/crm/contacts-view/contacts-view.component";
 import { DashboardService } from "src/app/dashboard.service";
 import { DataService } from "src/app/data.service";
+import { IdbService } from "src/app/idb.service";
+import { ObService } from "src/app/ob.service";
+import { ReportService } from "src/app/report.service";
 import * as _ from "underscore";
 
 import { LongTextViewComponent } from "../report/long-text-view/long-text-view.component";
@@ -31,21 +32,8 @@ import { ShortTextViewComponent } from "../report/short-text-view/short-text-vie
 import { StarRatingViewComponent } from "../report/star-rating-view/star-rating-view.component";
 import { CurrencyViewComponent } from "./currency-view/currency-view.component";
 import { DateViewComponent } from "./date-view/date-view.component";
-import {
-  DashboardWidgetInterface,
-  DashboardTabInterface
-} from "serendip-business-model";
-
-import { IdbService, Idb } from "src/app/idb.service";
-
-import * as Moment from "moment";
-import * as MomentJalaali from "moment-jalaali";
-import * as sUtil from "serendip-utility";
-import { ObService } from "src/app/ob.service";
-import { ReportService } from "src/app/report.service";
-import { PriceViewComponent } from "./price-view/price-view.component";
-import { CalendarService } from "src/app/calendar.service";
 import { IconViewComponent } from "./icon-view/icon-view.component";
+import { PriceViewComponent } from "./price-view/price-view.component";
 
 @Component({
   selector: "app-report",
@@ -98,14 +86,19 @@ export class ReportComponent implements OnInit {
       dataType: "name-value"
     },
     {
-      name: "advanced-pie",
+      name: "pie-advanced",
       icon: "pie-advanced-1",
+      dataType: "name-value"
+    },
+    {
+      name: "number-card",
+      icon: "number-cards",
       dataType: "name-value"
     },
     {
       name: "line",
       icon: "line-chart-1",
-      dataType: "name-value"
+      dataType: "name-series"
     },
     {
       name: "horizontal-grouped-bar",
@@ -183,6 +176,7 @@ export class ReportComponent implements OnInit {
   @Input()
   _report: ReportInterface;
   formattedReport: ReportInterface;
+  initDone = false;
   set report(value: ReportInterface) {
     this._report = value;
 
@@ -221,16 +215,17 @@ export class ReportComponent implements OnInit {
     private obService: ObService
   ) {}
 
-
   setChartType(type) {
     this.chartType = type;
 
-    this.WidgetChange.emit({inputs : {
-      chartType : type
-    } })
+    this.WidgetChange.emit({
+      inputs: {
+        chartType: type
+      }
+    });
   }
   filterChartsByDataType(dataType): any[] {
-   return _.where(this.charts, { dataType: dataType };
+    return _.where(this.charts, { dataType: dataType });
   }
   reportFieldDragStart(field, index, event) {
     this.fieldDragging = field;
@@ -244,12 +239,13 @@ export class ReportComponent implements OnInit {
     this.resultLoading = true;
     if (this.format) {
       this.formattedReport = await this.reportService.formatReport(
-       this.report,
-        [this.format]
+        this.report,
+        this.format
       );
     }
     this.resultLoading = false;
   }
+
   reportFieldDrop(event) {
     this.fieldDragging = null;
     if (!event) {
@@ -288,8 +284,7 @@ export class ReportComponent implements OnInit {
 
   setFormat(format: any) {
     this.format = format;
-    this.WidgetChange.emit({ inputs: { format : format } });
-
+    this.WidgetChange.emit({ inputs: { format: format } });
   }
   getReportFormatForRadioList() {
     if (!this.formats) {
@@ -361,6 +356,7 @@ export class ReportComponent implements OnInit {
 
   async refreshFormats() {
     this.resultLoading = true;
+
     this.formats = _.where(await this.dataService.list("format"), {
       entityName: this.report.entityName
     });
@@ -532,16 +528,16 @@ export class ReportComponent implements OnInit {
     await this.refreshReports();
     await this.refreshFormats();
 
-    if(this.format && this.chartType) {
-    await this.generateFormat();
+    if (this.format && this.chartType) {
+      await this.generateFormat();
     }
-
-
     this.obService.listen(this.entityName).subscribe(event => {
       if (event.eventType !== "delete" && this.obServiceActive) {
         this.changePage(0);
       }
     });
+
+    this.initDone = true;
   }
 
   activeFieldQueries() {

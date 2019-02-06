@@ -10,7 +10,8 @@ import * as _ from "underscore";
 import { DataService } from "./data.service";
 import { IdbService } from "./idb.service";
 import { WebWorkerService } from "./web-worker.service";
-import { TypeScriptEmitter } from "@angular/compiler";
+import ObjectID from "bson-objectid";
+import { ObService } from "./ob.service";
 
 export interface ReportOptionsInterface {
   entity: string;
@@ -24,9 +25,11 @@ export interface ReportOptionsInterface {
   providedIn: "root"
 })
 export class ReportService {
+  formatReportQueue: any;
   constructor(
     private dataService: DataService,
     private idbService: IdbService,
+    private obService: ObService,
     private webWorker: WebWorkerService
   ) {}
 
@@ -113,16 +116,21 @@ export class ReportService {
     return report;
   }
 
-  async formatReport(
-    report: ReportInterface,
-    formats: ReportFormatInterface[]
-  ) {
-    for (const format of formats || []) {
-      report = await this.getAsyncReportFormatMethods()[format.method]({
-        report: _.clone(report),
-        format
-      });
-    }
+  queueFormatReport(): Promise<ReportFormatInterface> {
+    return new Promise<ReportFormatInterface>((resolve, reject) => {
+      this.formatReportQueue = ObjectID.generate();
+    });
+  }
+  async formatReport(report: ReportInterface, format: ReportFormatInterface) {
+    report = await this.generate(_.omit(report, "data"), {
+      entity: report.entityName
+    });
+
+    // TODO: if for offline reports
+    report = await this.getAsyncReportFormatMethods()[format.method]({
+      report: _.clone(report),
+      format
+    });
 
     return report;
   }

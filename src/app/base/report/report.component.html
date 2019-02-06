@@ -34,7 +34,7 @@
       *ngIf="resultLoading"
       mode="indeterminate"
     ></mat-progress-bar>
-    <mat-card-content>
+    <mat-card-content *ngIf="initDone">
       <div class="form report-save" *ngIf="mode == 'save' && report">
         <app-form-text-input
           [label]="'نام گزارش'"
@@ -52,7 +52,13 @@
 
       <div
         class="report-chart"
-        *ngIf="!resultLoading && mode == 'chart' && report && report.data"
+        *ngIf="
+          !formatsLoading &&
+          !resultLoading &&
+          mode == 'chart' &&
+          report &&
+          report.data
+        "
       >
         <div class="empty" *ngIf="!formats || formats.length == 0">
           شیوه‌ای برای نتیجه گیری از
@@ -276,7 +282,7 @@
       </div>
     </mat-card-content>
 
-    <mat-card-actions *ngIf="report && mode == 'chart'">
+    <mat-card-actions *ngIf="initDone && !resultLoading && report && mode == 'chart'">
       <button
         *ngIf="format && !formattedReport"
         class="sp-button-icon with-text"
@@ -284,6 +290,15 @@
       >
         <img src="assets/icons/seen-visible-1.svg" />
         <span>نمایش نتیجه</span>
+      </button>
+
+      <button
+        *ngIf="format && formattedReport"
+        class="sp-button-icon with-text"
+        (click)="formattedReport = null"
+      >
+        <img src="assets/icons/settings-adjust-reg.svg" />
+        <span>تنظیمات</span>
       </button>
 
       <button
@@ -306,14 +321,16 @@
       <div class="clearfix"></div>
     </mat-card-actions>
 
-    <mat-card-actions *ngIf="report && (mode == 'report' || mode == 'save')">
+    <mat-card-actions
+      *ngIf="initDone && !resultLoading && report && (mode == 'report' || mode == 'save')"
+    >
       <button class="sp-button-icon with-text" (click)="save()">
         <img src="assets/icons/save-backup-1.svg" />
         <span>ذخیره گزارش</span>
       </button>
     </mat-card-actions>
 
-    <mat-card-actions *ngIf="report && mode == 'data'">
+    <mat-card-actions *ngIf="initDone && !resultLoading && report && mode == 'data'">
       <button class="sp-button-icon" (click)="new()">
         <img src="assets/icons/plus-add-3.svg" />
       </button>
