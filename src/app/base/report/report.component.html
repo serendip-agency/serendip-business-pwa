@@ -18,8 +18,7 @@
       </div>
 
       <div
-        class="search"
-        [class.spanned]="activeFieldQueries().length > 0"
+        class="search spanned"
         [class.active]="mode == 'report'"
         (click)="setMode(mode == 'report' ? 'data' : 'report'); refresh()"
       >
@@ -28,14 +27,24 @@
         <span *ngIf="activeFieldQueries().length > 0">
           {{ activeFieldQueries().length | rpd }} فیلتر
         </span>
+        <span>
+          {{ report?.data?.length | rpd }}
+          {{ report?.offline ? "آفلاین" : "" }}
+        </span>
       </div>
     </mat-card-header>
     <mat-progress-bar
       *ngIf="resultLoading"
       mode="indeterminate"
     ></mat-progress-bar>
-    <mat-card-content *ngIf="initDone">
-      <div class="form report-save" *ngIf="mode == 'save' && report">
+    <mat-card-content *ngIf="initDone && error">
+      <div class="logbox">
+        {{ error.message || error.statusText || error | json }}
+      </div>
+    </mat-card-content>
+
+    <mat-card-content *ngIf="initDone && !error">
+      <div class="form-wrapper report-save" *ngIf="mode == 'save' && report">
         <app-form-text-input
           [label]="'نام گزارش'"
           (modelChange)="report.label = $event"
@@ -43,6 +52,7 @@
         ></app-form-text-input>
         <app-form-radio-input
           (modelChange)="saveMode = $event"
+          [model]="!report.offline ? 'report' : 'data'"
           [data]="[
             { value: 'report', label: 'ذخیره گزارش' },
             { value: 'data', label: 'ذخیره گزارش و نتیجه' }
@@ -52,13 +62,7 @@
 
       <div
         class="report-chart"
-        *ngIf="
-          !formatsLoading &&
-          !resultLoading &&
-          mode == 'chart' &&
-          report &&
-          report.data
-        "
+        *ngIf="!formatsLoading && !resultLoading && mode == 'chart'"
       >
         <div class="empty" *ngIf="!formats || formats.length == 0">
           شیوه‌ای برای نتیجه گیری از
@@ -282,7 +286,9 @@
       </div>
     </mat-card-content>
 
-    <mat-card-actions *ngIf="initDone && !resultLoading && report && mode == 'chart'">
+    <mat-card-actions
+      *ngIf="initDone && !resultLoading && report && mode == 'chart'"
+    >
       <button
         *ngIf="format && !formattedReport"
         class="sp-button-icon with-text"
@@ -322,7 +328,12 @@
     </mat-card-actions>
 
     <mat-card-actions
-      *ngIf="initDone && !resultLoading && report && (mode == 'report' || mode == 'save')"
+      *ngIf="
+        initDone &&
+        !resultLoading &&
+        report &&
+        (mode == 'report' || mode == 'save')
+      "
     >
       <button class="sp-button-icon with-text" (click)="save()">
         <img src="assets/icons/save-backup-1.svg" />
@@ -330,7 +341,9 @@
       </button>
     </mat-card-actions>
 
-    <mat-card-actions *ngIf="initDone && !resultLoading && report && mode == 'data'">
+    <mat-card-actions
+      *ngIf="initDone && !resultLoading && report && mode == 'data'"
+    >
       <button class="sp-button-icon" (click)="new()">
         <img src="assets/icons/plus-add-3.svg" />
       </button>

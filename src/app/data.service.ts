@@ -185,6 +185,7 @@ export class DataService {
             .toPromise();
         }
       } catch (error) {
+        console.warn("request error", opts, error);
         if (error.status === 401) {
           this.authService.logout();
         }
@@ -192,9 +193,9 @@ export class DataService {
         if (opts.retry) {
           // TODO: add request to push collection
 
-          resolve();
+          return resolve();
         } else {
-          reject(error);
+          return reject(error);
         }
       }
 
@@ -426,23 +427,33 @@ export class DataService {
   async details(
     controller: string,
     _id: string,
-    offline?: boolean
+    offline?: boolean,
+    error?: any
   ): Promise<EntityModel> {
     if (offline) {
       const store = await this.idbService.dataIDB();
       const data = await store.get(controller);
-      return data[_id];
+      if (data[_id]) {
+        return data[_id];
+      } else {
+        throw error;
+      }
     } else {
       try {
-        return await this.request({
+        const result = await this.request({
           method: "POST",
-          timeout: 1000,
+
           path: `/api/entity/${controller}/details`,
           model: { _id }
         });
+
+        return result;
       } catch (error) {
+        console.log("trying details offline");
         if (!offline) {
-          return await this.details(controller, _id, true);
+          return this.details(controller, _id, true, error);
+        } else {
+          throw error;
         }
       }
     }

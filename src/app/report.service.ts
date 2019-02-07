@@ -13,14 +13,6 @@ import { WebWorkerService } from "./web-worker.service";
 import ObjectID from "bson-objectid";
 import { ObService } from "./ob.service";
 
-export interface ReportOptionsInterface {
-  entity: string;
-  skip?: number;
-  limit?: number;
-  zip?: boolean;
-  online?: boolean;
-}
-
 @Injectable({
   providedIn: "root"
 })
@@ -34,31 +26,14 @@ export class ReportService {
     private webWorker: WebWorkerService
   ) {}
 
-  async reports(entityName: string) {
-    let onlineReports: ReportOptionsInterface[] = [];
-    let offlineReports: ReportOptionsInterface[] = [];
-    try {
-      onlineReports = await this.dataService.request({
-        path: "/api/entity/reports",
-        model: { entityName },
-        method: "POST",
-        timeout: 1000,
-        retry: false
-      });
-    } catch (error) {}
-
-    try {
-      offlineReports = await (await this.idbService.reportIDB()).getAll();
-    } catch (error) {}
-  }
-
-  async generate(report: ReportInterface, opts: ReportOptionsInterface) {
+  async generate(report: ReportInterface) {
     if (!report.fields) {
       report.fields = [];
     }
 
     if (!report.data) {
-      let data = await this.dataService.list(opts.entity, 0, 0, false);
+      await this.dataService.pullCollection(report.entityName);
+      let data = await this.dataService.list(report.entityName, 0, 0, true);
       if (!data) {
         data = [];
       }
@@ -105,14 +80,6 @@ export class ReportService {
       // ];
     }
 
-    if ((!report.formats || report.formats.length === 0) && opts.skip) {
-      report.data = _.rest(report.data, opts.skip);
-    }
-
-    if ((!report.formats || report.formats.length === 0) && opts.limit) {
-      report.data = _.take(report.data, opts.limit);
-    }
-
     return report;
   }
 
@@ -132,9 +99,7 @@ export class ReportService {
   async formatReport(report: ReportInterface, format: ReportFormatInterface) {
     if (!this.formatterBusy) {
       this.formatterBusy = true;
-      report = await this.generate(_.omit(report, "data"), {
-        entity: report.entityName
-      });
+      // report = await this.generate(_.omit(report, "data"));
 
       // TODO: if for offline reports
       report = await this.getAsyncReportFormatMethods()[format.method]({

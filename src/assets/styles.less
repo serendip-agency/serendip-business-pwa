@@ -1035,86 +1035,84 @@ form {
   }
 }
 
-.widget {
-  .form-wrapper {
-    padding: 15px;
+.form-wrapper {
+  padding: 15px;
+  box-sizing: border-box;
+}
+
+.form-object-row {
+  padding: 10px;
+  margin: 5px 0 10px 0;
+  border: 2px dashed #dfdfdf;
+  border-radius: 10px;
+}
+
+.form-array-row {
+  padding: 10px;
+  margin: 5px 0 10px 0;
+  border: 2px dashed #dfdfdf;
+  border-radius: 10px;
+  &:after {
+    clear: both;
+    display: block;
+    content: " ";
+  }
+  .item {
+    width: calc(~"100% - 35px");
+    float: right;
+    vertical-align: bottom;
+  }
+  .action {
+    width: 30px;
+    height: 30px;
+    margin-top: 10px;
+    float: left;
+    vertical-align: bottom;
+    cursor: pointer;
+    border: 2px dashed #dfdfdf;
+    border-radius: 100%;
     box-sizing: border-box;
   }
+}
 
-  .form-object-row {
-    padding: 10px;
-    margin: 5px 0 10px 0;
-    border: 2px dashed #dfdfdf;
-    border-radius: 10px;
+.form-status {
+  background: #f2f2f2;
+  color: #777;
+  font-weight: 100;
+  font-size: 9px;
+  line-height: 14px;
+  display: inline-block;
+  padding: 0 5px;
+  border-radius: 0 0 5px 5px;
+  position: absolute;
+  top: 0;
+  left: 10px;
+  .id {
+    font-size: 7px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-family: monospace;
+    user-select: text;
   }
+}
 
-  .form-array-row {
-    padding: 10px;
-    margin: 5px 0 10px 0;
-    border: 2px dashed #dfdfdf;
-    border-radius: 10px;
-    &:after {
-      clear: both;
-      display: block;
-      content: " ";
-    }
-    .item {
-      width: calc(~"100% - 35px");
-      float: right;
-      vertical-align: bottom;
-    }
-    .action {
-      width: 30px;
-      height: 30px;
-      margin-top: 10px;
-      float: left;
-      vertical-align: bottom;
-      cursor: pointer;
-      border: 2px dashed #dfdfdf;
-      border-radius: 100%;
-      box-sizing: border-box;
-    }
-  }
+.logbox {
+}
+
+.widget {
+  position: relative;
 
   .form-status {
-    background: #f2f2f2;
-    color: #777;
-    font-weight: 100;
-    font-size: 9px;
-    line-height: 14px;
-    display: inline-block;
-    padding: 0 5px;
-    border-radius: 0 0 5px 5px;
     position: absolute;
     top: 0;
     left: 10px;
-    .id {
-      font-size: 7px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-family: monospace;
-      user-select: text;
-    }
   }
+}
 
-  .logbox {
-  }
-
-  .widget {
-    position: relative;
-
-    .form-status {
-      position: absolute;
-      top: 0;
-      left: 10px;
-    }
-  }
-
-  .array-label,
-  .object-label {
-    font-size: 14px;
-    line-height: 30px;
-  }
+.array-label,
+.object-label {
+  font-size: 14px;
+  line-height: 30px;
 }
 
 #calendar {

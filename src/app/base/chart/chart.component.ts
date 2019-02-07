@@ -12,59 +12,7 @@ export class ChartComponent implements OnInit {
 
   @Input() chartType: string;
   loading = true;
-  @Input() data = [
-    {
-      name: "م. اسماعیلی",
-      series: [
-        {
-          value: 10,
-          name: "خدمات"
-        },
-        {
-          value: 5,
-          name: "شکایات"
-        },
-        {
-          value: 20,
-          name: "فروش"
-        }
-      ]
-    },
-    {
-      name: "و. بزاز",
-      series: [
-        {
-          value: 5,
-          name: "خدمات"
-        },
-        {
-          value: 15,
-          name: "شکایات"
-        },
-        {
-          value: 10,
-          name: "فروش"
-        }
-      ]
-    },
-    {
-      name: "خ. کریمی",
-      series: [
-        {
-          value: 4,
-          name: "خدمات"
-        },
-        {
-          value: 8,
-          name: "شکایات"
-        },
-        {
-          value: 1,
-          name: "فروش"
-        }
-      ]
-    }
-  ];
+  @Input() data  ;
 
   ngOnInit() {
     setTimeout(() => {

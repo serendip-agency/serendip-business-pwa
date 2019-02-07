@@ -57,7 +57,7 @@ export class ReportComponent implements OnInit {
   }[] = [
     {
       name: "horizontal-bar",
-      icon: "bar-chart-horizon-1",
+      icon: "bar-chart-horz",
       dataType: "name-value"
     },
     {
@@ -67,17 +67,17 @@ export class ReportComponent implements OnInit {
     },
     {
       name: "doughnut",
-      icon: "doughnut-1",
+      icon: "doughnut",
       dataType: "name-value"
     },
     {
       name: "gauge",
-      icon: "gauge-2",
+      icon: "gauge",
       dataType: "name-value"
     },
     {
       name: "pie",
-      icon: "pie-chart-1",
+      icon: "pie-chart",
       dataType: "name-value"
     },
     {
@@ -87,7 +87,7 @@ export class ReportComponent implements OnInit {
     },
     {
       name: "pie-advanced",
-      icon: "pie-advanced-1",
+      icon: "pie-advanced",
       dataType: "name-value"
     },
     {
@@ -97,12 +97,12 @@ export class ReportComponent implements OnInit {
     },
     {
       name: "line",
-      icon: "line-chart-1",
+      icon: "line-chart",
       dataType: "name-series"
     },
     {
       name: "horizontal-grouped-bar",
-      icon: "line-chart-grouped-horizon",
+      icon: "line-chart-grouped-horz",
       dataType: "name-series"
     },
     {
@@ -112,17 +112,17 @@ export class ReportComponent implements OnInit {
     },
     {
       name: "horizontal-stacked-bar",
-      icon: "stacked-horizontal",
+      icon: "stacked-horz",
       dataType: "name-series"
     },
     {
       name: "vertical-grouped-bar",
-      icon: "stacked-vertical",
+      icon: "stacked-vert",
       dataType: "name-series"
     },
     {
       name: "polar",
-      icon: "polar-chart-1",
+      icon: "polar",
       dataType: "name-value"
     },
     {
@@ -177,6 +177,7 @@ export class ReportComponent implements OnInit {
   _report: ReportInterface;
   formattedReport: ReportInterface;
   initDone = false;
+  error: any;
   set report(value: ReportInterface) {
     this._report = value;
 
@@ -402,15 +403,11 @@ export class ReportComponent implements OnInit {
       }
     });
 
-    this.report = await this.reportService.generate(this.report, {
-      entity: this.entityName,
-      skip: skip,
-      limit: this.pageSize
-    });
-
-    this.page = this.report.data;
+    this.report = await this.reportService.generate(this.report);
 
     this.pageCount = Math.floor(this.report.count / this.pageSize);
+
+    this.changePage(0);
 
     this.resultLoading = false;
 
@@ -425,29 +422,35 @@ export class ReportComponent implements OnInit {
 
   async save() {
     if (this.mode !== "save") {
-      return (this.mode = "save");
+      return this.setMode("save");
     }
 
     this.resultLoading = true;
 
     let reportToSave;
     if (this.saveMode === "data") {
-      reportToSave = await this.reportService.generate(this.report, {
-        limit: 0,
-        entity: this.report.entityName
-      });
+      reportToSave = await this.reportService.generate(this.report);
+      reportToSave.offline = true;
     } else {
       reportToSave = _.omit(this.report, "data");
     }
 
-    const newReport = await this.dataService.insert("report", reportToSave);
+    let newReport;
+
+    if (this.report._id) {
+      newReport = await this.dataService.update("report", reportToSave);
+    } else {
+      newReport = await this.dataService.insert("report", reportToSave);
+    }
 
     this.reportId = newReport._id;
 
-    this.changePage(0);
+    this.report = newReport;
+
     await this.refreshReports();
 
-    this.mode = "report";
+    this.setMode("report");
+
     this.resultLoading = false;
   }
 
@@ -461,13 +464,13 @@ export class ReportComponent implements OnInit {
         return {
           label:
             (item.label ? item.label.trim() : item._id) +
-            "  ساخته شده در" +
-            this.calendarService
-              .moment(item._cdate)
-              .format("YYYY-MM-DD HH:mm:ss") +
-            " توسط " +
-            item._cuser +
-            (item.offline ? "ذخیره شده با نتیجه " : ""),
+            // "  ساخته شده در" +
+            // this.calendarService
+            //   .moment(item._cdate)
+            //   .format("YYYY-MM-DD HH:mm:ss") +
+            // " توسط " +
+            // item._cuser +
+            (item.offline ? " ذخیره شده با نتیجه " : ""),
           value: item._id
         };
       })
@@ -482,38 +485,44 @@ export class ReportComponent implements OnInit {
     });
   }
   async changeReport(reportId) {
-    this.report = null;
+    // this.reportId = reportId;
 
-    this.reportId = reportId;
+    //  this.report = await this.dataService.details("report", reportId);
 
-    this.report = await this.dataService.details("report", reportId);
-    if (this.report) {
-      this.report.offline = true;
-    }
-
-    if (!this.report) {
-      this.report = { _id: reportId } as any;
-    }
+    console.log("change report");
 
     this.WidgetChange.emit({ inputs: { reportId: reportId } });
 
-    await this.refresh();
+    //  await this.refresh();
   }
 
   async ngOnInit() {
-    await this.changePage(0);
-    await this.refreshReports();
-    await this.refreshFormats();
+    try {
+      await this.refresh();
+      await this.refreshReports();
+      await this.refreshFormats();
 
-    if (this.format && this.chartType) {
-      await this.generateFormat();
+      if (this.format && this.chartType) {
+        await this.generateFormat();
+      }
+    } catch (error) {
+      this.error = error;
     }
+
     this.obService.listen(this.entityName).subscribe(event => {
-      if (event.eventType !== "delete" && this.obServiceActive) {
+      if (this.mode === "chart") {
+      }
+
+      if (
+        this.mode === "data" &&
+        event.eventType !== "delete" &&
+        this.obServiceActive
+      ) {
         this.changePage(0);
       }
     });
 
+    this.resultLoading = false;
     this.initDone = true;
   }
 
@@ -647,7 +656,11 @@ export class ReportComponent implements OnInit {
       this.selected = [];
     }
 
-    await this.refresh();
+    this.page = _.take(
+      _.rest(this.report.data, this.pageSize * this.pageIndex),
+      this.pageSize
+    );
+
     this.resultLoading = false;
   }
 }
