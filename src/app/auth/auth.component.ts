@@ -5,7 +5,7 @@ import { DomSanitizer } from "@angular/platform-browser";
 import { DataService } from "../data.service";
 import * as _ from "underscore";
 import { MatSnackBar } from "@angular/material";
-import { TokenModel } from "serendip";
+import { TokenModel } from "serendip-business-model";
 
 @Component({
   selector: "app-auth",
@@ -107,7 +107,7 @@ export class AuthComponent implements OnInit {
         this.router.navigateByUrl("/");
       }
     } catch (res) {
-      if (res.error && res.error.description == "include password") {
+      if (res.error && res.error.description === "include password") {
         this.router.navigate(["/auth", "two-factor"]);
       } else {
         switch (res.status) {

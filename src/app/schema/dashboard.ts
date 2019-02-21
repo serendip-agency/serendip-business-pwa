@@ -29,6 +29,15 @@ export const DashboardSchema: DashboardSectionInterface[] = [
         widget: {
           component: "AccountProfileComponent"
         }
+      },
+      {
+        active: true,
+        title: "تغییر رمز",
+        icon: "account-profile-user-4",
+        status: "default",
+        widget: {
+          component: "AccountPasswordComponent"
+        }
       }
     ]
   },

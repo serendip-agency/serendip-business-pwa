@@ -1,14 +1,11 @@
-import { BusinessService } from "./business.service";
-import { Injectable } from "@angular/core";
-import {
-  CanActivate,
-  Router,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot
-} from "@angular/router";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { IdbDeleteAllDatabases } from "./idb.service";
-import { TokenModel } from "serendip";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { TokenModel } from 'serendip-business-model';
+
+import { BusinessService } from './business.service';
+import { IdbDeleteAllDatabases } from './idb.service';
+
 @Injectable()
 export class AuthService {
   profileValid = false;
@@ -26,7 +23,7 @@ export class AuthService {
   async logout() {
     localStorage.clear();
     await IdbDeleteAllDatabases();
-   window.location.reload();
+    window.location.reload();
   }
   async token(): Promise<TokenModel> {
     let token: TokenModel;

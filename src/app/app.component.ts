@@ -1,7 +1,6 @@
 import { Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
 
 import * as _moment from "moment-jalaali";
-import { AuthService } from "./auth.service";
 import { MatSnackBar } from "@angular/material";
 import {
   ActivatedRoute,
@@ -9,11 +8,11 @@ import {
   NavigationEnd,
   NavigationCancel
 } from "@angular/router";
-import { BusinessService } from "./business.service";
 import { Subscription } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import swal from "sweetalert2";
 import { environment } from "src/environments/environment";
+
 @Component({
   selector: "app-root",
   templateUrl: "./app.component.html",
@@ -29,14 +28,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   routerSubscription: Subscription;
 
-  constructor(
-    private httpClient: HttpClient,
-    private authService: AuthService,
-    private router: Router
-  ) {
-    setInterval(() => {
-      this.loggedIn = this.authService.loggedIn;
-    }, 1000);
+  constructor(private httpClient: HttpClient, private router: Router) {
+    // setInterval(() => {
+    //   this.loggedIn = this.authService.loggedIn;
+    // }, 1000);
   }
 
   rpd(input) {

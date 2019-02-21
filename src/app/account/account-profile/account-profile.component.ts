@@ -1,6 +1,6 @@
 import { DataService } from "src/app/data.service";
 import { Component, OnInit } from "@angular/core";
-import { UserProfileModel } from "serendip-business-model";
+import { ProfileModel } from "serendip-business-model";
 
 @Component({
   selector: "app-account-profle",
@@ -8,7 +8,7 @@ import { UserProfileModel } from "serendip-business-model";
   styleUrls: ["./account-profile.component.css"]
 })
 export class AccountProfileComponent implements OnInit {
-  profile: UserProfileModel = {} as any;
+  profile: ProfileModel = {} as any;
   constructor(private dataService: DataService) {}
 
   async refresh() {
@@ -16,10 +16,7 @@ export class AccountProfileComponent implements OnInit {
   }
   async ngOnInit() {}
 
-
-  async save(){
-    
-  }
+  async save() {}
   handleParams(): any {}
 
   fileChanged(event, property, resizeWidth?) {
@@ -51,7 +48,7 @@ export class AccountProfileComponent implements OnInit {
 
         // setting resized base64 to object property
 
-        var toPatch = {};
+        const toPatch = {};
 
         toPatch[property] = resizedDataUrl;
 

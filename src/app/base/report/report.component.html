@@ -18,15 +18,27 @@
       </div>
 
       <div
-        class="search spanned"
+        class="menu spanned"
         [class.active]="mode == 'report'"
-        (click)="setMode(mode == 'report' ? 'data' : 'report'); refresh()"
+        (click)="
+          setMode(mode == 'report' ? 'data' : 'report');
+          mode == 'data' ? refresh() : ''
+        "
       >
         <img [src]="'assets/icons/filter-6.svg'" />
 
         <span *ngIf="activeFieldQueries().length > 0">
           {{ activeFieldQueries().length | rpd }} فیلتر
         </span>
+      </div>
+
+      <div
+        class="menu spanned"
+        [class.active]="mode == 'data'"
+        (click)="setMode('data'); mode != 'data' ? refresh() : ''"
+      >
+        <img [src]="'assets/icons/check-list-2.svg'" />
+
         <span>
           {{ report?.data?.length | rpd }}
           {{ report?.offline ? "آفلاین" : "" }}

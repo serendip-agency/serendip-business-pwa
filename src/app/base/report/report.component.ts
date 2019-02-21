@@ -513,12 +513,28 @@ export class ReportComponent implements OnInit {
       if (this.mode === "chart") {
       }
 
-      if (
-        this.mode === "data" &&
-        event.eventType !== "delete" &&
-        this.obServiceActive
-      ) {
-        this.changePage(0);
+      console.log(event);
+
+      if (this.mode === "data" && this.obServiceActive) {
+        if (
+          event.eventType === "update" &&
+          _.findWhere(this.page, { _id: event.model._id })
+        ) {
+          this.page = this.page.map(p => {
+            if (p._id === event.model._id) {
+              p = event.model;
+            }
+            return p;
+          });
+        }
+
+        if (event.eventType === "insert") {
+          this.page.unshift(event.model);
+        }
+
+        if (event.eventType === "delete") {
+          this.page = this.page.filter(p => p._id !== event.model._id);
+        }
       }
     });
 

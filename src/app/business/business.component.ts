@@ -1,20 +1,16 @@
-import { FormBuilder, FormGroup, Validators, FormArray } from "@angular/forms";
-import { Component, OnInit, OnDestroy } from "@angular/core";
-import {
-  MatChipInputEvent,
-  MatSnackBarRef,
-  MatSnackBar
-} from "@angular/material";
-import { COMMA, ENTER } from "@angular/cdk/keycodes";
-import { AuthService } from "../auth.service";
-import { HttpClient } from "@angular/common/http";
-import { Router, ActivatedRoute, NavigationEnd } from "@angular/router";
-import { Subscription } from "rxjs";
-import { BusinessService } from "../business.service";
-import { environment } from "../../environments/environment";
-import { DataService } from "../data.service";
-import { DashboardService } from "../dashboard.service";
-import { TokenModel } from "serendip";
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatSnackBar } from '@angular/material';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { TokenModel } from 'serendip-business-model';
+
+import { AuthService } from '../auth.service';
+import { BusinessService } from '../business.service';
+import { DashboardService } from '../dashboard.service';
+import { DataService } from '../data.service';
+
 
 @Component({
   selector: "app-business",

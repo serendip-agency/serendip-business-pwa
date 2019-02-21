@@ -5,7 +5,7 @@ import * as JsZip from "jszip";
 import {
   ReportInterface,
   EntityModel,
-  UserProfileModel
+  ProfileModel
 } from "serendip-business-model";
 import * as utils from "serendip-utility";
 import * as _ from "underscore";
@@ -106,7 +106,7 @@ export class DataService {
     this.currentServer = lsServer;
   }
 
-  async profile(): Promise<UserProfileModel> {
+  async profile(): Promise<ProfileModel> {
     let profileLs = localStorage.getItem("profile");
 
     try {
@@ -510,8 +510,6 @@ export class DataService {
     data[model._id] = model;
 
     await store.set(controller, data);
-
-    this.obService.publish(controller, "insert", model);
   }
 
   async insert(controller: string, model: EntityModel): Promise<EntityModel> {
