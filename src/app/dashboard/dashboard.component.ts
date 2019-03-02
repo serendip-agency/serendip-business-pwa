@@ -48,6 +48,7 @@ import { AccountProfileComponent } from "../account/account-profile/account-prof
 import { AccountPasswordComponent } from "../account/account-password/account-password.component";
 import { AccountSessionsComponent } from "../account/account-sessions/account-sessions.component";
 import { ObService } from "../ob.service";
+import { StorageService } from "../storage.service";
 
 // optional import of scroll behavior
 polyfill({
@@ -90,6 +91,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     results: { [key: string]: { docId: string; score: number } }[];
   } = { mode: "", text: "", didYouMean: "", results: [] };
 
+  isGridEmpty = false;
+  lastGridEmptyCheck = 0;
   dashboardDate = "";
   dashboardTime = "";
   dashboardLoadingText = "";
@@ -193,6 +196,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.weatherService.weatherVisible ||
       this.calendarService.calendarVisible ||
       this.gmapsService.dashboardMapVisible ||
+      this.storageService.fileManagerVisible ||
       this.startActive
     );
   }
@@ -305,6 +309,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   constructor(
     public dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute,
+    public storageService: StorageService,
     private router: Router,
     public businessService: BusinessService,
     private idbService: IdbService,
@@ -458,6 +463,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.weatherService.weatherVisible = false;
     this.calendarService.calendarVisible = false;
     this.gmapsService.dashboardMapVisible = false;
+    this.storageService.fileManagerVisible = false;
     this.hideStart();
   }
   logoClick() {
@@ -476,6 +482,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   toggleCalendar() {
     this.weatherService.weatherVisible = false;
+    this.storageService.fileManagerVisible = false;
+
     this.hideStart();
     this.hideMap();
     this.calendarService.calendarVisible = !this.calendarService
@@ -483,13 +491,27 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   toggleWeather() {
     this.calendarService.calendarVisible = false;
+    this.storageService.fileManagerVisible = false;
+
     this.hideStart();
     this.hideMap();
     this.weatherService.weatherVisible = !this.weatherService.weatherVisible;
   }
 
+  toggleFileManager() {
+    this.calendarService.calendarVisible = false;
+    this.storageService.fileManagerVisible = false;
+    this.weatherService.weatherVisible = false;
+
+    this.hideStart();
+    this.hideMap();
+    this.storageService.fileManagerVisible = !this.storageService
+      .fileManagerVisible;
+  }
+
   toggleMap() {
     this.calendarService.calendarVisible = false;
+    this.storageService.fileManagerVisible = false;
     this.weatherService.weatherVisible = false;
     this.hideStart();
     this.gmapsService.dashboardMapVisible = !this.gmapsService
@@ -506,6 +528,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.hideMap();
     this.weatherService.weatherVisible = false;
     this.calendarService.calendarVisible = false;
+    this.storageService.fileManagerVisible = false;
   }
 
   hideMap() {
@@ -657,6 +680,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     tab.active = true;
   }
 
+  gridEmpty() {
+    if (Date.now() - this.lastGridEmptyCheck > 500) {
+      this.lastGridEmptyCheck = Date.now();
+      return (this.isGridEmpty =
+        this.grid.containers.filter(p => p.tabs.length !== 0).length === 0);
+    } else {
+      return this.isGridEmpty;
+    }
+  }
   extendObj(obj1, obj2) {
     return _.extend({}, obj1, obj2);
   }
@@ -1282,9 +1314,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
         event: "update" | "delete" | "insert";
         model: EntityModel;
       } = JSON.parse(msg.data);
-      console.log(data);
 
-      // this.obService.publish(data.model._business, data.event, data.model);
+      this.obService.publish(data.model._entity, data.event, data.model);
     };
   }
   async ngOnInit() {

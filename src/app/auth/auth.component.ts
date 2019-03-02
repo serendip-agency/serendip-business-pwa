@@ -15,7 +15,7 @@ import { TokenModel } from "serendip-business-model";
 export class AuthComponent implements OnInit {
   loading = false;
   tab = "login";
-  model: any = {};
+  model: any = { mobileCountryCode: "+98" };
 
   day = true;
   username: string;
@@ -149,7 +149,10 @@ export class AuthComponent implements OnInit {
       this.loading = true;
       //   await this.sleep(3000);
       try {
-        await this.authService.sendOneTimePassword(this.model.mobile);
+        await this.authService.sendOneTimePassword(
+          this.model.mobile,
+          this.model.mobileCountryCode
+        );
         this.router.navigate(["/auth", "code"]);
       } catch (error) {
         switch (error.status) {

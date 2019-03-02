@@ -1,4 +1,11 @@
-import { Component, OnInit, ChangeDetectorRef } from "@angular/core";
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  Input,
+  Output,
+  EventEmitter
+} from "@angular/core";
 import { WsService } from "../ws.service";
 import { AuthService } from "../auth.service";
 import * as promise_serial from "promise-serial";
@@ -18,10 +25,15 @@ export class StorageComponent implements OnInit {
   socket: WebSocket;
 
   sUtils = serendip_utility;
-
+  newFolderName = "";
+  @Input() mode = "";
   toUpload: any = {};
 
   _folders: any = {};
+  pathsSelected: boolean;
+  modePathsSelected: boolean;
+  @Input() modeSelectedPaths: string[] = [];
+  previewPath: any;
 
   get folders() {
     return this._folders;
@@ -40,14 +52,16 @@ export class StorageComponent implements OnInit {
     localStorage.setItem("folders", JSON.stringify(lsFolders));
   }
 
-  selectedPaths = [];
+  @Input() public folderPath: string;
 
-  showUserFolderList = true;
-  folderPath: string;
+  @Input() public viewMode: "full" | "mini" = "mini";
+
+  @Output() public selectEvents = new EventEmitter<string[]>();
 
   toDownload: any = {};
 
   public token: TokenModel;
+  @Input() selectType = "multiple";
 
   constructor(
     public wsService: WsService,
@@ -58,27 +72,91 @@ export class StorageComponent implements OnInit {
     public changeRef: ChangeDetectorRef
   ) {}
 
+  setMode(mode) {
+    this.modeSelectedPaths = [];
+    this.modePathsSelected = false;
+    this.mode = mode;
+  }
+
   getCrumbs() {
-    return this.folderPath
+    const labeledPath = this.folderPath
       .replace("users/" + this.token.userId, "فایل‌های من")
       .replace(
         "businesses/" + this.businessService.getActiveBusinessId(),
         "فایل‌ های " + this.businessService.business.title
-      )
-      .split("/");
+      );
+
+    return labeledPath.split("/").map((label, index) => {
+      let path = "";
+
+      // for (let i = index; i <= 0; i--) {
+      //   path = this.folderPath.split("/")[i] + path;
+      // }
+
+      return {
+        label,
+        path
+      };
+    });
+  }
+
+  clickOnItem(item) {
+    if (!this.mode) {
+      if (item.isFile) {
+        this.previewPath = item.path;
+      } else {
+        if (this.folderPath) {
+          this.folderPath = this.folderPath + "/" + item.basename;
+        } else {
+          this.folderPath = item.path;
+        }
+      }
+    } else {
+      if (item.isFile) {
+        if (this.selectType === "single") {
+          this.modeSelectedPaths = [item.path];
+        } else {
+          if (this.modeSelectedPaths.indexOf(item.path) === -1) {
+            this.modeSelectedPaths.push(item.path);
+          } else {
+            this.modeSelectedPaths.splice(
+              this.modeSelectedPaths.indexOf(item.path),
+              1
+            );
+          }
+        }
+      } else {
+        if (this.folderPath) {
+          this.folderPath = this.folderPath + "/" + item.basename;
+        } else {
+          this.folderPath = item.path;
+        }
+      }
+    }
+    this.refreshFolder();
   }
   objectKeys(object) {
     return Object.keys(object);
   }
-  cdBackDir(path: string) {
-    if (
-      path.split("/")[1] === this.businessService.getActiveBusinessId() ||
-      path.split("/")[1] === this.token.userId
-    ) {
+  cdBack(path: string) {
+    console.log(path, path.replace("/" + path.split("/").reverse()[0], ""));
+
+    const pathToReturn = path.replace("/" + path.split("/").reverse()[0], "");
+
+    if (pathToReturn === "businesses" || pathToReturn === "users") {
       return "";
     }
 
-    return path.replace("/" + path.split("/").reverse()[0], "");
+    return pathToReturn;
+
+    // if (
+    //   path.split("/")[1] === this.businessService.getActiveBusinessId() ||
+    //   path.split("/")[1] === this.token.userId
+    // ) {
+    //   return "";
+    // }
+
+    // return path.replace("/" + path.split("/").reverse()[0], "");
   }
   async refreshFolder() {
     if (!this.folderPath || this.folderPath === "/") {
@@ -92,7 +170,7 @@ export class StorageComponent implements OnInit {
         {
           isFile: false,
           isDirectory: true,
-          path: "businesses/" + this.businessService.getActiveBusinessId(),
+          path: "businesses/" + this.businessService.business._id,
           basename: "فایل‌های " + this.businessService.business.title
         }
       ];
@@ -111,6 +189,19 @@ export class StorageComponent implements OnInit {
     );
   }
   async ngOnInit() {
+    console.log("storage init");
+
+    if (this.modeSelectedPaths && this.modeSelectedPaths[0]) {
+      const arrayWithoutFileName = _.clone(
+        this.modeSelectedPaths[0].split("/")
+      );
+      arrayWithoutFileName.pop();
+
+      this.folderPath = arrayWithoutFileName.join("/");
+
+      console.log(this.folderPath);
+    }
+
     this.socket = await this.wsService.newSocket("/storage", true);
 
     this.socket.onclose = async closeEv => {

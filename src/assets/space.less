@@ -72,7 +72,7 @@
   overflow: hidden;
   text-align: center;
   transition: background ease 3s;
-  background: #3e3c5f;
+  background: #333;
   &.day {
     // background: #7F6D70;
   }
@@ -208,7 +208,8 @@
         }
       }
       .mobile-inputs {
-        max-width: 300px;
+        max-width: 200px;
+        margin:0 auto;
         &:after {
           clear: both;
           display: block;
@@ -217,19 +218,19 @@
 
         .mobile,
         .code {
-          float: right;
+          float: left;
           vertical-align: top;
           max-width: unset;
         }
         .mobile {
-          width: calc(~"100% - 24px") !important;
+          width: calc(~"100% - 40px") !important;
           input {
             text-align: left !important;
           }
         }
 
         .code {
-          width: 24px !important;
+          width: 40px !important;
         }
       }
       input {

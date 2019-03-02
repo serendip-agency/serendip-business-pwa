@@ -1,10 +1,15 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
-import { TokenModel } from 'serendip-business-model';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  Router,
+  RouterStateSnapshot
+} from "@angular/router";
+import { TokenModel } from "serendip-business-model";
 
-import { BusinessService } from './business.service';
-import { IdbDeleteAllDatabases } from './idb.service';
+import { BusinessService } from "./business.service";
+import { IdbDeleteAllDatabases } from "./idb.service";
 
 @Injectable()
 export class AuthService {
@@ -70,7 +75,11 @@ export class AuthService {
       .toPromise();
   }
 
-  async sendOneTimePassword(mobile: string, timeout?: number): Promise<any> {
+  async sendOneTimePassword(
+    mobile: string,
+    mobileCountryCode: string,
+    timeout?: number
+  ): Promise<any> {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         reject({ status: 0 });
@@ -78,7 +87,8 @@ export class AuthService {
 
       this.http
         .post(this.apiUrl + "/api/auth/oneTimePassword", {
-          mobile: mobile
+          mobile,
+          mobileCountryCode
         })
         .toPromise()
         .then(res => {

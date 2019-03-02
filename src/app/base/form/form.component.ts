@@ -11,13 +11,15 @@ import {
   DashboardTabInterface,
   DashboardWidgetInterface,
   FormInterface,
-  FormPartInterface
+  FormPartInterface,
+  EntityModel
 } from "serendip-business-model";
 import { DashboardService } from "src/app/dashboard.service";
 import * as _ from "underscore";
 
 import { DataService } from "../../data.service";
 import { Idb, IdbService } from "../../idb.service";
+import { BusinessService } from "src/app/business.service";
 
 @Component({
   selector: "app-form",
@@ -25,9 +27,19 @@ import { Idb, IdbService } from "../../idb.service";
   styleUrls: ["./form.component.less"]
 })
 export class FormComponent implements OnInit {
+  public get filesPath() {
+    if (this.model && this.model._id) {
+      return `businesses/${this.businessService.business._id}/${
+        this.entityName
+      }/${this.model._id}`;
+    } else {
+      return null;
+    }
+  }
   constructor(
     public dataService: DataService,
     public httpClient: HttpClient,
+    public businessService: BusinessService,
     public ref: ChangeDetectorRef,
     private dashboardService: DashboardService,
     public idbService: IdbService
@@ -54,7 +66,7 @@ export class FormComponent implements OnInit {
   @Input() minimal: boolean;
 
   @Input()
-  model: any = false;
+  model: EntityModel = null;
 
   @Input()
   formSchema: FormInterface;
@@ -157,7 +169,7 @@ export class FormComponent implements OnInit {
       }
     }
 
-    if (this.documentId) {
+    if (this.documentId && (!this.model || reset)) {
       this.model = await this.dataService.details(
         this.entityName,
         this.documentId,
@@ -165,7 +177,7 @@ export class FormComponent implements OnInit {
       );
     }
 
-    if (!this.model || reset) {
+    if (!this.model) {
       // Object.keys(this.formSchema.defaultModel || {}).forEach(dKey => {
       //   if (
       //     typeof this.model[dKey] === "undefined" ||
@@ -174,6 +186,13 @@ export class FormComponent implements OnInit {
       //     this.model[dKey] = this.formSchema.defaultModel[dKey];
       //   }
       // });
+
+      const tempMode = this.mode || "form";
+      this.mode = null;
+
+      setTimeout(() => {
+        this.mode = tempMode;
+      }, 100);
 
       if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
         this.model = _.clone(this.defaultModel);
@@ -195,7 +214,12 @@ export class FormComponent implements OnInit {
   trackByFn(index: any, item: any) {
     return index;
   }
-
+  jsonCodeChange(code) {
+    try {
+      this.model = JSON.parse(code);
+    } catch (error) {}
+    this.WidgetChange.emit({ inputs: { model: this.model } });
+  }
   findFormInSchema(formName): FormInterface {
     return _.findWhere(this.formsSchema, { name: formName });
   }

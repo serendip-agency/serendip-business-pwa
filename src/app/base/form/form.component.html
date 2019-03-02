@@ -1,9 +1,10 @@
 <div class="widget form" *ngIf="formType != 'inline'">
   <mat-card [class.minimal]="minimal">
     <mat-card-header>
-      <div mat-card-avatar>
+      <!-- <div mat-card-avatar>
         <img [src]="'assets/icons/' + entityIcon + '.svg'" />
       </div>
+
       <mat-card-title *ngIf="!minimal">
         فرم اطلاعات {{ title }}
       </mat-card-title>
@@ -16,30 +17,53 @@
 
       <mat-card-subtitle *ngIf="model._id && !minimal">
         ویرایش {{ entityName }}
-      </mat-card-subtitle>
+      </mat-card-subtitle> -->
+      <div class="mat-card-title single-title">
+        <span class="text" *ngIf="model?._cdate"> ویرایش سند</span>
+
+        <span class="text" *ngIf="!model?._id"> ثبت سند جدید</span>
+
+        <span class="id" *ngIf="model?._id"> {{ model._id }} </span>
+      </div>
 
       <div
-        *ngIf="!minimal"
         class="action"
         [class.active]="mode == 'triggers'"
         (click)="mode = mode == 'triggers' ? 'form' : 'triggers'"
       >
-        <img
-          [src]="
-            'assets/icons/' + 'complaints-customize-customer-voice-3' + '.svg'
-          "
-        />
+        <img [src]="'assets/icons/complaints-customize-customer-voice-3.svg'" />
       </div>
-      <div class="form-status">
-        <span class="text" *ngIf="model._id"> ویرایش </span>
 
-        <span class="text" *ngIf="model._oid"> ویرایش سند همگام‌نشده </span>
+      <div
+        class="action"
+        [class.active]="mode == 'files'"
+        (click)="mode = mode == 'files' ? 'form' : 'files'"
+      >
+        <img [src]="'assets/icons/folder-archive-open.svg'" />
+      </div>
 
-        <span class="text" *ngIf="!model._id"> ثبت سند جدید </span>
+      <div
+        class="action"
+        [class.active]="mode == 'access'"
+        (click)="mode = mode == 'access' ? 'form' : 'access'"
+      >
+        <img [src]="'assets/icons/password-lock-pad.svg'" />
+      </div>
 
-        <span class="id" *ngIf="model._id"> {{ model._id }} </span>
+      <div
+        class="action"
+        [class.active]="mode == 'json'"
+        (click)="mode = mode == 'json' ? 'form' : 'json'"
+      >
+        {{ "{}" }}
+      </div>
 
-        <span class="id" *ngIf="model._oid"> {{ model._oid }} </span>
+      <div
+        class="action"
+        [class.active]="mode == 'form'"
+        (click)="mode = 'form'"
+      >
+        <img [src]="'assets/icons/check-list-2.svg'" />
       </div>
     </mat-card-header>
 
@@ -53,9 +77,65 @@
       </div>
     </mat-card-content>
 
-    <mat-card-content *ngIf="mode == 'triggers'"> </mat-card-content>
+    <mat-card-content *ngIf="mode == 'triggers'">
+      <div class="form-wrapper">
+        <label for="">
+          تریگر‌ها
+        </label>
+      </div></mat-card-content
+    >
+    <mat-card-content *ngIf="mode == 'access'">
+      <div class="access">
+        <div class="form-wrapper">
+          <label for="">
+            سطح دسترسی به این سند را مشخص کنید
+          </label>
 
-    <mat-card-actions>
+          <div style="padding:5px 15px">
+            <app-form-radio-input
+              [display]="'block'"
+              [model]="model['_access']"
+              (modelChange)="
+                model['_access'] = $event; WidgetChange.emit({ model: model })
+              "
+              [data]="[
+                { value: '', label: 'اعضای تیم' },
+                { value: 'me', label: 'فقط من' },
+                { value: 'public', label: 'عمومی' },
+                { value: 'users', label: 'کاربران مشخص' },
+                { value: 'encrypted', label: 'رمزگذاری شده' }
+              ]"
+            ></app-form-radio-input>
+
+            <app-form-text-input
+              [label]="'رمز سند'"
+              *ngIf="model['_access'] === 'encrypted'"
+            >
+            </app-form-text-input>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+    <mat-card-content *ngIf="mode == 'files' && !loading">
+      <app-storage *ngIf="filesPath" [folderPath]="filesPath"></app-storage>
+
+      <div class="form-wrapper">
+        <div class="empty" *ngIf="!filesPath">
+          برای آپلود فایل ابتدا سند را ذخیره کنید
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-content *ngIf="mode == 'json' && !loading">
+      <div class="form-wrapper">
+        <app-form-code-input
+          [model]="model"
+          (modelChange)="jsonCodeChange($event)"
+        ></app-form-code-input>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions *ngIf="mode == 'json' || mode == 'form'">
       <button (click)="save()" class="sp-button-icon">
         <img
           *ngIf="saveButtonIcon"

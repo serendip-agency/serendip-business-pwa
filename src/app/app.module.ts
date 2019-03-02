@@ -116,6 +116,7 @@ import { FormIconInputComponent } from "./base/form/form-icon-input/form-icon-in
 import { ChartComponent } from "./base/chart/chart.component";
 import { FormCodeInputComponent } from "./base/form/form-code-input/form-code-input.component";
 import { IconViewComponent } from "./base/report/icon-view/icon-view.component";
+import { FormStorageInputComponent } from "./base/form/form-storage-input/form-storage-input.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -160,7 +161,8 @@ export const dynamicComponents = [
   FormFileInputComponent,
   FormIconInputComponent,
   FormCodeInputComponent,
-
+  FormCodeInputComponent,
+  FormStorageInputComponent,
   // Business related form parts
 
   ContactInputComponent,
@@ -209,8 +211,7 @@ export const primaryComponents = [
     StorageFilesComponent,
     FormPartsComponent,
     SyncComponent,
-    ChartComponent,
-    FormCodeInputComponent
+    ChartComponent
   ],
   entryComponents: [],
   imports: [

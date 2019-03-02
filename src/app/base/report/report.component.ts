@@ -512,8 +512,7 @@ export class ReportComponent implements OnInit {
     this.obService.listen(this.entityName).subscribe(event => {
       if (this.mode === "chart") {
       }
-
-      console.log(event);
+      console.log("event in report component", event);
 
       if (this.mode === "data" && this.obServiceActive) {
         if (

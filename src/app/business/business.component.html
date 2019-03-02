@@ -1,95 +1,100 @@
 <div class="business-settings" *ngIf="businessService.getActiveBusinessId()">
   <mat-card>
     <mat-card-content>
-      <div class="top-box">
-        <div class="logo">
-          <img
-            *ngIf="businessService.business.logo"
-            [src]="businessService.business.logo"
-            alt=""
-          />
-          <img
-            class="default"
-            src="assets/icons/building-production-unit-1.svg"
-            title="برای آپلود لوگو کلیک کنید"
-          />
-        </div>
-        <div class="info">
-          <app-form-text-input
-            [label]="'نام کسب‌وکار'"
-            [model]="businessService.business.title"
-          ></app-form-text-input>
-        </div>
-
-        <div class="clearfix"></div>
-      </div>
-      <div class="members">
-        <div class="title">کاربران</div>
-        <div class="member" *ngFor="let m of businessService.business.members">
-          <div class="profile" *ngIf="m.profile">
-            <div class="pic">
-              <img
-                *ngIf="m.profile.profilePicture"
-                [src]="businessService.business.logo"
-                alt=""
-              />
-              <img
-                class="default"
-                src="assets/icons/account-profile-user-4.svg"
-              />
-            </div>
+      <div class="form-wrapper">
+        <div class="top-box">
+          <div class="logo">
+            <img
+              *ngIf="businessService.business.logo"
+              [src]="businessService.business.logo"
+              alt=""
+            />
+            <img
+              class="default"
+              src="assets/icons/building-production-unit-1.svg"
+              title="برای آپلود لوگو کلیک کنید"
+            />
           </div>
-
-          <div class="no-profile" *ngIf="m.userId && !m.profile">
-            <div class="pic">
-              <img
-                class="default"
-                src="assets/icons/account-profile-user-4.svg"
-              />
-            </div>
-
-            کاربر
-
-            <span *ngIf="m.mobile" class="ltr en">{{
-              m.mobileCountryCode + m.mobile
-            }}</span>
-            <span class="id ltr" *ngIf="!m.mobile"> m.userId</span> پروفایل خود
-            را تکمیل نکرده است.
-          </div>
-
-          <div class="no-user" *ngIf="m.mobile && !m.userId">
-            شماره
-            <span class="ltr en">{{ m.mobileCountryCode + m.mobile }}</span>
-
-            تا کنون وارد سیستم نشده است.
-          </div>
-        </div>
-      </div>
-
-      <div class="invite">
-        <div class="title">کاربر جدید</div>
-
-        <div class="invite-form">
-          <div class="code">
+          <div class="info">
             <app-form-text-input
-              [label]="'کد کشور'"
-              [model]="memberToAdd.code"
-              (modelChange)="memberToAdd.code = $event"
-              [dir]="'ltr'"
+              [label]="'نام کسب‌وکار'"
+              [model]="businessService.business.title"
             ></app-form-text-input>
           </div>
-          <div class="mobile">
-            <app-form-text-input
-              [label]="'شماره موبایل کاربر جدید'"
-              [model]="memberToAdd.mobile"
-              (modelChange)="memberToAdd.mobile = $event"
-              [dir]="'ltr'"
-            ></app-form-text-input>
-          </div>
-          <button type="button" (click)="addMember()">ثبت</button>
+
           <div class="clearfix"></div>
         </div>
-        <p>نیازی نیست کاربر از قبل ثبت‌نام کرده باشد.</p>
+        <div class="members">
+          <div class="title">کاربران</div>
+          <div
+            class="member"
+            *ngFor="let m of businessService.business.members"
+          >
+            <div class="profile" *ngIf="m.profile">
+              <div class="pic">
+                <img
+                  *ngIf="m.profile.profilePicture"
+                  [src]="businessService.business.logo"
+                  alt=""
+                />
+                <img
+                  class="default"
+                  src="assets/icons/account-profile-user-4.svg"
+                />
+              </div>
+            </div>
+
+            <div class="no-profile" *ngIf="m.userId && !m.profile">
+              <div class="pic">
+                <img
+                  class="default"
+                  src="assets/icons/account-profile-user-4.svg"
+                />
+              </div>
+
+              کاربر
+
+              <span *ngIf="m.mobile" class="ltr en">{{
+                m.mobileCountryCode + m.mobile
+              }}</span>
+              <span class="id ltr" *ngIf="!m.mobile"> m.userId</span> پروفایل
+              خود را تکمیل نکرده است.
+            </div>
+
+            <div class="no-user" *ngIf="m.mobile && !m.userId">
+              شماره
+              <span class="ltr en">{{ m.mobileCountryCode + m.mobile }}</span>
+
+              تا کنون وارد سیستم نشده است.
+            </div>
+          </div>
+        </div>
+
+        <div class="invite">
+          <div class="title">کاربر جدید</div>
+
+          <div class="invite-form">
+            <div class="code">
+              <app-form-text-input
+                [label]="'کد کشور'"
+                [model]="memberToAdd.code"
+                (modelChange)="memberToAdd.code = $event"
+                [dir]="'ltr'"
+              ></app-form-text-input>
+            </div>
+            <div class="mobile">
+              <app-form-text-input
+                [label]="'شماره موبایل کاربر جدید'"
+                [model]="memberToAdd.mobile"
+                (modelChange)="memberToAdd.mobile = $event"
+                [dir]="'ltr'"
+              ></app-form-text-input>
+            </div>
+            <button type="button" (click)="addMember()">ثبت</button>
+            <div class="clearfix"></div>
+          </div>
+          <p>نیازی نیست کاربر از قبل ثبت‌نام کرده باشد.</p>
+        </div>
       </div>
     </mat-card-content>
   </mat-card>

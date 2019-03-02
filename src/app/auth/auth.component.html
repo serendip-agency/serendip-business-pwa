@@ -33,15 +33,26 @@
       <form *ngIf="tab == 'login'" class="form-mobile">
         <div class="title">شماره تماس خود را وارد کنید</div>
 
-        <div class="mobile-input">
-          <mat-form-field class="mobile">
+        <div class="mobile-inputs">
+          <mat-form-field class="code">
             <input
-            autocomplete="off"
-              type="text"
+              autocomplete="off"
+              type="tel"
               matInput
               dir="ltr"
-              [showMaskTyped]="true"
-              mask="000 000 0000"
+              [(ngModel)]="model.mobileCountryCode"
+              placeholder="کد"
+              autofocus
+              name="mobileCountryCode"
+              #mobileCountryCode="ngModel"
+            />
+          </mat-form-field>
+          <mat-form-field class="mobile">
+            <input
+              autocomplete="off"
+              type="tel"
+              matInput
+              dir="ltr"
               (keypress)="removeMobileZero()"
               [(ngModel)]="model.mobile"
               placeholder="مثال ۹۱۲۷۸۹۱۲۳۴"
@@ -91,7 +102,7 @@
         </ul>
       </form>
 
-      <form   *ngIf="tab == 'code'" class="form-code">
+      <form *ngIf="tab == 'code'" class="form-code">
         <div class="title">کد دریافت شده از طریق پیامک را وارد کنید</div>
 
         <div class="subtitle">
@@ -99,8 +110,7 @@
         </div>
         <mat-form-field>
           <input
-         
-            type="text"
+            type="tel"
             matInput
             dir="ltr"
             [showMaskTyped]="true"
@@ -200,7 +210,10 @@
             autofocus
             [(ngModel)]="model.username"
           />
-          <mat-hint> موبایل و یا ایمیلی که بار اول با آن وارد شدید</mat-hint>
+          <mat-hint>
+            موبایل (همراه با کد) و یا ایمیلی که بار اول با آن وارد
+            شدید</mat-hint
+          >
         </mat-form-field>
 
         <mat-form-field>

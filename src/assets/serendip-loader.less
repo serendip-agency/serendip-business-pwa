@@ -1,8 +1,8 @@
 #serendip-loader {
   text-align: center;
   line-height: calc(~"100vh - 100px");
-
-  background: #453e5d url("/assets/graphics/star-back.svg");
+  height: 100vh;
+  background: #333 url("/assets/graphics/star-back.svg");
   background-size: cover;
 
   .text {
@@ -31,9 +31,28 @@
     vertical-align: middle;
     text-align: center;
   }
-
 }
 
+@keyframes logo {
+  0% {
+    transform: translateX(0) translateY(200px);
+  }
+  25% {
+    transform: translateX(200px) translateY(0);
+  }
+
+  50% {
+    transform: translateX(0) translateY(-200px);
+  }
+
+  75% {
+    transform: translateX(-200px) translateY(0);
+  }
+
+  100% {
+    transform: translateX(0) translateY(200px);
+  }
+}
 
 .logo-wrapper {
   line-height: 0;
@@ -42,7 +61,11 @@
     margin-top: -111px;
     width: 100px;
     height: 100px;
-    img , svg{
+    position: relative;
+    z-index: 1;
+
+    img,
+    svg {
       width: 100%;
       height: 100%;
     }

@@ -527,6 +527,7 @@ export const FormsSchema: FormInterface[] = [
   },
   {
     name: "form-form",
+    entityName: "form",
     parts: [
       {
         componentName: "FormTextInputComponent",
@@ -618,11 +619,37 @@ export const FormsSchema: FormInterface[] = [
                   value: "FormSelectInputComponent"
                 },
                 {
+                  label: "انتخاب از مدیریت فایل",
+                  value: "FormStorageInputComponent"
+                },
+                {
+                  label: "فایل ضمیمه سند",
+                  value: "FormFileInputComponent"
+                },
+                {
                   label: "انتخاب موقعیت جغرافیایی",
                   value: "FormLatlngInputComponent"
                 }
               ]
             }
+          },
+          {
+            if:
+              "!^form.propertyType && ^form.componentName == 'FormStorageInputComponent'",
+            propertyType: "object",
+            propertyName: "inputs",
+            label: "تنظیمات فیلد انتخاب از فایل‌ها",
+            parts: [
+              {
+                propertyType: "string",
+                propertyName: "label",
+                componentName: "FormTextInputComponent",
+                inputs: {
+                  label: "لیبل فیلد",
+                  type: "single-line"
+                }
+              }
+            ]
           },
           {
             if:
@@ -663,7 +690,7 @@ export const FormsSchema: FormInterface[] = [
               "!^form.propertyType && ^form.componentName == 'FormRadioInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
-            label: "تنظیمات فیلد متنی",
+            label: "تنظیمات فیلد رادیو",
             parts: [
               {
                 propertyType: "string",

@@ -66,6 +66,7 @@ export class DataService {
     try {
       const myBusinesses = await this.request({
         method: "get",
+        timeout: 3000,
         retry: false,
         path: "/api/business/list"
       });
@@ -502,8 +503,21 @@ export class DataService {
   }
 
   async updateIDB(model: EntityModel, controller: string) {
-    const store = await this.idbService.dataIDB();
-    let data = await store.get(controller);
+    let store;
+    try {
+      store = await this.idbService.dataIDB();
+    } catch (error) {}
+
+    if (!store) {
+      return;
+    }
+    let data;
+
+    try {
+      data = await store.get(controller);
+    } catch (error) {
+      return;
+    }
     if (!data) {
       data = {};
     }
@@ -556,23 +570,25 @@ export class DataService {
     const store = await this.idbService.dataIDB();
 
     const data = await store.get(controller);
+
     console.log(data);
 
-    if (data && data[_id]) {
-      model = data[_id];
-      delete data[_id];
-      await store.set(controller, data);
+    if (data) {
+      await store.set(controller, data.filter(p => p._id !== _id));
     }
 
     this.obService.publish(controller, "delete", model);
 
-    console.log("model to delete", model);
-    await this.request({
-      method: "POST",
-      path: `/api/entity/${controller}/delete`,
-      model: model,
-      retry: true
-    });
+    try {
+      await this.request({
+        method: "POST",
+        path: `/api/entity/${controller}/delete`,
+        model: { _id },
+        retry: true
+      });
+    } catch (error) {
+      console.log("error deleting entity", model, error);
+    }
 
     return model;
   }

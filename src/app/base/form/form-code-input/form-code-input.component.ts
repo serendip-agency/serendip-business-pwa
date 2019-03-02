@@ -22,7 +22,16 @@ export class FormCodeInputComponent implements OnInit {
   @Output() modelChange = new EventEmitter<any>();
 
   flask: any;
-  model: string;
+  private _model: string;
+
+  @Input() set model(value: string) {
+    this._model = value;
+  }
+
+  get model(): string {
+    return this._model;
+  }
+
   constructor(private changeRef: ChangeDetectorRef) {}
 
   cleanCodeSpaces(input: string) {
@@ -46,6 +55,11 @@ export class FormCodeInputComponent implements OnInit {
     return result.join("\n");
   }
   ngOnInit() {
+    if (typeof this.model !== "string") {
+      try {
+        this.model = JSON.stringify(this.model, null, 2);
+      } catch (error) {}
+    }
     requestAnimationFrame(() => {
       this.flask = new CodeFlask("#" + this.selector, {
         language: this.language,

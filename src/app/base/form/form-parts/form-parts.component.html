@@ -6,7 +6,10 @@
     <ndc-dynamic
       *ngIf="getDynamicPart(part.componentName)"
       [ndcDynamicInputs]="
-        extendObj({ model: model[part.propertyName] }, part.inputs || {})
+        extendObj(
+          { model: model[part.propertyName], document: document },
+          part.inputs || {}
+        )
       "
       [ndcDynamicOutputs]="{
         modelChange: dynamicPartModelChange(part.propertyName)
@@ -14,10 +17,9 @@
       [ndcDynamicComponent]="getDynamicPart(part.componentName)"
     ></ndc-dynamic>
 
-    <div *ngIf="!getDynamicPart(part.componentName)" class="logbox auto-height"  >
+    <div *ngIf="!getDynamicPart(part.componentName)" class="logbox auto-height">
       {{ part.componentName }} not found.
     </div>
-    
   </div>
   <div *ngIf="part.propertyType == 'array'">
     <div class="array-label" *ngIf="part.label">{{ part.label }}</div>
@@ -26,6 +28,7 @@
         <div class="item">
           <app-form-parts
             [WidgetChange]="WidgetChange"
+            [document]="document"
             [formSchema]="
               part.parts.toString() === 'clone-top-parts' ? formSchema : part
             "
@@ -36,7 +39,6 @@
         <div class="action">
           <div
             class="plus"
-            *ngIf="itemIndex == 0"
             (click)="model[part.propertyName].push({}); detectChange()"
           >
             <img src="assets/icons/plus-add-2.svg" />
@@ -60,6 +62,7 @@
       <div class="object-label" *ngIf="part.label">{{ part.label }}</div>
 
       <app-form-parts
+        [document]="document"
         [WidgetChange]="WidgetChange"
         [formSchema]="
           part.parts.toString() === 'clone-top-parts' ? formSchema : part

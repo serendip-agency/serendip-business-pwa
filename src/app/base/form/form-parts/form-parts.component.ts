@@ -24,6 +24,7 @@ import { FormTelephoneInputComponent } from "../form-telephone-input/form-teleph
 import { FormTextInputComponent } from "../form-text-input/form-text-input.component";
 import { FormToggleInputComponent } from "../form-toggle-input/form-toggle-input.component";
 import { FormCodeInputComponent } from "../form-code-input/form-code-input.component";
+import { FormStorageInputComponent } from "../form-storage-input/form-storage-input.component";
 
 @Component({
   selector: "app-form-parts",
@@ -32,6 +33,8 @@ import { FormCodeInputComponent } from "../form-code-input/form-code-input.compo
 })
 export class FormPartsComponent implements OnInit {
   @Input() public model: any;
+
+  @Input() public document: any;
   @Input() public WidgetChange: any;
   @Input() public formSchema: any;
   private DynamicParts = {
@@ -55,7 +58,8 @@ export class FormPartsComponent implements OnInit {
     FormRelativeDateInputComponent,
     FormFileInputComponent,
     FormIconInputComponent,
-    FormCodeInputComponent
+    FormCodeInputComponent,
+    FormStorageInputComponent
   };
   constructor(public ref: ChangeDetectorRef) {}
   filterParts(parts: FormPartInterface[]) {
@@ -155,5 +159,9 @@ export class FormPartsComponent implements OnInit {
   getDynamicPart(componentName) {
     return this.DynamicParts[componentName];
   }
-  ngOnInit() {}
+  ngOnInit() {
+    if (!this.document && this.model) {
+      this.document = this.model;
+    }
+  }
 }

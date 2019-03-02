@@ -1,0 +1,30 @@
+<div class="input" [class.selecting]="selectActive">
+  <app-storage
+    *ngIf="selectActive"
+    [mode]="'select'"
+    [modeSelectedPaths]="selectType == 'single' ? [model] : model"
+    [selectType]="selectType"
+    (selectEvents)="onSelect($event)"
+    [folderPath]="'businesses/' + document._business + '/' + document._id"
+    [viewMode]="'in-form'"
+  ></app-storage>
+  <label for=""> {{ label }}</label>
+
+  <div class="triple-block">
+    <button (click)="selectActive = true" class="start-select">
+      انتخاب فایل
+    </button>
+
+    <div class="preview"></div>
+
+    <div class="path" *ngIf="selectType == 'single'">
+      {{ model }}
+    </div>
+
+    <div class="path" *ngIf="selectType == 'multiple'">
+      {{ model.length }}
+    </div>
+
+    <div class="clearfix"></div>
+  </div>
+</div>

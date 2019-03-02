@@ -1,18 +1,17 @@
 <app-calendar></app-calendar>
 <app-weather></app-weather>
 
-<app-storage *ngIf="dashboardReady"></app-storage>
+<app-storage [viewMode]="'full'" *ngIf="storageService.fileManagerVisible"></app-storage>
+
+
 <app-map [mapId]="'dashboard-map'"></app-map>
 <div id="serendip-loader" *ngIf="!dashboardReady">
   <div class="box">
-    <div class="logo-wrapper">
+    <div class="logo-wrapper out-of-the-box">
       <div class="loader"></div>
 
       <div class="logo">
-        <img
-          src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg"
-          alt=""
-        />
+        <img src="assets/graphics/brand/serendip-fav-2-1.svg" alt="" />
       </div>
     </div>
     <div class="text" *ngIf="dashboardLoadingText">
@@ -20,7 +19,12 @@
     </div>
   </div>
 </div>
-<div class="dashboard-wrapper" *ngIf="dashboardReady">
+
+<div
+  class="dashboard-wrapper"
+  [class.empty]="gridEmpty()"
+  *ngIf="dashboardReady"
+>
   <header id="header">
     <div class="inner">
       <div class="logo" (click)="logoClick()">
@@ -436,15 +440,31 @@
 
     <ul>
       <li>
-        <a> <img src="assets/icon-crm-header/note-1.svg" alt="" /> </a>
-      </li>
-
-      <li>
         <a
           (click)="toggleCalendar()"
           [class.active]="calendarService.calendarVisible"
         >
           <img src="assets/icon-crm-header/calendar-2.svg" alt="" />
+        </a>
+      </li>
+      <li>
+        <a> <img src="assets/icon-crm-header/note.svg" alt="" /> </a>
+      </li>
+
+      <li>
+        <a
+          (click)="toggleFileManager()"
+          [class.active]="storageService.fileManagerVisible"
+        >
+          <img src="assets/icon-crm-header/file-manager-cloud-4.svg" alt="" />
+        </a>
+      </li>
+      <li>
+        <a
+          (click)="toggleWeather()"
+          [class.active]="weatherService.weatherVisible"
+        >
+          <img src="assets/icon-crm-header/weather-3.svg" alt="" />
         </a>
       </li>
 
@@ -453,16 +473,7 @@
           (click)="toggleMap()"
           [class.active]="gmapsService.dashboardMapVisible"
         >
-          <img src="assets/icon-crm-header/map-1.svg" alt="" />
-        </a>
-      </li>
-
-      <li>
-        <a
-          (click)="toggleWeather()"
-          [class.active]="weatherService.weatherVisible"
-        >
-          <img src="assets/icon-crm-header/weather-1.svg" alt="" />
+          <img src="assets/icon-crm-header/map.svg" alt="" />
         </a>
       </li>
     </ul>

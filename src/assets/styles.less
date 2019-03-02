@@ -136,7 +136,7 @@ button.sp-button-icon {
 
   &.with-text {
     border-radius: 10px;
-    padding-right: 5px;
+    padding: 0 10px;
   }
 
   span {
@@ -413,16 +413,17 @@ label {
 }
 
 .grid-container {
-  width: calc(~"100% - 50px");
+  width: calc(~"100% - 55px");
   display: block; //transition: width ease-in-out .1s;
   position: relative;
-  height: calc(~"100vh - 50px");
+  margin-top: 15px;
+  height: calc(~"100vh - 65px");
   overflow-x: hidden;
   overflow-y: hidden;
   white-space: nowrap;
   margin-right: auto;
   user-select: none;
-
+  z-index: 100;
   &:active {
     cursor: move;
   }
@@ -510,6 +511,7 @@ label {
           height: 260px;
           border-top: 1px solid rgb(230, 230, 230);
           border-right: 1px solid rgb(230, 230, 230);
+
           text-align: right;
           width: auto;
           right: 10px;
@@ -556,8 +558,14 @@ label {
         z-index: 1;
         position: relative;
 
+        &:nth-last-child(2),
         &:last-child {
           cursor: default;
+
+          .tab-handle:after {
+            display: block !important;
+            background-image: url(/assets/graphics/tab-corner-2.svg) !important;
+          }
         }
         &:last-child,
         &.full-nav,
@@ -578,6 +586,7 @@ label {
             &:after,
             &:before {
               background-image: url(/assets/graphics/tab-corner.svg) !important;
+              display: block;
             }
           }
         }
@@ -588,18 +597,19 @@ label {
           padding: 0 30px;
 
           border-radius: 10px 10px 0 0;
-          background: #e3e0db;
+          background: rgba(white, 0.85);
 
           &:after,
           &:before {
             width: 12px;
             height: 12px;
-            background-image: url(/assets/graphics/tab-corner-2.svg);
+            background-image: url(/assets/graphics/tab-corner-3.svg);
             background-size: contain;
             position: absolute;
             bottom: 0;
             content: " ";
             left: -12px;
+            display: none;
           }
 
           &:before {
@@ -631,14 +641,15 @@ label {
           height: 22px;
           box-sizing: border-box;
           color: #7c94ca;
+          background: #eee;
           line-height: 22px;
           font-weight: 900;
           border-radius: 100%;
-          padding: 2px;
+          padding: 3px;
           vertical-align: middle;
           position: absolute;
-          top: 5px;
-          right: 5px;
+          top: 3px;
+          right: 3px;
           transition: all ease 0.3s;
 
           img {
@@ -646,20 +657,18 @@ label {
             height: 100%;
             transform: rotate(1deg);
             transition: all ease 0.3s;
+            border-radius: 100%;
           }
         }
-        &:hover .tab-close {
-          display: block;
-        }
+
         .tab-close {
           width: 20px;
           height: 20px;
           border-radius: 100%;
           vertical-align: middle;
           position: absolute;
-          top: 7px;
-          left: 5px;
-          display: none;
+          top: 5px;
+          left: 3px;
           img {
             width: 100%;
             height: 100%;
@@ -673,13 +682,15 @@ label {
     box-sizing: border-box;
     .mat-card {
       cursor: default;
-      background: #fff;
+      //   background: rgba(white, 0.5);
+      background: rgba(white, 1);
       padding: 0 !important;
       // max-width: 420px;
-      border-left: 5px solid rgb(235, 235, 235);
-      border-radius: 10px 0 10px 10px;
+      // border-left: 5px solid rgb(235, 235, 235);
+      // border-bottom: 5px solid rgb(235, 235, 235);
+
+      border-radius: 0 0 10px 10px;
       box-shadow: none !important;
-      border-bottom: 5px solid rgb(235, 235, 235);
       overflow: hidden;
       .mat-card-content {
         max-height: calc(~"100vh - 250px");
@@ -706,16 +717,22 @@ label {
         }
       }
       .mat-card-header {
+        // background: linear-gradient(
+        //   to bottom,
+        //   rgba(white, 1),
+        //   rgba(white, 0.5),
+        //   rgba(white, 0.05)
+        // );
+        background: #fff;
         padding: 10px;
-        padding-top: 20px;
-        padding-bottom: 0;
+        padding-bottom: 5px;
       }
       .mat-card-actions {
         box-sizing: border-box;
         margin: 0;
         padding: 10px;
-        background: rgb(248, 248, 248);
-        border-top: 2px solid rgb(242, 242, 242);
+        background: transparent;
+        border-top: none !important;
         &:last-child {
           margin: 0;
           padding-bottom: 10px;
@@ -760,7 +777,7 @@ label {
   }
   .grid-container {
     height: auto;
-    width: calc(100% - 50px);
+    width: calc(100% - 55px);
     &.docScrolled {
       width: 100%;
 
@@ -1072,27 +1089,6 @@ form {
     border: 2px dashed #dfdfdf;
     border-radius: 100%;
     box-sizing: border-box;
-  }
-}
-
-.form-status {
-  background: #f2f2f2;
-  color: #777;
-  font-weight: 100;
-  font-size: 9px;
-  line-height: 14px;
-  display: inline-block;
-  padding: 0 5px;
-  border-radius: 0 0 5px 5px;
-  position: absolute;
-  top: 0;
-  left: 10px;
-  .id {
-    font-size: 7px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-family: monospace;
-    user-select: text;
   }
 }
 
