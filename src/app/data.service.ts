@@ -19,6 +19,7 @@ import { FormsSchema, ReportsSchema } from "./schema";
 import { DocumentIndex } from "ndx";
 import { SearchSchema } from "./schema/search";
 import ObjectID from "bson-objectid";
+import * as moment from "moment-jalaali";
 
 export interface DataRequestInterface {
   method: string | "POST" | "GET";
@@ -194,6 +195,9 @@ export class DataService {
         if (opts.retry) {
           // TODO: add request to push collection
 
+          const pushIdb = await this.idbService.syncIDB("push");
+
+          pushIdb.set(new ObjectID().str, opts);
           return resolve();
         } else {
           return reject(error);
@@ -235,6 +239,52 @@ export class DataService {
     const unzippedArray = JSON.parse(unzippedText);
 
     return unzippedArray;
+  }
+
+  public async export(from?: number, to?: number): Promise<void> {
+    const res: any = await this.request({
+      method: "POST",
+      timeout: 60000,
+      path: `/api/entity/export`,
+      model: {
+        from: from,
+        to: to
+      },
+      raw: true
+    });
+
+    const data = res.body;
+    if (!data) {
+      throw new Error("no data");
+    }
+
+    const fileReader = new FileReader();
+
+    fileReader.readAsDataURL(data);
+
+    fileReader.onload = ev => {
+      if ((window as any).cordova) {
+        window.open(fileReader.result.toString(), "_system");
+      } else {
+        this.triggerBrowserDownload(
+          fileReader.result,
+          "export_" + moment().toISOString() + ".zip"
+        );
+      }
+    };
+  }
+
+  triggerBrowserDownload(imgURI, fileName) {
+    const evt = new MouseEvent("click", {
+      view: window,
+      bubbles: false,
+      cancelable: true
+    });
+    const a = document.createElement("a");
+    a.setAttribute("download", fileName);
+    a.setAttribute("href", imgURI);
+    a.setAttribute("target", "_blank");
+    a.dispatchEvent(evt);
   }
 
   async list<A>(
@@ -434,7 +484,7 @@ export class DataService {
     if (offline) {
       const store = await this.idbService.dataIDB();
       const data = await store.get(controller);
-      if (data[_id]) {
+      if (data && data[_id]) {
         return data[_id];
       } else {
         throw error;
@@ -530,7 +580,8 @@ export class DataService {
     if (!model._id) {
       model._id = new ObjectID().str;
     }
-    const result = await this.request({
+
+    await this.request({
       method: "POST",
       path: `/api/entity/${controller}/insert`,
       timeout: 1000,
@@ -541,7 +592,7 @@ export class DataService {
     await this.updateIDB(model, controller);
     this.obService.publish(controller, "insert", model);
 
-    return result;
+    return model;
   }
 
   async update(controller: string, model: EntityModel): Promise<EntityModel> {
@@ -559,6 +610,7 @@ export class DataService {
       model: model,
       retry: true
     });
+
     return model;
   }
 
@@ -571,10 +623,10 @@ export class DataService {
 
     const data = await store.get(controller);
 
-    console.log(data);
-
     if (data) {
-      await store.set(controller, data.filter(p => p._id !== _id));
+      model = _.extend(data[_id] || {});
+      delete data[_id];
+      await store.set(controller, data);
     }
 
     this.obService.publish(controller, "delete", model);
@@ -593,6 +645,13 @@ export class DataService {
     return model;
   }
 
+  wait(timeout) {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        resolve();
+      }, timeout);
+    });
+  }
   public async pullCollection(collection) {
     const pullStore = await this.idbService.syncIDB("pull");
 
@@ -615,7 +674,7 @@ export class DataService {
       // TODO Delete removed items
     }
 
-    const store = await this.idbService.dataIDB();
+    const dataIdb = await this.idbService.dataIDB();
     let changes;
     let changesCount;
 
@@ -625,7 +684,8 @@ export class DataService {
       return;
     }
 
-    let currentData = await store.get(collection);
+    // Its and object !
+    let currentData = await dataIdb.get(collection);
     if (!currentData) {
       currentData = {};
     }
@@ -650,59 +710,48 @@ export class DataService {
       changes
     );
 
-    const newData = await this.zip(collection, lastSync, Date.now());
-    currentData = _.extend(currentData, newData);
+    const newData = await this.zip<EntityModel>(
+      collection,
+      lastSync,
+      Date.now()
+    );
 
-    await store.set(collection, currentData);
+    for (const item of newData) {
+      currentData[item._id] = item;
+    }
+
+    await dataIdb.set(collection, currentData);
 
     await pullStore.set(collection + "_" + Date.now(), {
       events: changes
     });
   }
 
-  public pushCollections() {
-    return new Promise(async (resolve, reject) => {
-      const store = await this.idbService.syncIDB("push");
-      const keys = await store.keys();
+  public async pushCollections(callback?: (_id: string, error?: any) => void) {
+    const store = await this.idbService.syncIDB("push");
+    const pushKeys = await store.keys();
 
-      const pushes = _.map(keys, key => {
-        return {
-          key: key,
-          promise: new Promise(async (_resolve, _reject) => {
-            const pushModel = await store.get(key);
-            await this.request(pushModel.opts);
-            _resolve();
-          })
-        };
-      });
+    for (const key of pushKeys) {
+      const push = await store.get(key);
 
-      const runInSeries = index => {
-        const pushModel: any = pushes[index];
-        pushModel.promise
-          .then(() => {
-            store.delete(pushModel.key);
-            index++;
-
-            if (index === pushes.length) {
-              resolve();
-            } else {
-              runInSeries(index);
-            }
-          })
-          .catch(e => {
-            reject();
-          });
-      };
-
-      if (pushes.length > 0) {
-        runInSeries(0);
-      } else {
-        resolve();
+      try {
+        push.retry = false;
+        await this.request(push);
+        await store.delete(key);
+        if (push && push.model && callback) {
+          callback(push.model._id);
+        }
+      } catch (error) {
+        if (push && push.model && callback) {
+          callback(push.model._id, error);
+        }
       }
-    });
+    }
   }
 
-  public async pullCollections(onCollectionSync?: Function) {
+  public async pullCollections(
+    callback?: (collectionName: string, error?: any) => void
+  ) {
     const baseCollections = ["dashboard", "entity", "form", "people", "report"];
     // FormsSchema.forEach(schema => {
     //   if (schema.entityName) {
@@ -719,30 +768,24 @@ export class DataService {
     //   }
     // });
 
-    await promiseSerial(
-      _.map(baseCollections, collection => {
-        return () => {
-          return this.pullCollection(collection);
-        };
-      }),
-      { parallelize: 1 }
-    );
+    for (const collection of baseCollections) {
+      await this.pullCollection(collection);
+      callback(collection);
+    }
 
     const entityCollections = (await this.list("entity"))
       .filter(p => p.offline)
       .map(p => p.name);
 
-    await promiseSerial(
-      _.map(entityCollections, collection => {
-        return () => {
-          return this.pullCollection(collection);
-        };
-      }),
-      { parallelize: 1 }
-    );
+    for (const collection of entityCollections) {
+      await this.pullCollection(collection);
+      callback(collection);
+    }
   }
 
-  public async indexCollections() {
+  public async indexCollections(
+    callback?: (collectionName: string, error: any) => void
+  ) {
     await promiseSerial(
       SearchSchema.map(schema => {
         return () =>
@@ -787,12 +830,19 @@ export class DataService {
 
     this.commonEnglishWordsIndexCache = docIndex;
   }
-  public async sync() {
-    await this.pushCollections();
+  public async sync(opts?: {
+    onCollectionPush?: (collectionName: string, error: any) => void;
+    onCollectionPull?: (collectionName: string, error: any) => void;
+    onCollectionIndex?: (collectionName: string, error: any) => void;
+  }) {
+    if (!opts) {
+      opts = {};
+    }
+    await this.pushCollections(opts.onCollectionPush);
 
-    await this.pullCollections();
+    await this.pullCollections(opts.onCollectionPull);
 
-    await this.indexCollections();
+    await this.indexCollections(opts.onCollectionIndex);
 
     await this.indexCommonEnglishWords();
   }

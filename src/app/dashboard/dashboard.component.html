@@ -1,8 +1,10 @@
 <app-calendar></app-calendar>
 <app-weather></app-weather>
 
-<app-storage [viewMode]="'full'" *ngIf="storageService.fileManagerVisible"></app-storage>
-
+<app-storage
+  [viewMode]="'full'"
+  *ngIf="storageService.fileManagerVisible"
+></app-storage>
 
 <app-map [mapId]="'dashboard-map'"></app-map>
 <div id="serendip-loader" *ngIf="!dashboardReady">
@@ -168,12 +170,6 @@
               </a>
             </li>
           </ul>
-        </li>
-
-        <li class="sync">
-          <a (click)="dataSync()">
-            <img [src]="'assets/icons/sync-6.svg'" /> <span>همگام سازی</span>
-          </a>
         </li>
 
         <li class="logout">
@@ -382,6 +378,18 @@
           </div>
         </div>
         <div class="tasks"></div>
+      </div>
+
+      <div class="actions">
+        <div class="button" (click)="manualSync()">
+          <img src="assets/icons/sync-3.svg" />
+          همگام سازی
+        </div>
+
+        <div class="button" (click)="downloadExport()">
+          <img src="assets/icons/export-3.svg" />
+          خروجی کامل
+        </div>
       </div>
     </div>
   </div>

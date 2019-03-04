@@ -60,7 +60,8 @@ export class DashboardService {
     this.schema.dashboard = ((await this.dataService.list(
       "dashboard",
       0,
-      0
+      0,
+      true
     )) as any).concat(this.schema.dashboard);
 
     console.log("set default schema");

@@ -528,7 +528,9 @@ export class ReportComponent implements OnInit {
         }
 
         if (event.eventType === "insert") {
-          this.page.unshift(event.model);
+          if (this.page.filter(p => p._id === event.model._id).length === 0) {
+            this.page.unshift(event.model);
+          }
         }
 
         if (event.eventType === "delete") {

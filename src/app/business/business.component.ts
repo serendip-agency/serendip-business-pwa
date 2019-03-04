@@ -97,7 +97,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
   }
 
   choose(id) {
-    localStorage.setItem("business", id);
+    localStorage.setItem("businessId", id);
     this.router.navigate(["/dashboard"]);
   }
 

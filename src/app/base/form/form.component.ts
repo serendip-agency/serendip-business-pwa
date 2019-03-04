@@ -142,8 +142,7 @@ export class FormComponent implements OnInit {
         documentId: doc._id
       }
     });
-
-    await this.wait(1500);
+ 
 
     this.loading = false;
   }

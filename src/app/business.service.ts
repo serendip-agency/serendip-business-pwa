@@ -10,19 +10,19 @@ export class BusinessService {
   get business(): BusinessModel {
     if (this._business) {
       return this._business;
-    } else if (localStorage.getItem("businessModel")) {
-      return JSON.parse(localStorage.getItem("businessModel"));
+    } else if (localStorage.getItem("business")) {
+      return JSON.parse(localStorage.getItem("business"));
     }
   }
 
   set business(val) {
     this._business = val;
-    localStorage.setItem("businessModel", JSON.stringify(val));
+    localStorage.setItem("business", JSON.stringify(val));
   }
   constructor() {}
 
   getActiveBusinessId() {
-    const business = localStorage.getItem("business");
+    const business = localStorage.getItem("businessId");
 
     if (typeof business !== "undefined" && business !== "undefined") {
       return business;

@@ -1047,14 +1047,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }, 300);
     }, 1);
   }
-
+  downloadExport() {
+    this.dataService.export();
+  }
   dataSync() {
     return new Promise((resolve, reject) => {
       this.dashboardLoadingText = "Syncing dashboard ...";
 
       const syncStart = Date.now();
       this.dataService
-        .sync()
+        .sync({
+          onCollectionPush: (collectionName, error) => {
+            this.dashboardLoadingText = `${collectionName} entity ${
+              !error ? "pushed" : "push error " + error.message
+            }`;
+          },
+          onCollectionPull: collectionName => {
+            this.dashboardLoadingText = `${collectionName} collection pulled`;
+          },
+          onCollectionIndex: collectionName => {
+            this.dashboardLoadingText = `${collectionName} collection indexed`;
+          }
+        })
         .then(() => {
           const seconds = ((Date.now() - syncStart) / 1000).toFixed(1);
           this.dashboardLoadingText = `Syncing took ${this.rpd(
@@ -1064,15 +1078,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
           resolve();
         })
         .catch(res => {
+          console.log("sync error", res);
           if (res.status === 0 || res.status === 500) {
             this.dashboardLoadingText = "Postponing Sync ...";
             resolve();
           } else {
             this.dashboardLoadingText = "Choose business for Syncing ...";
-            setTimeout(() => {
-              localStorage.removeItem("business");
-              this.router.navigate(["/business"]);
-            }, 2500);
+            // setTimeout(() => {
+            //   localStorage.removeItem("business");
+            //   this.router.navigate(["/business"]);
+            // }, 2500);
           }
         });
     });
@@ -1318,6 +1333,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.obService.publish(data.model._entity, data.event, data.model);
     };
   }
+
+  async manualSync() {
+    this.dashboardReady = false;
+    try {
+      await this.dataSync();
+      this.lastDataSync = Date.now();
+    } catch (error) {}
+    this.dashboardReady = true;
+  }
   async ngOnInit() {
     this.initEntitySocket()
       .then()
@@ -1327,18 +1351,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .catch();
 
     if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
+    }
+
       try {
         await this.dataSync();
         this.lastDataSync = Date.now();
       } catch (error) {}
-    }
 
     this.dashboardLoadingText = "Initiating dashboard ...";
     this.dashboardDateTimeTick();
 
+    console.log("initiating dashboard");
+
     if (!this.businessService.getActiveBusinessId()) {
-      this.router.navigate(["/business"]);
-      return;
+      // this.router.navigate(["/business"]);
+      // return;
     }
 
     this.dashboardLoadingText = "Loading business ...";

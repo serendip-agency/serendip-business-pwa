@@ -32,8 +32,8 @@ export class ReportService {
     }
 
     if (!report.data) {
-      await this.dataService.pullCollection(report.entityName);
-      let data = await this.dataService.list(report.entityName, 0, 0, true);
+     
+      let data = await this.dataService.list(report.entityName, 0, 0, false);
       if (!data) {
         data = [];
       }
