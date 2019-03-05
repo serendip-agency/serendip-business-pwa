@@ -22,7 +22,6 @@ import ObjectID from "bson-objectid";
 import * as moment from "moment-jalaali";
 import * as aesjs from "aes-js";
 
-import * as _ from "underscore";
 export interface DataRequestInterface {
   method: string | "POST" | "GET";
   path: string;

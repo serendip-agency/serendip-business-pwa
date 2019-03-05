@@ -1332,6 +1332,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
         model: EntityModel;
       } = JSON.parse(msg.data);
 
+      if (data.model) {
+        data.model = this.dataService.decrypt(data.model);
+      }
+
       this.obService.publish(data.model._entity, data.event, data.model);
     };
   }
