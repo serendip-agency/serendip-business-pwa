@@ -20,7 +20,9 @@ import { DocumentIndex } from "ndx";
 import { SearchSchema } from "./schema/search";
 import ObjectID from "bson-objectid";
 import * as moment from "moment-jalaali";
+import * as aesjs from "aes-js";
 
+import * as _ from "underscore";
 export interface DataRequestInterface {
   method: string | "POST" | "GET";
   path: string;
@@ -274,7 +276,7 @@ export class DataService {
     };
   }
 
-  triggerBrowserDownload(imgURI, fileName) {
+  triggerBrowserDownload(base64, fileName) {
     const evt = new MouseEvent("click", {
       view: window,
       bubbles: false,
@@ -282,7 +284,7 @@ export class DataService {
     });
     const a = document.createElement("a");
     a.setAttribute("download", fileName);
-    a.setAttribute("href", imgURI);
+    a.setAttribute("href", base64);
     a.setAttribute("target", "_blank");
     a.dispatchEvent(evt);
   }
@@ -319,7 +321,7 @@ export class DataService {
       return data;
     } else {
       try {
-        return await this.request({
+        return (await this.request({
           method: "POST",
           path: `/api/entity/${controller}/list`,
           timeout: 1000,
@@ -327,7 +329,7 @@ export class DataService {
             skip: skip,
             limit: limit
           }
-        });
+        })).map(p => this.decrypt(p));
       } catch (error) {
         if (!offline) {
           return await this.list(controller, skip, limit, true);
@@ -491,12 +493,14 @@ export class DataService {
       }
     } else {
       try {
-        const result = await this.request({
-          method: "POST",
+        const result = this.decrypt(
+          await this.request({
+            method: "POST",
 
-          path: `/api/entity/${controller}/details`,
-          model: { _id }
-        });
+            path: `/api/entity/${controller}/details`,
+            model: { _id }
+          })
+        );
 
         return result;
       } catch (error) {
@@ -652,6 +656,7 @@ export class DataService {
       }, timeout);
     });
   }
+
   public async pullCollection(collection) {
     const pullStore = await this.idbService.syncIDB("pull");
 
@@ -717,7 +722,7 @@ export class DataService {
     );
 
     for (const item of newData) {
-      currentData[item._id] = item;
+      currentData[item._id] = this.decrypt(item);
     }
 
     await dataIdb.set(collection, currentData);
@@ -726,7 +731,37 @@ export class DataService {
       events: changes
     });
   }
+  decrypt(model: EntityModel) {
+    if (!model._aes) {
+      return model;
+    }
 
+    try {
+      const aesKey = window.cryptico.decrypt(
+        model._aes,
+        this.businessService.privateKey
+      ).plaintext;
+
+      const dAesCtr = new aesjs.ModeOfOperation.ctr(
+        aesjs.utils.utf8.toBytes(aesKey),
+        new aesjs.Counter(5)
+      );
+      const decryptedModel = JSON.parse(
+        aesjs.utils.utf8.fromBytes(
+          dAesCtr.decrypt(aesjs.utils.hex.toBytes(model._hex))
+        )
+      );
+
+      delete model["_aes"];
+      delete model["_hex"];
+
+      return _.extend(model, decryptedModel);
+    } catch (error) {
+      console.log(error);
+    }
+
+    return model;
+  }
   public async pushCollections(callback?: (_id: string, error?: any) => void) {
     const store = await this.idbService.syncIDB("push");
     const pushKeys = await store.keys();
@@ -774,7 +809,7 @@ export class DataService {
     }
 
     const entityCollections = (await this.list("entity"))
-      .filter(p => p.offline)
+      //  .filter(p => p.offline)
       .map(p => p.name);
 
     for (const collection of entityCollections) {

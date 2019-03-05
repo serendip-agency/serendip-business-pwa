@@ -9,6 +9,9 @@
     <meta name="theme-color" content="#000" />
     <link rel="manifest" href="manifest.json" />
     <link rel="stylesheet" href="assets/serendip-loader.css" />
+    <script src="assets/cryptico.js"></script>
+
+    
     <style>
       html,
       body {
@@ -47,10 +50,7 @@
             <div class="loader"></div>
 
             <div class="logo">
-              <img
-                src="assets/graphics/brand/serendip-fav-2-1.svg"
-                alt=""
-              />
+              <img src="assets/graphics/brand/serendip-fav-2-1.svg" alt="" />
             </div>
 
             <div class="text">Loading dashboard ...</div>
@@ -62,7 +62,10 @@
     <script>
       (function() {
         if (window.location.protocol === "http:")
-          if (window.location.hostname !== "localhost" && window.location.port != "4200") {
+          if (
+            window.location.hostname !== "localhost" &&
+            window.location.port != "4200"
+          ) {
             document.write("redirecting to secure protocol ...");
 
             setTimeout(() => {

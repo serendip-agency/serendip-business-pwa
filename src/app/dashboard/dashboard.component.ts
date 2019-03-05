@@ -22,7 +22,7 @@ import { FormComponent } from "../base/form/form.component";
 import { ReportComponent } from "../base/report/report.component";
 import { TriggersComponent } from "../base/triggers/triggers.component";
 import { BusinessService } from "../business.service";
-import { IdbService } from "../idb.service";
+import { IdbService, IdbDeleteAllDatabases } from "../idb.service";
 import * as lunr from "lunr";
 import {
   DashboardContainerInterface,
@@ -812,16 +812,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.dashboardSocket.send(
-      JSON.stringify({
-        command: "sync_grid",
-        business: this.businessService.getActiveBusinessId(),
-        data: JSON.stringify({
-          section: this.dashboardService.currentSection.name,
-          grid: this.grid
+    if (this.dashboardSocket) {
+      this.dashboardSocket.send(
+        JSON.stringify({
+          command: "sync_grid",
+          business: this.businessService.getActiveBusinessId(),
+          data: JSON.stringify({
+            section: this.dashboardService.currentSection.name,
+            grid: this.grid
+          })
         })
-      })
-    );
+      );
+    }
 
     this.lastGridSync = Date.now();
   }
@@ -1084,10 +1086,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
             resolve();
           } else {
             this.dashboardLoadingText = "Choose business for Syncing ...";
-            // setTimeout(() => {
-            //   localStorage.removeItem("business");
-            //   this.router.navigate(["/business"]);
-            // }, 2500);
+            setTimeout(() => {
+              localStorage.removeItem("businessId");
+              this.router.navigate(["/business"]);
+            }, 2500);
           }
         });
     });
@@ -1342,6 +1344,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     } catch (error) {}
     this.dashboardReady = true;
   }
+
   async ngOnInit() {
     this.initEntitySocket()
       .then()
@@ -1350,27 +1353,39 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .then()
       .catch();
 
-    if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
-    }
-
-      try {
-        await this.dataSync();
-        this.lastDataSync = Date.now();
-      } catch (error) {}
+    this.lastDataSync = 0;
+    await (await this.idbService.syncIDB("pull")).clear();
 
     this.dashboardLoadingText = "Initiating dashboard ...";
     this.dashboardDateTimeTick();
 
     console.log("initiating dashboard");
 
-    if (!this.businessService.getActiveBusinessId()) {
-      // this.router.navigate(["/business"]);
-      // return;
-    }
-
     this.dashboardLoadingText = "Loading business ...";
 
+    if (!this.businessService.getActiveBusinessId()) {
+      this.router.navigate(["/business"]);
+      return;
+    }
+
     await this.dataService.loadBusiness();
+
+    if (!this.businessService.business.publicKey) {
+      this.router.navigate(["/business", "encryption"]);
+      return;
+    }
+
+    if (!localStorage.getItem("rsa")) {
+      this.router.navigate(["/business", "key"]);
+      return;
+    }
+
+    if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
+      try {
+        await this.dataSync();
+        this.lastDataSync = Date.now();
+      } catch (error) {}
+    }
 
     this.dashboardLoadingText = "Loading schemas ...";
 

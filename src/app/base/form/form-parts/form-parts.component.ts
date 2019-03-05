@@ -72,6 +72,9 @@ export class FormPartsComponent implements OnInit {
         return;
       }
       if (part.propertyType === "array") {
+        if (!this.model) {
+          this.model = {};
+        }
         if (
           !this.model[part.propertyName] ||
           (this.model[part.propertyName] &&

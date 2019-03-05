@@ -1,16 +1,20 @@
-import { COMMA, ENTER } from '@angular/cdk/keycodes';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
-import { MatSnackBar } from '@angular/material';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-import { TokenModel } from 'serendip-business-model';
+import { COMMA, ENTER } from "@angular/cdk/keycodes";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { FormBuilder } from "@angular/forms";
+import { MatSnackBar } from "@angular/material";
+import { ActivatedRoute, NavigationEnd, Router } from "@angular/router";
+import { Subscription } from "rxjs";
+import { TokenModel } from "serendip-business-model";
 
-import { AuthService } from '../auth.service';
-import { BusinessService } from '../business.service';
-import { DashboardService } from '../dashboard.service';
-import { DataService } from '../data.service';
+import { AuthService } from "../auth.service";
+import { BusinessService } from "../business.service";
+import { DashboardService } from "../dashboard.service";
+import { DataService } from "../data.service";
 
+import * as aesjs from "aes-js";
+import * as sUtil from "serendip-utility";
+
+import * as _ from "underscore";
 
 @Component({
   selector: "app-business",
@@ -22,6 +26,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
   model = { title: "" };
   routerSubscription: Subscription;
+  rsaKeyHexToImport;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   list: any[] = [];
   token: TokenModel;
@@ -35,16 +40,51 @@ export class BusinessComponent implements OnInit, OnDestroy {
   loading = true;
   lastListReq = 0;
   offline: boolean;
+  rsaKeyHex: string;
+  rsaPublicKey: any;
+  RsaKey: string;
+  rsaKeyHexToImportValidated = false;
   constructor(
     private fb: FormBuilder,
     public authService: AuthService,
-    private router: Router,
+    public router: Router,
     private activatedRoute: ActivatedRoute,
     public businessService: BusinessService,
     public dashboardService: DashboardService,
     private snackBar: MatSnackBar,
     public dataService: DataService
   ) {}
+
+  validateHexToImport(keyArea) {
+    const rsaHex = keyArea.value;
+
+    const decodedHex = aesjs.utils.utf8.fromBytes(
+      aesjs.utils.hex.toBytes(rsaHex)
+    );
+    console.log(decodedHex);
+
+    try {
+    } catch (error) {}
+    const rsaKey = window.cryptico.RSAKey.parse(decodedHex);
+
+    console.log(
+      window.cryptico.publicKeyString(rsaKey),
+      this.businessService.business.publicKey
+    );
+    this.rsaKeyHexToImportValidated =
+      window.cryptico.publicKeyString(rsaKey) ===
+      this.businessService.business.publicKey;
+  }
+
+  uploadKey(fileInput, keyArea) {
+    const reader = new FileReader();
+    reader.onload = event => {
+      keyArea.value = reader.result.toString().replace(/\n/g, "");
+      this.validateHexToImport(keyArea);
+    };
+
+    reader.readAsText(fileInput.files[0]);
+  }
 
   addMember() {
     this.loading = true;
@@ -98,6 +138,32 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
   choose(id) {
     localStorage.setItem("businessId", id);
+    this.router.navigate(["/dashboard"]);
+  }
+
+  async savePrivateKey(keyArea) {
+    localStorage.setItem(
+      "rsa",
+      aesjs.utils.utf8.fromBytes(aesjs.utils.hex.toBytes(keyArea.value))
+    );
+    this.router.navigate(["/dashboard"]);
+  }
+  async savePublicKey() {
+    await this.dataService.loadBusiness();
+
+    this.businessService.business = _.extend(this.businessService.business, {
+      publicKey: this.rsaPublicKey
+    });
+
+    localStorage.setItem("rsa", this.RsaKey);
+
+    await this.dataService.request({
+      method: "POST",
+      model: this.businessService.business,
+      path: "/api/business/saveBusiness",
+      retry: false
+    });
+
     this.router.navigate(["/dashboard"]);
   }
 
@@ -159,8 +225,22 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
     console.log(this.list);
 
-    if (!this.offline && this.list.length === 0) {
+    if (!this.offline && this.tab === "list" && this.list.length === 0) {
       this.router.navigate(["/business", "new"]);
+    }
+
+    if (this.tab === "encryption") {
+      const rsaKey = window.cryptico.generateRSAKey(
+        sUtil.text.randomAsciiString(256),
+        1024
+      );
+
+      this.RsaKey = JSON.stringify(rsaKey.toJSON());
+
+      this.rsaKeyHex = aesjs.utils.hex.fromBytes(
+        aesjs.utils.utf8.toBytes(this.RsaKey)
+      );
+      this.rsaPublicKey = window.cryptico.publicKeyString(rsaKey);
     }
 
     this.loading = false;
@@ -175,6 +255,17 @@ export class BusinessComponent implements OnInit, OnDestroy {
     if (this.routerSubscription && this.routerSubscription.unsubscribe) {
       this.routerSubscription.unsubscribe();
     }
+  }
+  downloadRsaKey() {
+    this.dataService.triggerBrowserDownload(
+      "data:text/plain;charset=utf-8," +
+        this.rsaKeyHex.split("").reduce((prev, current, index) => {
+          return prev + current + ((index + 1) % 40 === 0 ? "\n" : "");
+        }),
+      "business-key-کلید-کسب‌‌وکار-" +
+        this.businessService.business.title +
+        ".txt"
+    );
   }
   async ngOnInit() {
     try {

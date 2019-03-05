@@ -11,8 +11,28 @@ export class BusinessService {
     if (this._business) {
       return this._business;
     } else if (localStorage.getItem("business")) {
-      return JSON.parse(localStorage.getItem("business"));
+      try {
+        return JSON.parse(localStorage.getItem("business"));
+      } catch (error) {
+        localStorage.removeItem("business");
+        return undefined;
+      }
     }
+  }
+
+  private _privateKey;
+  public get privateKey() {
+    if (this._privateKey) {
+      return this._privateKey;
+    }
+
+    if (localStorage.getItem("rsa")) {
+      this._privateKey = window.cryptico.RSAKey.parse(
+        localStorage.getItem("rsa")
+      );
+    }
+
+    return this._privateKey;
   }
 
   set business(val) {
@@ -24,7 +44,11 @@ export class BusinessService {
   getActiveBusinessId() {
     const business = localStorage.getItem("businessId");
 
-    if (typeof business !== "undefined" && business !== "undefined") {
+    if (
+      typeof business !== "undefined" &&
+      business !== "null" &&
+      business !== "undefined"
+    ) {
       return business;
     } else {
       return undefined;
