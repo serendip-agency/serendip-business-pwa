@@ -264,7 +264,13 @@
         </mat-progress-bar>
 
         <div class="records" *ngIf="!resultLoading">
-          <div class="record" *ngFor="let record of page; trackBy: trackByFn">
+          <div
+            class="record"
+            *ngFor="
+              let record of _.take(page || [], pageSize);
+              trackBy: trackByFn
+            "
+          >
             <div class="select">
               <mat-checkbox
                 *ngIf="record._id"

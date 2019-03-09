@@ -8,6 +8,30 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: []
   },
   {
+    name: "mail",
+    title: "ایمیل",
+    icon: "email-reg",
+    tabs: [
+      {
+        status: "default",
+        title: "گزارش‌ ایمیل‌ها",
+        icon: "email-reg",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "mail-default",
+              formName: "mail-form",
+              icon: "email-reg",
+              entityLabelSingular: "ایمیل",
+              title: "ایمیل‌ها"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
     name: "settings",
     title: "تنظیمات",
     icon: "settings-1",

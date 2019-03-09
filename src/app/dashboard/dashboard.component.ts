@@ -415,15 +415,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   tabDragStart(tab: DashboardTabInterface) {
     this.tabDragging = tab;
+
+    console.log("drag start", tab);
   }
 
   tabDragEnd() {
     this.tabDragging = null;
   }
   onTabDragover(event: DragEvent, containerIndex: number) {
-    if (this.screen === "mobile") {
-      return;
-    }
+    // if (this.screen === "mobile") {
+    //   return;
+    // }
 
     const targetPosition = (event.target as HTMLElement).parentElement.getBoundingClientRect();
 

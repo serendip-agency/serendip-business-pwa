@@ -1,0 +1,11 @@
+<div class="iframe-container" *ngIf="model">
+  <iframe [srcdoc]="model | safe: 'html'" frameborder="0"></iframe>
+</div>
+
+<textarea
+  class="source"
+  (change)="model = $event.target.value; modelChange.emit(model)"
+  id=""
+  cols="30"
+  rows="10"
+></textarea>

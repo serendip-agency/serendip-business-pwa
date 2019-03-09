@@ -894,8 +894,8 @@ export const FormsSchema: FormInterface[] = [
     ]
   },
   {
-    name: "email-form",
-    entityName: "email",
+    name: "mail-form",
+    entityName: "mail",
     parts: [
       {
         componentName: "FormTextInputComponent",
@@ -905,56 +905,100 @@ export const FormsSchema: FormInterface[] = [
         }
       },
       {
-        componentName: "FormChipsInputComponent",
-        propertyName: "recipients",
-        propertyType: "string",
-        cssClass: "w-60",
+        componentName: "FormTextInputComponent",
+        propertyName: "from",
         inputs: {
-          entityName: "people",
-          propertiesToSearch: ["firstName", "lastName", "emails"],
-          propertiesSearchMode: "mix",
-          selectType: "multiple",
-          label: "دریافت کنندگان"
-        }
-      },
-      {
-        componentName: "FormChipsInputComponent",
-        propertyName: "template",
-        propertyType: "string",
-        cssClass: "w-60",
-        inputs: {
-          entityName: "emailTemplate",
-          propertiesToSearch: ["name"],
-          propertiesSearchMode: "mix",
-          selectType: "single",
-          label: "قالب ایمیل"
-        }
-      },
-      {
-        componentName: "FormDateInputComponent",
-        propertyName: "jdate",
-        propertyType: "string",
-        inputs: {
-          label: "ارسال در تاریخ"
+          label: "ایمیل فرستنده",
+          dir: "ltr"
         }
       },
       {
         componentName: "FormTextInputComponent",
-        propertyName: "firstName",
+        propertyName: "to",
+        inputs: {
+          label: "ایمیل گیرنده",
+          dir: "ltr"
+        }
+      },
+      // {
+      //   componentName: "FormChipsInputComponent",
+      //   propertyName: "recipients",
+      //   propertyType: "string",
+      //   cssClass: "w-60",
+      //   inputs: {
+      //     entityName: "people",
+      //     propertiesToSearch: ["firstName", "lastName", "emails"],
+      //     propertiesSearchMode: "mix",
+      //     selectType: "multiple",
+      //     label: "دریافت کنندگان"
+      //   }
+      // },
+      // {
+      //   componentName: "FormChipsInputComponent",
+      //   propertyName: "template",
+      //   propertyType: "string",
+      //   cssClass: "w-60",
+      //   inputs: {
+      //     entityName: "emailTemplate",
+      //     propertiesToSearch: ["name"],
+      //     propertiesSearchMode: "mix",
+      //     selectType: "single",
+      //     label: "قالب ایمیل"
+      //   }
+      // },
+      {
+        if: "^form.sentDate",
+        componentName: "FormDateInputComponent",
+        propertyName: "sentDate",
+        propertyType: "string",
+        inputs: {
+          label: "ارسال تاریخ"
+        }
+      },
+      {
+        if: "false",
+        componentName: "FormTextInputComponent",
+        propertyName: "text",
         inputs: {
           label: "متن ایمیل",
           type: "multi-line"
         }
       },
       {
-        componentName: "FormFileInputComponent",
-        propertyName: "attachments",
-        inputs: {
-          type: "multiple",
-          label: "فایل‌های ضمیمه"
-        }
+        label: "قالب ایمیل",
+        propertyName: "template",
+        propertyType: "object",
+        parts: [
+          {
+            componentName: "FormTextInputComponent",
+            propertyName: "name",
+            inputs: {
+              label: "نام قالب",
+              dir: "ltr"
+            }
+          },
+          {
+            componentName: "FormHtmlInputComponent",
+            propertyName: "source",
+            inputs: {}
+          }
+        ]
       }
-    ]
+
+      // {
+      //   componentName: "FormFileInputComponent",
+      //   propertyName: "attachments",
+      //   inputs: {
+      //     type: "multiple",
+      //     label: "فایل‌های ضمیمه"
+      //   }
+      // }
+    ],
+    defaultModel: {
+      template: {
+        name: "droid"
+      }
+    }
   },
   {
     name: "people-form",

@@ -180,10 +180,22 @@ export const ReportsSchema: ReportInterface[] = [
     ]
   },
   {
-    name: "email-default",
-    entityName: "email",
+    name: "mail-default",
+    entityName: "mail",
     label: "",
     fields: [
+      {
+        enabled: true,
+        name: "from",
+        label: "فرستنده ",
+        template: { component: "LongTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "to",
+        label: "گیرنده ",
+        template: { component: "LongTextViewComponent" }
+      },
       {
         enabled: true,
         name: "subject",

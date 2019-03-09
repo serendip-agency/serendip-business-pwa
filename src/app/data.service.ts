@@ -808,7 +808,7 @@ export class DataService {
     }
 
     const entityCollections = (await this.list("entity"))
-      //  .filter(p => p.offline)
+      .filter(p => p.offline)
       .map(p => p.name);
 
     for (const collection of entityCollections) {
