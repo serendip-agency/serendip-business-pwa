@@ -74,58 +74,150 @@
 
       <div
         class="report-chart"
-        *ngIf="!formatsLoading && !resultLoading && mode == 'chart'"
+        *ngIf="!formatsLoading && !resultLoading && mode == 'format'"
       >
-        <div class="empty" *ngIf="!formats || formats.length == 0">
-          شیوه‌ای برای نتیجه گیری از
-          <b>
-            {{ title }}
-          </b>
-          تعریف نشده است.
-        </div>
+        <div class="formats" *ngIf="mode == 'format'">
+          <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label>
 
-        <div *ngIf="!formattedReport && formats && formats.length > 0">
-          <div class="formats">
-            <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label>
-            <div class="list">
-              <app-form-radio-input
-                [display]="'block'"
-                [model]="format"
-                [data]="getReportFormatForRadioList()"
-                (modelChange)="setFormat($event)"
-              ></app-form-radio-input>
-            </div>
-          </div>
+          <app-form-radio-input
+            [display]="'block'"
+            [model]="format.type"
+            [data]="getFormatTypes()"
+            (modelChange)="
+              format.type = $event;
+              WidgetChange.emit({ inputs: { format: format } })
+            "
+          ></app-form-radio-input>
+          <br />
+          <app-form-radio-input
+            *ngIf="format.type && formatFields.length > 0"
+            [model]="format.options.groupBy"
+            [label]="'ویژگی‌ای را برای تفکیک انتخاب کنید'"
+            [data]="formatFields"
+            [display]="'block'"
+            (modelChange)="
+              format.options.groupBy = $event;
+              WidgetChange.emit({ inputs: { format: format } })
+            "
+          ></app-form-radio-input>
+          <br />
+          <app-form-toggle-input
+            *ngIf="
+              (format.options?.groupBy && format.type == '2d') ||
+              format.type == '3d'
+            "
+            [model]="format.type == '3d'"
+            [label]="'نمایش سایز ویژگی'"
+            (modelChange)="
+              format.type = $event ? '3d' : '2d';
+              WidgetChange.emit({ inputs: { format: format } })
+            "
+          ></app-form-toggle-input>
+          <div class="clear"></div>
+          <br />
 
-          <div class="chart-types" *ngIf="format">
+          <app-form-radio-input
+            *ngIf="format.type == '3d'"
+            [model]="format.fields"
+            [label]="'ویژگی‌ای را برای معیار سایز انتخاب کنید'"
+            [data]="formatFields"
+            [display]="'block'"
+            (modelChange)="
+              format.options.sizeBy = $event;
+              WidgetChange.emit({ inputs: { format: format } })
+            "
+          ></app-form-radio-input>
+
+          <div class="chart-types" *ngIf="format.type && format.type != '3d'">
             <label for="">
               ابزار نمایش نتیجه را انتخاب کنید:
             </label>
 
             <div class="list">
               <div
-                *ngFor="let item of filterChartsByDataType(format.dataType)"
+                *ngFor="let item of filterChartsByDataType(format.type)"
                 class="chart-type"
                 (click)="
-                  chartType == item.name
-                    ? setChartType('')
-                    : setChartType(item.name)
+                  format.chart == item.name
+                    ? (format.chart = '')
+                    : (format.chart = item.name);
+                  WidgetChange.emit({ inputs: { format: format } })
                 "
-                [class.selected]="chartType == item.name"
+                [class.selected]="format.chart == item.name"
               >
                 <img [src]="'/assets/charts/' + item.icon + '.svg'" alt="" />
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div *ngIf="formatted && mode == 'chart'">
+        <div class="form-wrapper">
+          <div class="title" *ngIf="format.type == '1d'">
+            بررسی {{ title }} به تفکیک
+            {{ format.options.groupBy.label }}
+          </div>
+
+          <div class="title" *ngIf="format.type == '2d'">
+            بررسی {{ title }} در طول زمان به تفکیک
+            {{ format.options.groupBy.label }}
+          </div>
+          <br />
+
+          <div class="double-field">
+            <div class="w-30">
+              <app-form-select-input
+                [data]="dateRangeUnitsToSelect"
+                [label]="'بازه‌های زمانی'"
+                [selectType]="'single'"
+                (modelChange)="
+                  format.options.dateRangeUnit = $event;
+                  generateFormat();
+                  WidgetChange.emit({ inputs: { format: format } })
+                "
+                [model]="format.options.dateRangeUnit"
+              ></app-form-select-input>
+            </div>
+
+            <div class="w-30">
+              <app-form-text-input
+                [label]="'تعداد بازه'"
+                dir="ltr"
+                (modelChange)="
+                  format.options.dateRangeCount = $event;
+                  generateFormat();
+                  WidgetChange.emit({ inputs: { format: format } })
+                "
+                [model]="format.options.dateRangeCount"
+              ></app-form-text-input>
+            </div>
+          </div>
+        </div>
 
         <app-chart
-          [chartType]="chartType"
-          *ngIf="chartType && format && formattedReport"
-          [data]="formattedReport.data"
+          [chartType]="format.chart"
+          [data]="formatted.data"
         ></app-chart>
+        <table
+          class="formatted-report-table"
+          *ngIf="formatted && format.type == '1d'"
+        >
+          <thead>
+            <tr>
+              <th *ngFor="let field of formatted.fields">
+                {{ field.label || field.name }}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let record of formatted.data">
+              <td *ngFor="let field of formatted.fields">
+                {{ record[field.name] | rpd }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
-
       <div class="report-model" *ngIf="mode == 'report' && report">
         <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
         <div class="fields">
@@ -305,28 +397,34 @@
     </mat-card-content>
 
     <mat-card-actions
-      *ngIf="initDone && !resultLoading && report && mode == 'chart'"
+      *ngIf="
+        initDone &&
+        !resultLoading &&
+        report &&
+        (mode == 'chart' || mode == 'format')
+      "
     >
       <button
-        *ngIf="format && !formattedReport"
-        class="sp-button-icon with-text"
-        (click)="generateFormat()"
+        *ngIf="mode == 'format'"
+        class="sp-button-icon with-text pull-left"
+        (click)="
+          generateFormat(); WidgetChange.emit({ inputs: { mode: 'chart' } })
+        "
       >
-        <img src="assets/icons/seen-visible-1.svg" />
         <span>نمایش نتیجه</span>
       </button>
 
       <button
-        *ngIf="format && formattedReport"
+        *ngIf="mode == 'chart'"
         class="sp-button-icon with-text"
-        (click)="formattedReport = null"
+        (click)="WidgetChange.emit({ inputs: { mode: 'format' } })"
       >
         <img src="assets/icons/settings-adjust-reg.svg" />
         <span>تنظیمات</span>
       </button>
 
       <button
-        *ngIf="format && formattedReport"
+        *ngIf="format == 'chart'"
         class="sp-button-icon pull-left"
         (click)="generateFormat()"
       >

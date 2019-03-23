@@ -2,7 +2,24 @@
   width: auto;
   max-width: 100%;
 }
+table.formatted-report-table {
+  margin: 15px 0;
+  width: auto;
+  display: table;
+  text-align: right;
+  line-height: 24px;
+  padding: 10px;
+  box-sizing: border-box;
 
+  th {
+    border-bottom-color: #bbb;
+  }
+  td,
+  th {
+    border-bottom: 1px solid #ccc;
+    padding:0 5px;
+  }
+}
 .report-chart {
   .empty {
     margin: 30px;
@@ -31,7 +48,6 @@
 
   .list {
     max-width: 360px;
-    margin: 0 auto;
   }
 
   .chart-type {
@@ -48,7 +64,7 @@
       background: #dbe8ff;
     }
 
-    &:hover{
+    &:hover {
       opacity: 1;
     }
     img {

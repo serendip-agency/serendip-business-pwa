@@ -47,88 +47,115 @@ export class ReportComponent implements OnInit {
 
   formatLoaded = false;
   saveMode = "report";
-
-  @Input() chartType: string;
-
+  dateRangeUnitsToSelect = [
+    {
+      value: "month",
+      label: "ماه میلادی"
+    },
+    {
+      value: "jMonth",
+      label: "ماه شمسی"
+    },
+    {
+      value: "year",
+      label: "سال میلادی"
+    },
+    {
+      value: "jYear",
+      label: "سال شمسی"
+    },
+    {
+      value: "day",
+      label: "روز"
+    },
+    {
+      value: "minute",
+      label: "دقیقه"
+    },
+    {
+      value: "hour",
+      label: "ساعت"
+    }
+  ];
   charts: {
     name: string;
     icon: string;
-    dataType: "name-value" | "name-series";
+    dataType: "1d" | "2d";
   }[] = [
     {
       name: "horizontal-bar",
       icon: "bar-chart-horz",
-      dataType: "name-value"
+      dataType: "1d"
     },
     {
       name: "vertical-bar",
       icon: "bar-chart-vert",
-      dataType: "name-value"
+      dataType: "1d"
     },
     {
       name: "doughnut",
       icon: "doughnut",
-      dataType: "name-value"
+      dataType: "1d"
     },
     {
       name: "gauge",
       icon: "gauge",
-      dataType: "name-value"
+      dataType: "1d"
     },
     {
       name: "pie",
       icon: "pie-chart",
-      dataType: "name-value"
+      dataType: "1d"
     },
     {
       name: "pie-grid",
       icon: "pie-grid",
-      dataType: "name-value"
+      dataType: "1d"
     },
     {
       name: "pie-advanced",
       icon: "pie-advanced",
-      dataType: "name-value"
+      dataType: "1d"
     },
     {
       name: "number-card",
       icon: "number-cards",
-      dataType: "name-value"
+      dataType: "1d"
     },
     {
       name: "line",
       icon: "line-chart",
-      dataType: "name-series"
+      dataType: "2d"
     },
     {
       name: "horizontal-grouped-bar",
       icon: "line-chart-grouped-horz",
-      dataType: "name-series"
+      dataType: "2d"
     },
     {
       name: "vertical-grouped-bar",
       icon: "line-chart-grouped-vert",
-      dataType: "name-series"
+      dataType: "2d"
     },
     {
       name: "horizontal-stacked-bar",
       icon: "stacked-horz",
-      dataType: "name-series"
+      dataType: "2d"
     },
     {
-      name: "vertical-grouped-bar",
+      name: "vertical-stacked-bar",
       icon: "stacked-vert",
-      dataType: "name-series"
+      dataType: "2d"
     },
     {
       name: "polar",
       icon: "polar",
-      dataType: "name-value"
+      dataType: "2d"
     },
     {
       name: "tree-map",
       icon: "tree-map",
-      dataType: "name-value"
+      dataType: "1d"
     }
   ];
 
@@ -143,7 +170,7 @@ export class ReportComponent implements OnInit {
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
 
-  @Input() format: ReportFormatInterface;
+  @Input() format: ReportFormatInterface = { options: {} };
   @Input() title: string;
   @Input() entityName: string;
   @Input() subtitle: string;
@@ -175,9 +202,10 @@ export class ReportComponent implements OnInit {
 
   @Input()
   _report: ReportInterface;
-  formattedReport: ReportInterface;
+  @Input() formatted: ReportInterface;
   initDone = false;
   error: any;
+  _formatFields: any[];
   set report(value: ReportInterface) {
     this._report = value;
 
@@ -216,15 +244,41 @@ export class ReportComponent implements OnInit {
     private obService: ObService
   ) {}
 
-  setChartType(type) {
-    this.chartType = type;
+  get formatFields() {
+    if (this._formatFields) {
+      return this._formatFields;
+    }
 
-    this.WidgetChange.emit({
-      inputs: {
-        chartType: type
+    if (!this.report || !this.report.fields) {
+      return [];
+    }
+    const fields = [];
+
+    this.report.fields.forEach(item => {
+      if (item.analytical) {
+        fields.push({
+          label: `${item.label} (${item.name})`,
+          value: item
+        });
       }
     });
+
+    this._formatFields = fields;
+    return fields;
   }
+  getFormatTypes() {
+    return [
+      {
+        label: `بررسی ${this.title} به تفکیک ویژگی`,
+        value: "1d"
+      },
+      {
+        label: `بررسی ${this.title} در طول زمان`,
+        value: "2d"
+      }
+    ];
+  }
+
   filterChartsByDataType(dataType): any[] {
     return _.where(this.charts, { dataType: dataType });
   }
@@ -238,11 +292,26 @@ export class ReportComponent implements OnInit {
 
   async generateFormat() {
     this.resultLoading = true;
+
+    if (this.format.type === "1d") {
+      this.format.method = "analyze1d";
+    }
+
+    if (this.format.type === "2d") {
+      this.format.method = "analyze2d";
+    }
+
+    if (this.format.type === "3d") {
+      this.format.method = "analyze3d";
+    }
+
     if (this.format) {
-      this.formattedReport = await this.reportService.formatReport(
+      this.formatted = await this.reportService.formatReport(
         this.report,
         this.format
       );
+
+      this.WidgetChange.emit({ inputs: { formatted: this.formatted } });
     }
     this.resultLoading = false;
   }
@@ -360,6 +429,34 @@ export class ReportComponent implements OnInit {
     this.formats = _.where(await this.dataService.list("format"), {
       entityName: this.report.entityName
     });
+
+    const fields = this.report.fields.filter(
+      p => ["_vdate", "_cdate", "_id"].indexOf(p.name) === -1
+    );
+
+    // fields.forEach(field => {
+    //   this.formats.push({
+    //     label: "تفکیک بر اساس کمیت " + field.label,
+    //     method: "groupByFieldAndCount",
+    //     options: { field },
+    //     dataType: "1d"
+    //   } as ReportFormatInterface);
+
+    //   fields.forEach(field2 => {
+    //     if (field.name === field2.name) {
+    //       return;
+    //     }
+    //     this.formats.push({
+    //       label: `تحلیل تغییرات ${this.entityLabelPlural ||
+    //         this.title} در بازه‌های زمانی به تفکیک ${field.label} و ${
+    //         field2.label
+    //       }`,
+    //       method: "groupByFieldAndCountOther",
+    //       options: { groupBy: field2, countBy: field },
+    //       dataType: "2d"
+    //     } as ReportFormatInterface);
+    //   });
+    // });
 
     this.resultLoading = false;
   }
@@ -502,9 +599,9 @@ export class ReportComponent implements OnInit {
       await this.refreshReports();
       await this.refreshFormats();
 
-      if (this.format && this.chartType) {
-        await this.generateFormat();
-      }
+      // if (this.format && this.chartType) {
+      //   await this.generateFormat();
+      // }
     } catch (error) {
       this.error = error;
     }

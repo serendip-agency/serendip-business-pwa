@@ -69,6 +69,21 @@ export const ReportsSchema: ReportInterface[] = [
             methodInputForm: "report-sync-field-query-range"
           }
         ]
+      },
+      {
+        enabled: true,
+        name: "_cuser",
+        label: "ثبت‌کننده",
+        analytical: true,
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "_vuser",
+        analytical: true,
+        link: "_user",
+        label: "آخرین تغییر‌دهنده",
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -90,6 +105,12 @@ export const ReportsSchema: ReportInterface[] = [
         template: { component: "ShortTextViewComponent" }
       }
     ]
+  },
+  {
+    name: "grid-default",
+    entityName: "grid",
+    label: "",
+    fields: []
   },
   {
     name: "report-default",
@@ -144,6 +165,25 @@ export const ReportsSchema: ReportInterface[] = [
         name: "icon",
         label: "آیکون",
         template: { component: "IconViewComponent" }
+      }
+    ]
+  },
+  {
+    name: "trigger-default",
+    entityName: "trigger",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام تریگر",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "entity",
+        label: "نام شی",
+        template: { component: "ShortTextViewComponent" }
       }
     ]
   },
@@ -211,8 +251,66 @@ export const ReportsSchema: ReportInterface[] = [
     fields: [
       {
         enabled: true,
-        name: "body",
+        name: "to",
+        label: "گیرنده ",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "message",
         label: "متن ",
+        template: { component: "LongTextViewComponent" }
+      }
+    ]
+  },
+  {
+    name: "telegram-user-default",
+    entityName: "telegramUser",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "first_name",
+        label: "نام ",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "last_name",
+        label: "نام خانوادگی ",
+        template: { component: "ShortTextViewComponent" }
+      },
+      ,
+      {
+        enabled: true,
+        name: "username",
+        label: "شناسه کاربری ",
+        template: { component: "ShortTextViewComponent" }
+      }
+    ]
+  },
+  {
+    name: "telegram-request-default",
+    entityName: "telegramRequest",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "type",
+        label: "نوع ",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "text",
+        label: "متن",
+        template: { component: "ShortTextViewComponent" }
+      },
+      ,
+      {
+        enabled: true,
+        name: "username",
+        label: "شناسه کاربری ",
         template: { component: "ShortTextViewComponent" }
       }
     ]

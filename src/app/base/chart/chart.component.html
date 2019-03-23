@@ -1,21 +1,58 @@
-<!-- <ngx-charts-line-chart
-  [id]="chartId + '2'"
-  [xAxis]="true"
-  [yAxis]="true"
-  [legendTitle]="'کاربران'"
-  
-  [view]="[500, 400]"
-  class="chart-container"
-  [class.loading]="loading"
-  [results]="data"
->
-</ngx-charts-line-chart> -->
 <div class="chart-wrapper">
+  <ngx-charts-line-chart
+    *ngIf="chartType == 'line'"
+    [id]="chartId"
+    [xAxis]="true"
+    [autoScale]="true"
+    [view]="[400, 400]"
+    [yAxis]="true"
+    class="chart-container"
+    [class.loading]="loading"
+    [timeline]="true"
+    [results]="data"
+  >
+  </ngx-charts-line-chart>
+
+  <ngx-charts-polar-chart
+    *ngIf="chartType == 'polar'"
+    [id]="chartId"
+    [xAxis]="true"
+    [view]="[400, 400]"
+    [autoScale]="true"
+    [yAxis]="true"
+    class="chart-container"
+    [class.loading]="loading"
+    [results]="data"
+  >
+  </ngx-charts-polar-chart>
+
+  <ngx-charts-bar-vertical-stacked
+    *ngIf="chartType == 'vertical-stacked-bar'"
+    [view]="[400, 400]"
+    [id]="chartId"
+    [xAxis]="true"
+    [yAxis]="true"
+    class="chart-container"
+    [class.loading]="loading"
+    [results]="data"
+  >
+  </ngx-charts-bar-vertical-stacked>
+
+  <ngx-charts-bar-vertical-2d
+    *ngIf="chartType == 'vertical-grouped-bar'"
+    [id]="chartId"
+    [view]="[400, 400]"
+    [xAxis]="true"
+    [yAxis]="true"
+    class="chart-container"
+    [class.loading]="loading"
+    [results]="data"
+  >
+  </ngx-charts-bar-vertical-2d>
+
   <ngx-charts-pie-chart
     *ngIf="chartType == 'pie'"
     [id]="chartId"
-    [legendTitle]="'کاربران'"
-    
     [view]="[400, 400]"
     [doughnut]="false"
     [labels]="true"
@@ -29,8 +66,6 @@
   <ngx-charts-pie-chart
     *ngIf="chartType == 'doughnut'"
     [id]="chartId"
-    [legendTitle]="'کاربران'"
-    
     [view]="[400, 400]"
     [doughnut]="true"
     [labels]="true"
@@ -44,10 +79,8 @@
   <ngx-charts-bar-horizontal
     *ngIf="chartType == 'horizontal-bar'"
     [id]="chartId"
-    [legendTitle]="'کاربران'"
     [yAxis]="true"
     [xAxis]="true"
-    
     [view]="[400, 400]"
     class="chart-container"
     [class.loading]="loading"
@@ -59,10 +92,8 @@
   <ngx-charts-bar-vertical
     *ngIf="chartType == 'vertical-bar'"
     [id]="chartId"
-    [legendTitle]="'کاربران'"
     [yAxis]="true"
     [xAxis]="true"
-    
     [view]="[400, 400]"
     class="chart-container"
     [class.loading]="loading"
@@ -102,7 +133,6 @@
 
   <ngx-charts-gauge
     *ngIf="chartType == 'gauge'"
-    
     [id]="chartId"
     [view]="[400, 400]"
     class="chart-container"

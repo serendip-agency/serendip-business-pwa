@@ -249,6 +249,125 @@ export const FormsSchema: FormInterface[] = [
     ]
   },
   {
+    name: "trigger-form",
+    entityName: "trigger",
+    parts: [
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "name",
+        inputs: {
+          label: "نام تریگر",
+          type: "single-line",
+          dir: "ltr"
+        }
+      },
+      // {
+      //   componentName: "FormTextInputComponent",
+      //   propertyName: "entity",
+      //   inputs: {
+      //     label: "نام شی",
+      //     type: "single-line",
+      //     dir: "ltr"
+      //   }
+      // },
+      {
+        label: "شرایط فعال سازی",
+        propertyType: "object",
+        propertyName: "condition",
+        parts: [
+          {
+            propertyName: "type",
+            componentName: "FormRadioInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "رویداد",
+              data: [
+                {
+                  label: "رویداد‌های اطلاعات",
+                  value: "form"
+                },
+                {
+                  label: "رویداد‌های گزارش",
+                  value: "report"
+                }
+              ]
+            }
+          },
+          {
+            if: '^form.type == "report"',
+            componentName: "FormChipsInputComponent",
+            propertyName: "reportId",
+            propertyType: "string",
+            cssClass: "w-60",
+            inputs: {
+              entityName: "report",
+              propertiesToSearch: ["name"],
+              propertiesSearchMode: "mix",
+              selectType: "single",
+              label: "گزارش مرتبط"
+            }
+          },
+          {
+            if: '^form.type == "form"',
+            propertyName: "formEvent",
+            componentName: "FormRadioInputComponent",
+            inputs: {
+              display: "inline-block",
+              label: "نوع تغییر فرم",
+              data: [
+                {
+                  label: "ثبت سند جدید",
+                  value: "insert"
+                },
+                {
+                  label: "ویرایش سند",
+                  value: "update"
+                },
+                {
+                  label: "حذف سند",
+                  value: "delete"
+                }
+              ]
+            }
+          },
+          {
+            if: '^form.type == "form" && ^form.formEvent != "delete"',
+            propertyName: "formHasFieldFilter",
+            componentName: "FormCheckboxInputComponent",
+            inputs: {
+              label: "فیلتر فیلد خاص"
+            }
+          },
+          {
+            if:
+              "^form.type == 'form' && ^form.formEvent != 'delete' && ^form.formHasFieldFilter",
+            componentName: "FormChipsInputComponent",
+            propertyName: "formId",
+            propertyType: "string",
+            cssClass: "w-60",
+            inputs: {
+              entityName: "form",
+              propertiesToSearch: ["name"],
+              propertiesSearchMode: "mix",
+              selectType: "single",
+              label: "فرم مرتبط"
+            }
+          },
+          {
+            if:
+              '^form.type == "form" && ^form.formEvent != "delete" && ^form.formHasFieldFilter && ^form.formId',
+            propertyName: "formFieldFilterModel",
+            componentName: "FormFieldValueCompareComponent",
+            inputs: {
+              formId: "^form.formId"
+            }
+          }
+        ]
+      }
+    ],
+    defaultModel: {}
+  },
+  {
     name: "entity-form",
     entityName: "entity",
     parts: [
@@ -311,7 +430,6 @@ export const FormsSchema: FormInterface[] = [
           ]
         }
       },
-
       {
         propertyName: "method",
         componentName: "FormSelectInputComponent",
@@ -389,6 +507,22 @@ export const FormsSchema: FormInterface[] = [
             inputs: {
               label: "لیبل فیلد",
               type: "single-line"
+            }
+          },
+          {
+            propertyName: "type",
+            componentName: "FormTextInputComponent",
+            inputs: {
+              label: "نوع فیلد",
+              type: "single-line",
+              dir: "ltr"
+            }
+          },
+          {
+            propertyName: "analytical",
+            componentName: "FormToggleInputComponent",
+            inputs: {
+              label: "مناسب برای تحلیل"
             }
           },
           {
@@ -779,43 +913,51 @@ export const FormsSchema: FormInterface[] = [
     name: "sms-form",
     entityName: "sms",
     parts: [
+      // {
+      //   componentName: "FormChipsInputComponent",
+      //   propertyName: "recipients",
+      //   propertyType: "string",
+      //   cssClass: "w-60",
+      //   inputs: {
+      //     entityName: "people",
+      //     propertiesToSearch: ["firstName", "lastName", "emails"],
+      //     propertiesSearchMode: "mix",
+      //     selectType: "multiple",
+      //     label: "دریافت کنندگان"
+      //   }
+      // },
+      // {
+      //   componentName: "FormChipsInputComponent",
+      //   propertyName: "template",
+      //   propertyType: "string",
+      //   cssClass: "w-60",
+      //   inputs: {
+      //     entityName: "emailTemplate",
+      //     propertiesToSearch: ["name"],
+      //     propertiesSearchMode: "mix",
+      //     selectType: "single",
+      //     label: "قالب پیامک"
+      //   }
+      // },
+      // {
+      //   componentName: "FormDateInputComponent",
+      //   propertyName: "jdate",
+      //   propertyType: "string",
+      //   inputs: {
+      //     label: "ارسال در تاریخ"
+      //   }
+      // },
       {
-        componentName: "FormChipsInputComponent",
-        propertyName: "recipients",
-        propertyType: "string",
-        cssClass: "w-60",
+        componentName: "FormTextInputComponent",
+        propertyName: "to",
         inputs: {
-          entityName: "people",
-          propertiesToSearch: ["firstName", "lastName", "emails"],
-          propertiesSearchMode: "mix",
-          selectType: "multiple",
-          label: "دریافت کنندگان"
-        }
-      },
-      {
-        componentName: "FormChipsInputComponent",
-        propertyName: "template",
-        propertyType: "string",
-        cssClass: "w-60",
-        inputs: {
-          entityName: "emailTemplate",
-          propertiesToSearch: ["name"],
-          propertiesSearchMode: "mix",
-          selectType: "single",
-          label: "قالب پیامک"
-        }
-      },
-      {
-        componentName: "FormDateInputComponent",
-        propertyName: "jdate",
-        propertyType: "string",
-        inputs: {
-          label: "ارسال در تاریخ"
+          label: "گیرنده",
+          dir: "ltr"
         }
       },
       {
         componentName: "FormTextInputComponent",
-        propertyName: "firstName",
+        propertyName: "message",
         inputs: {
           label: "متن پیامک",
           type: "multi-line"

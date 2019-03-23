@@ -118,7 +118,8 @@ import { FormCodeInputComponent } from "./base/form/form-code-input/form-code-in
 import { IconViewComponent } from "./base/report/icon-view/icon-view.component";
 import { FormStorageInputComponent } from "./base/form/form-storage-input/form-storage-input.component";
 import { FormHtmlInputComponent } from "./base/form/form-html-input/form-html-input.component";
-import { SafePipe } from './safe.pipe';
+import { SafePipe } from "./safe.pipe";
+import { FormFieldValueCompareComponent } from "./base/form/form-field-value-compare/form-field-value-compare.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -166,6 +167,7 @@ export const dynamicComponents = [
   FormCodeInputComponent,
   FormStorageInputComponent,
   FormHtmlInputComponent,
+  FormFieldValueCompareComponent,
 
   // Business related form parts
 

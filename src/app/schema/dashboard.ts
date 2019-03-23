@@ -32,6 +32,69 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     ]
   },
   {
+    name: "sms",
+    title: "پیامک",
+    icon: "sms-bold-1",
+    tabs: [
+      {
+        status: "default",
+        title: "گزارش‌ پیامک‌ها",
+        icon: "sms-bold-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "sms-default",
+              formName: "sms-form",
+              icon: "sms-bold-1",
+              entityLabelSingular: "پیامک",
+              title: "پیامک‌ها"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "telegram",
+    title: "تلگرام",
+    icon: "send",
+    tabs: [
+      {
+        status: "default",
+        title: "گزارش‌ کاربران بات تلگرام",
+        icon: "send",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "telegram-user-default",
+              icon: "send",
+              entityLabelSingular: "کاربر",
+              title: "کاربران بات تلگرام"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "گزارش‌ درخواست‌های بات تلگرام",
+        icon: "send",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "telegram-request-default",
+              icon: "send",
+              entityLabelSingular: "درخواست",
+              title: "درخواست‌های بات تلگرام"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
     name: "settings",
     title: "تنظیمات",
     icon: "settings-1",
@@ -89,6 +152,23 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       },
       {
         status: "default",
+        title: "تاریخچه",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "grid-default",
+              formName: "grid-form",
+              icon: "tab-4",
+              entityLabelSingular: "گرید",
+              title: "تاریخچه استفاده از گرید"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
         title: "داشبورد‌ها",
         icon: "tab-3",
         widgets: [
@@ -134,6 +214,23 @@ export const DashboardSchema: DashboardSectionInterface[] = [
               icon: "filter-6",
               entityLabelSingular: "گرارش",
               title: "گزارشات"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "تریگرها",
+        icon: "complaints-customize-customer-voice-3",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "trigger-default",
+              formName: "trigger-form",
+              icon: "complaints-customize-customer-voice-3",
+              entityLabelSingular: "تریگر",
+              title: "تریگر‌ها"
             }
           }
         ]

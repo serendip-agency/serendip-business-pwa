@@ -11,7 +11,7 @@ export class FormCheckboxInputComponent implements OnInit {
   trackByFn(index: any, item: any) { return index; }
 
 
-  private _model:any;
+  private _model: any;
 
   @Input() set model(value: any) {
     this._model = value;
@@ -19,13 +19,14 @@ export class FormCheckboxInputComponent implements OnInit {
 
   get model():   any {
 
-    if(this._model)
+    if (this._model) {
     return this._model;
-    else
-    if(this.data)
+    } else
+    if (this.data) {
     this._model = [];
-    else
+    } else {
     this._model = false;
+    }
 
     return this._model;
   }
@@ -45,16 +46,20 @@ export class FormCheckboxInputComponent implements OnInit {
 
 // console.log(event,item,this.model,item.value || item);
 
-    if (!this.model)
+    if (!this.model) {
       this.model = [];
+    }
 
-    if (!event.checked)
-      if (this.model.indexOf(item.value  ||item) != -1)
-        this.model.splice(this.model.indexOf(item.value || item), 1)
+    if (!event.checked) {
+      if (this.model.indexOf(item.value  || item) !== -1) {
+        this.model.splice(this.model.indexOf(item.value || item), 1);
+      }
+    }
 
 
-    if (event.checked)
+    if (event.checked) {
       this.model.push(item.value  || item);
+    }
 
 
     this.modelChange.emit(this.model);

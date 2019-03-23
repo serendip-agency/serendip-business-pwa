@@ -7,7 +7,11 @@
       *ngIf="getDynamicPart(part.componentName)"
       [ndcDynamicInputs]="
         extendObj(
-          { model: model[part.propertyName], document: document },
+          {
+            model: model[part.propertyName],
+            document: document,
+            formModel: model
+          },
           part.inputs || {}
         )
       "

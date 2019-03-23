@@ -12,6 +12,7 @@ import { IdbService } from "./idb.service";
 import { WebWorkerService } from "./web-worker.service";
 import ObjectID from "bson-objectid";
 import { ObService } from "./ob.service";
+import * as moment from "moment-jalaali";
 
 @Injectable({
   providedIn: "root"
@@ -102,6 +103,7 @@ export class ReportService {
       this.formatterBusy = true;
       // report = await this.generate(_.omit(report, "data"));
 
+      console.log(format.method);
       // TODO: if for offline reports
       report = await this.getAsyncReportFormatMethods()[format.method]({
         report: _.clone(report),
@@ -233,12 +235,155 @@ export class ReportService {
         //   return input.report;
         // }
       },
-      groupByQueries: async input => {
-        const formatOptions: { queries: FieldQueryInterface[] } = {
-          queries: input.format.options.queries
+      analyze2d: async input => {
+        const formatOptions: {
+          dateBy: ReportFieldInterface;
+          groupBy: ReportFieldInterface;
+          dateRangeCount: number;
+          dateRangeUnit: moment.JUnitOfTime | moment.unitOfTime.All;
+        } = {
+          dateBy: input.format.options.countBy,
+          groupBy: input.format.options.groupBy,
+          dateRangeUnit: input.format.options.dateRangeUnit || "minute",
+          dateRangeCount: input.format.options.dateRangeCount || 30
         };
 
-        return input.report;
+        const r = input.report;
+        let dataGroups: { [key: string]: EntityModel[] } = {};
+        // if (formatOptions.groupBy.name.indexOf("date") !== -1) {
+        //   r.data = _.groupBy(r.data, p =>
+        //     moment(p[formatOptions.groupBy.name]).format("YYYY-MM-DD")
+        //   ) as any;
+        // } else {
+
+        // }
+
+        if (!formatOptions.groupBy) {
+          dataGroups = { all: r.data } as any;
+        } else {
+          dataGroups = _.groupBy(r.data, p =>
+            p[formatOptions.groupBy.name] === "undefined"
+              ? "n/a"
+              : p[formatOptions.groupBy.name] || "n/a"
+          ) as any;
+        }
+
+        console.log(dataGroups);
+
+        r.data = [];
+
+        for (const groupKey in dataGroups) {
+          // group["n/a"] =
+          //   [...(group[""] || []), ...(group["undefined"] || [])] || [];
+          // delete group[""];
+          // delete group["undefined"];
+          const dataGroup = dataGroups[groupKey];
+
+          const series = [];
+
+          let dateRangeFormat = "YYYY-MM-DD";
+
+          if (formatOptions.dateRangeUnit === "minute") {
+            dateRangeFormat = "kk-mm";
+          }
+
+          if (formatOptions.dateRangeUnit === "hour") {
+            dateRangeFormat = "kk";
+          }
+
+          if (formatOptions.dateRangeUnit === "month") {
+            dateRangeFormat = "YYYY-MM";
+          }
+
+          if (formatOptions.dateRangeUnit === "year") {
+            dateRangeFormat = "YYYY-MM";
+          }
+
+          if (formatOptions.dateRangeUnit === "jMonth") {
+            dateRangeFormat = "jYYYY-jMM";
+          }
+
+          if (formatOptions.dateRangeUnit === "jYear") {
+            dateRangeFormat = "jYYYY";
+          }
+
+          const timeRanges = _.range(formatOptions.dateRangeCount).map(n => {
+            return moment()
+              .add(
+                (n - formatOptions.dateRangeCount) as any,
+                formatOptions.dateRangeUnit
+              )
+              .format(dateRangeFormat);
+          });
+
+          let count = 0;
+          // tslint:disable-next-line:forin
+          for (const timeRange of timeRanges) {
+            for (const row of dataGroup) {
+              if (
+                moment(
+                  row[
+                    formatOptions.dateBy ? formatOptions.dateBy.name : "_vdate"
+                  ]
+                ).format(dateRangeFormat) === timeRange
+              ) {
+                count++;
+              }
+            }
+
+            series.push({
+              name: timeRange,
+              value: count
+            });
+          }
+
+          r.data.push({
+            name: groupKey,
+            series
+          });
+        }
+
+        r.fields = [
+          {
+            label: formatOptions.groupBy ? formatOptions.groupBy.label : "all",
+            name: "name",
+            enabled: true
+          },
+          { label: "تعداد", name: "series", enabled: true }
+        ];
+        r.count = r.data.length;
+
+        console.log(r.data);
+
+        //        r.data = r.data.sort((a, b) => b.value - a.value);
+        return r;
+      },
+      analyze1d: async input => {
+        const formatOptions: { groupBy: ReportFieldInterface } = {
+          groupBy: input.format.options.groupBy
+        };
+        const r = input.report;
+
+        r.data = _.groupBy(r.data, p => p[formatOptions.groupBy.name]) as any;
+
+        r.data["n/a"] =
+          [...(r.data[""] || []), ...(r.data["undefined"] || [])] || [];
+        delete r.data[""];
+        delete r.data["undefined"];
+        r.data = Object.keys(r.data).map(p => {
+          return {
+            name: p,
+            value: r.data[p].length || 0
+            //   data: r.data[p] || []
+          };
+        });
+        r.fields = [
+          { label: formatOptions.groupBy.label, name: "name", enabled: true },
+          { label: "تعداد", name: "value", enabled: true }
+        ];
+        r.count = r.data.length;
+        r.data = r.data.sort((a, b) => b.value - a.value);
+        return r;
       }
     };
   }
@@ -252,6 +397,22 @@ export class ReportService {
     }) => Promise<any>;
   } {
     return {
+      findEntityById: async input => {
+        const methodOptions: { entity: string } = input.field.methodOptions;
+
+        return await this.dataService.details(
+          methodOptions.entity,
+          input.document[input.field.name]
+        );
+      },
+      findEntitiesById: async input => {
+        const methodOptions: { entity: string } = input.field.methodOptions;
+
+        return await this.dataService.details(
+          methodOptions.entity,
+          input.document[input.field.name]
+        );
+      },
       joinFields: async input => {
         const methodOptions: { fields: string[]; separator: string } =
           input.field.methodOptions;

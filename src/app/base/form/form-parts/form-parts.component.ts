@@ -26,6 +26,7 @@ import { FormToggleInputComponent } from "../form-toggle-input/form-toggle-input
 import { FormCodeInputComponent } from "../form-code-input/form-code-input.component";
 import { FormStorageInputComponent } from "../form-storage-input/form-storage-input.component";
 import { FormHtmlInputComponent } from "../form-html-input/form-html-input.component";
+import { FormFieldValueCompareComponent } from "../form-field-value-compare/form-field-value-compare.component";
 
 @Component({
   selector: "app-form-parts",
@@ -61,6 +62,7 @@ export class FormPartsComponent implements OnInit {
     FormFileInputComponent,
     FormIconInputComponent,
     FormCodeInputComponent,
+    FormFieldValueCompareComponent,
     FormStorageInputComponent
   };
   constructor(public ref: ChangeDetectorRef) {}
@@ -117,6 +119,28 @@ export class FormPartsComponent implements OnInit {
       }
       return true;
     });
+  }
+
+  formatPartInput(input) {
+    if (!input) {
+      return {};
+    }
+
+    Object.keys(input).forEach(key => {
+      if (input[key].indexOf("^form") !== -1) {
+        try {
+          // tslint:disable-next-line:no-eval
+          input[key] = eval(
+            input[key].replace(
+              /\^form/g,
+              "(" + JSON.stringify(this.model) + ")"
+            )
+          );
+        } catch (error) {}
+      }
+    });
+
+    return input;
   }
 
   extendObj(obj1, obj2) {
