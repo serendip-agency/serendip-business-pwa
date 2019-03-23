@@ -15,16 +15,16 @@ export class ChartComponent implements OnInit {
   @Input() data  ;
 
   ngOnInit() {
-    setTimeout(() => {
-      _.forEach(document.querySelectorAll(`.chart-container text`), elem => {
-        elem.innerHTML = sutils.text.replaceEnglishDigitsWithPersian(
-          elem.innerHTML
-        );
-      });
+  //  setTimeout(() => {
+      // _.forEach(document.querySelectorAll(`.chart-container text`), elem => {
+      //   elem.innerHTML = sutils.text.replaceEnglishDigitsWithPersian(
+      //     elem.innerHTML
+      //   );
+      // });
 
       setTimeout(() => {
         this.loading = false;
       }, 500);
-    }, 100);
+  //  }, 100);
   }
 }

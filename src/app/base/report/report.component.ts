@@ -23,8 +23,9 @@ import { DashboardService } from "src/app/dashboard.service";
 import { DataService } from "src/app/data.service";
 import { IdbService } from "src/app/idb.service";
 import { ObService } from "src/app/ob.service";
-import { ReportService } from "src/app/report.service";
+import { ReportService, DateUnitToFormatMap } from "src/app/report.service";
 import * as _ from "underscore";
+import * as moment from "moment-jalaali";
 
 import { LongTextViewComponent } from "../report/long-text-view/long-text-view.component";
 import { ObjectidViewComponent } from "../report/objectid-view/objectid-view.component";
@@ -170,7 +171,9 @@ export class ReportComponent implements OnInit {
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
 
-  @Input() format: ReportFormatInterface = { options: {} };
+  @Input() format: ReportFormatInterface = { options: {
+    
+  } };
   @Input() title: string;
   @Input() entityName: string;
   @Input() subtitle: string;
@@ -242,7 +245,9 @@ export class ReportComponent implements OnInit {
     private changeRef: ChangeDetectorRef,
     private calendarService: CalendarService,
     private obService: ObService
-  ) {}
+  ) {
+    moment.loadPersian();
+  }
 
   get formatFields() {
     if (this._formatFields) {
@@ -316,6 +321,29 @@ export class ReportComponent implements OnInit {
     this.resultLoading = false;
   }
 
+  formatDateRangeUnitChange(event) {
+    if (!this.format.options.dateRangeEnd) {
+      this.format.options.dateRangeEnd = moment()
+        .add(this.format.options.dateRangeCount, event)
+        .format(DateUnitToFormatMap[event]);
+    } else {
+      try {
+        this.format.options.dateRangeEnd = moment(
+          this.format.options.dateRangeEnd,
+          DateUnitToFormatMap[this.format.options.dateRangeUnit]
+        ).format(DateUnitToFormatMap[event]);
+      } catch (error) {
+        this.format.options.dateRangeEnd = moment()
+          .add(this.format.options.dateRangeCount, event)
+          .format(DateUnitToFormatMap[event]);
+      }
+    }
+
+    this.format.options.dateRangeUnit = event;
+    this.WidgetChange.emit({ inputs: { format: this.format } });
+
+    this.generateFormat();
+  }
   reportFieldDrop(event) {
     this.fieldDragging = null;
     if (!event) {

@@ -13,6 +13,34 @@ import { WebWorkerService } from "./web-worker.service";
 import ObjectID from "bson-objectid";
 import { ObService } from "./ob.service";
 import * as moment from "moment-jalaali";
+import { spawn } from "threads";
+export const DateUnitToFormatMap = {
+  minute: "YYYY-MM-DD kk:mm",
+  hour: "YYYY-MM-DD kk",
+  day: "jYYYY/jMM/jDD",
+  month: "YYYY-MM",
+  year: "YYYY",
+  jMonth: "jYYYY/jMM",
+  jYear: "jYYYY"
+};
+  // if (formatOptions.dateRangeUnit === "minute") {
+  //   formatOptions.dateRangeFormat = "kk-mm";
+  // }
+  // if (formatOptions.dateRangeUnit === "hour") {
+  //   formatOptions.dateRangeFormat = "kk";
+  // }
+  // if (formatOptions.dateRangeUnit === "month") {
+  //   formatOptions.dateRangeFormat = "YYYY-MM";
+  // }
+  // if (formatOptions.dateRangeUnit === "year") {
+  //   formatOptions.dateRangeFormat = "YYYY-MM";
+  // }
+  // if (formatOptions.dateRangeUnit === "jMonth") {
+  //   formatOptions.dateRangeFormat = "jYYYY-jMM";
+  // }
+  // if (formatOptions.dateRangeUnit === "jYear") {
+  //   formatOptions.dateRangeFormat = "jYYYY";
+  // }
 
 @Injectable({
   providedIn: "root"
@@ -25,7 +53,9 @@ export class ReportService {
     private idbService: IdbService,
     private obService: ObService,
     private webWorker: WebWorkerService
-  ) {}
+  ) {
+    moment.loadPersian();
+  }
 
   async generate(report: ReportInterface) {
     if (!report.fields) {
@@ -103,7 +133,6 @@ export class ReportService {
       this.formatterBusy = true;
       // report = await this.generate(_.omit(report, "data"));
 
-      console.log(format.method);
       // TODO: if for offline reports
       report = await this.getAsyncReportFormatMethods()[format.method]({
         report: _.clone(report),
@@ -235,128 +264,41 @@ export class ReportService {
         //   return input.report;
         // }
       },
-      analyze2d: async input => {
-        const formatOptions: {
+      analyze2d: async _input => {
+        const _formatOptions: {
           dateBy: ReportFieldInterface;
           groupBy: ReportFieldInterface;
           dateRangeCount: number;
+          dateRangeFormat: string;
+          dateRangeEnd: string;
           dateRangeUnit: moment.JUnitOfTime | moment.unitOfTime.All;
         } = {
-          dateBy: input.format.options.countBy,
-          groupBy: input.format.options.groupBy,
-          dateRangeUnit: input.format.options.dateRangeUnit || "minute",
-          dateRangeCount: input.format.options.dateRangeCount || 30
+          dateBy: _input.format.options.countBy,
+          groupBy: _input.format.options.groupBy,
+          dateRangeUnit: _input.format.options.dateRangeUnit || "minute",
+          dateRangeEnd: _input.format.options.dateRangeEnd,
+          dateRangeFormat: _input.format.options.dateRangeFormat || "kk-mm",
+          dateRangeCount: _input.format.options.dateRangeCount || 30
         };
 
-        const r = input.report;
-        let dataGroups: { [key: string]: EntityModel[] } = {};
-        // if (formatOptions.groupBy.name.indexOf("date") !== -1) {
-        //   r.data = _.groupBy(r.data, p =>
-        //     moment(p[formatOptions.groupBy.name]).format("YYYY-MM-DD")
-        //   ) as any;
-        // } else {
+        const thread = spawn(location.origin + "/workers/analyze2d.js");
 
-        // }
-
-        if (!formatOptions.groupBy) {
-          dataGroups = { all: r.data } as any;
-        } else {
-          dataGroups = _.groupBy(r.data, p =>
-            p[formatOptions.groupBy.name] === "undefined"
-              ? "n/a"
-              : p[formatOptions.groupBy.name] || "n/a"
-          ) as any;
-        }
-
-        console.log(dataGroups);
-
-        r.data = [];
-
-        for (const groupKey in dataGroups) {
-          // group["n/a"] =
-          //   [...(group[""] || []), ...(group["undefined"] || [])] || [];
-          // delete group[""];
-          // delete group["undefined"];
-          const dataGroup = dataGroups[groupKey];
-
-          const series = [];
-
-          let dateRangeFormat = "YYYY-MM-DD";
-
-          if (formatOptions.dateRangeUnit === "minute") {
-            dateRangeFormat = "kk-mm";
-          }
-
-          if (formatOptions.dateRangeUnit === "hour") {
-            dateRangeFormat = "kk";
-          }
-
-          if (formatOptions.dateRangeUnit === "month") {
-            dateRangeFormat = "YYYY-MM";
-          }
-
-          if (formatOptions.dateRangeUnit === "year") {
-            dateRangeFormat = "YYYY-MM";
-          }
-
-          if (formatOptions.dateRangeUnit === "jMonth") {
-            dateRangeFormat = "jYYYY-jMM";
-          }
-
-          if (formatOptions.dateRangeUnit === "jYear") {
-            dateRangeFormat = "jYYYY";
-          }
-
-          const timeRanges = _.range(formatOptions.dateRangeCount).map(n => {
-            return moment()
-              .add(
-                (n - formatOptions.dateRangeCount) as any,
-                formatOptions.dateRangeUnit
-              )
-              .format(dateRangeFormat);
-          });
-
-          let count = 0;
-          // tslint:disable-next-line:forin
-          for (const timeRange of timeRanges) {
-            for (const row of dataGroup) {
-              if (
-                moment(
-                  row[
-                    formatOptions.dateBy ? formatOptions.dateBy.name : "_vdate"
-                  ]
-                ).format(dateRangeFormat) === timeRange
-              ) {
-                count++;
-              }
-            }
-
-            series.push({
-              name: timeRange,
-              value: count
+        return new Promise((resolve, reject) => {
+          thread
+            .send(
+              JSON.stringify({
+                _input,
+                _formatOptions
+              })
+            )
+            .on("message", output => {
+              resolve(output);
+              thread.kill();
+            })
+            .on("error", e => {
+              reject(e);
             });
-          }
-
-          r.data.push({
-            name: groupKey,
-            series
-          });
-        }
-
-        r.fields = [
-          {
-            label: formatOptions.groupBy ? formatOptions.groupBy.label : "all",
-            name: "name",
-            enabled: true
-          },
-          { label: "تعداد", name: "series", enabled: true }
-        ];
-        r.count = r.data.length;
-
-        console.log(r.data);
-
-        //        r.data = r.data.sort((a, b) => b.value - a.value);
-        return r;
+        }).catch(e => console.log(e)) as any;
       },
       analyze1d: async input => {
         const formatOptions: { groupBy: ReportFieldInterface } = {
@@ -387,6 +329,7 @@ export class ReportService {
       }
     };
   }
+
   /**
    * will return al async field formatting method available. each method takes document and field as input and return value to set on field
    */

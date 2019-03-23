@@ -164,22 +164,22 @@
           </div>
           <br />
 
-          <div class="double-field">
-            <div class="w-30">
+          <div class="double-field" style="max-width: 400px">
+            <div class="w-40">
               <app-form-select-input
                 [data]="dateRangeUnitsToSelect"
                 [label]="'بازه‌های زمانی'"
                 [selectType]="'single'"
                 (modelChange)="
-                  format.options.dateRangeUnit = $event;
-                  generateFormat();
-                  WidgetChange.emit({ inputs: { format: format } })
+               
+                  formatDateRangeUnitChange($event)
                 "
+                [modelTrackBy]="['unit', 'format']"
                 [model]="format.options.dateRangeUnit"
               ></app-form-select-input>
             </div>
 
-            <div class="w-30">
+            <div class="w-20">
               <app-form-text-input
                 [label]="'تعداد بازه'"
                 dir="ltr"
@@ -189,6 +189,19 @@
                   WidgetChange.emit({ inputs: { format: format } })
                 "
                 [model]="format.options.dateRangeCount"
+              ></app-form-text-input>
+            </div>
+
+            <div class="w-40">
+              <app-form-text-input
+                [label]="'تا تاریخ'"
+                dir="ltr"
+                (modelChange)="
+                  format.options.dateRangeEnd = $event;
+                  generateFormat();
+                  WidgetChange.emit({ inputs: { format: format } })
+                "
+                [model]="format.options.dateRangeEnd"
               ></app-form-text-input>
             </div>
           </div>
@@ -424,7 +437,7 @@
       </button>
 
       <button
-        *ngIf="format == 'chart'"
+        *ngIf="mode == 'chart'"
         class="sp-button-icon pull-left"
         (click)="generateFormat()"
       >

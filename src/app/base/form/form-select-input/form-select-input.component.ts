@@ -14,6 +14,7 @@ export class FormSelectInputComponent implements OnInit {
 
   @Input() selectType: "single" | "multiple" = "multiple";
 
+  @Input() modelTrackBy;
   @Input() label: string;
   @Input() data: any;
 
@@ -37,6 +38,11 @@ export class FormSelectInputComponent implements OnInit {
   compareObjects(o1, o2) {
     if (!o1 && !o2) {
       return false;
+    }
+
+
+    if (this.modelTrackBy) {
+      return this.modelTrackBy.map(p => o1.value[p] === o2.value[p]).indexOf(false) === -1;
     }
 
     try {
