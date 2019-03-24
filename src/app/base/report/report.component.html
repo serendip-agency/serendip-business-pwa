@@ -40,7 +40,7 @@
         <img [src]="'assets/icons/check-list-2.svg'" />
 
         <span>
-          {{ report?.data?.length | rpd }}
+          {{ report?.count | rpd }}
           {{ report?.offline ? "آفلاین" : "" }}
         </span>
       </div>
@@ -91,7 +91,7 @@
           <br />
           <app-form-radio-input
             *ngIf="format.type && formatFields.length > 0"
-            [model]="format.options.groupBy"
+            [model]="format?.options?.groupBy"
             [label]="'ویژگی‌ای را برای تفکیک انتخاب کنید'"
             [data]="formatFields"
             [display]="'block'"
@@ -103,7 +103,7 @@
           <br />
           <app-form-toggle-input
             *ngIf="
-              (format.options?.groupBy && format.type == '2d') ||
+              (format?.options?.groupBy && format.type == '2d') ||
               format.type == '3d'
             "
             [model]="format.type == '3d'"
@@ -155,25 +155,22 @@
         <div class="form-wrapper">
           <div class="title" *ngIf="format.type == '1d'">
             بررسی {{ title }} به تفکیک
-            {{ format.options.groupBy.label }}
+            {{ format?.options?.groupBy?.label }}
           </div>
 
           <div class="title" *ngIf="format.type == '2d'">
             بررسی {{ title }} در طول زمان به تفکیک
-            {{ format.options.groupBy.label }}
+            {{ format?.options?.groupBy?.label }}
           </div>
           <br />
 
           <div class="double-field" style="max-width: 400px">
-            <div class="w-40">
+            <div class="w-20">
               <app-form-select-input
                 [data]="dateRangeUnitsToSelect"
                 [label]="'بازه‌های زمانی'"
                 [selectType]="'single'"
-                (modelChange)="
-               
-                  formatDateRangeUnitChange($event)
-                "
+                (modelChange)="formatDateRangeUnitChange($event)"
                 [modelTrackBy]="['unit', 'format']"
                 [model]="format.options.dateRangeUnit"
               ></app-form-select-input>
@@ -192,8 +189,8 @@
               ></app-form-text-input>
             </div>
 
-            <div class="w-40">
-              <app-form-text-input
+            <div class="w-60">
+              <app-form-date-input
                 [label]="'تا تاریخ'"
                 dir="ltr"
                 (modelChange)="
@@ -202,7 +199,7 @@
                   WidgetChange.emit({ inputs: { format: format } })
                 "
                 [model]="format.options.dateRangeEnd"
-              ></app-form-text-input>
+              ></app-form-date-input>
             </div>
           </div>
         </div>
@@ -429,11 +426,10 @@
 
       <button
         *ngIf="mode == 'chart'"
-        class="sp-button-icon with-text"
+        class="sp-button-icon pull-left"
         (click)="WidgetChange.emit({ inputs: { mode: 'format' } })"
       >
         <img src="assets/icons/settings-adjust-reg.svg" />
-        <span>تنظیمات</span>
       </button>
 
       <button

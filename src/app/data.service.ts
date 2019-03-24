@@ -322,7 +322,8 @@ export class DataService {
         return (await this.request({
           method: "POST",
           path: `/api/entity/${controller}/list`,
-          timeout: 1000,
+          timeout: 3000,
+          retry: false,
           model: {
             skip: skip,
             limit: limit
@@ -660,23 +661,14 @@ export class DataService {
 
     let lastSync = 0;
 
-    try {
-      const syncKeys = _.filter(await pullStore.keys(), (item: string) => {
-        return item.toString().indexOf(collection + "_") === 0;
-      }).reverse();
+    const syncKeys = _.filter(await pullStore.keys(), (item: string) => {
+      return item.toString().indexOf(collection + "_") === 0;
+    }).reverse();
 
-      if (syncKeys && syncKeys.length > 0) {
-        // tslint:disable-next-line:radix
-        lastSync = parseInt(syncKeys[0].split("_")[1]);
-      }
-    } catch (e) {
-      console.log(e);
+    if (syncKeys && syncKeys.length > 0) {
+      // tslint:disable-next-line:radix
+      lastSync = parseInt(syncKeys[0].split("_")[1]);
     }
-
-    if (lastSync) {
-      // TODO Delete removed items
-    }
-
     const dataIdb = await this.idbService.dataIDB();
     let changes;
     let changesCount;
@@ -785,7 +777,7 @@ export class DataService {
   public async pullCollections(
     callback?: (collectionName: string, error?: any) => void
   ) {
-    const baseCollections = ["dashboard", "entity", "form", "people", "report"];
+    const baseCollections = ["dashboard", "entity", "form", "report"];
     // FormsSchema.forEach(schema => {
     //   if (schema.entityName) {
     //     if (collections.indexOf(schema.entityName) === -1) {
@@ -820,29 +812,36 @@ export class DataService {
     callback?: (collectionName: string, error: any) => void
   ) {
     await promiseSerial(
-      SearchSchema.map(schema => {
-        return () =>
-          new Promise(async (resolve, reject) => {
-            const docIndex = new DocumentIndex({
-              filter: str => {
-                return str;
-              }
+      ReportsSchema.concat(await this.list("report"))
+        .filter(p => p.entityName)
+        .map(schema => {
+          console.log(schema);
+          return () =>
+            new Promise(async (resolve, reject) => {
+              const docIndex = new DocumentIndex({
+                filter: str => {
+                  return str;
+                }
+              });
+              const docs = await this.list(schema.entityName, 0, 0, true);
+
+              schema.fields
+                .filter(p => p.indexing)
+                .forEach(field => {
+                  docIndex.addField(field.name, {
+                    getter: doc => doc[field.name] || ""
+                  });
+                });
+
+              docs.forEach(doc => {
+                docIndex.add(doc._id, doc);
+              });
+
+              this.collectionsTextIndexCache[schema.entityName] = docIndex;
+              console.log(this.collectionsTextIndexCache);
+              resolve();
             });
-            const docs = await this.list(schema.entityName, 0, 0, true);
-
-            schema.fields.forEach(field => {
-              docIndex.addField(field.name, field.opts);
-            });
-
-            docs.forEach(doc => {
-              docIndex.add(doc._id, doc);
-            });
-
-            this.collectionsTextIndexCache[schema.entityName] = docIndex;
-
-            resolve();
-          });
-      }),
+        }),
       { parallelize: 1 }
     );
   }

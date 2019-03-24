@@ -5,7 +5,7 @@ import { text } from "serendip-utility";
 })
 export class RpdPipe implements PipeTransform {
   transform(value: string): any {
-    if (!value) return "";
-    return text.replaceEnglishDigitsWithPersian(value);
+    if (!value) { return ""; }
+    return text.replaceEnglishDigitsWithPersian(value.toString());
   }
 }

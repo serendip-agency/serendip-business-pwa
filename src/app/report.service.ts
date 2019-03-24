@@ -23,24 +23,24 @@ export const DateUnitToFormatMap = {
   jMonth: "jYYYY/jMM",
   jYear: "jYYYY"
 };
-  // if (formatOptions.dateRangeUnit === "minute") {
-  //   formatOptions.dateRangeFormat = "kk-mm";
-  // }
-  // if (formatOptions.dateRangeUnit === "hour") {
-  //   formatOptions.dateRangeFormat = "kk";
-  // }
-  // if (formatOptions.dateRangeUnit === "month") {
-  //   formatOptions.dateRangeFormat = "YYYY-MM";
-  // }
-  // if (formatOptions.dateRangeUnit === "year") {
-  //   formatOptions.dateRangeFormat = "YYYY-MM";
-  // }
-  // if (formatOptions.dateRangeUnit === "jMonth") {
-  //   formatOptions.dateRangeFormat = "jYYYY-jMM";
-  // }
-  // if (formatOptions.dateRangeUnit === "jYear") {
-  //   formatOptions.dateRangeFormat = "jYYYY";
-  // }
+// if (formatOptions.dateRangeUnit === "minute") {
+//   formatOptions.dateRangeFormat = "kk-mm";
+// }
+// if (formatOptions.dateRangeUnit === "hour") {
+//   formatOptions.dateRangeFormat = "kk";
+// }
+// if (formatOptions.dateRangeUnit === "month") {
+//   formatOptions.dateRangeFormat = "YYYY-MM";
+// }
+// if (formatOptions.dateRangeUnit === "year") {
+//   formatOptions.dateRangeFormat = "YYYY-MM";
+// }
+// if (formatOptions.dateRangeUnit === "jMonth") {
+//   formatOptions.dateRangeFormat = "jYYYY-jMM";
+// }
+// if (formatOptions.dateRangeUnit === "jYear") {
+//   formatOptions.dateRangeFormat = "jYYYY";
+// }
 
 @Injectable({
   providedIn: "root"
@@ -62,10 +62,11 @@ export class ReportService {
       report.fields = [];
     }
 
-    if (!report.data) {
+    if (!report.data || report.data.length === 0) {
       await this.dataService.pushCollections();
 
-      let data = await this.dataService.list(report.entityName, 0, 0, false);
+      console.log("generate report", report);
+      let data = await this.dataService.list(report.entityName, 0, 0);
       if (!data) {
         data = [];
       }
@@ -278,7 +279,7 @@ export class ReportService {
           dateRangeUnit: _input.format.options.dateRangeUnit || "minute",
           dateRangeEnd: _input.format.options.dateRangeEnd,
           dateRangeFormat: _input.format.options.dateRangeFormat || "kk-mm",
-          dateRangeCount: _input.format.options.dateRangeCount || 30
+          dateRangeCount: _input.format.options.dateRangeCount || 10
         };
 
         const thread = spawn(location.origin + "/workers/analyze2d.js");
@@ -300,32 +301,27 @@ export class ReportService {
             });
         }).catch(e => console.log(e)) as any;
       },
-      analyze1d: async input => {
-        const formatOptions: { groupBy: ReportFieldInterface } = {
-          groupBy: input.format.options.groupBy
+      analyze1d: async _input => {
+        const thread = spawn(location.origin + "/workers/analyze1d.js");
+        const _formatOptions: { groupBy: ReportFieldInterface } = {
+          groupBy: _input.format.options.groupBy
         };
-        const r = input.report;
-
-        r.data = _.groupBy(r.data, p => p[formatOptions.groupBy.name]) as any;
-
-        r.data["n/a"] =
-          [...(r.data[""] || []), ...(r.data["undefined"] || [])] || [];
-        delete r.data[""];
-        delete r.data["undefined"];
-        r.data = Object.keys(r.data).map(p => {
-          return {
-            name: p,
-            value: r.data[p].length || 0
-            //   data: r.data[p] || []
-          };
-        });
-        r.fields = [
-          { label: formatOptions.groupBy.label, name: "name", enabled: true },
-          { label: "تعداد", name: "value", enabled: true }
-        ];
-        r.count = r.data.length;
-        r.data = r.data.sort((a, b) => b.value - a.value);
-        return r;
+        return new Promise((resolve, reject) => {
+          thread
+            .send(
+              JSON.stringify({
+                _input,
+                _formatOptions
+              })
+            )
+            .on("message", output => {
+              resolve(output);
+              thread.kill();
+            })
+            .on("error", e => {
+              reject(e);
+            });
+        }).catch(e => console.log(e)) as any;
       }
     };
   }
@@ -374,6 +370,8 @@ export class ReportService {
           if (typeof evaluatedCode !== "function") {
             return "evaluated code is not a function";
           }
+
+          return evaluatedCode(input.document, input.field);
         } catch (error) {
           return error.message || error;
         }

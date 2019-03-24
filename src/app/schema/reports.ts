@@ -110,7 +110,17 @@ export const ReportsSchema: ReportInterface[] = [
     name: "grid-default",
     entityName: "grid",
     label: "",
-    fields: []
+    fields: [
+      {
+        enabled: true,
+        name: "section",
+        analytical : true,
+        label: "بخش",
+        method: "javascript",
+        methodOptions: { code: "(doc,field)=> doc.data.section" },
+        template: { component: "ShortTextViewComponent" }
+      }
+    ]
   },
   {
     name: "report-default",

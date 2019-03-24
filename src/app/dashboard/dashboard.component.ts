@@ -255,7 +255,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     }
   }
+  searchResultsInSection(sectionName) {
+    let records = [];
 
+    Object.keys(this.search.results)
+      .filter(p => p.indexOf(sectionName) === 0)
+      .forEach(entity => {
+        records = records.concat(this.search.results[entity]);
+      });
+
+    return records;
+  }
   dashboardDateTimeTick() {
     // this.dashboardDateTimeFormats[0]
 
@@ -1360,7 +1370,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .catch();
 
     this.lastDataSync = 0;
-    await (await this.idbService.syncIDB("pull")).clear();
+    //  await (await this.idbService.syncIDB("pull")).clear();
 
     this.dashboardLoadingText = "Initiating dashboard ...";
     this.dashboardDateTimeTick();

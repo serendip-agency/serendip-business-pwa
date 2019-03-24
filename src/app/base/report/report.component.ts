@@ -171,9 +171,7 @@ export class ReportComponent implements OnInit {
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
 
-  @Input() format: ReportFormatInterface = { options: {
-    
-  } };
+  @Input() format: ReportFormatInterface = { options: {} };
   @Input() title: string;
   @Input() entityName: string;
   @Input() subtitle: string;
@@ -298,6 +296,10 @@ export class ReportComponent implements OnInit {
   async generateFormat() {
     this.resultLoading = true;
 
+    if (!this.format.options.dateRangeUnitEnd) {
+      this.format.options.dateRangeUnitEnd = new Date().toString();
+    }
+
     if (this.format.type === "1d") {
       this.format.method = "analyze1d";
     }
@@ -322,23 +324,6 @@ export class ReportComponent implements OnInit {
   }
 
   formatDateRangeUnitChange(event) {
-    if (!this.format.options.dateRangeEnd) {
-      this.format.options.dateRangeEnd = moment()
-        .add(this.format.options.dateRangeCount, event)
-        .format(DateUnitToFormatMap[event]);
-    } else {
-      try {
-        this.format.options.dateRangeEnd = moment(
-          this.format.options.dateRangeEnd,
-          DateUnitToFormatMap[this.format.options.dateRangeUnit]
-        ).format(DateUnitToFormatMap[event]);
-      } catch (error) {
-        this.format.options.dateRangeEnd = moment()
-          .add(this.format.options.dateRangeCount, event)
-          .format(DateUnitToFormatMap[event]);
-      }
-    }
-
     this.format.options.dateRangeUnit = event;
     this.WidgetChange.emit({ inputs: { format: this.format } });
 
@@ -635,11 +620,7 @@ export class ReportComponent implements OnInit {
     }
 
     this.obService.listen(this.entityName).subscribe(event => {
-      if (this.mode === "chart") {
-      }
-      console.log("event in report component", event);
-
-      if (this.mode === "data" && this.obServiceActive) {
+      if (this.obServiceActive) {
         if (
           event.eventType === "update" &&
           _.findWhere(this.page, { _id: event.model._id })
@@ -656,10 +637,14 @@ export class ReportComponent implements OnInit {
           if (this.page.filter(p => p._id === event.model._id).length === 0) {
             this.page.unshift(event.model);
           }
+          console.log("insert");
+          this.report.count++;
         }
 
         if (event.eventType === "delete") {
           this.page = this.page.filter(p => p._id !== event.model._id);
+
+          this.report.count--;
         }
       }
     });

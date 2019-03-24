@@ -10,10 +10,10 @@ const DateUnitToFormatMap = {
 
 self.module = {
   exports: function(params, done) {
-    ["moment","moment-jalaali","underscore"].forEach(lib =>
+    ["moment", "moment-jalaali", "underscore"].forEach(lib =>
       importScripts(location.origin + "/workers/lib/" + lib + ".js")
     );
-    
+
     console.log(location.origin);
     params = JSON.parse(params);
     // tslint:disable-next-line:no-shadowed-variable
@@ -31,6 +31,9 @@ self.module = {
 
     // }
 
+    try {
+      formatOptions.dateRangeCount = parseInt(formatOptions.dateRangeCount);
+    } catch (error) {}
     if (!formatOptions.groupBy) {
       dataGroups = { all: r.data };
     } else {
@@ -55,16 +58,9 @@ self.module = {
       formatOptions.dateRangeFormat =
         DateUnitToFormatMap[formatOptions.dateRangeUnit];
 
-      const timeRanges = _.range(formatOptions.dateRangeCount).map(n => {
-        return moment(
-          formatOptions.dateRangeEnd ||
-            moment().format(formatOptions.dateRangeFormat),
-          formatOptions.dateRangeFormat
-        )
-          .add(
-            n - formatOptions.dateRangeCount + 1,
-            formatOptions.dateRangeUnit
-          )
+      const timeRanges = _.range(formatOptions.dateRangeCount + 1).map(n => {
+        return moment(formatOptions.dateRangeEnd || null)
+          .add(n - formatOptions.dateRangeCount, formatOptions.dateRangeUnit)
           .format(formatOptions.dateRangeFormat);
       });
 

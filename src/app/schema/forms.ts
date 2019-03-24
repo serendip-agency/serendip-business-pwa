@@ -115,6 +115,7 @@ export const FormsSchema: FormInterface[] = [
           dir: "ltr"
         }
       },
+     
       {
         componentName: "FormTextInputComponent",
         propertyName: "title",
@@ -381,6 +382,13 @@ export const FormsSchema: FormInterface[] = [
         }
       },
       {
+        propertyName: "offline",
+        componentName: "FormToggleInputComponent",
+        inputs: {
+          label: "آفلاین"
+        }
+      },
+      {
         componentName: "FormIconInputComponent",
         propertyName: "icon",
         inputs: {
@@ -523,6 +531,13 @@ export const FormsSchema: FormInterface[] = [
             componentName: "FormToggleInputComponent",
             inputs: {
               label: "مناسب برای تحلیل"
+            }
+          },
+          {
+            propertyName: "indexing",
+            componentName: "FormToggleInputComponent",
+            inputs: {
+              label: "ثبت در موتور جست‌وجو"
             }
           },
           {

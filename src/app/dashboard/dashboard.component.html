@@ -329,10 +329,7 @@
                 : []
             "
             [class.no-result]="
-              search.text &&
-              (search.results[item.name]
-                ? search.results[item.name].length == 0
-                : true)
+              search.text && searchResultsInSection(item.name).length == 0
             "
             [class.active]="
               !search.text &&
@@ -349,11 +346,7 @@
               (click)="search.text ? (search.mode = item.name) : hideStart()"
             >
               <div class="count" *ngIf="search.text">
-                {{
-                  (search.results[item.name]
-                    ? search.results[item.name].length || "0"
-                    : "0") | rpd
-                }}
+                {{ searchResultsInSection(item.name).length.toString() | rpd }}
               </div>
               <img
                 *ngIf="!search.text"
