@@ -40,6 +40,31 @@ table.formatted-report-table {
   }
 }
 
+.chart-type {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  vertical-align: top;
+  user-select: none;
+  opacity: 0.65;
+  border-radius: 100%;
+  transition: all ease-in-out 0.1s;
+  &.selected {
+    opacity: 1;
+    background: #576E9E;
+    img{
+      filter: invert(1);
+    }
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
 .chart-types {
   padding: 15px;
   padding-top: 0;
@@ -50,34 +75,17 @@ table.formatted-report-table {
     max-width: 360px;
   }
 
-  .chart-type {
-    display: inline-block;
-    width: 50px;
-    height: 50px;
-    vertical-align: top;
-    user-select: none;
-    opacity: 0.65;
-    border-radius: 100%;
-    transition: all ease-in-out 0.1s;
-    &.selected {
-      opacity: 1;
-      background: #dbe8ff;
-    }
-
-    &:hover {
-      opacity: 1;
-    }
-    img {
-      width: 100%;
-      height: 100%;
-    }
-  }
 }
 .report-model {
   padding: 10px 30px;
   margin-bottom: 30px;
   margin-top: 10px !important;
 
+
+  .queries{
+    // margin-right: 40px;
+    font-size: 11px;
+  }
   .reset-query {
     img {
       width: auto;
@@ -90,10 +98,10 @@ table.formatted-report-table {
 
   .template-inputs,
   .property-query {
-    padding: 10px;
-    background: #e3e0db;
-    border-radius: 10px;
-    margin: 10px;
+    padding:0 10px;
+    background: #f1f1f1;
+  
+    margin: 0 30px 0 0;
 
     vertical-align: top;
     font-size: 11px;
@@ -108,12 +116,12 @@ table.formatted-report-table {
   }
   .field-name {
     display: inline-block;
-    width: 140px;
+    width:100%;
     text-overflow: ellipsis;
     white-space: nowrap;
     border-bottom: 2px solid rgb(240, 240, 240);
-    line-height: 36px;
     padding: 0 0 0 15px;
+    font-size: 11px;
   }
 
   .fields {

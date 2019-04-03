@@ -10,7 +10,8 @@ import * as BusinessSchema from "./schema";
 import {
   ReportInterface,
   DashboardSectionInterface,
-  FormInterface
+  FormInterface,
+  DashboardTabInterface
 } from "serendip-business-model";
 import { WsService } from "./ws.service";
 import { EventEmitter } from "events";
@@ -74,6 +75,28 @@ export class DashboardService {
         return tab;
       });
       return dashboard;
+    });
+
+    this.schema.dashboard.push({
+      name: "raw",
+      icon: "copy",
+      title: "گزارشات خام",
+      tabs: (await this.dataService.list("entity")).map(record => {
+        const entityName = record.name;
+        return {
+          icon: "copy",
+          active: true,
+          title: "گزارش " + entityName,
+          widgets: [
+            {
+              component: "ReportComponent",
+              inputs: {
+                entityName
+              }
+            }
+          ]
+        };
+      })
     });
   }
   getActiveTabs() {

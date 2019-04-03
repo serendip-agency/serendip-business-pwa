@@ -14,12 +14,13 @@ self.module = {
       importScripts(location.origin + "/workers/lib/" + lib + ".js")
     );
 
-    console.log(location.origin);
     params = JSON.parse(params);
     // tslint:disable-next-line:no-shadowed-variable
 
     const input = params._input;
     const formatOptions = params._formatOptions;
+
+    console.log(formatOptions);
 
     const r = input.report;
     let dataGroups = {};
@@ -68,13 +69,15 @@ self.module = {
       // tslint:disable-next-line:forin
       for (const timeRange of timeRanges) {
         for (const row of dataGroup) {
-          if (
-            moment(
-              row[formatOptions.dateBy ? formatOptions.dateBy.name : "_vdate"]
-            ).format(formatOptions.dateRangeFormat) === timeRange
-          ) {
-            count++;
-          }
+          try {
+            if (
+              moment(
+                row[formatOptions.dateBy ? formatOptions.dateBy.name : "_vdate"]
+              ).format(formatOptions.dateRangeFormat) === timeRange
+            ) {
+              count++;
+            }
+          } catch (error) {}
         }
 
         series.push({

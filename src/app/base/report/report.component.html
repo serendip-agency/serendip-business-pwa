@@ -12,7 +12,7 @@
       <div
         class="menu"
         [class.active]="mode == 'chart'"
-        (click)="mode == 'chart' ? setMode('data') : setMode('chart')"
+        (click)="mode == 'chart' ? setMode('data') : setMode('format')"
       >
         <img src="assets/icons/efficiency-chart-3.svg" />
       </div>
@@ -73,98 +73,74 @@
       </div>
 
       <div
-        class="report-chart"
+        class="report-chart form-wrapper"
         *ngIf="!formatsLoading && !resultLoading && mode == 'format'"
       >
-        <div class="formats" *ngIf="mode == 'format'">
-          <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label>
+        <!-- <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label> -->
 
-          <app-form-radio-input
-            [display]="'block'"
-            [model]="format.type"
-            [data]="getFormatTypes()"
-            (modelChange)="
-              format.type = $event;
-              WidgetChange.emit({ inputs: { format: format } })
-            "
-          ></app-form-radio-input>
-          <br />
-          <app-form-radio-input
-            *ngIf="format.type && formatFields.length > 0"
-            [model]="format?.options?.groupBy"
-            [label]="'ویژگی‌ای را برای تفکیک انتخاب کنید'"
-            [data]="formatFields"
-            [display]="'block'"
-            (modelChange)="
-              format.options.groupBy = $event;
-              WidgetChange.emit({ inputs: { format: format } })
-            "
-          ></app-form-radio-input>
-          <br />
-          <app-form-toggle-input
-            *ngIf="
-              (format?.options?.groupBy && format.type == '2d') ||
-              format.type == '3d'
-            "
-            [model]="format.type == '3d'"
-            [label]="'نمایش سایز ویژگی'"
-            (modelChange)="
-              format.type = $event ? '3d' : '2d';
-              WidgetChange.emit({ inputs: { format: format } })
-            "
-          ></app-form-toggle-input>
-          <div class="clear"></div>
-          <br />
+        <!-- <app-form-radio-input
+          [display]="'block'"
+          [model]="format.type"
+          [data]="getFormatTypes()"
+          (modelChange)="
+            format.type = $event;
+            WidgetChange.emit({ inputs: { format: format } })
+          "
+        ></app-form-radio-input> -->
 
-          <app-form-radio-input
-            *ngIf="format.type == '3d'"
-            [model]="format.fields"
-            [label]="'ویژگی‌ای را برای معیار سایز انتخاب کنید'"
-            [data]="formatFields"
-            [display]="'block'"
-            (modelChange)="
-              format.options.sizeBy = $event;
-              WidgetChange.emit({ inputs: { format: format } })
-            "
-          ></app-form-radio-input>
+        <br />
 
-          <div class="chart-types" *ngIf="format.type && format.type != '3d'">
-            <label for="">
-              ابزار نمایش نتیجه را انتخاب کنید:
-            </label>
+        <app-form-radio-input
+          [model]="format.options.groupBy"
+          [label]="'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید (DATASET)'"
+          [data]="getFieldsForSelect('string', 'boolean', 'number', 'array')"
+          [display]="'block'"
+          (modelChange)="
+            format.options.groupBy = $event;
+            WidgetChange.emit({ inputs: { format: format } })
+          "
+        ></app-form-radio-input>
 
-            <div class="list">
-              <div
-                *ngFor="let item of filterChartsByDataType(format.type)"
-                class="chart-type"
-                (click)="
-                  format.chart == item.name
-                    ? (format.chart = '')
-                    : (format.chart = item.name);
-                  WidgetChange.emit({ inputs: { format: format } })
-                "
-                [class.selected]="format.chart == item.name"
-              >
-                <img [src]="'/assets/charts/' + item.icon + '.svg'" alt="" />
-              </div>
-            </div>
-          </div>
-        </div>
+        <app-form-radio-input
+          [model]="format?.options?.dateBy"
+          [label]="'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید'"
+          [data]="getFieldsForSelect('date')"
+          [display]="'block'"
+          (modelChange)="
+            format.options.dateBy = $event;
+            WidgetChange.emit({ inputs: { format: format } })
+          "
+        ></app-form-radio-input>
+
+        <app-form-radio-input
+          [model]="format?.options?.valueBy"
+          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'"
+          [data]="getFieldsForY()"
+          [display]="'block'"
+          (modelChange)="
+            format.options.valueBy = $event;
+            WidgetChange.emit({ inputs: { format: format } })
+          "
+        ></app-form-radio-input>
+
+        <app-form-radio-input
+          [model]="format?.options?.sizeBy"
+          [label]="'ویژگی را برای عمق و یا سایز انتخاب کنید  (Z)'"
+          [data]="getFieldsForSelect('number')"
+          [display]="'block'"
+          (modelChange)="
+            format.options.sizeBy = $event;
+            WidgetChange.emit({ inputs: { format: format } })
+          "
+        ></app-form-radio-input>
       </div>
       <div *ngIf="formatted && mode == 'chart'">
-        <div class="form-wrapper">
-          <div class="title" *ngIf="format.type == '1d'">
-            بررسی {{ title }} به تفکیک
-            {{ format?.options?.groupBy?.label }}
-          </div>
-
-          <div class="title" *ngIf="format.type == '2d'">
-            بررسی {{ title }} در طول زمان به تفکیک
-            {{ format?.options?.groupBy?.label }}
-          </div>
-          <br />
-
-          <div class="double-field" style="max-width: 400px">
+        <div class="form-wrapper" style="text-align: center;">
+          <div
+            class="double-field"
+            *ngIf="format?.type != '1d'"
+            style="max-width: 400px"
+          >
             <div class="w-20">
               <app-form-select-input
                 [data]="dateRangeUnitsToSelect"
@@ -201,6 +177,49 @@
                 [model]="format.options.dateRangeEnd"
               ></app-form-date-input>
             </div>
+          </div>
+          <div
+            *ngFor="
+              let item of filterChartsByDataType(
+                format.options.dateBy
+                  ? '2d'
+                  : format.options.sizeBy
+                  ? '3d'
+                  : '1d'
+              )
+            "
+            class="chart-type"
+            (click)="
+              format.chart == item.name
+                ? (format.chart = '')
+                : (format.chart = item.name);
+              WidgetChange.emit({ inputs: { format: format } })
+            "
+            [class.selected]="format.chart == item.name"
+          >
+            <img [src]="'/assets/charts/' + item.icon + '.svg'" alt="" />
+          </div>
+        </div>
+
+        <div
+          style="margin:15px auto 0 auto;text-align: center;font-weight: bold;font-size:14px;"
+        >
+          <div class="title" *ngIf="format.type == '1d'">
+            بررسی {{ title }} به تفکیک
+            {{
+              format?.options?.groupBy?.label
+                ? format?.options?.groupBy?.label
+                : format?.options?.groupBy?.name
+            }}
+          </div>
+
+          <div class="title" *ngIf="format.type == '2d'">
+            بررسی {{ title }} در طول زمان به تفکیک
+            {{
+              format?.options?.groupBy?.label
+                ? format?.options?.groupBy?.label
+                : format?.options?.groupBy?.name
+            }}
           </div>
         </div>
 
@@ -255,10 +274,7 @@
               />
 
               <div class="field-name">
-                <mat-slide-toggle
-                  [(ngModel)]="field.enabled"
-                  (change)="modelChange()"
-                >
+                <mat-slide-toggle [(ngModel)]="field.enabled">
                   {{ field.label }}
                 </mat-slide-toggle>
               </div>
@@ -287,9 +303,8 @@
                 "
                 class="queries"
               >
-                <label for="">فیلترها:</label>
                 <div
-                  [class]="query.enabled ? 'property-query' : ''"
+                  [class]="'property-query'"
                   *ngFor="let query of field.queries"
                 >
                   <app-form-checkbox-input
@@ -321,7 +336,6 @@
           </div>
         </div>
       </div>
-
       <div
         class="report-result"
         [style.overflowX]="resultLoading ? 'hidden' : 'scroll'"
@@ -350,7 +364,7 @@
                 [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
                 [ndcDynamicComponent]="
                   getViewComponent(
-                    field.template?.component || 'ShortTextViewComponent'
+                    field.template?.component || 'JsonViewComponent'
                   )
                 "
               ></ndc-dynamic>
@@ -392,7 +406,7 @@
                 [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
                 [ndcDynamicComponent]="
                   getViewComponent(
-                    field.template?.component || 'ShortTextViewComponent'
+                    field.template?.component || 'JsonViewComponent'
                   )
                 "
               ></ndc-dynamic>
@@ -417,9 +431,7 @@
       <button
         *ngIf="mode == 'format'"
         class="sp-button-icon with-text pull-left"
-        (click)="
-          generateFormat(); WidgetChange.emit({ inputs: { mode: 'chart' } })
-        "
+        (click)="generateFormat()"
       >
         <span>نمایش نتیجه</span>
       </button>
@@ -438,15 +450,6 @@
         (click)="generateFormat()"
       >
         <img src="assets/icons/refresh.svg" />
-      </button>
-
-      <button
-        *ngIf="!formats || formats.length == 0"
-        class="sp-button-icon with-text pull-left"
-        (click)="addFormat()"
-      >
-        <img src="assets/icons/plus-add-3.svg" />
-        <span>ثبت روش نتیجه‌گیری</span>
       </button>
 
       <div class="clearfix"></div>

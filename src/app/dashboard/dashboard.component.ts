@@ -432,17 +432,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   tabDragEnd() {
     this.tabDragging = null;
   }
+
+  containerLoopTrack(index, item) {
+    return index; // or item.id
+  }
+
   onTabDragover(event: DragEvent, containerIndex: number) {
+    console.log("onTabDragover");
     // if (this.screen === "mobile") {
     //   return;
     // }
-
-    const targetPosition = (event.target as HTMLElement).parentElement.getBoundingClientRect();
-
-    const handlerPosition = { top: event.clientY, left: event.clientX };
-
+    // const targetPosition = (event.target as HTMLElement).parentElement.getBoundingClientRect();
+    // const handlerPosition = { top: event.clientY, left: event.clientX };
     // If handle is near left side of container its possible he needs another container
-
     // if (handlerPosition.top > 100) {
     //   if (
     //     handlerPosition.left - targetPosition.left < 200 &&
@@ -454,7 +456,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //         return container.tabs && container.tabs.length > 0;
     //       }
     //     ).length;
-
     //     // if (this.grid.containers.length < 3)
     //     if (
     //       notEmptyContainersCount - containerIndex === 1 &&
@@ -462,7 +463,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //     ) {
     //       this.addContainer();
     //     }
-
     //     const grid = document.querySelector(".grid-container");
     //     if (containerIndex > 1) {
     //       grid.scroll({ left: grid.scrollLeft - 200, behavior: "smooth" });
@@ -556,6 +556,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
+    console.log("tab drop");
     if (this.screen === "mobile") {
       this.explorerMouseOut();
     }
@@ -1056,9 +1057,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
 
-      setTimeout(() => {
-        this.handleFullNav();
-      }, 300);
+      // setTimeout(() => {
+      //   this.handleFullNav();
+      // }, 300);
     }, 1);
   }
   downloadExport() {

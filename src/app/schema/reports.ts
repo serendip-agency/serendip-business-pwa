@@ -6,6 +6,7 @@ export const ReportsSchema: ReportInterface[] = [
     fields: [
       {
         enabled: true,
+        indexing: true,
         name: "_id",
         label: "شناسه سند",
         template: { component: "ObjectidViewComponent" },
@@ -23,7 +24,7 @@ export const ReportsSchema: ReportInterface[] = [
         ]
       },
       {
-        enabled: true,
+        enabled: false,
         name: "_cdate",
         label: "تاریخ ثبت",
         template: {
@@ -47,7 +48,7 @@ export const ReportsSchema: ReportInterface[] = [
         ]
       },
       {
-        enabled: true,
+        enabled: false,
         name: "_vdate",
         label: "آخرین تغییر",
         template: {
@@ -71,14 +72,14 @@ export const ReportsSchema: ReportInterface[] = [
         ]
       },
       {
-        enabled: true,
+        enabled: false,
         name: "_cuser",
         label: "ثبت‌کننده",
         analytical: true,
         template: { component: "ShortTextViewComponent" }
       },
       {
-        enabled: true,
+        enabled: false,
         name: "_vuser",
         analytical: true,
         link: "_user",
@@ -114,7 +115,7 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: true,
         name: "section",
-        analytical : true,
+        analytical: true,
         label: "بخش",
         method: "javascript",
         methodOptions: { code: "(doc,field)=> doc.data.section" },

@@ -484,11 +484,16 @@ export class DataService {
   ): Promise<EntityModel> {
     if (offline) {
       const store = await this.idbService.dataIDB();
-      const data = await store.get(controller);
-      if (data && data[_id]) {
-        return data[_id];
+
+      if (controller) {
+        const data = await store.get(controller);
+        if (data && data[_id]) {
+          return data[_id];
+        } else {
+          throw error;
+        }
       } else {
-        throw error;
+        throw new Error("not found");
       }
     } else {
       try {
@@ -815,7 +820,6 @@ export class DataService {
       ReportsSchema.concat(await this.list("report"))
         .filter(p => p.entityName)
         .map(schema => {
-          console.log(schema);
           return () =>
             new Promise(async (resolve, reject) => {
               const docIndex = new DocumentIndex({

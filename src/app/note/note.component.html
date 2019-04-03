@@ -1,0 +1,11 @@
+<div class="notes">
+  <div class="note">
+    <textarea
+      [dir]="
+        sUtil.text.englishKeyChar.indexOf(text.value[0]) != -1 ? 'ltr' : 'rtl'
+      "
+      #text
+      placeholder="یادداشت جدید ..."
+    ></textarea>
+  </div>
+</div>

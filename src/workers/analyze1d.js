@@ -18,7 +18,11 @@ self.module = {
     r.data = Object.keys(r.data).map(p => {
       return {
         name: p,
-        value: r.data[p].length || 0
+        value: formatOptions.valueBy
+          ? r.data[p].reduce((prev, current) => {
+              return (prev || 0) + current[formatOptions.valueBy.name];
+            },0)
+          : r.data[p].length || 0
         //   data: r.data[p] || []
       };
     });

@@ -1,6 +1,5 @@
 @import "material.less";
 @import "space.less";
-@import "taucharts.css";
 
 /**
 *
@@ -278,6 +277,14 @@ ngx-charts-number-card .cell .trimmed-label {
   text-align: right !important;
 }
 
+.advanced-pie-legend,
+.number-card.chart,.tree-map.charts {
+  * {
+    direction: ltr;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  }
+}
+
 .pull-left {
   float: left !important;
 }
@@ -322,6 +329,7 @@ ngx-charts-number-card .cell .trimmed-label {
     font-size: 11px !important;
     font-weight: 100 !important;
     text-anchor: start;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
   .pie-label-line {
     stroke: rgb(210, 210, 210) !important;
@@ -1092,7 +1100,6 @@ form {
     box-sizing: border-box;
   }
 }
- 
 
 .widget {
   position: relative;
@@ -1137,8 +1144,7 @@ form {
   background: transparent !important;
   // background: #ddd !important;
 
-  .codeflask__flatten{
-  
+  .codeflask__flatten {
   }
 
   .codeflask__code,

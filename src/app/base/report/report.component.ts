@@ -35,6 +35,7 @@ import { CurrencyViewComponent } from "./currency-view/currency-view.component";
 import { DateViewComponent } from "./date-view/date-view.component";
 import { IconViewComponent } from "./icon-view/icon-view.component";
 import { PriceViewComponent } from "./price-view/price-view.component";
+import { JsonViewComponent } from "./json-view/json-view.component";
 
 @Component({
   selector: "app-report",
@@ -171,7 +172,18 @@ export class ReportComponent implements OnInit {
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
 
-  @Input() format: ReportFormatInterface = { options: {} };
+  @Input() format: ReportFormatInterface = {
+    type: "2d",
+    chart: "line",
+    options: {
+      dateRangeEnd: new Date(),
+      dateRangeUnit: "day",
+      dateRangeCount: 15,
+      groupBy: null,
+      dateBy: null,
+      sizeBy: null
+    }
+  };
   @Input() title: string;
   @Input() entityName: string;
   @Input() subtitle: string;
@@ -228,6 +240,7 @@ export class ReportComponent implements OnInit {
     CurrencyViewComponent,
     PriceViewComponent,
     IconViewComponent,
+    JsonViewComponent,
     // Business related  report views
     ClubRatingViewComponent,
     ContactsViewComponent
@@ -238,35 +251,122 @@ export class ReportComponent implements OnInit {
   constructor(
     private dashboardService: DashboardService,
     private dataService: DataService,
-    private idbService: IdbService,
     private reportService: ReportService,
     private changeRef: ChangeDetectorRef,
-    private calendarService: CalendarService,
     private obService: ObService
   ) {
     moment.loadPersian();
   }
 
-  get formatFields() {
+  getFieldsForY() {
+    const fields = JSON.parse(
+      JSON.stringify(this.getFieldsForSelect("number"))
+    );
+    const fieldsForY = [];
+
+    for (const f of fields) {
+      if (f.value === null) {
+        f.label = "شمارش تعداد رکوردها";
+      } else {
+        if (!f.label.startsWith("مجموع")) {
+          f.label = "مجموع " + _.clone(f.label);
+        }
+      }
+
+      fieldsForY.push(f);
+    }
+    return fieldsForY;
+  }
+
+  getFieldsForSelect(
+    ...typeFilter: string[]
+  ): { label: string; value: ReportFieldInterface }[] {
     if (this._formatFields) {
-      return this._formatFields;
+      if (typeFilter) {
+        return this._formatFields.filter(
+          p => !p.value || typeFilter.indexOf(p.value.type) !== -1
+        );
+      } else {
+        return this._formatFields;
+      }
     }
 
-    if (!this.report || !this.report.fields) {
+    if (
+      !this.report ||
+      !this.report.fields ||
+      !this.report.data ||
+      this.report.data.length === 0
+    ) {
       return [];
     }
-    const fields = [];
+    let fields: { label: string; value: ReportFieldInterface }[] = [];
 
     this.report.fields.forEach(item => {
-      if (item.analytical) {
-        fields.push({
-          label: `${item.label} (${item.name})`,
-          value: item
-        });
-      }
+      fields.push({
+        label: `  ${item.label} `,
+        value: item
+      });
     });
 
+    // this.report.data.forEach(row => {
+    //   for (const key in row) {
+    //     if (["_entity", "_business", "_id"].indexOf(key) !== -1) {
+    //       continue;
+    //     }
+
+    //     if (row.hasOwnProperty(key)) {
+    //       const value = row[key];
+
+    //       if (typeof value === "undefined" || value === null) {
+    //         continue;
+    //       }
+    //       if (fields.filter(p => p.value.name === key).length === 0) {
+    //         if (key.toLowerCase().indexOf("date") !== -1) {
+    //           fields.push({
+    //             label: key,
+    //             value: { name: key, type: "date" }
+    //           });
+    //           continue;
+    //         }
+
+    //         fields.push({
+    //           label: key,
+    //           value: { name: key, type: typeof value as any }
+    //         });
+    //       }
+    //     }
+    //   }
+    // });
+
+    fields = fields.map(field => {
+      if (!field.value.type) {
+        for (const row of this.report.data) {
+          if (
+            typeof row[field.value.name] === "undefined" ||
+            row[field.value.name] === null
+          ) {
+            continue;
+          }
+          if (field.value.name.toLowerCase().indexOf("date") !== -1) {
+            field.value.type = "date";
+          } else {
+            field.value.type = typeof row[field.value.name] as any;
+          }
+          break;
+        }
+      }
+      return field;
+    });
+
+    fields.unshift({ label: "انتخاب نشده", value: null });
+
     this._formatFields = fields;
+
+    if (typeFilter) {
+      return fields.filter(
+        p => !p.value || typeFilter.indexOf(p.value.type) !== -1
+      );
+    }
     return fields;
   }
   getFormatTypes() {
@@ -300,17 +400,19 @@ export class ReportComponent implements OnInit {
       this.format.options.dateRangeUnitEnd = new Date().toString();
     }
 
-    if (this.format.type === "1d") {
-      this.format.method = "analyze1d";
-    }
-
-    if (this.format.type === "2d") {
+    this.format.method = "analyze1d";
+    this.format.type = "1d";
+    if (this.format.options.dateBy) {
       this.format.method = "analyze2d";
+      this.format.type = "2d";
     }
 
-    if (this.format.type === "3d") {
+    if (this.format.options.sizeBy) {
       this.format.method = "analyze3d";
+      this.format.type = "3d";
     }
+
+    console.log(this.format);
 
     if (this.format) {
       this.formatted = await this.reportService.formatReport(
@@ -318,7 +420,13 @@ export class ReportComponent implements OnInit {
         this.format
       );
 
-      this.WidgetChange.emit({ inputs: { formatted: this.formatted } });
+      this.WidgetChange.emit({
+        inputs: {
+          format: this.format,
+          formatted: this.formatted,
+          mode: "chart"
+        }
+      });
     }
     this.resultLoading = false;
   }
@@ -377,34 +485,12 @@ export class ReportComponent implements OnInit {
       return { label: p.label, value: p };
     });
   }
-  modelChange() {
-    this.report._id = null;
-    this.report.label = null;
-
-    this.changeRef.detectChanges();
-  }
 
   objectKeys(obj) {
     return Object.keys(obj);
   }
   trackByFn(index: any, item: any) {
     return item._id;
-  }
-
-  getRangeLabel(page: number, pageSize: number, length: number) {
-    if (length === 0 || pageSize === 0) {
-      return sUtils.text.replaceEnglishDigitsWithPersian(`0 از ${length}`);
-    }
-
-    length = Math.max(length, 0);
-    const startIndex = page * pageSize;
-    const endIndex =
-      startIndex < length
-        ? Math.min(startIndex + pageSize, length)
-        : startIndex + pageSize;
-    return sUtils.text.replaceEnglishDigitsWithPersian(
-      `${startIndex + 1} - ${endIndex} از ${length}`
-    );
   }
 
   enabledReportFields(): ReportFieldInterface[] {
@@ -484,8 +570,6 @@ export class ReportComponent implements OnInit {
 
     this.resultLoading = true;
 
-    const skip = this.pageIndex * this.pageSize;
-
     if (!this.report && this.reportName) {
       this.report = _.findWhere(this.dashboardService.schema.reports, {
         name: this.reportName
@@ -497,25 +581,28 @@ export class ReportComponent implements OnInit {
         "report",
         this.reportId
       )) as any;
+      console.log("getting report with id", this.report, this.reportId);
     }
 
     if (!this.entityName) {
       this.entityName = this.report.entityName;
     }
 
-    const primaryFields = _.findWhere(this.dashboardService.schema.reports, {
-      name: "primary"
-    }).fields;
+    if (!this.report) {
+      this.report = {
+        entityName: this.entityName,
+        fields: []
+      };
+    }
 
-    primaryFields.forEach(pf => {
-      if (this.report.fields.filter(f => f.name === pf.name).length === 0) {
-        this.report.fields.push(pf);
-      }
-    });
+    this.report.fields = await this.reportService.fields(
+      this.entityName,
+      this.report
+    );
 
     this.report = await this.reportService.generate(this.report);
 
-    this.pageCount = Math.floor(this.report.count / this.pageSize);
+    this.pageCount = Math.ceil(this.report.count / this.pageSize);
 
     this.changePage(0);
 
@@ -573,7 +660,7 @@ export class ReportComponent implements OnInit {
       .map(item => {
         return {
           label:
-            (item.label ? item.label.trim() : item._id) +
+            (item.label ? item.label.trim() : moment(item._vdate).fromNow()) +
             // "  ساخته شده در" +
             // this.calendarService
             //   .moment(item._cdate)
@@ -599,9 +686,12 @@ export class ReportComponent implements OnInit {
 
     //  this.report = await this.dataService.details("report", reportId);
 
-    console.log("change report");
+    console.log("change report to", reportId);
 
-    this.WidgetChange.emit({ inputs: { reportId: reportId } });
+    this.report = null;
+    this.reportId = reportId;
+    this.WidgetChange.emit({ inputs: { reportId } });
+    this.refresh();
 
     //  await this.refresh();
   }

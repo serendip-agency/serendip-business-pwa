@@ -20,7 +20,7 @@ import * as _ from "underscore";
 import { DataService } from "../../data.service";
 import { Idb, IdbService } from "../../idb.service";
 import { BusinessService } from "src/app/business.service";
-
+import * as sUtil from "serendip-utility";
 @Component({
   selector: "app-form",
   templateUrl: "./form.component.html",
@@ -36,6 +36,8 @@ export class FormComponent implements OnInit {
       return null;
     }
   }
+
+  public sUtil = sUtil;
   constructor(
     public dataService: DataService,
     public httpClient: HttpClient,
@@ -142,7 +144,6 @@ export class FormComponent implements OnInit {
         documentId: doc._id
       }
     });
- 
 
     this.loading = false;
   }

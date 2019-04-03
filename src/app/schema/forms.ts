@@ -115,7 +115,7 @@ export const FormsSchema: FormInterface[] = [
           dir: "ltr"
         }
       },
-     
+
       {
         componentName: "FormTextInputComponent",
         propertyName: "title",
@@ -262,15 +262,19 @@ export const FormsSchema: FormInterface[] = [
           dir: "ltr"
         }
       },
-      // {
-      //   componentName: "FormTextInputComponent",
-      //   propertyName: "entity",
-      //   inputs: {
-      //     label: "نام شی",
-      //     type: "single-line",
-      //     dir: "ltr"
-      //   }
-      // },
+      {
+        componentName: "FormChipsInputComponent",
+            propertyName: "entity",
+            propertyType: "string",
+            cssClass: "w-60",
+            inputs: {
+              entityName: "entity",
+              propertiesToSearch: ["name"],
+              propertiesSearchMode: "mix",
+              selectType: "single",
+              label: "شی "
+            }
+      },
       {
         label: "شرایط فعال سازی",
         propertyType: "object",
@@ -517,15 +521,15 @@ export const FormsSchema: FormInterface[] = [
               type: "single-line"
             }
           },
-          {
-            propertyName: "type",
-            componentName: "FormTextInputComponent",
-            inputs: {
-              label: "نوع فیلد",
-              type: "single-line",
-              dir: "ltr"
-            }
-          },
+          // {
+          //   propertyName: "type",
+          //   componentName: "FormTextInputComponent",
+          //   inputs: {
+          //     label: "نوع فیلد",
+          //     type: "single-line",
+          //     dir: "ltr"
+          //   }
+          // },
           {
             propertyName: "analytical",
             componentName: "FormToggleInputComponent",

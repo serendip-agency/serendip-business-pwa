@@ -14,6 +14,7 @@ import ObjectID from "bson-objectid";
 import { ObService } from "./ob.service";
 import * as moment from "moment-jalaali";
 import { spawn } from "threads";
+import { ReportsSchema } from "./schema";
 export const DateUnitToFormatMap = {
   minute: "YYYY-MM-DD kk:mm",
   hour: "YYYY-MM-DD kk",
@@ -57,7 +58,157 @@ export class ReportService {
     moment.loadPersian();
   }
 
+  async fields(
+    entityName: string,
+    report?: ReportInterface,
+    depth?: number,
+    maxDepth?: number
+  ) {
+    console.log("fields", entityName, depth, maxDepth);
+    if (depth > maxDepth) {
+      return [];
+    }
+    if (!report) {
+      report = _.findWhere(await this.dataService.list("report", 0, 0), {
+        entityName
+      } as ReportInterface);
+
+      if (!report) {
+        report = { entityName, fields: [] };
+      }
+    }
+
+    const primaryFields = _.findWhere(ReportsSchema, {
+      name: "primary"
+    }).fields;
+
+    primaryFields.forEach(pf => {
+      if (report.fields.filter(f => f.name === pf.name).length === 0) {
+        report.fields.push(pf);
+      }
+    });
+
+    for (const row of await this.dataService.list(entityName, 0, 100)) {
+      for (const key in row) {
+        if (
+          ["_entity", "_business", "_id", "_vuser", "_uuser"].indexOf(key) !==
+          -1
+        ) {
+          continue;
+        }
+
+        const value = row[key];
+
+        if (typeof value === "undefined" || value === null) {
+          continue;
+        }
+
+        if (
+          report.fields.filter(p => p.name === key).length === 0 &&
+          report.fields.filter(p => p.name.startsWith(key + ".")).length === 0
+        ) {
+          if (key.toLowerCase().indexOf("date") !== -1) {
+            report.fields.push({
+              name: key,
+              label: key,
+              analytical: true,
+              enabled: false,
+              type: "date"
+            });
+            continue;
+          }
+
+          if (typeof value.length !== "undefined" && value.length !== 24) {
+            report.fields.push({
+              name: key + "Length",
+              label: typeof value === "string" ? "طول " + key : "تعداد " + key,
+              enabled: false,
+              analytical: true,
+              method: "javascript",
+              methodOptions: {
+                code: `(async (
+                      document,
+                      field
+                    ) => {
+                      if (document['${key}']) {
+                        return document['${key}'].length;
+                      } else {
+                        return 0;
+                      }
+                    })`.toString()
+              },
+              type: "number"
+            });
+
+            report.fields.push({
+              name: key,
+              label: key,
+              analytical: true,
+              enabled: false,
+              type: "array"
+            });
+
+            continue;
+          }
+
+          if (typeof value.length !== "undefined" && value.length === 24) {
+            if (value === row._id) {
+              continue;
+            }
+            let model;
+
+            try {
+              model = await this.dataService.details(null, value);
+            } catch (error) {}
+
+            if (model) {
+              (await this.fields(
+                model._entity,
+                null,
+                (depth || 0) + 1,
+                maxDepth || 1
+              )).forEach(subField => {
+                report.fields.push({
+                  name: key + "." + subField.name,
+                  label: key + "." + subField.name,
+                  analytical: true,
+                  method: "findEntityById",
+                  methodOptions: {
+                    entityName: model._entity,
+                    field: subField
+                  },
+                  enabled: false,
+                  type: typeof value as any
+                });
+              });
+
+              continue;
+            }
+
+            // for (const entityName of entityNamesToCheck) {
+            //   try {
+            //     await this.dataService.details(entityName, value);
+            //   } catch (error) {}
+            // }
+          }
+
+          report.fields.push({
+            name: key,
+            label: key,
+            analytical: true,
+            enabled: false,
+            type: typeof value as any
+          });
+        }
+      }
+    }
+
+    return report.fields;
+  }
   async generate(report: ReportInterface) {
+    if (!report) {
+      return;
+    }
     if (!report.fields) {
       report.fields = [];
     }
@@ -134,9 +285,22 @@ export class ReportService {
       this.formatterBusy = true;
       // report = await this.generate(_.omit(report, "data"));
 
+      ["dateBy", "groupBy", "valueBy", "sizeBy"].forEach(optName => {
+        if (format.options[optName]) {
+          const optField: ReportFieldInterface = format.options[optName];
+
+          if (
+            report.fields.filter(p => p.name === optField.name).length === 0
+          ) {
+            optField.enabled = true;
+            report.fields.push(optField);
+          }
+        }
+      });
+
       // TODO: if for offline reports
       report = await this.getAsyncReportFormatMethods()[format.method]({
-        report: _.clone(report),
+        report: await this.generate(report),
         format
       });
 
@@ -269,13 +433,15 @@ export class ReportService {
         const _formatOptions: {
           dateBy: ReportFieldInterface;
           groupBy: ReportFieldInterface;
+          valueBy: ReportFieldInterface;
           dateRangeCount: number;
           dateRangeFormat: string;
           dateRangeEnd: string;
           dateRangeUnit: moment.JUnitOfTime | moment.unitOfTime.All;
         } = {
-          dateBy: _input.format.options.countBy,
+          dateBy: _input.format.options.dateBy,
           groupBy: _input.format.options.groupBy,
+          valueBy: _input.format.options.valueBy,
           dateRangeUnit: _input.format.options.dateRangeUnit || "minute",
           dateRangeEnd: _input.format.options.dateRangeEnd,
           dateRangeFormat: _input.format.options.dateRangeFormat || "kk-mm",
@@ -303,8 +469,12 @@ export class ReportService {
       },
       analyze1d: async _input => {
         const thread = spawn(location.origin + "/workers/analyze1d.js");
-        const _formatOptions: { groupBy: ReportFieldInterface } = {
-          groupBy: _input.format.options.groupBy
+        const _formatOptions: {
+          valueBy: ReportFieldInterface;
+          groupBy: ReportFieldInterface;
+        } = {
+          groupBy: _input.format.options.groupBy,
+          valueBy: _input.format.options.valueBy
         };
         return new Promise((resolve, reject) => {
           thread
@@ -337,12 +507,27 @@ export class ReportService {
   } {
     return {
       findEntityById: async input => {
-        const methodOptions: { entity: string } = input.field.methodOptions;
+        const methodOptions: {
+          entityName: string;
+          field: ReportFieldInterface;
+        } = input.field.methodOptions;
 
-        return await this.dataService.details(
-          methodOptions.entity,
-          input.document[input.field.name]
+        const model = await this.dataService.details(
+          methodOptions.entityName,
+          input.document[input.field.name.split(".")[0]]
         );
+
+        console.log(model, methodOptions.field.name);
+
+        if (model) {
+          if (methodOptions.field) {
+            return model[methodOptions.field.name];
+          }
+
+          return model;
+        }
+
+        return null;
       },
       findEntitiesById: async input => {
         const methodOptions: { entity: string } = input.field.methodOptions;
@@ -352,6 +537,7 @@ export class ReportService {
           input.document[input.field.name]
         );
       },
+
       joinFields: async input => {
         const methodOptions: { fields: string[]; separator: string } =
           input.field.methodOptions;
@@ -373,6 +559,7 @@ export class ReportService {
 
           return evaluatedCode(input.document, input.field);
         } catch (error) {
+          console.log(error);
           return error.message || error;
         }
       }

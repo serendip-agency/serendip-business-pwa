@@ -192,7 +192,11 @@
       dndDropzone
       (dndDragover)="onTabDragover($event, c)"
       (dndDrop)="onTabDrop($event, c)"
-      *ngFor="let container of grid.containers; let c = index"
+      *ngFor="
+        let container of grid.containers;
+        trackBy: containerLoopTrack;
+        let c = index
+      "
     >
       <!-- optional placeholder element for dropzone -->
       <!-- will be removed from DOM on init -->

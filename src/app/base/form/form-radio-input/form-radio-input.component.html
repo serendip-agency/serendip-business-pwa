@@ -5,8 +5,8 @@
     [style.display]="display"
     *ngFor="let item of data || []; let b = index; trackBy: trackByFn"
     (change)="modelChange.emit($event.value)"
-    [checked]="stringify(item.value) == stringify(model)"
-    [value]="typeof(item.value) == 'undefined' ? item : item.value"
+    [checked]="stringify(item.value || '') == stringify(model)"
+    [value]="typeof(item.value) == 'undefined' ? item : item.value || ''"
   >
     {{ item.label || item }}
   </mat-radio-button>

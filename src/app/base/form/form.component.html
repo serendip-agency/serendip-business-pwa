@@ -28,6 +28,14 @@
 
       <div
         class="action"
+        [class.active]="mode == 'note'"
+        (click)="mode = mode == 'note' ? 'form' : 'note'"
+      >
+        <img [src]="'assets/icons/note.svg'" />
+      </div>
+
+      <div
+        class="action"
         [class.active]="mode == 'triggers'"
         (click)="mode = mode == 'triggers' ? 'form' : 'triggers'"
       >
@@ -82,8 +90,14 @@
         <label for="">
           تریگر‌ها
         </label>
-      </div></mat-card-content
-    >
+      </div>
+    </mat-card-content>
+
+    <mat-card-content *ngIf="mode == 'note'">
+      <div class="form-wrapper">
+       <app-note></app-note>
+      </div>
+    </mat-card-content>
     <mat-card-content *ngIf="mode == 'access'">
       <div class="access">
         <div class="form-wrapper">

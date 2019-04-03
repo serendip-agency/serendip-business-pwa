@@ -1,0 +1,35 @@
+<div class="view">
+  <div class="label" *ngIf="viewType == 'label'">
+    {{ label | rpd }}
+  </div>
+
+  <div class="cell" *ngIf="viewType != 'label' && typeOf(model) == 'string'">
+    {{ model }}
+  </div>
+
+  <div class="cell" *ngIf="viewType != 'label' && typeOf(model) == 'boolean'">
+    {{ model }}
+  </div>
+
+  <div class="cell" *ngIf="viewType != 'label' && typeOf(model) == 'number'">
+    {{ model }}
+  </div>
+
+  <div
+    class="cell"
+    *ngIf="
+      viewType != 'label' &&
+      typeOf(model) == 'object' &&
+      typeOf(model?.length) == 'undefined'
+    "
+  >
+    {{ model | json }}
+  </div>
+
+  <div
+    class="cell"
+    *ngIf="viewType != 'label' && typeOf(model) == 'object' && model?.length"
+  >
+    {{ model }}
+  </div>
+</div>

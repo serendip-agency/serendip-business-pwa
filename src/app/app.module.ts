@@ -120,6 +120,8 @@ import { FormStorageInputComponent } from "./base/form/form-storage-input/form-s
 import { FormHtmlInputComponent } from "./base/form/form-html-input/form-html-input.component";
 import { SafePipe } from "./safe.pipe";
 import { FormFieldValueCompareComponent } from "./base/form/form-field-value-compare/form-field-value-compare.component";
+import { NoteComponent } from "./note/note.component";
+import { JsonViewComponent } from "./base/report/json-view/json-view.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -182,10 +184,12 @@ export const dynamicComponents = [
   DateViewComponent,
   CurrencyViewComponent,
   // Business related  report views
+
   ClubRatingViewComponent,
   ContactsViewComponent,
   PriceViewComponent,
   IconViewComponent,
+  JsonViewComponent,
 
   // Other services
   WeatherComponent,
@@ -205,21 +209,19 @@ export const primaryComponents = [
   RpdPipe,
   Split3Pipe,
   PersianPipe,
-  CalendarYearComponent
+  CalendarYearComponent,
+  ListComponent,
+  StorageComponent,
+  StorageFilesComponent,
+  FormPartsComponent,
+  SyncComponent,
+  ChartComponent,
+  SafePipe,
+  NoteComponent
 ];
 
 @NgModule({
-  declarations: [
-    ...primaryComponents,
-    ...dynamicComponents,
-    ListComponent,
-    StorageComponent,
-    StorageFilesComponent,
-    FormPartsComponent,
-    SyncComponent,
-    ChartComponent,
-    SafePipe
-  ],
+  declarations: [...primaryComponents, ...dynamicComponents],
   entryComponents: [],
   imports: [
     QuillModule,
