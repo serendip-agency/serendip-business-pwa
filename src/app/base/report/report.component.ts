@@ -412,6 +412,21 @@ export class ReportComponent implements OnInit {
       this.format.type = "3d";
     }
 
+    if (this.format.chart) {
+      if (
+        this.charts.filter(p => p.name === this.format.chart)[0].dataType !==
+        this.format.type
+      ) {
+        this.format.chart = null;
+      }
+    }
+
+    if (!this.format.chart) {
+      this.format.chart = this.charts
+        .filter(p => p.dataType === this.format.type)
+        .sort((a, b) => Math.random())[0].name;
+    }
+
     console.log(this.format);
 
     if (this.format) {

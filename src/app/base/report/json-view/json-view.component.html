@@ -30,6 +30,6 @@
     class="cell"
     *ngIf="viewType != 'label' && typeOf(model) == 'object' && model?.length"
   >
-    {{ model }}
+    {{ model | json }}
   </div>
 </div>

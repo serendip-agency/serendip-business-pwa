@@ -17,7 +17,7 @@ table.formatted-report-table {
   td,
   th {
     border-bottom: 1px solid #ccc;
-    padding:0 5px;
+    padding: 0 5px;
   }
 }
 .report-chart {
@@ -51,8 +51,8 @@ table.formatted-report-table {
   transition: all ease-in-out 0.1s;
   &.selected {
     opacity: 1;
-    background: #576E9E;
-    img{
+    background: #576e9e;
+    img {
       filter: invert(1);
     }
   }
@@ -74,16 +74,15 @@ table.formatted-report-table {
   .list {
     max-width: 360px;
   }
-
 }
 .report-model {
   padding: 10px 30px;
   margin-bottom: 30px;
   margin-top: 10px !important;
 
-
-  .queries{
+  .queries {
     // margin-right: 40px;
+    margin:10px 0;
     font-size: 11px;
   }
   .reset-query {
@@ -98,9 +97,8 @@ table.formatted-report-table {
 
   .template-inputs,
   .property-query {
-    padding:0 10px;
-    background: #f1f1f1;
-  
+    padding: 0 10px;
+
     margin: 0 30px 0 0;
 
     vertical-align: top;
@@ -116,35 +114,55 @@ table.formatted-report-table {
   }
   .field-name {
     display: inline-block;
-    width:100%;
+    width: 100%;
     text-overflow: ellipsis;
     white-space: nowrap;
-    border-bottom: 2px solid rgb(240, 240, 240);
     padding: 0 0 0 15px;
     font-size: 11px;
   }
 
   .fields {
     .field {
-      margin: 15px 0;
+      margin: 10px 0;
       font-size: 12px;
-      padding-left: 30px;
+      padding-right: 30px;
 
       position: relative;
-      border-bottom: 2px solid rgb(240, 240, 240);
     }
   }
+
   .drag-handle {
     vertical-align: top;
     display: inline-block;
-    width: 30px;
-    height: 30px;
-    top: 0;
-    left: 0;
+    width: 20px;
+    height: 20px;
+    top: 2px;
+    right: 0;
     position: absolute;
     cursor: move;
     opacity: 0.7;
+    border-radius: 100%;
+    box-sizing: border-box;
   }
+
+
+
+  .queries-icon {
+    width: 20px;
+    height: 20px;
+    top: 2px;
+    left: 0;
+    position: absolute;
+    opacity: 0.7;
+    border-radius: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+    &.active{
+      background: #DBE8FF;
+      cursor: default;
+    }
+  }
+
 
   .mat-slide-toggle-content {
     font-size: 13px;

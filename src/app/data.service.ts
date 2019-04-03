@@ -819,8 +819,12 @@ export class DataService {
     entityName: string,
     report?: ReportInterface,
     depth?: number,
-    maxDepth?: number
+    maxDepth?: number,
+    parents?: string[]
   ) {
+    if (!parents) {
+      parents = [];
+    }
     if (depth > maxDepth) {
       return [];
     }
@@ -843,9 +847,13 @@ export class DataService {
       }
     }
 
-    const primaryFields = _.findWhere(ReportsSchema, {
-      name: "primary"
-    }).fields;
+    const primaryFields = JSON.parse(
+      JSON.stringify(
+        _.findWhere(ReportsSchema, {
+          name: "primary"
+        }).fields
+      )
+    );
 
     primaryFields.forEach(pf => {
       if (report.fields.filter(f => f.name === pf.name).length === 0) {
@@ -884,26 +892,26 @@ export class DataService {
           }
 
           if (typeof value.length !== "undefined" && value.length !== 24) {
-            report.fields.push({
-              name: key + "Length",
-              label: typeof value === "string" ? "طول " + key : "تعداد " + key,
-              enabled: false,
-              analytical: true,
-              method: "javascript",
-              methodOptions: {
-                code: `(async (
-                      document,
-                      field
-                    ) => {
-                      if (document['${key}']) {
-                        return document['${key}'].length;
-                      } else {
-                        return 0;
-                      }
-                    })`.toString()
-              },
-              type: "number"
-            });
+            // report.fields.push({
+            //   name: key + "Length",
+            //   label: typeof value === "string" ? "طول " + key : "تعداد " + key,
+            //   enabled: false,
+            //   analytical: true,
+            //   method: "javascript",
+            //   methodOptions: {
+            //     code: `(async (
+            //           document,
+            //           field
+            //         ) => {
+            //           if (document['${key}']) {
+            //             return document['${key}'].length;
+            //           } else {
+            //             return 0;
+            //           }
+            //         })`.toString()
+            //   },
+            //   type: "number"
+            // });
 
             report.fields.push({
               name: key,
@@ -927,25 +935,28 @@ export class DataService {
             } catch (error) {}
 
             if (model) {
-              (await this.fields(
-                model._entity,
-                null,
-                (depth || 0) + 1,
-                maxDepth === undefined ? 0 : maxDepth
-              )).forEach(subField => {
-                report.fields.push({
-                  name: key + "." + subField.name,
-                  label: key + "." + subField.name,
-                  analytical: true,
-                  method: "findEntityById",
-                  methodOptions: {
-                    entityName: model._entity,
-                    field: subField
-                  },
-                  enabled: false,
-                  type: typeof value as any
+              if (parents.indexOf(model._entity) === -1) {
+                (await this.fields(
+                  model._entity,
+                  null,
+                  (depth || 0) + 1,
+                  maxDepth === undefined ? 0 : maxDepth,
+                  parents.concat([entityName])
+                )).forEach(subField => {
+                  report.fields.push({
+                    name: key + "." + subField.name,
+                    label: key + "." + subField.name,
+                    analytical: true,
+                    method: "findEntityById",
+                    methodOptions: {
+                      entityName: model._entity,
+                      field: subField
+                    },
+                    enabled: false,
+                    type: typeof value as any
+                  });
                 });
-              });
+              }
 
               continue;
             }

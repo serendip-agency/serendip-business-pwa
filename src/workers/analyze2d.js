@@ -39,9 +39,10 @@ self.module = {
       dataGroups = { all: r.data };
     } else {
       dataGroups = _.groupBy(r.data, p =>
-        p[formatOptions.groupBy.name] === "undefined"
-          ? "n/a"
-          : p[formatOptions.groupBy.name] || "n/a"
+        p[formatOptions.groupBy.name]
+          ? p[formatOptions.groupBy.name].length ||
+            p[formatOptions.groupBy.name]
+          : 'n/a'
       );
     }
 

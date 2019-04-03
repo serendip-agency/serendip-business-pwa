@@ -92,7 +92,9 @@
 
         <app-form-radio-input
           [model]="format.options.groupBy"
-          [label]="'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید (DATASET)'"
+          [label]="'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید (DATASET)'+  ' (' +
+          getFieldsForSelect('string', 'boolean', 'number', 'array').length +
+          ')' | rpd"
           [data]="getFieldsForSelect('string', 'boolean', 'number', 'array')"
           [display]="'block'"
           (modelChange)="
@@ -103,7 +105,12 @@
 
         <app-form-radio-input
           [model]="format?.options?.dateBy"
-          [label]="'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید'"
+          [label]="
+            'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید' +
+            ' (' +
+            getFieldsForSelect('date').length +
+            ')' | rpd
+          "
           [data]="getFieldsForSelect('date')"
           [display]="'block'"
           (modelChange)="
@@ -205,7 +212,13 @@
           style="margin:15px auto 0 auto;text-align: center;font-weight: bold;font-size:14px;"
         >
           <div class="title" *ngIf="format.type == '1d'">
-            بررسی {{ title || entityName }} به تفکیک
+            {{
+              format?.options?.valueBy
+                ? "مجموع " + format?.options?.valueBy.label
+                : "تعداد رکورد‌ها"
+            }}
+            در
+            {{ title || entityName }} به تفکیک
             {{
               format?.options?.groupBy?.label
                 ? format?.options?.groupBy?.label
@@ -214,7 +227,7 @@
           </div>
 
           <div class="title" *ngIf="format.type == '2d'">
-            بررسی {{ title  || entityName }} در طول زمان به تفکیک
+            بررسی {{ title || entityName }} در طول زمان به تفکیک
             {{
               format?.options?.groupBy?.label
                 ? format?.options?.groupBy?.label
@@ -273,6 +286,20 @@
                 alt=""
               />
 
+              <img
+                *ngIf="
+                  field.enabled && field.queries && field.queries.length > 0
+                "
+                (click)="field.showQueries = !field.showQueries"
+                class="queries-icon"
+                [class.active]="
+                  _.findWhere(field.queries, { enabled: true }) ||
+                  field.showQueries
+                "
+                src="assets/icons/filter-6.svg"
+                alt=""
+              />
+
               <div class="field-name">
                 <mat-slide-toggle [(ngModel)]="field.enabled">
                   {{ field.label }}
@@ -299,7 +326,11 @@
 
               <div
                 *ngIf="
-                  field.enabled && field.queries && field.queries.length > 0
+                  field.enabled &&
+                  field.queries &&
+                  (_.findWhere(field.queries, { enabled: true }) ||
+                    field.showQueries) &&
+                  field.queries.length > 0
                 "
                 class="queries"
               >
@@ -329,7 +360,7 @@
 
             <div dndPlaceholderRef>
               <div
-                style="margin:10px;height:40px;border:1px dashed #ccc;border-radius: 10px;"
+                style="margin:5px 0;height:30px;border:1px dashed #ccc;border-radius: 10px;"
                 *ngIf="fieldDragging"
               ></div>
             </div>

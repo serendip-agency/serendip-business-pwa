@@ -9,7 +9,11 @@ self.module = {
 
     const r = params._input.report;
 
-    r.data = _.groupBy(r.data, p => p[formatOptions.groupBy.name]);
+    r.data = _.groupBy(r.data, p =>
+      p[formatOptions.groupBy.name]
+        ? p[formatOptions.groupBy.name].length || p[formatOptions.groupBy.name]
+        : "n/a"
+    );
 
     r.data["n/a"] =
       [...(r.data[""] || []), ...(r.data["undefined"] || [])] || [];
@@ -21,7 +25,7 @@ self.module = {
         value: formatOptions.valueBy
           ? r.data[p].reduce((prev, current) => {
               return (prev || 0) + current[formatOptions.valueBy.name];
-            },0)
+            }, 0)
           : r.data[p].length || 0
         //   data: r.data[p] || []
       };
