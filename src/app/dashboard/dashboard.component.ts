@@ -49,6 +49,7 @@ import { AccountPasswordComponent } from "../account/account-password/account-pa
 import { AccountSessionsComponent } from "../account/account-sessions/account-sessions.component";
 import { ObService } from "../ob.service";
 import { StorageService } from "../storage.service";
+import { ReportService } from "../report.service";
 
 // optional import of scroll behavior
 polyfill({
@@ -236,36 +237,65 @@ export class DashboardComponent implements OnInit, OnDestroy {
         const result = this.dataService.collectionsTextIndexCache[
           entityName
         ].search(q);
+
         this.search.results[entityName] = result;
-        if (result.lenght > 0) {
+        if (result.length > 0) {
           foundAnyThing = true;
         }
       }
     );
+    const searchInCommonEnglishWords = this.dataService.commonEnglishWordsIndexCache.search(
+      q
+    );
 
-    if (!foundAnyThing) {
-      const matchAnyCommonEnglishWord =
-        this.dataService.commonEnglishWordsIndexCache.search(q).length > 0;
-      if (
-        text.englishKeyChar.indexOf(q[0] || " ") !== -1 &&
-        !matchAnyCommonEnglishWord &&
-        !validate.isNumeric(q)
-      ) {
-        this.search.didYouMean = text.switchEnglishKeyToPersian(q);
-      }
+    if (
+      text.englishKeyChar.indexOf(q[0] || " ") !== -1 &&
+      searchInCommonEnglishWords.length === 0 &&
+      !validate.isNumeric(q)
+    ) {
+      this.search.didYouMean = text.switchEnglishKeyToPersian(q);
     }
   }
   searchResultsInSection(sectionName) {
     let records = [];
 
     Object.keys(this.search.results)
-      .filter(p => p.indexOf(sectionName) === 0)
+      .filter(p => p.toLowerCase().indexOf(sectionName.toLowerCase()) === 0)
       .forEach(entity => {
         records = records.concat(this.search.results[entity]);
       });
 
     return records;
   }
+
+  public async indexCollections(
+    callback?: (collectionName: string, error: any) => void
+  ) {
+    for (const entity of await this.dataService.list("entity")) {
+      const fields = JSON.parse(
+        JSON.stringify(await this.dataService.fields(entity.name, null, 0, 1))
+      )
+        .filter(p => p.indexing)
+        .map(f => {
+          f.enabled = true;
+          return f;
+        });
+
+      const docIndex = this.dataService.createDocumentIndex(fields);
+
+      const report = await this.reportService.generate({
+        entityName: entity.name,
+        fields
+      });
+
+      for (const item of report.data) {
+        docIndex.add(item);
+      }
+
+      this.dataService.collectionsTextIndexCache[entity.name] = docIndex;
+    }
+  }
+
   dashboardDateTimeTick() {
     // this.dashboardDateTimeFormats[0]
 
@@ -324,6 +354,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public businessService: BusinessService,
     private idbService: IdbService,
     private changeRef: ChangeDetectorRef,
+    private reportService: ReportService,
     private widgetService: WidgetService,
     private wsService: WsService,
     public obService: ObService,
@@ -1397,6 +1428,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
+    this.dashboardLoadingText = "Syncing Data ...";
+
     if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
       try {
         await this.dataSync();
@@ -1413,6 +1446,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardReady = true;
 
     this.handleFullNav();
+
+    this.dashboardLoadingText = "Indexing Data ...";
+
+    await this.indexCollections();
 
     this.dashboardLoadingText = "Connecting to socket ...";
 

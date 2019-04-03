@@ -595,9 +595,11 @@ export class ReportComponent implements OnInit {
       };
     }
 
-    this.report.fields = await this.reportService.fields(
+    this.report.fields = await this.dataService.fields(
       this.entityName,
-      this.report
+      this.report,
+      0,
+      3
     );
 
     this.report = await this.reportService.generate(this.report);

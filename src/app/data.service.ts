@@ -16,12 +16,13 @@ import { IdbService } from "./idb.service";
 import { ObService } from "./ob.service";
 import * as promiseSerial from "promise-serial";
 import { FormsSchema, ReportsSchema } from "./schema";
-import { DocumentIndex } from "ndx";
+import { createIndex, addDocumentToIndex } from "ndx";
 import { SearchSchema } from "./schema/search";
 import ObjectID from "bson-objectid";
 import * as moment from "moment-jalaali";
 import * as aesjs from "aes-js";
-
+import { words } from "lodash";
+import { query as ndxQuery } from "ndx-query";
 export interface DataRequestInterface {
   method: string | "POST" | "GET";
   path: string;
@@ -51,6 +52,7 @@ export class DataService {
   ];
 
   currentServer = "localhost:2040";
+  _fieldsCache: any = {};
 
   constructor(
     private obService: ObService,
@@ -813,55 +815,220 @@ export class DataService {
     }
   }
 
-  public async indexCollections(
-    callback?: (collectionName: string, error: any) => void
+  async fields(
+    entityName: string,
+    report?: ReportInterface,
+    depth?: number,
+    maxDepth?: number
   ) {
-    await promiseSerial(
-      ReportsSchema.concat(await this.list("report"))
-        .filter(p => p.entityName)
-        .map(schema => {
-          return () =>
-            new Promise(async (resolve, reject) => {
-              const docIndex = new DocumentIndex({
-                filter: str => {
-                  return str;
-                }
-              });
-              const docs = await this.list(schema.entityName, 0, 0, true);
+    if (depth > maxDepth) {
+      return [];
+    }
 
-              schema.fields
-                .filter(p => p.indexing)
-                .forEach(field => {
-                  docIndex.addField(field.name, {
-                    getter: doc => doc[field.name] || ""
-                  });
-                });
+    if (!report) {
+      if (this._fieldsCache[`${entityName}`]) {
+        return this._fieldsCache[`${entityName}`];
+      }
+    }
 
-              docs.forEach(doc => {
-                docIndex.add(doc._id, doc);
-              });
+    console.log("searching for fields", entityName, depth, maxDepth);
 
-              this.collectionsTextIndexCache[schema.entityName] = docIndex;
-              console.log(this.collectionsTextIndexCache);
-              resolve();
+    if (!report) {
+      report = _.findWhere(await this.list("report", 0, 0), {
+        entityName
+      } as ReportInterface);
+
+      if (!report) {
+        report = { entityName, fields: [] };
+      }
+    }
+
+    const primaryFields = _.findWhere(ReportsSchema, {
+      name: "primary"
+    }).fields;
+
+    primaryFields.forEach(pf => {
+      if (report.fields.filter(f => f.name === pf.name).length === 0) {
+        report.fields.push(pf);
+      }
+    });
+
+    for (const row of await this.list(entityName, 0, 10)) {
+      for (const key in row) {
+        if (
+          ["_entity", "_business", "_id", "_vuser", "_uuser"].indexOf(key) !==
+          -1
+        ) {
+          continue;
+        }
+
+        const value = row[key];
+
+        if (typeof value === "undefined" || value === null) {
+          continue;
+        }
+
+        if (
+          report.fields.filter(p => p.name === key).length === 0 &&
+          report.fields.filter(p => p.name.startsWith(key + ".")).length === 0
+        ) {
+          if (key.toLowerCase().indexOf("date") !== -1) {
+            report.fields.push({
+              name: key,
+              label: key,
+              analytical: true,
+              enabled: false,
+              type: "date"
             });
-        }),
-      { parallelize: 1 }
-    );
+            continue;
+          }
+
+          if (typeof value.length !== "undefined" && value.length !== 24) {
+            report.fields.push({
+              name: key + "Length",
+              label: typeof value === "string" ? "طول " + key : "تعداد " + key,
+              enabled: false,
+              analytical: true,
+              method: "javascript",
+              methodOptions: {
+                code: `(async (
+                      document,
+                      field
+                    ) => {
+                      if (document['${key}']) {
+                        return document['${key}'].length;
+                      } else {
+                        return 0;
+                      }
+                    })`.toString()
+              },
+              type: "number"
+            });
+
+            report.fields.push({
+              name: key,
+              label: key,
+              analytical: true,
+              enabled: false,
+              type: "array"
+            });
+
+            continue;
+          }
+
+          if (typeof value.length !== "undefined" && value.length === 24) {
+            if (value === row._id) {
+              continue;
+            }
+            let model;
+
+            try {
+              model = await this.details(null, value);
+            } catch (error) {}
+
+            if (model) {
+              (await this.fields(
+                model._entity,
+                null,
+                (depth || 0) + 1,
+                maxDepth === undefined ? 0 : maxDepth
+              )).forEach(subField => {
+                report.fields.push({
+                  name: key + "." + subField.name,
+                  label: key + "." + subField.name,
+                  analytical: true,
+                  method: "findEntityById",
+                  methodOptions: {
+                    entityName: model._entity,
+                    field: subField
+                  },
+                  enabled: false,
+                  type: typeof value as any
+                });
+              });
+
+              continue;
+            }
+
+            // for (const entityName of entityNamesToCheck) {
+            //   try {
+            //     await this.dataService.details(entityName, value);
+            //   } catch (error) {}
+            // }
+          }
+
+          report.fields.push({
+            name: key,
+            label: key,
+            analytical: true,
+            enabled: false,
+            type: typeof value as any
+          });
+        }
+      }
+    }
+
+    return report.fields;
   }
 
+  createDocumentIndex(fields) {
+    // `createIndex()` creates an index data structure.
+    // First argument specifies how many different fields we want to index.
+    const index = createIndex(fields.length);
+    // `fieldAccessors` is an array with functions that used to retrieve data from different fields.
+    const fieldAccessors = fields.map(f => doc => doc[f.name]);
+    // `fieldBoostFactors` is an array of boost factors for each field, in this example all fields will have
+    // identical factors.
+    const fieldBoostFactors = fields.map(() => 1);
+
+    return {
+      // `add()` function will add documents to the index.
+      add: doc => {
+        addDocumentToIndex(
+          index,
+          fieldAccessors,
+          // Tokenizer is a function that breaks text into words, phrases, symbols, or other meaningful elements
+          // called tokens.
+          // Lodash function `words()` splits string into an array of its words, see https://lodash.com/docs/#words for
+          // details.
+          words,
+          // Filter is a function that processes tokens and returns terms, terms are used in Inverted Index to
+          // index documents.
+          term => term.toLowerCase(),
+          // Document key, it can be a unique document id or a refernce to a document if you want to store all documents
+          // in memory.
+          doc._id,
+          // Document.
+          doc
+        );
+      },
+      // `search()` function will be used to perform queries.
+      search: q =>
+        ndxQuery(
+          index,
+          fieldBoostFactors,
+          // BM25 ranking function constants:
+          1.2, // BM25 k1 constant, controls non-linear term frequency normalization (saturation).
+          0.75, // BM25 b constant, controls to what degree document length normalizes tf values.
+          words,
+          term => term.toLowerCase(),
+          // Set of removed documents, in this example we don't want to support removing documents from the index,
+          // so we can ignore it by specifying this set as `undefined` value.
+          undefined,
+          q
+        )
+    };
+  }
   public async indexCommonEnglishWords() {
-    const words =
+    const list =
       (await this.http
         .get<string[]>("assets/data/common-words.json")
         .toPromise()) || [];
 
-    const docIndex = new DocumentIndex();
+    const docIndex = this.createDocumentIndex([{ name: "value" }]);
 
-    docIndex.addField("value");
-
-    words.forEach(w => {
-      docIndex.add(w, { value: w });
+    list.forEach(w => {
+      docIndex.add({ value: w });
     });
 
     this.commonEnglishWordsIndexCache = docIndex;
@@ -877,8 +1044,6 @@ export class DataService {
     await this.pushCollections(opts.onCollectionPush);
 
     await this.pullCollections(opts.onCollectionPull);
-
-    await this.indexCollections(opts.onCollectionIndex);
 
     await this.indexCommonEnglishWords();
   }

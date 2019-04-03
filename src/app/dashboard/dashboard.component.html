@@ -377,6 +377,16 @@
         <div class="tasks"></div>
       </div>
 
+
+    <div *ngIf="search.mode">
+
+      <div *ngFor="let item of searchResultsInSection(search.mode)">
+
+        {{item | json}}
+      </div>
+
+    </div>
+
       <div class="actions">
         <div class="button" (click)="manualSync()">
           <img src="assets/icons/sync-3.svg" />

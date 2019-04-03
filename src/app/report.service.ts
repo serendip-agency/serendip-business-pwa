@@ -58,153 +58,6 @@ export class ReportService {
     moment.loadPersian();
   }
 
-  async fields(
-    entityName: string,
-    report?: ReportInterface,
-    depth?: number,
-    maxDepth?: number
-  ) {
-    console.log("fields", entityName, depth, maxDepth);
-    if (depth > maxDepth) {
-      return [];
-    }
-    if (!report) {
-      report = _.findWhere(await this.dataService.list("report", 0, 0), {
-        entityName
-      } as ReportInterface);
-
-      if (!report) {
-        report = { entityName, fields: [] };
-      }
-    }
-
-    const primaryFields = _.findWhere(ReportsSchema, {
-      name: "primary"
-    }).fields;
-
-    primaryFields.forEach(pf => {
-      if (report.fields.filter(f => f.name === pf.name).length === 0) {
-        report.fields.push(pf);
-      }
-    });
-
-    for (const row of await this.dataService.list(entityName, 0, 100)) {
-      for (const key in row) {
-        if (
-          ["_entity", "_business", "_id", "_vuser", "_uuser"].indexOf(key) !==
-          -1
-        ) {
-          continue;
-        }
-
-        const value = row[key];
-
-        if (typeof value === "undefined" || value === null) {
-          continue;
-        }
-
-        if (
-          report.fields.filter(p => p.name === key).length === 0 &&
-          report.fields.filter(p => p.name.startsWith(key + ".")).length === 0
-        ) {
-          if (key.toLowerCase().indexOf("date") !== -1) {
-            report.fields.push({
-              name: key,
-              label: key,
-              analytical: true,
-              enabled: false,
-              type: "date"
-            });
-            continue;
-          }
-
-          if (typeof value.length !== "undefined" && value.length !== 24) {
-            report.fields.push({
-              name: key + "Length",
-              label: typeof value === "string" ? "طول " + key : "تعداد " + key,
-              enabled: false,
-              analytical: true,
-              method: "javascript",
-              methodOptions: {
-                code: `(async (
-                      document,
-                      field
-                    ) => {
-                      if (document['${key}']) {
-                        return document['${key}'].length;
-                      } else {
-                        return 0;
-                      }
-                    })`.toString()
-              },
-              type: "number"
-            });
-
-            report.fields.push({
-              name: key,
-              label: key,
-              analytical: true,
-              enabled: false,
-              type: "array"
-            });
-
-            continue;
-          }
-
-          if (typeof value.length !== "undefined" && value.length === 24) {
-            if (value === row._id) {
-              continue;
-            }
-            let model;
-
-            try {
-              model = await this.dataService.details(null, value);
-            } catch (error) {}
-
-            if (model) {
-              (await this.fields(
-                model._entity,
-                null,
-                (depth || 0) + 1,
-                maxDepth || 1
-              )).forEach(subField => {
-                report.fields.push({
-                  name: key + "." + subField.name,
-                  label: key + "." + subField.name,
-                  analytical: true,
-                  method: "findEntityById",
-                  methodOptions: {
-                    entityName: model._entity,
-                    field: subField
-                  },
-                  enabled: false,
-                  type: typeof value as any
-                });
-              });
-
-              continue;
-            }
-
-            // for (const entityName of entityNamesToCheck) {
-            //   try {
-            //     await this.dataService.details(entityName, value);
-            //   } catch (error) {}
-            // }
-          }
-
-          report.fields.push({
-            name: key,
-            label: key,
-            analytical: true,
-            enabled: false,
-            type: typeof value as any
-          });
-        }
-      }
-    }
-
-    return report.fields;
-  }
   async generate(report: ReportInterface) {
     if (!report) {
       return;
@@ -512,12 +365,14 @@ export class ReportService {
           field: ReportFieldInterface;
         } = input.field.methodOptions;
 
-        const model = await this.dataService.details(
-          methodOptions.entityName,
-          input.document[input.field.name.split(".")[0]]
-        );
+        let model;
 
-        console.log(model, methodOptions.field.name);
+        try {
+          model = await this.dataService.details(
+            methodOptions.entityName,
+            input.document[input.field.name.split(".")[0]]
+          );
+        } catch (error) {}
 
         if (model) {
           if (methodOptions.field) {

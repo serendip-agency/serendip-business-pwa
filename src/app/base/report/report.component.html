@@ -205,7 +205,7 @@
           style="margin:15px auto 0 auto;text-align: center;font-weight: bold;font-size:14px;"
         >
           <div class="title" *ngIf="format.type == '1d'">
-            بررسی {{ title }} به تفکیک
+            بررسی {{ title || entityName }} به تفکیک
             {{
               format?.options?.groupBy?.label
                 ? format?.options?.groupBy?.label
@@ -214,7 +214,7 @@
           </div>
 
           <div class="title" *ngIf="format.type == '2d'">
-            بررسی {{ title }} در طول زمان به تفکیک
+            بررسی {{ title  || entityName }} در طول زمان به تفکیک
             {{
               format?.options?.groupBy?.label
                 ? format?.options?.groupBy?.label
