@@ -7,84 +7,38 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: true,
         indexing: true,
+        type: "string",
         name: "_id",
         label: "شناسه سند",
-        template: { component: "ObjectidViewComponent" },
-        queries: [
-          {
-            label: "برابر باشد با",
-            method: "eq",
-            methodInputForm: "report-sync-field-query-eq"
-          },
-          {
-            label: "برابر نباشد با",
-            method: "neq",
-            methodInputForm: "report-sync-field-query-eq"
-          }
-        ]
+        template: { component: "ObjectidViewComponent" }
       },
       {
         enabled: false,
         name: "_cdate",
         label: "تاریخ ثبت",
-        template: {
-          component: "DateViewComponent",
-          inputs: {
-            format: "jYYYY/jMM/jDD HH:mm:ss"
-          },
-          formName: "report-async-field-format-date"
-        },
-        queries: [
-          {
-            label: "در این بازه زمانی باشد",
-            method: "range",
-            methodInputForm: "report-sync-field-query-range"
-          },
-          {
-            label: "در این بازه زمانی نباشد",
-            method: "range",
-            methodInputForm: "report-sync-field-query-range"
-          }
-        ]
+        type: "date"
       },
       {
         enabled: false,
         name: "_vdate",
-        label: "آخرین تغییر",
-        template: {
-          component: "DateViewComponent",
-          inputs: {
-            format: "jYYYY/jMM/jDD HH:mm:ss"
-          },
-          formName: "report-async-field-format-date"
-        },
-        queries: [
-          {
-            label: "در این بازه زمانی باشد",
-            method: "range",
-            methodInputForm: "report-sync-field-query-range"
-          },
-          {
-            label: "در این بازه زمانی نباشد",
-            method: "range",
-            methodInputForm: "report-sync-field-query-range"
-          }
-        ]
+        label: "تاریخ آخرین تغییر",
+        type: "date"
+      },
+      {
+        enabled: false,
+        name: "_udate",
+        label: "تاریخ آخرین آپدیت",
+        type: "date"
       },
       {
         enabled: false,
         name: "_cuser",
-        label: "ثبت‌کننده",
-        analytical: true,
-        template: { component: "ShortTextViewComponent" }
+        label: "ثبت‌کننده"
       },
       {
         enabled: false,
         name: "_vuser",
-        analytical: true,
-        link: "_user",
-        label: "آخرین تغییر‌دهنده",
-        template: { component: "ShortTextViewComponent" }
+        label: "آخرین تغییر‌دهنده"
       }
     ]
   },

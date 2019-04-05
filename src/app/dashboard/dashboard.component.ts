@@ -1418,15 +1418,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     await this.dataService.loadBusiness();
 
-    if (!this.businessService.business.publicKey) {
-      this.router.navigate(["/business", "encryption"]);
-      return;
-    }
+    // if (!this.businessService.business.publicKey) {
+    //   this.router.navigate(["/business", "encryption"]);
+    //   return;
+    // }
 
-    if (!localStorage.getItem("rsa")) {
-      this.router.navigate(["/business", "key"]);
-      return;
-    }
+    // if (!localStorage.getItem("rsa")) {
+    //   this.router.navigate(["/business", "key"]);
+    //   return;
+    // }
 
     this.dashboardLoadingText = "Syncing Data ...";
 

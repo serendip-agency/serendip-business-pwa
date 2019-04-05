@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import * as sUtils from "serendip-utility";
+import * as sUtil from "serendip-utility";
 
 @Component({
   selector: "app-note",
@@ -8,6 +8,8 @@ import * as sUtils from "serendip-utility";
 })
 export class NoteComponent implements OnInit {
   constructor() {}
+
+  public sUtil = sUtil;
 
   ngOnInit() {}
 }

@@ -25,7 +25,6 @@ export class CalendarMonthComponent implements OnInit {
 
   viewId: string;
   monthView: {
-    events: any[];
     date: Date;
     class: string[];
     formats: any;
@@ -138,7 +137,7 @@ export class CalendarMonthComponent implements OnInit {
             element.formats["jYYYY/jMM/jDD"]
           )
           .then(events => {
-            element.events = events;
+       //     element.events = events;
 
             element.holiday = _.findWhere(events, { holiday: true });
           });

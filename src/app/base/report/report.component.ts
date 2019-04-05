@@ -15,7 +15,7 @@ import {
   ReportFormatInterface,
   ReportInterface
 } from "serendip-business-model";
-import * as sUtils from "serendip-utility";
+import * as sUtil from "serendip-utility";
 import { CalendarService } from "src/app/calendar.service";
 import { ClubRatingViewComponent } from "src/app/crm/club-rating-view/club-rating-view.component";
 import { ContactsViewComponent } from "src/app/crm/contacts-view/contacts-view.component";
@@ -210,6 +210,7 @@ export class ReportComponent implements OnInit {
   formats: EntityModel[];
 
   _ = _;
+  public sUtil = sUtil;
 
   @Input() pageCount = 1;
 

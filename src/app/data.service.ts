@@ -298,7 +298,7 @@ export class DataService {
     if (offline) {
       const storeName = controller.toLowerCase().trim();
       const store = await this.idbService.dataIDB();
-      let data = await store.get(controller);
+      let data = (await store.get(controller)) as any;
 
       if (!data) {
         data = [];
@@ -338,64 +338,6 @@ export class DataService {
       }
     }
   }
-
-  async cacheReport(reportId: string) {
-    const reportStore = await this.idbService.reportIDB();
-    await reportStore.set(
-      reportId,
-      await this.request({
-        method: "POST",
-        path: `/api/entity/report`,
-        model: {
-          reportId: reportId,
-          zip: true
-        }
-      })
-    );
-  }
-
-  // async report<A>(opts: ReportOptionsInterface): Promise<ReportModel> {
-  //   if (!opts.online) {
-  //     return this.offlineReport(opts);
-  //   }
-
-  //   const requestOpts: DataRequestInterface = {
-  //     method: "POST",
-  //     path: `/api/entity/report`,
-  //     model: opts,
-  //     timeout: 3000
-  //   };
-
-  //   if (opts.zip) {
-  //     requestOpts.raw = true;
-  //   }
-
-  //   try {
-  //     const requestResult = await this.request(requestOpts);
-
-  //     if (opts.zip) {
-  //       const data = requestResult.body;
-  //       if (!data) {
-  //         return null;
-  //       }
-
-  //       const zip = await JsZip.loadAsync(data, {
-  //         base64: false,
-  //         checkCRC32: true
-  //       });
-
-  //       const unzippedText: any = await zip.file("data.json").async("text");
-
-  //       const unzippedArray = JSON.parse(unzippedText);
-
-  //       return unzippedArray;
-  //     } else {
-  //       return requestResult;
-  //     }
-  //   } catch (error) {
-  //     return await this.offlineReport(opts);
-  //   }
-  // }
 
   async search<A>(
     controller: string,
@@ -460,9 +402,8 @@ export class DataService {
   async count(controller: string, offline?: boolean): Promise<number> {
     if (offline) {
       const store = await this.idbService.dataIDB();
-      const data = await store.get(controller);
 
-      return data.length;
+      return store.count();
     } else {
       try {
         return await this.request({
@@ -835,8 +776,6 @@ export class DataService {
       }
     }
 
-    console.log("searching for fields", entityName, depth, maxDepth);
-
     if (!report) {
       report = _.findWhere(await this.list("report", 0, 0), {
         entityName
@@ -891,7 +830,11 @@ export class DataService {
             continue;
           }
 
-          if (typeof value.length !== "undefined" && value.length !== 24) {
+          if (
+            typeof value !== "string" &&
+            typeof value.length !== "undefined" &&
+            value.length !== 24
+          ) {
             // report.fields.push({
             //   name: key + "Length",
             //   label: typeof value === "string" ? "طول " + key : "تعداد " + key,
@@ -924,7 +867,7 @@ export class DataService {
             continue;
           }
 
-          if (typeof value.length !== "undefined" && value.length === 24) {
+          if (typeof value === "string" && value.length === 24) {
             if (value === row._id) {
               continue;
             }
@@ -953,7 +896,7 @@ export class DataService {
                       field: subField
                     },
                     enabled: false,
-                    type: typeof value as any
+                    type: subField.type
                   });
                 });
               }
@@ -978,6 +921,155 @@ export class DataService {
         }
       }
     }
+
+    report.fields = report.fields.map(field => {
+      if (!field.queries) {
+        field.queries = [];
+      }
+
+      if (field.type === "array") {
+        [
+          {
+            label: "سایز آرایه برابر باشد با",
+            method: "array-length-eq",
+            methodInputForm: "field-query-number-eq"
+          },
+
+          {
+            label: "سایز آرایه برابر نباشد با",
+            method: "array-length-eq",
+            methodInputForm: "field-query-number-eq"
+          }
+        ].forEach(f => {
+          if (field.queries.filter(p => p.method === f.method).length === 0) {
+            field.queries.push(f);
+          }
+        });
+      }
+
+      if (field.type === "number") {
+        [
+          {
+            label: "برابر باشد با",
+            method: "number-eq",
+            methodInputForm: "field-query-number-eq"
+          },
+          {
+            label: "برابر نباشد با",
+            method: "number-neq",
+            methodInputForm: "field-query-number-eq"
+          },
+          {
+            label: "در این بازه باشد",
+            method: "number-in-range",
+            methodInputForm: "field-query-number-range"
+          },
+          {
+            label: "در این بازه نباشد",
+            method: "number-nin-range",
+            methodInputForm: "field-query-number-range"
+          }
+        ].forEach(f => {
+          if (field.queries.filter(p => p.method === f.method).length === 0) {
+            field.queries.push(f);
+          }
+        });
+      }
+
+      if (field.type === "boolean") {
+        [
+          {
+            label: "برابر باشد با",
+            method: "boolean-eq",
+            methodInputForm: "field-query-boolean-eq"
+          }
+        ].forEach(f => {
+          if (field.queries.filter(p => p.method === f.method).length === 0) {
+            field.queries.push(f);
+          }
+        });
+      }
+
+      if (field.type === "date") {
+        [
+          {
+            label: "در این بازه زمانی باشد",
+            method: "date-in-range",
+            methodInputForm: "field-query-date-range"
+          },
+          {
+            label: "در این بازه زمانی نباشد",
+            method: "date-nin-range",
+            methodInputForm: "field-query-date-range"
+          },
+          {
+            label: "برابر باشد با",
+            method: "date-eq",
+            methodInputForm: "field-query-date-eq"
+          },
+          {
+            label: "برابر نباشد با",
+            method: "date-neq",
+            methodInputForm: "field-query-date-eq"
+          }
+        ].forEach(f => {
+          if (field.queries.filter(p => p.method === f.method).length === 0) {
+            field.queries.push(f);
+          }
+        });
+
+        if (!field.template) {
+          field.template = {
+            component: "DateViewComponent",
+            inputs: {
+              format: "jYYYY/jMM/jDD HH:mm:ss"
+            },
+            formName: "report-async-field-format-date"
+          };
+        }
+      }
+
+      if (field.type === "string") {
+        [
+          {
+            label: "برابر باشد با",
+            method: "string-eq",
+            methodInputForm: "field-query-date-eq"
+          },
+          {
+            label: "برابر نباشد با",
+            method: "string-neq",
+            methodInputForm: "field-query-date-eq"
+          },
+          {
+            label: "شامل شود",
+            method: "string-contain",
+            methodInputForm: "field-query-date-eq"
+          }
+        ].forEach(f => {
+          if (field.queries.filter(p => p.method === f.method).length === 0) {
+            field.queries.push(f);
+          }
+        });
+      }
+
+      [
+        {
+          label: "خالی نباشد",
+          method: "neq-null"
+        },
+        {
+          label: "خالی باشد",
+          method: "eq-null"
+        }
+      ].forEach(f => {
+        if (field.queries.filter(p => p.method === f.method).length === 0) {
+          field.queries.push(f);
+        }
+      });
+
+      return field;
+    });
 
     return report.fields;
   }

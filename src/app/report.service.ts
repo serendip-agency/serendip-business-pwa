@@ -301,7 +301,7 @@ export class ReportService {
           dateRangeCount: _input.format.options.dateRangeCount || 10
         };
 
-        const thread = spawn(location.origin + "/workers/analyze2d.js");
+        const thread = spawn(location.origin + "/workers/analyze/2d.js");
 
         return new Promise((resolve, reject) => {
           thread
@@ -321,7 +321,7 @@ export class ReportService {
         }).catch(e => console.log(e)) as any;
       },
       analyze1d: async _input => {
-        const thread = spawn(location.origin + "/workers/analyze1d.js");
+        const thread = spawn(location.origin + "/workers/analyze/1d.js");
         const _formatOptions: {
           valueBy: ReportFieldInterface;
           groupBy: ReportFieldInterface;

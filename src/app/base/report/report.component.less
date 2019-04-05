@@ -82,7 +82,7 @@ table.formatted-report-table {
 
   .queries {
     // margin-right: 40px;
-    margin:10px 0;
+    margin: 10px 0;
     font-size: 11px;
   }
   .reset-query {
@@ -117,15 +117,27 @@ table.formatted-report-table {
     width: 100%;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding: 0 0 0 15px;
-    font-size: 11px;
+    font-size: 13px;
+    line-height: 24px;
+    height: 24px;
+
+    span {
+      display: inline-block;
+      vertical-align: top;
+      padding: 0 5px;
+    }
+    &.ltr {
+      direction: ltr;
+      text-align: left;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
   }
 
   .fields {
     .field {
       margin: 10px 0;
       font-size: 12px;
-      padding-right: 30px;
+      padding: 0 0 0 60px;
 
       position: relative;
     }
@@ -137,7 +149,7 @@ table.formatted-report-table {
     width: 20px;
     height: 20px;
     top: 2px;
-    right: 0;
+    left: 0;
     position: absolute;
     cursor: move;
     opacity: 0.7;
@@ -145,24 +157,21 @@ table.formatted-report-table {
     box-sizing: border-box;
   }
 
-
-
   .queries-icon {
     width: 20px;
     height: 20px;
     top: 2px;
-    left: 0;
+    left: 30px;
     position: absolute;
     opacity: 0.7;
     border-radius: 100%;
     box-sizing: border-box;
     cursor: pointer;
-    &.active{
-      background: #DBE8FF;
+    &.active {
+      background: #dbe8ff;
       cursor: default;
     }
   }
-
 
   .mat-slide-toggle-content {
     font-size: 13px;
@@ -216,6 +225,9 @@ table.formatted-report-table {
       vertical-align: top;
       line-height: 30px;
       padding: 5px 0;
+    }
+
+    .field-label {
     }
     .select {
       height: 40px;

@@ -92,9 +92,13 @@
 
         <app-form-radio-input
           [model]="format.options.groupBy"
-          [label]="'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید (DATASET)'+  ' (' +
-          getFieldsForSelect('string', 'boolean', 'number', 'array').length +
-          ')' | rpd"
+          [label]="
+            'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید (DATASET)' +
+              ' (' +
+              getFieldsForSelect('string', 'boolean', 'number', 'array')
+                .length +
+              ')' | rpd
+          "
           [data]="getFieldsForSelect('string', 'boolean', 'number', 'array')"
           [display]="'block'"
           (modelChange)="
@@ -107,9 +111,9 @@
           [model]="format?.options?.dateBy"
           [label]="
             'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید' +
-            ' (' +
-            getFieldsForSelect('date').length +
-            ')' | rpd
+              ' (' +
+              getFieldsForSelect('date').length +
+              ')' | rpd
           "
           [data]="getFieldsForSelect('date')"
           [display]="'block'"
@@ -300,10 +304,17 @@
                 alt=""
               />
 
-              <div class="field-name">
+              <div
+                class="field-name"
+                [class.ltr]="
+                  sUtil.text.englishKeyChar.indexOf(field.label[0]) !== -1
+                "
+              >
                 <mat-slide-toggle [(ngModel)]="field.enabled">
-                  {{ field.label }}
                 </mat-slide-toggle>
+                <span>
+                  {{ field.label }} ({{field.type}})
+                </span>
               </div>
 
               <div
@@ -384,6 +395,9 @@
             <div
               class="field-label"
               *ngFor="let field of enabledReportFields()"
+              [class.ltr]="
+                sUtil.text.englishKeyChar.indexOf(field.label[0]) !== -1
+              "
             >
               <ndc-dynamic
                 [ndcDynamicInputs]="

@@ -2,133 +2,217 @@ import { Injectable } from "@angular/core";
 import * as idb from "idb";
 import * as _ from "underscore";
 import * as promiseSerial from "promise-serial";
-export class Idb {
-  dbPromise: Promise<idb.DB>;
-  store: string;
-  constructor(_dbPromise, _store) {
-    this.dbPromise = _dbPromise;
-    this.store = _store;
+
+import { spawn } from "threads";
+import { EventEmitter } from "events";
+import { EntityModel } from "serendip-business-model";
+
+export class Idb<T> {
+  constructor(
+    private dbName: string,
+    private storeName: string,
+    private thread: any,
+    private resultStream: EventEmitter
+  ) {}
+
+  private newPid() {
+    return (
+      Date.now() +
+      "_" +
+      Math.random()
+        .toString()
+        .split(".")[1]
+    );
   }
-
-  async keys() {
-    return this.dbPromise.then(db => {
-      const tx = db.transaction(this.store);
-      const keys = [];
-
-      return tx.objectStore(this.store).getAllKeys();
-      //  const oStore = tx.objectStore(this.store);
-
-      // This would be this.store.getAllKeys(), but it isn't supported by Edge or Safari.
-      // openKeyCursor isn't supported by Safari, so we fall back
-      // (oStore.iterateKeyCursor || oStore.iterateCursor).call(oStore, cursor => {
-      //   if (!cursor) {
-      //     return;
-      //   }
-      //   keys.push(cursor.key);
-      //   cursor.continue();
-      // });
-
-      // return tx.complete.then(() => {
-      //   console.log("keys done");
-      //   return keys;
-      // });
+  async keys(): Promise<string[]> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "keys",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName
+      },
+      pid
     });
-  }
 
-  async list(skip?, limit?) {
-    return this.dbPromise.then(db => {
-      const tx = db.transaction(this.store);
-      const records = [];
-      const oStore = tx.objectStore(this.store);
-
-      let recordSkipped = 0;
-
-      // This would be this.store.getAllKeys(), but it isn't supported by Edge or Safari.
-      // openKeyCursor isn't supported by Safari, so we fall back
-
-      oStore.iterateCursor(cursor => {
-        if (!cursor) {
-          return;
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
         }
-
-        if (!skip || recordSkipped >= skip) {
-          records.push(cursor.value);
-        } else {
-          recordSkipped++;
-        }
-
-        if (limit) {
-          if (records.length === limit) {
-            return;
-          }
-        }
-
-        cursor.continue();
-      });
-
-      return tx.complete.then(() => {
-        return records;
+        resolve(result.model);
       });
     });
   }
 
-  async get(key) {
-    return this.dbPromise.then(db => {
-      return db
-        .transaction(this.store)
-        .objectStore(this.store)
-        .get(key);
+  async list(skip?, limit?): Promise<T[]> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "list",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName,
+        skip,
+        limit
+      },
+      pid
+    });
+
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
+        }
+        resolve(result.model);
+      });
     });
   }
 
-  async getAll() {
-    return this.dbPromise.then(db => {
-      return db
-        .transaction(this.store)
-        .objectStore(this.store)
-        .getAll();
+  async get(key): Promise<T> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "get",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName,
+        key
+      },
+      pid
+    });
+
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
+        }
+        resolve(result.model);
+      });
     });
   }
 
-  async count() {
-    return this.dbPromise.then(db => {
-      return db
-        .transaction(this.store)
-        .objectStore(this.store)
-        .count();
+  async getAll(): Promise<T[]> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "getAll",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName
+      },
+      pid
     });
-  }
-  async set(key, val) {
-    return this.dbPromise.then(db => {
-      const tx = db.transaction(this.store, "readwrite");
 
-      return tx.objectStore(this.store).put(val, key);
-      //  return tx.complete;
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
+        }
+        resolve(result.model);
+      });
     });
   }
-  async setAll(data: { key: string; val: any }[]) {
-    return this.dbPromise.then(db => {
-      const tx = db.transaction(this.store, "readwrite");
-      return promiseSerial(
-        _.map(data, item => {
-          return () => tx.objectStore(this.store).put(item.val, item.key);
-        }),
-        { parallelize: 100 }
-      );
+
+  async count(): Promise<number> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "count",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName
+      },
+      pid
+    });
+
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
+        }
+        resolve(result.model);
+      });
     });
   }
-  async delete(key) {
-    return this.dbPromise.then(db => {
-      const tx = db.transaction(this.store, "readwrite");
-      tx.objectStore(this.store).delete(key);
-      return tx.complete;
+  async set(key, val): Promise<void> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "set",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName,
+        key,
+        val
+      },
+      pid
+    });
+
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
+        }
+        resolve(result.model);
+      });
     });
   }
-  async clear() {
-    return this.dbPromise.then(db => {
-      const tx = db.transaction(this.store, "readwrite");
-      tx.objectStore(this.store).clear();
-      return tx.complete;
+  async setAll(data: { key: string; val: any }[]): Promise<void> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "setAll",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName,
+        data
+      },
+      pid
+    });
+
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
+        }
+        resolve(result.model);
+      });
+    });
+  }
+  async delete(key): Promise<void> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "delete",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName,
+        key
+      },
+      pid
+    });
+
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
+        }
+        resolve(result.model);
+      });
+    });
+  }
+  async clear(): Promise<void> {
+    const pid = this.newPid();
+    this.thread.send({
+      method: "clear",
+      options: {
+        dbName: this.dbName,
+        storeName: this.storeName
+      },
+      pid
+    });
+
+    return new Promise((resolve, reject) => {
+      this.resultStream.on(pid, result => {
+        if (result.error) {
+          reject(result.error);
+        }
+        resolve(result.model);
+      });
     });
   }
 }
@@ -144,44 +228,38 @@ export const IdbDeleteAllDatabases = () => {
 };
 @Injectable()
 export class IdbService {
+  resultStream = new EventEmitter();
+  thread: any;
   constructor() {
     console.log("IdbService constructed ...");
+
+    this.thread = spawn(location.origin + "/workers/idb.js");
+
+    // TODO: Check for spawn done event
+
+    this.thread
+
+      .on("message", msg => {
+        console.log(msg);
+        this.resultStream.emit(msg.pid, msg);
+      })
+      .on("error", e => {});
   }
 
   async syncIDB(store: "pull" | "push") {
-    return new Idb(
-      idb.default.open("SYNC", 1, db => {
-        db.createObjectStore("pull");
-        db.createObjectStore("push");
-      }),
-      store
-    );
+    return new Idb<any>("SYNC", store, this.thread, this.resultStream);
   }
 
   async cacheIDB() {
-    return new Idb(
-      idb.default.open("CACHE", 1, db => {
-        db.createObjectStore("cache");
-      }),
-      "cache"
-    );
+    return new Idb<any>("CACHE", "cache", this.thread, this.resultStream);
   }
 
   async dataIDB() {
-    return new Idb(
-      idb.default.open("DATA", 1, db => {
-        db.createObjectStore("collections");
-      }),
-      "collections"
-    );
-  }
-
-  async reportIDB() {
-    return new Idb(
-      idb.default.open("REPORT", 1, db => {
-        db.createObjectStore("report");
-      }),
-      "report"
+    return new Idb<{ [key: string]: EntityModel }>(
+      "DATA",
+      "collections",
+      this.thread,
+      this.resultStream
     );
   }
 }
