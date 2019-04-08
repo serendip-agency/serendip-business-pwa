@@ -104,7 +104,7 @@ export const FormsSchema: FormInterface[] = [
   },
   {
     name: "dashboard-form",
-    entityName: "dashboard",
+    entityName: "_dashboard",
     parts: [
       {
         componentName: "FormTextInputComponent",
@@ -214,7 +214,7 @@ export const FormsSchema: FormInterface[] = [
                     propertyType: "string",
                     cssClass: "w-60",
                     inputs: {
-                      entityName: "report",
+                      entityName: "_report",
                       propertiesToSearch: ["name"],
                       propertiesSearchMode: "mix",
                       selectType: "single",
@@ -227,7 +227,7 @@ export const FormsSchema: FormInterface[] = [
                     propertyType: "string",
                     cssClass: "w-60",
                     inputs: {
-                      entityName: "form",
+                      entityName: "_form",
                       propertiesToSearch: ["name"],
                       propertiesSearchMode: "mix",
                       selectType: "single",
@@ -251,7 +251,7 @@ export const FormsSchema: FormInterface[] = [
   },
   {
     name: "trigger-form",
-    entityName: "trigger",
+    entityName: "_trigger",
     parts: [
       {
         componentName: "FormTextInputComponent",
@@ -305,7 +305,7 @@ export const FormsSchema: FormInterface[] = [
             propertyType: "string",
             cssClass: "w-60",
             inputs: {
-              entityName: "report",
+              entityName: "_report",
               propertiesToSearch: ["name"],
               propertiesSearchMode: "mix",
               selectType: "single",
@@ -351,7 +351,7 @@ export const FormsSchema: FormInterface[] = [
             propertyType: "string",
             cssClass: "w-60",
             inputs: {
-              entityName: "form",
+              entityName: "_form",
               propertiesToSearch: ["name"],
               propertiesSearchMode: "mix",
               selectType: "single",
@@ -404,7 +404,7 @@ export const FormsSchema: FormInterface[] = [
   },
   {
     name: "format-form",
-    entityName: "format",
+    entityName: "_format",
     parts: [
       {
         propertyName: "label",
@@ -480,7 +480,7 @@ export const FormsSchema: FormInterface[] = [
   },
   {
     name: "report-form",
-    entityName: "report",
+    entityName: "_report",
     parts: [
       {
         propertyName: "name",
@@ -680,7 +680,7 @@ export const FormsSchema: FormInterface[] = [
   },
   {
     name: "form-form",
-    entityName: "form",
+    entityName: "_form",
     parts: [
       {
         componentName: "FormTextInputComponent",

@@ -120,7 +120,7 @@ export class FormComponent implements OnInit {
   @Input()
   name: string;
 
-  stateDb: Idb;
+  stateDb: Idb<any>;
 
   wait(timeout) {
     return new Promise((resolve, reject) => {
@@ -158,7 +158,7 @@ export class FormComponent implements OnInit {
     }
     if (this.formId) {
       this.formSchema = (await this.dataService.details(
-        "form",
+        "_form",
         this.formId
       )) as any;
     }

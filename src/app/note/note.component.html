@@ -5,7 +5,25 @@
         sUtil.text.englishKeyChar.indexOf(text.value[0]) != -1 ? 'ltr' : 'rtl'
       "
       #text
-      placeholder="یادداشت جدید ..."
+      placeholder="یادداشت  جدید را اینجا بنویسید ..."
     ></textarea>
+
+    <div class="colors">
+      <div
+        class="color"
+        [style.borderColor]="c"
+        *ngFor="
+          let c of [
+            '#3F51B5',
+            '#4CAF50',
+            '#FF9800',
+            '#673AB7',
+            '#009688',
+            '#FFC107',
+            '#9C27B0'
+          ]
+        "
+      ></div>
+    </div>
   </div>
 </div>

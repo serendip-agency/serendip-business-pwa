@@ -59,7 +59,7 @@ export class DashboardService {
     };
 
     this.schema.dashboard = ((await this.dataService.list(
-      "dashboard",
+      "_dashboard",
       0,
       0,
       true
@@ -81,7 +81,7 @@ export class DashboardService {
       name: "raw",
       icon: "copy",
       title: "گزارشات خام",
-      tabs: (await this.dataService.list("entity")).map(record => {
+      tabs: (await this.dataService.list("_entity")).map(record => {
         const entityName = record.name;
         return {
           icon: "copy",

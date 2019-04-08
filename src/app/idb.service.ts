@@ -35,7 +35,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<string[]>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);
@@ -58,7 +58,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<T[]>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);
@@ -80,7 +80,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<T>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);
@@ -101,7 +101,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<T[]>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);
@@ -122,7 +122,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<number>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);
@@ -144,7 +144,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);
@@ -165,7 +165,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);
@@ -186,7 +186,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);
@@ -206,7 +206,7 @@ export class Idb<T> {
       pid
     });
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       this.resultStream.on(pid, result => {
         if (result.error) {
           reject(result.error);

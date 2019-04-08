@@ -486,6 +486,12 @@ export class ReportComponent implements OnInit {
   setMode(mode: string) {
     this.mode = mode;
 
+    if (this.mode === "data") {
+      this.refresh()
+        .then()
+        .catch();
+    }
+
     this.WidgetChange.emit({ inputs: { mode } });
   }
 
@@ -538,43 +544,6 @@ export class ReportComponent implements OnInit {
     return _.where(field.queries, { enabled: true });
   }
 
-  async refreshFormats() {
-    this.resultLoading = true;
-
-    this.formats = _.where(await this.dataService.list("format"), {
-      entityName: this.report.entityName
-    });
-
-    const fields = this.report.fields.filter(
-      p => ["_vdate", "_cdate", "_id"].indexOf(p.name) === -1
-    );
-
-    // fields.forEach(field => {
-    //   this.formats.push({
-    //     label: "تفکیک بر اساس کمیت " + field.label,
-    //     method: "groupByFieldAndCount",
-    //     options: { field },
-    //     dataType: "1d"
-    //   } as ReportFormatInterface);
-
-    //   fields.forEach(field2 => {
-    //     if (field.name === field2.name) {
-    //       return;
-    //     }
-    //     this.formats.push({
-    //       label: `تحلیل تغییرات ${this.entityLabelPlural ||
-    //         this.title} در بازه‌های زمانی به تفکیک ${field.label} و ${
-    //         field2.label
-    //       }`,
-    //       method: "groupByFieldAndCountOther",
-    //       options: { groupBy: field2, countBy: field },
-    //       dataType: "2d"
-    //     } as ReportFormatInterface);
-    //   });
-    // });
-
-    this.resultLoading = false;
-  }
   async deleteReport() {
     this.report.offline = false;
     //  await this.reportStore.delete(this.report.name);
@@ -594,7 +563,7 @@ export class ReportComponent implements OnInit {
 
     if (!this.report && this.reportId) {
       this.report = (await this.dataService.details(
-        "report",
+        "_report",
         this.reportId
       )) as any;
       console.log("getting report with id", this.report, this.reportId);
@@ -611,11 +580,9 @@ export class ReportComponent implements OnInit {
       };
     }
 
-    this.report.fields = await this.dataService.fields(
-      this.entityName,
-      this.report,
-      0,
-      3
+    this.report.fields = _.sortBy(
+      await this.dataService.fields(this.entityName, this.report, 0, 3),
+      item => item.name.length
     );
 
     this.report = await this.reportService.generate(this.report);
@@ -653,9 +620,9 @@ export class ReportComponent implements OnInit {
     let newReport;
 
     if (this.report._id) {
-      newReport = await this.dataService.update("report", reportToSave);
+      newReport = await this.dataService.update("_report", reportToSave);
     } else {
-      newReport = await this.dataService.insert("report", reportToSave);
+      newReport = await this.dataService.insert("_report", reportToSave);
     }
 
     this.reportId = newReport._id;
@@ -670,7 +637,7 @@ export class ReportComponent implements OnInit {
   }
 
   async refreshReports() {
-    const reportsQuery = (await this.dataService.list("report")).filter(
+    const reportsQuery = (await this.dataService.list("_report")).filter(
       p => p.entityName === this.entityName
     );
 
@@ -718,7 +685,6 @@ export class ReportComponent implements OnInit {
     try {
       await this.refresh();
       await this.refreshReports();
-      await this.refreshFormats();
 
       // if (this.format && this.chartType) {
       //   await this.generateFormat();

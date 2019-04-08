@@ -49,7 +49,7 @@ export class FormFieldValueCompareComponent implements OnInit {
   async ngOnInit() {
     if (this.formModel.formId) {
       this.form = (await this.dataService.details(
-        "form",
+        "_form",
         this.formModel.formId
       )) as any;
 

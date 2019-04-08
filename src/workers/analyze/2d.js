@@ -38,12 +38,18 @@ self.module = {
     if (!formatOptions.groupBy) {
       dataGroups = { all: r.data };
     } else {
-      dataGroups = _.groupBy(r.data, p =>
-        p[formatOptions.groupBy.name]
-          ? p[formatOptions.groupBy.name].length ||
-            p[formatOptions.groupBy.name]
-          : 'n/a'
-      );
+      dataGroups = _.groupBy(r.data, p => {
+        if (typeof p[formatOptions.groupBy.name] == "string")
+          return p[formatOptions.groupBy.name];
+
+        if (
+          typeof p[formatOptions.groupBy.name] == "object" ||
+          typeof p[formatOptions.groupBy.name].length != "undefined"
+        )
+          return p[formatOptions.groupBy.name].length;
+
+        return "n/a";
+      });
     }
 
     r.data = [];
@@ -76,7 +82,11 @@ self.module = {
                 row[formatOptions.dateBy ? formatOptions.dateBy.name : "_vdate"]
               ).format(formatOptions.dateRangeFormat) === timeRange
             ) {
-              count++;
+              if (formatOptions.valueBy) {
+                count += row[formatOptions.valueBy.name];
+              } else {
+                count++;
+              }
             }
           } catch (error) {}
         }

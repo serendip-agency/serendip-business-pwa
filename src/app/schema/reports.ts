@@ -44,7 +44,7 @@ export const ReportsSchema: ReportInterface[] = [
   },
   {
     name: "dashboard-default",
-    entityName: "dashboard",
+    entityName: "_dashboard",
     label: "",
     fields: [
       {
@@ -63,7 +63,7 @@ export const ReportsSchema: ReportInterface[] = [
   },
   {
     name: "grid-default",
-    entityName: "grid",
+    entityName: "_grid",
     label: "",
     fields: [
       {
@@ -79,7 +79,7 @@ export const ReportsSchema: ReportInterface[] = [
   },
   {
     name: "report-default",
-    entityName: "report",
+    entityName: "_report",
     label: "",
     fields: [
       {
@@ -135,7 +135,7 @@ export const ReportsSchema: ReportInterface[] = [
   },
   {
     name: "trigger-default",
-    entityName: "trigger",
+    entityName: "_trigger",
     label: "",
     fields: [
       {
@@ -173,7 +173,7 @@ export const ReportsSchema: ReportInterface[] = [
   },
   {
     name: "form-default",
-    entityName: "form",
+    entityName: "_form",
     label: "",
     fields: [
       {

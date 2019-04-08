@@ -725,7 +725,7 @@ export class DataService {
   public async pullCollections(
     callback?: (collectionName: string, error?: any) => void
   ) {
-    const baseCollections = ["dashboard", "entity", "form", "report"];
+    const baseCollections = ["_dashboard", "_entity", "_form", "_report"];
     // FormsSchema.forEach(schema => {
     //   if (schema.entityName) {
     //     if (collections.indexOf(schema.entityName) === -1) {
@@ -777,7 +777,7 @@ export class DataService {
     }
 
     if (!report) {
-      report = _.findWhere(await this.list("report", 0, 0), {
+      report = _.findWhere(await this.list("_report", 0, 0), {
         entityName
       } as ReportInterface);
 
@@ -800,7 +800,10 @@ export class DataService {
       }
     });
 
-    for (const row of await this.list(entityName, 0, 10)) {
+    const sampleList = await this.list(entityName, 0, 1000);
+    for (const row of _.times(10, p => p).map(
+      p => _.sample(sampleList, 1)[0]
+    ) as EntityModel[]) {
       for (const key in row) {
         if (
           ["_entity", "_business", "_id", "_vuser", "_uuser"].indexOf(key) !==
@@ -809,7 +812,7 @@ export class DataService {
           continue;
         }
 
-        const value = row[key];
+      const value = row[key];
 
         if (typeof value === "undefined" || value === null) {
           continue;

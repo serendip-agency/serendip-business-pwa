@@ -231,7 +231,13 @@
           </div>
 
           <div class="title" *ngIf="format.type == '2d'">
-            بررسی {{ title || entityName }} در طول زمان به تفکیک
+            بررسی
+            {{
+              format?.options?.valueBy?.label
+                ? "مجموع " + format?.options?.valueBy?.label + ' های '
+                : "تعداد"
+            }}
+            {{ title || entityName }} در طول زمان به تفکیک
             {{
               format?.options?.groupBy?.label
                 ? format?.options?.groupBy?.label
@@ -312,9 +318,7 @@
               >
                 <mat-slide-toggle [(ngModel)]="field.enabled">
                 </mat-slide-toggle>
-                <span>
-                  {{ field.label }} ({{field.type}})
-                </span>
+                <span> {{ field.label }} ({{ field.type }}) </span>
               </div>
 
               <div
