@@ -374,7 +374,7 @@ export const FormsSchema: FormInterface[] = [
   },
   {
     name: "entity-form",
-    entityName: "entity",
+    entityName: "_entity",
     parts: [
       {
         componentName: "FormTextInputComponent",

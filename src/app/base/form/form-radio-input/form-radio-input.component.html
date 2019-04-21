@@ -6,6 +6,9 @@
     *ngFor="let item of data || []; let b = index; trackBy: trackByFn"
     (change)="modelChange.emit($event.value)"
     [checked]="stringify(item.value || '') == stringify(model)"
+    [dir]="
+      sUtil.text.englishKeyChar.indexOf(item.label.trim()[0]) != -1 ? 'ltr' : 'rtl'
+    "
     [value]="typeof(item.value) == 'undefined' ? item : item.value || ''"
   >
     {{ item.label || item }}

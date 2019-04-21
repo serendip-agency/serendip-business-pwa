@@ -77,11 +77,13 @@ export class DashboardService {
       return dashboard;
     });
 
+    const entities = (await this.dataService.list("_entity"));
+    console.log(entities);
     this.schema.dashboard.push({
       name: "raw",
       icon: "copy",
       title: "گزارشات خام",
-      tabs: (await this.dataService.list("_entity")).map(record => {
+      tabs: entities.map(record => {
         const entityName = record.name;
         return {
           icon: "copy",

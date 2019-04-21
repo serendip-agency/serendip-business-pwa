@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 
+import * as sUtil from "serendip-utility";
+
 @Component({
   selector: "app-form-radio-input",
   templateUrl: "./form-radio-input.component.html",
@@ -7,6 +9,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from "@angular/core";
 })
 export class FormRadioInputComponent implements OnInit {
   stringify = JSON.stringify;
+
+  public sUtil = sUtil;
 
   @Input()
   public model: any;

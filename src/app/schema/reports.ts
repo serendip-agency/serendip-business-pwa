@@ -110,7 +110,7 @@ export const ReportsSchema: ReportInterface[] = [
   },
   {
     name: "entity-default",
-    entityName: "entity",
+    entityName: "_entity",
     label: "",
     fields: [
       {

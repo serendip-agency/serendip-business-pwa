@@ -10,6 +10,8 @@ import { TokenModel } from "serendip-business-model";
 
 import { BusinessService } from "./business.service";
 import { IdbDeleteAllDatabases } from "./idb.service";
+import { environment } from "src/environments/environment";
+import { querystring } from 'serendip-utility';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +19,7 @@ export class AuthService {
 
   loggedIn = false;
   _apiUrl: string;
+  qs: any;
 
   get apiUrl() {
     return localStorage.server;
@@ -24,7 +27,11 @@ export class AuthService {
 
   profile: any = {};
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+
+
+
+  }
   async logout() {
     localStorage.clear();
     await IdbDeleteAllDatabases();
@@ -190,7 +197,7 @@ export class AuthGuard implements CanActivate {
     private authService: AuthService,
     private businessService: BusinessService,
     private router: Router
-  ) {}
+  ) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -204,7 +211,7 @@ export class AuthGuard implements CanActivate {
       // Store the attempted URL for redirecting
       localStorage.setItem("lastUrl", url);
       // Navigate to the login page with extras
-      this.router.navigate(["/auth", "login"]);
+      this.router.navigate(['/auth', 'login']);
     }
   }
 }
