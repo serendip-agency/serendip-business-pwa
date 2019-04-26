@@ -15,6 +15,7 @@ import { DataService } from "../data.service";
 import { BusinessService } from "../business.service";
 import { DashboardService } from "../dashboard.service";
 import { TokenModel } from "serendip-business-model";
+import { Buffer } from "buffer";
 
 @Component({
   selector: "app-storage",
@@ -70,7 +71,7 @@ export class StorageComponent implements OnInit {
     public businessService: BusinessService,
     public dashboardService: DashboardService,
     public changeRef: ChangeDetectorRef
-  ) {}
+  ) { }
 
   setMode(mode) {
     this.modeSelectedPaths = [];
@@ -87,7 +88,7 @@ export class StorageComponent implements OnInit {
       );
 
     return labeledPath.split("/").map((label, index) => {
-      let path = "";
+      const path = "";
 
       // for (let i = index; i <= 0; i--) {
       //   path = this.folderPath.split("/")[i] + path;
@@ -230,7 +231,7 @@ export class StorageComponent implements OnInit {
           new Promise((resolve, reject) => {
             const fileReader = new FileReader();
 
-            fileReader.readAsDataURL(files.item(i));
+            fileReader.readAsArrayBuffer(files.item(i));
 
             fileReader.onprogress = ev => {
               console.log((ev.loaded / ev.total) * 100);
@@ -241,7 +242,7 @@ export class StorageComponent implements OnInit {
             };
 
             fileReader.onload = ev => {
-              const result: string = (ev.target as any).result;
+              const result: ArrayBuffer = (ev.target as any).result;
 
               // this.socket.send(JSON.stringify({
               //   type: 'upload',
@@ -290,7 +291,7 @@ export class StorageComponent implements OnInit {
     }
     return input.toFixed(2);
   }
-  async upload(path, base64: string) {
+  async upload(path, arrayBuffer: ArrayBuffer) {
     const remoteParts: {
       exists: { start: number; end: number }[];
       missing: { start: number; end: number }[];
@@ -305,10 +306,12 @@ export class StorageComponent implements OnInit {
 
     let partSize = 1024 * 1024;
 
-    if (this.toUpload[path].size < 1024 * 1024 * 10) {
-      partSize = 1024 * 500;
-    }
-    const numberOfParts = Math.ceil(base64.length / partSize);
+    // if (this.toUpload[path].size < 1024 * 1024 * 10) {
+    //   partSize = 1024 * 500;
+    // }
+    const numberOfParts = Math.ceil(arrayBuffer.byteLength / partSize);
+
+    const buffer = Buffer.from(arrayBuffer);
 
     await promise_serial(
       new Array(numberOfParts).fill(0, 0, numberOfParts).map((v, i) => {
@@ -333,13 +336,13 @@ export class StorageComponent implements OnInit {
                 retry: false,
                 model: {
                   type: "upload",
-                  data: base64.slice(i * partSize, (i + 1) * partSize),
+                  data: buffer.slice(i * partSize, (i + 1) * partSize).toString('hex'),
                   start: i * partSize,
                   end:
                     i === numberOfParts - 1
-                      ? base64.length
+                      ? buffer.byteLength
                       : (i + 1) * partSize,
-                  total: base64.length,
+                  total: buffer.byteLength,
                   path
                 } as StorageCommandInterface,
                 path: "/api/storage/upload"

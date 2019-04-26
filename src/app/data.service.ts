@@ -684,6 +684,7 @@ export class DataService {
         aesjs.utils.utf8.toBytes(aesKey),
         new aesjs.Counter(5)
       );
+    
       const decryptedModel = JSON.parse(
         aesjs.utils.utf8.fromBytes(
           dAesCtr.decrypt(aesjs.utils.hex.toBytes(model._hex))
