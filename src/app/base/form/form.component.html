@@ -133,8 +133,8 @@
     <mat-card-content *ngIf="mode == 'files' && !loading">
       <app-storage *ngIf="filesPath" [folderPath]="filesPath"></app-storage>
 
-      <div class="form-wrapper">
-        <div class="empty" *ngIf="!filesPath">
+      <div class="form-wrapper" *ngIf="!filesPath">
+        <div class="empty" >
           برای آپلود فایل ابتدا سند را ذخیره کنید
         </div>
       </div>

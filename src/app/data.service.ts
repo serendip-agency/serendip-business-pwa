@@ -77,7 +77,7 @@ export class DataService {
       this.businessService.business = _.findWhere(myBusinesses, {
         _id: this.businessService.getActiveBusinessId()
       });
-    } catch (error) {}
+    } catch (error) { }
   }
   setCurrentServer(srv?) {
     let lsServer = localStorage.server;
@@ -181,9 +181,9 @@ export class DataService {
           result = await this.http
             .get(
               opts.host +
-                opts.path +
-                "?" +
-                utils.querystring.fromObject(opts.model),
+              opts.path +
+              "?" +
+              utils.querystring.fromObject(opts.model),
               options
             )
             .toPromise();
@@ -507,7 +507,7 @@ export class DataService {
     let store;
     try {
       store = await this.idbService.dataIDB();
-    } catch (error) {}
+    } catch (error) { }
 
     if (!store) {
       return;
@@ -645,11 +645,11 @@ export class DataService {
 
     console.warn(
       "changes count for " +
-        collection +
-        " is " +
-        changesCount +
-        " since " +
-        lastSync,
+      collection +
+      " is " +
+      changesCount +
+      " since " +
+      lastSync,
       changes
     );
 
@@ -684,7 +684,7 @@ export class DataService {
         aesjs.utils.utf8.toBytes(aesKey),
         new aesjs.Counter(5)
       );
-    
+
       const decryptedModel = JSON.parse(
         aesjs.utils.utf8.fromBytes(
           dAesCtr.decrypt(aesjs.utils.hex.toBytes(model._hex))
@@ -813,7 +813,7 @@ export class DataService {
           continue;
         }
 
-      const value = row[key];
+        const value = row[key];
 
         if (typeof value === "undefined" || value === null) {
           continue;
@@ -879,7 +879,7 @@ export class DataService {
 
             try {
               model = await this.details(null, value);
-            } catch (error) {}
+            } catch (error) { }
 
             if (model) {
               if (parents.indexOf(model._entity) === -1) {
@@ -1074,6 +1074,15 @@ export class DataService {
 
       return field;
     });
+
+    const nonPrimaryFields = report.fields.filter(p => primaryFields.filter(d => d.name === p.name).length === 0);
+
+    nonPrimaryFields.filter(p => p.name.indexOf('.') === -1).forEach((value, index) => {
+      if (index < 3) {
+        value.enabled = true;
+      }
+    });
+
 
     return report.fields;
   }

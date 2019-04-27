@@ -59,8 +59,8 @@ polyfill({
 
 // workaround to make scroll prevent work in iOS Safari > 10
 try {
-  window.addEventListener("touchmove", function() {}, { passive: false });
-} catch (e) {}
+  window.addEventListener("touchmove", function () { }, { passive: false });
+} catch (e) { }
 
 const dynamicComponents = {
   FormComponent,
@@ -509,13 +509,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.storageService.fileManagerVisible = false;
     this.hideStart();
   }
-  logoClick() {
+  clickOnLogo() {
     if (this.startActive) {
       return this.hideStart();
     }
     if (
       this.weatherService.weatherVisible ||
       this.calendarService.calendarVisible ||
+      this.storageService.fileManagerVisible ||
       this.gmapsService.dashboardMapVisible
     ) {
       this.hideAllServiceComponents();
@@ -890,7 +891,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         widgetIndex
       ] = _.extend(
         this.grid.containers[containerIndex].tabs[tabIndex].widgets[
-          widgetIndex
+        widgetIndex
         ],
         newWidget
       );
@@ -1106,7 +1107,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           onCollectionPush: (collectionName, error) => {
             this.dashboardLoadingText = `${collectionName} entity ${
               !error ? "pushed" : "push error " + error.message
-            }`;
+              }`;
           },
           onCollectionPull: collectionName => {
             this.dashboardLoadingText = `${collectionName} collection pulled`;
@@ -1143,13 +1144,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!Element.prototype.matches) {
       Element.prototype.matches =
         Element.prototype.webkitMatchesSelector ||
-        function(s) {
+        function (s) {
           // tslint:disable-next-line:prefer-const
           let matches = (this.document || this.ownerDocument).querySelectorAll(
-              s
-            ),
+            s
+          ),
             i = matches.length;
-          while (--i >= 0 && matches.item(i) !== this) {}
+          while (--i >= 0 && matches.item(i) !== this) { }
           return i > -1;
         };
     }
@@ -1275,7 +1276,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         timeout: 1000,
         retry: false
       });
-    } catch (error) {}
+    } catch (error) { }
 
     console.log("remoteGrid", remoteGrid, "localGrid", localGrid);
 
@@ -1389,7 +1390,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     try {
       await this.dataSync();
       this.lastDataSync = Date.now();
-    } catch (error) {}
+    } catch (error) { }
     this.dashboardReady = true;
   }
 
@@ -1434,7 +1435,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       try {
         await this.dataSync();
         this.lastDataSync = Date.now();
-      } catch (error) {}
+      } catch (error) { }
     }
 
     this.dashboardLoadingText = "Loading schemas ...";

@@ -16,6 +16,7 @@ import { BusinessService } from "../business.service";
 import { DashboardService } from "../dashboard.service";
 import { TokenModel } from "serendip-business-model";
 import { Buffer } from "buffer";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @Component({
   selector: "app-storage",
@@ -25,6 +26,18 @@ import { Buffer } from "buffer";
 export class StorageComponent implements OnInit {
   socket: WebSocket;
 
+  extIcons = {
+    zip: 'sell-buy-2',
+    rar: 'sell-buy-2',
+    pdf: 'pdf-bold',
+    png: 'photo-image-picture-landscape',
+    mp4: 'photo-image-picture-landscape',
+    jpg: 'photo-image-picture-landscape',
+    txt: 'information-data-1',
+    xls: 'efficiency-chart-1',
+    html: 'website-globe',
+    apk: 'mobile-smart-phone'
+  }
   sUtils = serendip_utility;
   newFolderName = "";
   @Input() mode = "";
@@ -53,7 +66,7 @@ export class StorageComponent implements OnInit {
     localStorage.setItem("folders", JSON.stringify(lsFolders));
   }
 
-  @Input() public folderPath: string;
+  @Input() public folderPath: string = '/';
 
   @Input() public viewMode: "full" | "mini" = "mini";
 
@@ -70,7 +83,8 @@ export class StorageComponent implements OnInit {
     public dataService: DataService,
     public businessService: BusinessService,
     public dashboardService: DashboardService,
-    public changeRef: ChangeDetectorRef
+    public changeRef: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) { }
 
   setMode(mode) {
@@ -101,12 +115,14 @@ export class StorageComponent implements OnInit {
     });
   }
 
-  clickOnItem(item) {
+
+  async clickOnItem(item) {
     if (!this.mode) {
       if (item.isFile) {
-        this.previewPath = item.path;
+        this.previewPath = this.dataService.currentServer + '/api/storage/preview' +
+          item.path + '?access_token=' + encodeURIComponent((await this.authService.token()).access_token);
       } else {
-        if (this.folderPath) {
+        if (this.folderPath !== '/') {
           this.folderPath = this.folderPath + "/" + item.basename;
         } else {
           this.folderPath = item.path;
@@ -145,7 +161,7 @@ export class StorageComponent implements OnInit {
     const pathToReturn = path.replace("/" + path.split("/").reverse()[0], "");
 
     if (pathToReturn === "businesses" || pathToReturn === "users") {
-      return "";
+      return "/";
     }
 
     return pathToReturn;
@@ -181,16 +197,43 @@ export class StorageComponent implements OnInit {
     this.folders[this.folderPath] = _.sortBy(
       await this.dataService.request({
         path: "/api/storage/list",
-        model: { path: this.folderPath + "/**" },
+        model: { path: this.folderPath },
         method: "POST"
       }),
       (item: any) => {
         return item.isDirectory ? "000-" : "111-" + item.path;
       }
     );
+
+    console.log(this.folders[this.folderPath]);
   }
   async ngOnInit() {
     console.log("storage init");
+
+    this.selectEvents.subscribe((paths) => {
+      console.log(this.mode, paths);
+
+      if (this.mode === 'newFolder') {
+
+        if (!paths[0]) {
+          return;
+        }
+
+        this.dataService.request({
+          method: 'post',
+          path: '/api/storage/newFolder',
+          model: {
+            path: this.folderPath + '/' + paths[0]
+          }
+        }).then(() => {
+
+          this.mode = '';
+          this.refreshFolder().then(() => { }).catch(() => { });
+        }).catch(() => { });
+
+      }
+
+    });
 
     if (this.modeSelectedPaths && this.modeSelectedPaths[0]) {
       const arrayWithoutFileName = _.clone(
@@ -261,6 +304,8 @@ export class StorageComponent implements OnInit {
                 type: files.item(i).type
               };
 
+
+
               resolve();
             };
           });
@@ -269,19 +314,22 @@ export class StorageComponent implements OnInit {
     await promise_serial(readPromises, { parallelize: 1 });
     (zoneChangeEv.target as any).value = "";
 
-    this.processQueue();
+    this.processQueue().then().catch();
   }
   async processQueue() {
+    console.log('upload queue', Object.keys(this.toUpload))
     if (Object.keys(this.toUpload).length > 0) {
       const item: any = this.toUpload[Object.keys(this.toUpload)[0]];
+      console.log('to upload ', this.toUpload);
       await this.upload(item.path, item.data);
 
       delete this.toUpload[item.path];
 
-      await this.refreshFolder();
+
       setTimeout(() => {
-        this.processQueue();
-      }, 1000);
+        this.refreshFolder().then(() => { }).catch(() => { });
+        this.processQueue().then(() => { }).catch(() => { });
+      }, 500);
     }
   }
 
@@ -303,6 +351,9 @@ export class StorageComponent implements OnInit {
         path: path
       }
     });
+
+
+    console.log('remoteParts', remoteParts);
 
     let partSize = 1024 * 1024;
 

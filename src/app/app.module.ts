@@ -122,6 +122,7 @@ import { SafePipe } from "./safe.pipe";
 import { FormFieldValueCompareComponent } from "./base/form/form-field-value-compare/form-field-value-compare.component";
 import { NoteComponent } from "./note/note.component";
 import { JsonViewComponent } from "./base/report/json-view/json-view.component";
+import { IframeComponent } from './iframe/iframe.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -221,7 +222,7 @@ export const primaryComponents = [
 ];
 
 @NgModule({
-  declarations: [...primaryComponents, ...dynamicComponents],
+  declarations: [...primaryComponents, ...dynamicComponents, IframeComponent],
   entryComponents: [],
   imports: [
     QuillModule,
