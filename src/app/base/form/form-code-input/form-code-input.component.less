@@ -4,18 +4,22 @@
   height: 500px;
   background: #fff;
   overflow: auto;
-  border-radius: 10px;
   position: relative;
-  max-width: 700px;
   width: 100%;
+
   * {
-    direction: rtl;
+    direction: ltr;
+    text-align: left;
   }
 
   &:after {
     clear: both;
     display: block;
     content: " ";
+  }
+
+  &.full{
+    height:calc(100vh - 50px);
   }
 }
 

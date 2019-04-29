@@ -269,7 +269,7 @@ export const primaryComponents = [
     MatSortModule,
     MatPaginatorModule,
     MatMomentDateModule,
-    MatBottomSheetModule
+    MatBottomSheetModule,
   ],
   providers: [
     DataService,
@@ -282,4 +282,4 @@ export const primaryComponents = [
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

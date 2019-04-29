@@ -142,37 +142,39 @@
       </li>
 
       <li *ngIf="folderPath != '/'" (click)="folderPath = cdBack(folderPath); refreshFolder()">
+
+        <div class="select"></div>
+
+        <input type="text" name="" style="text-align: left" readonly disabled value="بازگشت به فولدر بالایی" id="" />
+        <div class="size">&nbsp;</div>
+
         <div class="img  no-hover">
           <img class="icon" src="assets/icons/arrow-left-back-10.svg" />
         </div>
 
-        <div class="size">&nbsp;</div>
-        <input type="text" name="" readonly disabled value="بازگشت به فولدر بالایی" id="" />
       </li>
-      <li *ngFor="let item of folders[folderPath || '/']" (click)="clickOnItem(item)" [title]="item.basename">
+      <li *ngFor="let item of folders[folderPath || '/']" [title]="item.basename">
         <div *ngIf="item.uploadPercent && item.uploadPercent != 100" class="progress"
           [style.width]="item.uploadPercent + '%'"></div>
 
-        <div class="img">
-          <img *ngIf="item.isFile && modeSelectedPaths.indexOf(item.path) == -1" [class.icon]="mode"
-            [src]="'assets/icons/' + extIcons[item.ext] + '.svg'" />
+        <div class="select" (click)="item.isFile ? clickOnSelect(item) : null">
 
-          <img *ngIf="
-              item.isDirectory && modeSelectedPaths.indexOf(item.path) == -1
-            " [class.icon]="mode" src="assets/icons/folder-archive.svg" />
-
-          <img src="assets/icons/tab-1.svg" *ngIf="mode && modeSelectedPaths.indexOf(item.path) == -1" class="hover" />
-          <img src="assets/icons/check-9.svg" *ngIf="mode && modeSelectedPaths.indexOf(item.path) != -1"
-            class="hover selected" />
+          <img src="assets/icons/tab-1.svg" *ngIf="item.isFile && mode && modeSelectedPaths.indexOf(item.path) == -1"
+            class=" " />
+          <img src="assets/icons/check-9.svg" *ngIf="item.isFile && mode && modeSelectedPaths.indexOf(item.path) != -1"
+            class=" selected" />
         </div>
 
-        <input type="text" readonly [class]="
+        <input type="text" (click)="clickOnItem(item)" readonly [class]="
             sUtils.text.persianKeyChar.indexOf(item.basename[0]) != -1
               ? 'fa'
               : 'en'
           " [value]="item.basename" />
 
-        <div class="size" *ngIf="item.isFile">
+
+
+
+        <div class="size" (click)="clickOnItem(item)" *ngIf="item.isFile">
           <span *ngIf="item.sizeInMB">
             <div class="en">{{ item.ext | uppercase }}</div>
             {{ readableSize(item.sizeInMB) | rpd }}
@@ -191,6 +193,17 @@
             DIR
           </span>
         </div>
+
+        <div class="img">
+          <img *ngIf="item.isFile " [class.icon]="mode"
+            [src]="'assets/mimetypes/' + item.mime?.replace('/','-') + '.svg'" />
+
+          <img *ngIf="
+                item.isDirectory 
+              " [class.icon]="mode" src="assets/icons/folder-archive.svg" />
+
+        </div>
+
       </li>
 
 
@@ -217,12 +230,29 @@
 
   </section>
 
-  <section class="preview" *ngIf="previewPath">
-    <!-- {{previewPath}} -->
+  <!-- <section class="preview" *ngIf="previewPath">
+  
 
-    <app-iframe [url]="previewPath"></app-iframe>
+  </section> -->
+
+  <section class="preview">
+
+    <ul class="nav en">
+      <li (click)="codeEditorActive = false;iframeActive = true">
+        iFrame
+      </li>
+      <li *ngIf="codeEditorVisible" (click)="iframeActive = false; codeEditorActive = true">
+        Code Editor
+      </li>
+    </ul>
+
+    <app-iframe *ngIf="iframeActive" [url]="previewPath"></app-iframe>
+
+    <app-form-code-input [layout]="'full'" *ngIf="codeEditorVisible && codeEditorActive"
+      (modelChange)="codeEditorChange($event)" [model]="codeEditorModel" [language]="codeEditorLanguage">
+    </app-form-code-input>
+
   </section>
-
 
 
   <div class="clearfix"></div>

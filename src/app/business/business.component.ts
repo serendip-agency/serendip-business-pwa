@@ -53,7 +53,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
     public dashboardService: DashboardService,
     private snackBar: MatSnackBar,
     public dataService: DataService
-  ) {}
+  ) { }
 
   validateHexToImport(keyArea) {
     const rsaHex = keyArea.value;
@@ -64,7 +64,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
     console.log(decodedHex);
 
     try {
-    } catch (error) {}
+    } catch (error) { }
     const rsaKey = window.cryptico.RSAKey.parse(decodedHex);
 
     console.log(
@@ -240,6 +240,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
       this.rsaKeyHex = aesjs.utils.hex.fromBytes(
         aesjs.utils.utf8.toBytes(this.RsaKey)
       );
+
       this.rsaPublicKey = window.cryptico.publicKeyString(rsaKey);
     }
 
@@ -259,12 +260,12 @@ export class BusinessComponent implements OnInit, OnDestroy {
   downloadRsaKey() {
     this.dataService.triggerBrowserDownload(
       "data:text/plain;charset=utf-8," +
-        this.rsaKeyHex.split("").reduce((prev, current, index) => {
-          return prev + current + ((index + 1) % 40 === 0 ? "\n" : "");
-        }),
+      this.rsaKeyHex.split("").reduce((prev, current, index) => {
+        return prev + current + ((index + 1) % 40 === 0 ? "\n" : "");
+      }),
       "business-key-کلید-کسب‌‌وکار-" +
-        this.businessService.business.title +
-        ".txt"
+      this.businessService.business.title +
+      ".txt"
     );
   }
   async ngOnInit() {

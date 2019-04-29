@@ -18,6 +18,7 @@ export class FormCodeInputComponent implements OnInit {
   selector = "code-input-" + _.random(1000) + "-" + Date.now();
 
   @Input() language = "js";
+  @Input() layout = "form";
 
   @Output() modelChange = new EventEmitter<any>();
 
@@ -25,14 +26,20 @@ export class FormCodeInputComponent implements OnInit {
   private _model: string;
 
   @Input() set model(value: string) {
-    this._model = value;
+
+    if (this._model !== value) {
+      this._model = value;
+      if (this.flask) {
+        this.flask.updateCode(this.cleanCodeSpaces(value));
+      }
+    }
   }
 
   get model(): string {
     return this._model;
   }
 
-  constructor(private changeRef: ChangeDetectorRef) {}
+  constructor(private changeRef: ChangeDetectorRef) { }
 
   cleanCodeSpaces(input: string) {
     const result = [];
@@ -52,13 +59,13 @@ export class FormCodeInputComponent implements OnInit {
       }
     }
 
-    return result.join("\n");
+    return input || result.join("\n");
   }
   ngOnInit() {
     if (typeof this.model !== "string") {
       try {
         this.model = JSON.stringify(this.model, null, 2);
-      } catch (error) {}
+      } catch (error) { }
     }
     requestAnimationFrame(() => {
       this.flask = new CodeFlask("#" + this.selector, {

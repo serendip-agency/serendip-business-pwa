@@ -18,6 +18,7 @@ import { TokenModel } from "serendip-business-model";
 import { Buffer } from "buffer";
 import { DomSanitizer } from "@angular/platform-browser";
 
+
 @Component({
   selector: "app-storage",
   templateUrl: "./storage.component.html",
@@ -37,17 +38,33 @@ export class StorageComponent implements OnInit {
     xls: 'efficiency-chart-1',
     html: 'website-globe',
     apk: 'mobile-smart-phone'
-  }
+  };
+
+  codeEditorVisible = true;
+  codeEditorLanguage = 'javascript';
+  codeEditorModel = 'console.log("hi")';
   sUtils = serendip_utility;
   newFolderName = "";
+
+  iframeActive = false;
+  codeEditorActive = false;
   @Input() mode = "";
-  toUpload: any = {};
+  toUpload: {
+    [key: string]: {
+      path: string,
+      percent: number,
+      data: any,
+      name: string,
+      size: number
+    }
+  } = {};
 
   _folders: any = {};
   pathsSelected: boolean;
   modePathsSelected: boolean;
   @Input() modeSelectedPaths: string[] = [];
   previewPath: any;
+  previewItem: any;
 
   get folders() {
     return this._folders;
@@ -66,7 +83,29 @@ export class StorageComponent implements OnInit {
     localStorage.setItem("folders", JSON.stringify(lsFolders));
   }
 
-  @Input() public folderPath: string = '/';
+
+
+
+  private _folderPath;
+  public get folderPath(): string {
+
+    if (!this._folderPath) {
+      this._folderPath = localStorage.getItem('fileManagerFolderPath') || '/';
+    }
+
+    return this._folderPath;
+
+  }
+
+  @Input()
+  public set folderPath(v: string) {
+
+    if (this._folderPath !== v) {
+      this._folderPath = v;
+      localStorage.setItem('fileManagerFolderPath', v);
+    }
+  }
+
 
   @Input() public viewMode: "full" | "mini" = "mini";
 
@@ -87,6 +126,10 @@ export class StorageComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) { }
 
+
+  codeEditorChange(event) {
+    console.log('codeEditorChange', event);
+  }
   setMode(mode) {
     this.modeSelectedPaths = [];
     this.modePathsSelected = false;
@@ -115,43 +158,68 @@ export class StorageComponent implements OnInit {
     });
   }
 
+  async clickOnSelect(item) {
 
-  async clickOnItem(item) {
-    if (!this.mode) {
-      if (item.isFile) {
-        this.previewPath = this.dataService.currentServer + '/api/storage/preview' +
-          item.path + '?access_token=' + encodeURIComponent((await this.authService.token()).access_token);
-      } else {
-        if (this.folderPath !== '/') {
-          this.folderPath = this.folderPath + "/" + item.basename;
-        } else {
-          this.folderPath = item.path;
-        }
-      }
+    if (this.selectType === "single") {
+      this.modeSelectedPaths = [item.path];
     } else {
-      if (item.isFile) {
-        if (this.selectType === "single") {
-          this.modeSelectedPaths = [item.path];
-        } else {
-          if (this.modeSelectedPaths.indexOf(item.path) === -1) {
-            this.modeSelectedPaths.push(item.path);
-          } else {
-            this.modeSelectedPaths.splice(
-              this.modeSelectedPaths.indexOf(item.path),
-              1
-            );
-          }
-        }
+      if (this.modeSelectedPaths.indexOf(item.path) === -1) {
+        this.modeSelectedPaths.push(item.path);
       } else {
-        if (this.folderPath) {
-          this.folderPath = this.folderPath + "/" + item.basename;
-        } else {
-          this.folderPath = item.path;
-        }
+        this.modeSelectedPaths.splice(
+          this.modeSelectedPaths.indexOf(item.path),
+          1
+        );
       }
     }
+
+  }
+  async clickOnItem(item) {
+    if (item.isFile) {
+      this.previewItem = item;
+      this.previewPath = this.dataService.currentServer + '/api/storage/preview' +
+        item.path + '?access_token=' + encodeURIComponent((await this.authService.token()).access_token);
+
+
+      this.codeEditorVisible = false;
+      this.codeEditorModel = '';
+
+      if (['js', 'html', 'svg', 'ts', 'json'].indexOf(item.ext) !== -1) {
+
+        const file = await this.dataService.request({
+          path: '/api/storage/preview' +
+            item.path,
+          method: 'get',
+          raw: true
+        });
+
+        const fileReader = new FileReader();
+
+        fileReader.onloadend = (e: any) => {
+
+          this.codeEditorModel = e.target.result;
+          this.codeEditorVisible = true;
+          this.changeRef.detectChanges();
+        };
+
+        fileReader.readAsText(file.body);
+
+
+
+      }
+
+    } else {
+      this.modeSelectedPaths = [];
+      if (this.folderPath !== '/') {
+        this.folderPath = this.folderPath + "/" + item.basename;
+      } else {
+        this.folderPath = item.path;
+      }
+    }
+
     this.refreshFolder();
   }
+
   objectKeys(object) {
     return Object.keys(object);
   }
@@ -301,7 +369,6 @@ export class StorageComponent implements OnInit {
                 data: result,
                 name: files.item(i).name,
                 size: files.item(i).size,
-                type: files.item(i).type
               };
 
 
@@ -317,7 +384,7 @@ export class StorageComponent implements OnInit {
     this.processQueue().then().catch();
   }
   async processQueue() {
-    console.log('upload queue', Object.keys(this.toUpload))
+    console.log('upload queue', Object.keys(this.toUpload));
     if (Object.keys(this.toUpload).length > 0) {
       const item: any = this.toUpload[Object.keys(this.toUpload)[0]];
       console.log('to upload ', this.toUpload);
@@ -355,7 +422,7 @@ export class StorageComponent implements OnInit {
 
     console.log('remoteParts', remoteParts);
 
-    let partSize = 1024 * 1024;
+    const partSize = 1024 * 1024;
 
     // if (this.toUpload[path].size < 1024 * 1024 * 10) {
     //   partSize = 1024 * 500;
@@ -401,10 +468,10 @@ export class StorageComponent implements OnInit {
             }
 
             if (this.toUpload[path]) {
-              this.toUpload[path].percent = (
+              this.toUpload[path].percent = parseInt((
                 ((i + 1) / numberOfParts) *
                 100
-              ).toFixed(0);
+              ).toFixed(0), 10);
             }
 
             this.changeRef.detectChanges();
