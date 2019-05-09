@@ -123,6 +123,8 @@ import { FormFieldValueCompareComponent } from "./base/form/form-field-value-com
 import { NoteComponent } from "./note/note.component";
 import { JsonViewComponent } from "./base/report/json-view/json-view.component";
 import { IframeComponent } from './iframe/iframe.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -270,6 +272,7 @@ export const primaryComponents = [
     MatPaginatorModule,
     MatMomentDateModule,
     MatBottomSheetModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [
     DataService,

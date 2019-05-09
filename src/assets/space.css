@@ -17,19 +17,33 @@
 }
 @keyframes astro {
   0% {
-    transform: rotate(70deg) translate3d(0, 0, 0);
+    transform: rotate(45deg);
   }
   25% {
-    transform: rotate(70deg) translate3d(10px, 0, 0) scale(0.95);
-  }
-  50% {
-    transform: rotate(65deg) translate3d(10px, 10px, 0);
+    transform: rotate(45deg) scale(0.95);
   }
   75% {
-    transform: rotate(70deg) translate3d(10px, 10px, 0) scale(0.97);
+    transform: rotate(45deg) scale(0.97);
   }
   100% {
-    transform: rotate(65deg) translate3d(10px, 10px, 0);
+    transform: rotate(45deg);
+  }
+}
+@keyframes loadingRotation {
+  0% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(90deg);
+  }
+  50% {
+    transform: rotate(180deg);
+  }
+  75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 #space {
@@ -37,17 +51,21 @@
   background-position: center bottom;
   padding: 0;
   box-sizing: border-box;
-  background: #7f6d70;
+  background: #8E94A6;
   height: 100vh;
   max-height: 100vh;
   overflow: hidden;
   text-align: center;
   transition: background ease 3s;
-  background: #3e3c5f;
+}
+#space .radio-list {
+  text-align: right;
+  width: 185px;
+  margin: 10px auto;
 }
 #space:before {
   background-size: 1200px;
-  background: url("graphics/background/star-back.svg");
+  background: url("graphics/star-back.svg");
   position: fixed;
   bottom: 0;
   left: 0;
@@ -71,12 +89,13 @@
   width: 180px;
   height: 180px;
   content: " ";
+  background: url("graphics/astro-small.svg") no-repeat;
   transform: rotate(45deg);
   animation-name: astro;
   animation-delay: 0s;
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
-  animation-duration: 30s;
+  animation-duration: 3s;
   animation-fill-mode: both;
   transform-style: preserve-3d;
 }
@@ -88,9 +107,9 @@
   z-index: 10;
   box-sizing: border-box;
   margin: 0 auto 0 auto;
-  padding: 110px;
+  padding: 60px 110px;
   overflow: hidden;
-  background: #fff url("graphics/background/planet.svg");
+  background: #fff url("graphics/object-planet-globe-1.svg");
   background-size: contain;
   box-shadow: -10px 10px 30px rgba(0, 0, 0, 0.1);
   top: 50%;
@@ -98,12 +117,12 @@
   vertical-align: middle;
   display: inline-block;
 }
-#space .moon img.logo {
-  max-width: 80px;
-  display: block;
-  position: relative;
-  z-index: 2;
-  margin: 10px auto;
+#space .moon .message {
+  color: #6b6898;
+  font-size: 13px;
+  font-weight: 500;
+  margin: 10px 0;
+  line-height: 20px;
 }
 #space .moon .links {
   margin: 30px 0 0 0;
@@ -113,12 +132,23 @@
   list-style: none;
   margin-bottom: 5px;
   font-weight: 100;
+  display: inline-block;
+  vertical-align: top;
+  line-height: 20px;
+  margin-left: 15px;
+  border-bottom: 2px solid #d8d5ce;
+}
+#space .moon .links li:last-child {
+  border-left: none;
+  margin-left: 0;
 }
 #space .moon .links a {
   text-decoration: none;
-  font-weight: 100;
-  font-size: 13px;
-  color: #6c87c3;
+  font-weight: 500;
+  font-size: 10px;
+  color: #453e5d;
+  display: block;
+  border-radius: 5px;
 }
 #space .moon form {
   border-radius: 5px;
@@ -129,12 +159,23 @@
   flex-direction: column;
   text-align: center;
 }
+#space .moon form button img {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: -2px;
+}
 #space .moon form mat-form-field {
-  margin: 0 auto;
-  max-width: 160px;
+  margin: 5px auto;
+  max-width: 240px;
+}
+#space .moon form mat-form-field input {
+  font-size: 11px;
 }
 #space .moon form .mobile-inputs {
-  max-width: 300px;
+  max-width: 200px;
+  margin: 0 auto;
 }
 #space .moon form .mobile-inputs:after {
   clear: both;
@@ -148,25 +189,37 @@
   max-width: unset;
 }
 #space .moon form .mobile-inputs .mobile {
-  width: calc(100% - 60px) !important;
+  width: calc(100% - 40px) !important;
+}
+#space .moon form .mobile-inputs .mobile input {
+  text-align: left !important;
 }
 #space .moon form .mobile-inputs .code {
-  width: 60px!important;
+  width: 40px !important;
 }
 #space .moon form input {
   text-align: center;
   font-size: 13px;
 }
 #space .moon form .title {
-  font-weight: 100;
+  font-weight: 500;
   margin-bottom: 10px;
-  font-size: 17px;
+  font-size: 15px;
+}
+#space .moon form .subtitle {
+  font-weight: 100;
+  margin-bottom: 20px;
+  font-size: 13px;
 }
 #space .moon form .submit {
   text-align: left;
 }
-#space .moon form .submit button[type="submit"] {
+#space .moon form .submit button {
   width: 120px;
+}
+#space .moon form .submit button.loading {
+  cursor: not-allowed !important;
+  pointer-events: none;
 }
 #space .moon form .submit {
   margin: 15px 0 0 0;
@@ -211,15 +264,11 @@
     padding: 15px 0 0 0;
     background-image: none;
   }
-  #space .moon img.logo,
-  #space .moon .loading {
-    margin: 0 15px;
-  }
-  #space .moon img.logo {
-    margin: 10px 25px;
+  #space .moon .logo-wrapper {
+    max-width: 420px;
   }
   #space .moon form {
-    max-width: 360px;
+    max-width: 420px;
   }
 }
 @media (max-width: 440px) {
@@ -237,14 +286,58 @@
     background-image: none;
     height: auto;
   }
-  #space .moon img.logo {
-    margin: 10px auto;
-  }
-  #space .moon .loading {
+  #space .moon .logo-wrapper {
+    width: 100%;
     margin: 0 auto;
   }
   #space .moon form {
     max-width: 380px;
     margin: 0 auto;
+  }
+}
+button .spinner {
+  width: 100%;
+  height: 20px;
+  line-height: 20px;
+  text-align: center;
+  font-size: 10px;
+  display: inline-block;
+  vertical-align: top;
+  margin-top: -2px;
+}
+button .spinner > div {
+  margin: 0;
+  border-radius: 5px;
+  height: 100%;
+  width: 8px;
+  margin-right: 4px;
+  display: inline-block;
+  vertical-align: middle;
+  transform-origin: center center;
+  box-sizing: border-box;
+  animation: sk-stretchdelay 1.2s infinite ease-in-out;
+}
+button .spinner .rect2 {
+  animation-delay: -1.1s;
+}
+button .spinner .rect3 {
+  animation-delay: -1s;
+}
+button .spinner .rect4 {
+  animation-delay: -0.9s;
+}
+button .spinner .rect5 {
+  animation-delay: -0.8s;
+}
+@keyframes sk-stretchdelay {
+  0%,
+  40%,
+  100% {
+    transform: scaleY(0.5);
+    background: #c9c9cb;
+  }
+  20% {
+    background: #ccbda4;
+    transform: scaleY(1);
   }
 }

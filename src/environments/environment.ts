@@ -5,8 +5,7 @@
 export const environment = {
   production: false,
   mode : 'development',
-  // sso: 'http://localhost:7777',
-  sso : false,
+  sso: 'http://localhost:8888',
   googleApiKey: "AIzaSyB1ZFq-cxNYtuxRXSZgpMrdUfBe7Mr-X_g"
 };
 

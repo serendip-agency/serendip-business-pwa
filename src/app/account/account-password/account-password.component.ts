@@ -12,22 +12,38 @@ export class AccountPasswordComponent implements OnInit {
     passwordConfirm: ""
   };
   message: string;
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService) { }
 
   async save() {
-    await this.dataService.request({
-      path: "/api/auth/changePassword",
-      model: this.model,
-      method: "post"
-    });
+
+    try {
+      await this.dataService.request({
+        path: "/api/auth/changePassword",
+        model: this.model,
+        method: "post"
+      });
+
+      this.message = "پسورد جدید با موفقیت ثبت شد";
+
+    } catch (error) {
+
+      if (error.status == 400) {
+        this.message = "ورودی‌ها را بازبینی کنید";
+      } else if (error.status == 500) {
+        this.message = "خطای سرور";
+      } else {
+        this.message = "ارتباط با سرور برقرار نشد";
+      }
+
+    }
+
 
     this.model = {
       password: "",
       passwordConfirm: ""
     };
 
-    this.message = "پسورد جدید با موفقیت ثبت شد.";
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 }

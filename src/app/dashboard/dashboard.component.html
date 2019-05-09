@@ -1,10 +1,7 @@
 <app-calendar></app-calendar>
 <app-weather></app-weather>
 
-<app-storage
-  [viewMode]="'full'"
-  *ngIf="storageService.fileManagerVisible"
-></app-storage>
+<app-storage [viewMode]="'full'" *ngIf="storageService.fileManagerVisible"></app-storage>
 
 <app-map [mapId]="'dashboard-map'"></app-map>
 <div id="serendip-loader" *ngIf="!dashboardReady">
@@ -22,39 +19,22 @@
   </div>
 </div>
 
-<div
-  class="dashboard-wrapper"
-  [class.empty]="gridEmpty()"
-  *ngIf="dashboardReady"
->
+<div class="dashboard-wrapper" [class.empty]="gridEmpty()" *ngIf="dashboardReady">
   <header id="header">
     <div class="inner">
       <div class="logo" (click)="clickOnLogo()">
         <img src="assets/graphics/brand/logo-6.svg" />
       </div>
 
-      <div
-        class="explorer-toggle"
-        (click)="explorerToggleClick()"
-        [class.active]="explorerVisible"
-      >
-        <img
-          *ngIf="!anyServiceComponentVisible()"
-          src="assets/icons/arrow-right-next-4.svg"
-        />
-        <img
-          *ngIf="anyServiceComponentVisible()"
-          src="assets/icons/close-2.svg"
-        />
+      <div class="explorer-toggle" (click)="explorerToggleClick()" [class.active]="explorerVisible">
+        <img *ngIf="!anyServiceComponentVisible()" src="assets/icons/arrow-right-next-4.svg" />
+        <img *ngIf="anyServiceComponentVisible()" src="assets/icons/close-2.svg" />
       </div>
 
       <div class="quick" (click)="toggleDashboardDateTimeFormat()">
         <div class="datetime">
           <span class="time">
-            <img
-              *ngFor="let w of dashboardTime.split('')"
-              [src]="'assets/digital-numbers/' + w + '.svg'"
-            />
+            <img *ngFor="let w of dashboardTime.split('')" [src]="'assets/digital-numbers/' + w + '.svg'" />
           </span>
 
           <span class="date"> {{ rpd(dashboardDate) }} </span>
@@ -144,25 +124,14 @@
             <img [src]="'assets/icons/' + section.icon + '.svg'" />
             <span> {{ section.title }} </span>
 
-            <img
-              *ngIf="section.tabs && section.tabs.length > 0"
-              class="toggle-ul"
-              [class.active]="section.toggleUl"
-              [src]="'assets/icons/arrow-right-next-8.svg'"
-            />
+            <img *ngIf="section.tabs && section.tabs.length > 0" class="toggle-ul" [class.active]="section.toggleUl"
+              [src]="'assets/icons/arrow-right-next-8.svg'" />
           </a>
 
-          <ul
-            [class.show]="section.toggleUl"
-            *ngIf="section.tabs && section.tabs.length > 0"
-          >
+          <ul [class.show]="section.toggleUl" *ngIf="section.tabs && section.tabs.length > 0">
             <li *ngFor="let tab of getExplorerTabs(section.tabs)">
-              <a
-                [dndEffectAllowed]="'all'"
-                [dndDraggable]="{ tab: tab }"
-                (dndStart)="tabDragStart(tab)"
-                (dndEnd)="tabDragEnd()"
-              >
+              <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab: tab }" (dndStart)="tabDragStart(tab)"
+                (dndEnd)="tabDragEnd()" (click)="clickOnNavTab(tab)" [title]="tab.title">
                 <div class="img">
                   <img [src]="'assets/icons/' + tab.icon + '.svg'" />
                 </div>
@@ -181,77 +150,45 @@
     </div>
   </aside>
 
-  <div
-    class="grid-container"
-    [ngClass]="'f' + grid.containers.length"
-    [class.explorer-show]="explorerVisible"
-    [class.go-back]="!explorerAnimDone"
-  >
-    <div
-      class="tabs-container"
-      dndDropzone
-      (dndDragover)="onTabDragover($event, c)"
-      (dndDrop)="onTabDrop($event, c)"
+  <div class="grid-container" [ngClass]="'f' + grid.containers.length" [class.explorer-show]="explorerVisible"
+    [class.go-back]="!explorerAnimDone">
+    <div class="tabs-container" dndDropzone (dndDragover)="onTabDragover($event, c)" (dndDrop)="onTabDrop($event, c)"
       *ngFor="
         let container of grid.containers;
         trackBy: containerLoopTrack;
         let c = index
-      "
-    >
+      ">
       <!-- optional placeholder element for dropzone -->
       <!-- will be removed from DOM on init -->
       <div dndPlaceholderRef>
         <div class="placeholder" *ngIf="tabDragging"></div>
       </div>
 
-      <ul
-        class="tabs-nav"
-        *ngIf="container.tabs.length > 0"
-        [class.showTabs]="container.showTabs"
-        [id]="'nav-tab-' + c"
-        [class.full]="isNavTabFull('nav-tab-' + c)"
-      >
-        <li
-          *ngFor="let tab of definedItemsOfArray(container.tabs); let i = index"
+      <ul class="tabs-nav" *ngIf="container.tabs.length > 0" [class.showTabs]="container.showTabs" [id]="'nav-tab-' + c"
+        [class.full]="isNavTabFull('nav-tab-' + c)">
+        <li *ngFor="let tab of definedItemsOfArray(container.tabs); let i = index"
           [style.top]="container.showTabs ? i * 40 + 10 + 'px' : 'unset'"
           [class.last-item]="i == container.tabs.length - 1"
           [style.z-index]="!container.showTabs && tab.active ? 1000 : i"
           [style.left]="container.showTabs ? 10 + 'px' : 'unset'"
-          [style.right]="container.showTabs ? 10 + 'px' : 'unset'"
-          [id]="'tab-' + c + '-' + i"
-          [class.nextIsActive]="
+          [style.right]="container.showTabs ? 10 + 'px' : 'unset'" [id]="'tab-' + c + '-' + i" [class.nextIsActive]="
             container.tabs[i + 1] && container.tabs[i + 1].active
-          "
-          [class.prevIsActive]="
+          " [class.prevIsActive]="
             container.tabs[i - 1] && container.tabs[i - 1].active
-          "
-          [class.nextIsHover]="
+          " [class.nextIsHover]="
             container.tabs[i + 1] && container.tabs[i + 1].hover
-          "
-          [class.prevIsHover]="
+          " [class.prevIsHover]="
             container.tabs[i - 1] && container.tabs[i - 1].hover
-          "
-          [class.active]="tab.active"
-          [class.hover]="tab.hover"
-          (mouseenter)="tab.hover = !container.showTabs"
-          (mouseout)="tab.hover = false"
-          (click)="
+          " [class.active]="tab.active" [class.hover]="tab.hover" (mouseenter)="tab.hover = !container.showTabs"
+          (mouseout)="tab.hover = false" (click)="
             isNavTabFull('nav-tab-' + c) && !container.showTabs
               ? ''
               : setActive(tab, container);
             container.showTabs = false;
             syncGrid()
-          "
-        >
-          <a
-            class="tab-handle"
-            [title]="tab.title"
-            [dndDisableIf]="screen == 'mobile'"
-            [dndEffectAllowed]="'all'"
-            (dndStart)="tabDragStart(tab)"
-            (dndEnd)="tabDragEnd()"
-            [dndDraggable]="{ containerIndex: c, tabIndex: i }"
-          >
+          ">
+          <a class="tab-handle" [title]="tab.title" [dndDisableIf]="screen == 'mobile'" [dndEffectAllowed]="'all'"
+            (dndStart)="tabDragStart(tab)" (dndEnd)="tabDragEnd()" [dndDraggable]="{ containerIndex: c, tabIndex: i }">
             <div class="tab-icon">
               <!-- <img [src]="'assets/icons/location-pin.svg'" /> -->
               <img [src]="'assets/icons/' + tab.icon + '.svg'" />
@@ -284,41 +221,24 @@
         </li> -->
       </ul>
 
-      <div
-        *ngFor="let tab of definedItemsOfArray(container.tabs); let t = index"
-        [hidden]="!tab.active || container.showTabs"
-      >
-        <div
-          class="widget-container"
-          *ngFor="let widget of getWidgets(tab); let w = index"
-          [hidden]="widget.screen && widget.screen != dashboardService.screen"
-        >
-          <ndc-dynamic
-            *ngIf="!widget.screen || widget.screen == dashboardService.screen"
-            [ndcDynamicInputs]="
+      <div *ngFor="let tab of definedItemsOfArray(container.tabs); let t = index"
+        [hidden]="!tab.active || container.showTabs">
+        <div class="widget-container" *ngFor="let widget of getWidgets(tab); let w = index"
+          [hidden]="widget.screen && widget.screen != dashboardService.screen">
+          <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="
               extendObj({ widgetId: widget.id, tab: tab }, widget.inputs || {})
-            "
-            [ndcDynamicOutputs]="{
+            " [ndcDynamicOutputs]="{
               DashboardCommand: dashboardCommand(c, t, w),
               TabChange: tabChange(c, t, w),
               WidgetChange: widgetChange(c, t, w)
-            }"
-            [ndcDynamicComponent]="getComponent(widget.component)"
-          ></ndc-dynamic>
+            }" [ndcDynamicComponent]="getComponent(widget.component)"></ndc-dynamic>
         </div>
       </div>
     </div>
   </div>
 
-  <div
-    *ngIf="businessService.getActiveBusinessId()"
-    id="start-button"
-    (click)="startButtonClick()"
-  >
-    <img
-      src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg"
-      alt=""
-    />
+  <div *ngIf="businessService.getActiveBusinessId()" id="start-button" (click)="startButtonClick()">
+    <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="" />
   </div>
 
   <div id="start" (click)="clickOnStartWrapper($event)">
@@ -326,36 +246,26 @@
       <ng-container *ngTemplateOutlet="shortcuts"></ng-container>
       <nav *ngIf="!search.mode">
         <ul [class.search-active]="search.text">
-          <li
-            *ngFor="
+          <li *ngFor="
               let item of dashboardService.schema
                 ? dashboardService.schema.dashboard
                 : []
-            "
-            [class.no-result]="
+            " [class.no-result]="
               search.text && searchResultsInSection(item.name).length == 0
-            "
-            [class.active]="
+            " [class.active]="
               !search.text &&
               dashboardService.currentSection &&
               dashboardService.currentSection.name == item.name
-            "
-          >
-            <a
-              [routerLink]="
+            ">
+            <a [routerLink]="
                 search.text
                   ? null
                   : ['/dashboard', item.name == 'dashboard' ? '' : item.name]
-              "
-              (click)="search.text ? (search.mode = item.name) : hideStart()"
-            >
+              " (click)="search.text ? (search.mode = item.name) : hideStart()">
               <div class="count" *ngIf="search.text">
                 {{ searchResultsInSection(item.name).length.toString() | rpd }}
               </div>
-              <img
-                *ngIf="!search.text"
-                [src]="'assets/icons/' + item.icon + '.svg'"
-              />
+              <img *ngIf="!search.text" [src]="'assets/icons/' + item.icon + '.svg'" />
               <span> {{ item.title }} </span>
             </a>
           </li>
@@ -378,14 +288,14 @@
       </div>
 
 
-    <div *ngIf="search.mode">
+      <div *ngIf="search.mode">
 
-      <div *ngFor="let item of searchResultsInSection(search.mode)">
+        <div *ngFor="let item of searchResultsInSection(search.mode)">
 
-        {{item | json}}
+          {{item | json}}
+        </div>
+
       </div>
-
-    </div>
 
       <div class="actions">
         <div class="button" (click)="manualSync()">
@@ -404,50 +314,27 @@
 
 <ng-template #shortcuts>
   <div class="shortcuts">
-    <div
-      class="search"
-      [class.search-active]="search.text"
-      [class.mode-selected]="search.mode"
-    >
+    <div class="search" [class.search-active]="search.text" [class.mode-selected]="search.mode">
       <div class="search-inner">
         <div>
-          <img
-            src="assets/icons/search.svg"
-            alt="انجام جست‌و‌جو"
-            (click)="doSearch(search.text)"
-          />
-          <img
-            *ngIf="search.text"
-            src="assets/icons/close-5.svg"
-            (click)="search.text = ''; search.mode = ''"
-            alt="ریست جست‌و‌جو"
-          />
+          <img src="assets/icons/search.svg" alt="انجام جست‌و‌جو" (click)="doSearch(search.text)" />
+          <img *ngIf="search.text" src="assets/icons/close-5.svg" (click)="search.text = ''; search.mode = ''"
+            alt="ریست جست‌و‌جو" />
 
-          <input
-            type="text"
-            [dir]="getInputDirection(search.text)"
-            [(ngModel)]="search.text"
-            (keyup)="doSearch(search.text)"
-            placeholder="جست‌و‌جو ..."
-          />
+          <input type="text" [dir]="getInputDirection(search.text)" [(ngModel)]="search.text"
+            (keyup)="doSearch(search.text)" placeholder="جست‌و‌جو ..." />
 
-          <img
-            *ngIf="search.mode"
-            (click)="search.mode = ''"
-            [src]="'assets/icons/' + getModeIcon(search.mode) + '.svg'"
-          />
+          <img *ngIf="search.mode" (click)="search.mode = ''"
+            [src]="'assets/icons/' + getModeIcon(search.mode) + '.svg'" />
         </div>
 
         <div class="did-you-mean" *ngIf="search.didYouMean">
           آیا منظور شما
-          <a
-            (click)="
+          <a (click)="
               search.text = search.didYouMean;
               search.didYouMean = '';
               doSearch(search.text)
-            "
-            >{{ search.didYouMean }}</a
-          >
+            ">{{ search.didYouMean }}</a>
           است؟
         </div>
       </div>
@@ -455,39 +342,28 @@
 
     <ul>
       <li>
-        <a
-          (click)="toggleCalendar()"
-          [class.active]="calendarService.calendarVisible"
-        >
+        <a (click)="toggleCalendar()" [class.active]="calendarService.calendarVisible">
           <img src="assets/icon-crm-header/calendar-2.svg" alt="" />
         </a>
       </li>
+      
       <li>
         <a> <img src="assets/icon-crm-header/note.svg" alt="" /> </a>
       </li>
 
       <li>
-        <a
-          (click)="toggleFileManager()"
-          [class.active]="storageService.fileManagerVisible"
-        >
+        <a (click)="toggleFileManager()" [class.active]="storageService.fileManagerVisible">
           <img src="assets/icon-crm-header/file-manager-cloud-4.svg" alt="" />
         </a>
       </li>
-      <li>
-        <a
-          (click)="toggleWeather()"
-          [class.active]="weatherService.weatherVisible"
-        >
+      <!-- <li>
+        <a (click)="toggleWeather()" [class.active]="weatherService.weatherVisible">
           <img src="assets/icon-crm-header/weather-3.svg" alt="" />
         </a>
-      </li>
+      </li> -->
 
       <li>
-        <a
-          (click)="toggleMap()"
-          [class.active]="gmapsService.dashboardMapVisible"
-        >
+        <a (click)="toggleMap()" [class.active]="gmapsService.dashboardMapVisible">
           <img src="assets/icon-crm-header/map.svg" alt="" />
         </a>
       </li>

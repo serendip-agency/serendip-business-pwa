@@ -28,6 +28,13 @@ export class FormCodeInputComponent implements OnInit {
   @Input() set model(value: string) {
 
     if (this._model !== value) {
+
+      if (typeof value !== "string") {
+        try {
+          value = JSON.stringify(value, null, 2);
+        } catch (error) { }
+      }
+
       this._model = value;
       if (this.flask) {
         this.flask.updateCode(this.cleanCodeSpaces(value));
@@ -62,11 +69,7 @@ export class FormCodeInputComponent implements OnInit {
     return input || result.join("\n");
   }
   ngOnInit() {
-    if (typeof this.model !== "string") {
-      try {
-        this.model = JSON.stringify(this.model, null, 2);
-      } catch (error) { }
-    }
+
     requestAnimationFrame(() => {
       this.flask = new CodeFlask("#" + this.selector, {
         language: this.language,

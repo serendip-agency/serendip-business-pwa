@@ -10,9 +10,10 @@ export class FormTextInputComponent implements OnInit {
     Math.random()
       .toString()
       .split(".")[1]
-  }`;
+    }`;
 
-  @Input() type: "single-line" | "multi-line";
+  @Input() multiline = false;
+  @Input() type = 'text';
 
   @Input() dir;
 
@@ -29,12 +30,10 @@ export class FormTextInputComponent implements OnInit {
   @Input() label: string;
   @Output() modelChange = new EventEmitter<any>();
 
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
-    if (!this.type) {
-      this.type = "single-line";
-    }
+
   }
 
   inputsChange() {

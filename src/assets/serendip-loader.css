@@ -2,7 +2,7 @@
   text-align: center;
   line-height: calc(100vh - 100px);
   height: 100vh;
-  background: #333333 url("/assets/graphics/star-back.svg");
+  background: #000 url("/assets/graphics/star-back.svg");
   background-size: cover;
 }
 #serendip-loader .text {

@@ -587,6 +587,24 @@ export class DashboardComponent implements OnInit, OnDestroy {
     return _.filter(array, x => !!x);
   }
 
+  clickOnNavTab(tab){
+    _.forEach(
+      this.definedItemsOfArray(this.grid.containers[0].tabs),
+      (tab: { active: boolean }) => {
+        tab.active = false;
+      }
+    );
+
+    tab.active = true;
+
+    this.grid.containers[0].tabs.push(tab);
+
+
+    this.syncGrid();
+
+  }
+
+
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
     console.log("tab drop");
     if (this.screen === "mobile") {
@@ -839,6 +857,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async syncGrid() {
+
+    
     if (this.lastGridSync) {
       if (Date.now() - this.lastGridSync < 1000) {
         return;
@@ -846,7 +866,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     this.grid.version = Date.now();
 
-    console.warn("syncing grid ...");
 
     localStorage.setItem(
       "grid-" + this.dashboardService.currentSection.name,
@@ -858,12 +877,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
 
     if (this.dashboardSocket) {
+
+
+    console.warn("syncing grid ...");
+
       this.dashboardSocket.send(
         JSON.stringify({
           command: "sync_grid",
           business: this.businessService.getActiveBusinessId(),
           data: JSON.stringify({
-            section: this.dashboardService.currentSection.name,
+            section: this.dashboardService.currentSection.name || "start",
             grid: this.grid
           })
         })
@@ -1089,9 +1112,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
 
-      // setTimeout(() => {
-      //   this.handleFullNav();
-      // }, 300);
+      setTimeout(() => {
+        this.handleFullNav();
+      }, 300);
     }, 1);
   }
   downloadExport() {

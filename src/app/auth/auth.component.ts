@@ -421,7 +421,9 @@ export class AuthComponent implements OnInit {
               clientId: 'serendip-business-pwa',
             }
           }).toPromise()));
-        this.authService.loggedIn = true;
+
+        location.href = '/'
+
       } catch (error) {
         setTimeout(() => {
           // tslint:disable-next-line:max-line-length

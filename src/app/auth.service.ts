@@ -90,7 +90,7 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         reject({ status: 0 });
-      }, timeout || 3000);
+      }, timeout || 10000);
 
       this.http
         .post(this.apiUrl + "/api/auth/oneTimePassword", {

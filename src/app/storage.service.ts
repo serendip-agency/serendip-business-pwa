@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class StorageService {
-  fileManagerVisible: boolean = true;
+  fileManagerVisible: boolean = false;
 
   constructor() { }
 }

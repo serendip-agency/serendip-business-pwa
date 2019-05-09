@@ -3,8 +3,28 @@
   height: 100vh;
   min-height: 100%;
   box-sizing: border-box;
+  &.empty:after {
+    filter: blur(0);
+  }
+
   &.empty:before {
     filter: blur(0);
+  }
+  &:after {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    min-height: 100%;
+    width: 100%;
+    background-image: url("/assets/wallpaper.png");
+    transform: rotateY(180deg) rotateX(180deg);
+    background-size: 60vh;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    content: " ";
+    z-index: 0;
+    filter: brightness(.3) blur(3px) grayscale();
   }
   &:before {
     position: fixed;
@@ -14,15 +34,15 @@
     min-height: 100%;
     width: 100%;
     background-color: #000;
-    background-image: url("/assets/wallpaper.jpg");
-    background-size: contain;
-    background-position: left bottom;
+    background-size: 1200px;
+    background-image: url("/assets/graphics/star-back.svg");
     background-repeat: no-repeat;
     content: " ";
     z-index: 0;
-    filter: blur(20px);
-    transition: filter linear 0.5s;
+    filter: brightness(.3) blur(3px) grayscale();
+
   }
+
   // &:after {
   //   position: fixed;
   //   top: 0;
@@ -117,7 +137,7 @@ header {
   height: 50px;
   overflow: hidden;
   user-select: none;
-  background: rgba(#333, 1);
+  background: rgba(69, 62, 93, 0.95);
   top: 0;
   left: 0;
   width: 100%;
@@ -319,8 +339,7 @@ header {
         overflow: hidden;
         box-sizing: border-box;
         margin-top: -3px;
-
-        opacity: 0.5;
+        opacity: 1;
       }
     }
     .title {
@@ -500,7 +519,6 @@ aside#explorer {
         list-style: none;
         cursor: default;
         padding: 5px 0; // transition: transform ease 1.5s;
-        border-bottom: 1px solid rgb(235, 235, 235);
         position: relative;
         img.toggle-ul {
           position: absolute;
@@ -521,7 +539,7 @@ aside#explorer {
           display: block;
           text-decoration: none;
           line-height: 29px;
-          color: #777;
+          color: #000;
           font-weight: 100;
           font-size: 14px;
           white-space: nowrap;
@@ -536,7 +554,6 @@ aside#explorer {
             display: inline-block; // border: 1px solid #000;
             box-sizing: border-box;
             vertical-align: middle;
-            opacity: 0.5;
           }
         }
         & > ul {
@@ -551,17 +568,19 @@ aside#explorer {
             border-radius: 5px;
             margin: 10px auto;
             box-sizing: border-box;
-            background: #f4f4f4;
+            background: #E3E0DB;
             &:hover {
-              background: #d2ae6d;
+              background: #4A458F;
               transition: all ease 0.3s;
+
+              img{
+                filter: invert(1);
+              }
               a {
-                color: rgb(105, 80, 32);
+                color: #fff;
               }
             }
-            &:last-child {
-              // border-bottom: none;
-            }
+          
             a {
               font-size: 11px;
               font-weight: 100;
@@ -570,10 +589,9 @@ aside#explorer {
               cursor: move;
               .img {
                 display: inline-block;
-                background-color: rgba(195, 162, 101, 0.3);
+        
                 width: 26px;
                 height: 26px;
-                border-radius: 100%;
                 overflow: hidden;
                 display: inline-block; // border: 1px solid #000;
                 box-sizing: border-box;
@@ -841,7 +859,7 @@ header .shortcuts .search {
   right: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  background: rgba(255, 255, 255, 0.5);
+  background: transparent;
   filter: grayscale(1);
   color: #fff;
   opacity: 0; // transition: opacity ease .3s;
@@ -942,7 +960,8 @@ header .shortcuts .search {
     max-width: 420px;
     width: 100%;
     margin: 0 auto;
-    background: #333 url(../../assets/graphics/astro-small.svg) no-repeat center
+    background: rgba(69, 62, 93, 0.95) url(../../assets/graphics/astro-small.svg) no-repeat center
+
       bottom;
     background-size: 64px;
     min-height: 100%;
@@ -952,23 +971,10 @@ header .shortcuts .search {
     top: 0;
 
     left: -600px;
-    //  transition: left ease 0.5s;
-    transition: none;
+     transition: left ease 0.5s;
+   // transition: none;
 
-    &:after {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      bottom: 0;
-      left: 0;
-      content: " ";
-      display: block;
-      background: url("../../assets/graphics/star-back.svg") repeat center
-        bottom;
-      background-size: 1200px;
-      opacity: 0.3;
-      z-index: -1;
-    }
+    
   }
 
   &.fadeIn {
@@ -1019,7 +1025,7 @@ header .shortcuts .search {
         padding-top: 8px;
         box-sizing: border-box;
         border-radius: 5px;
-        margin: 8px;
+        margin: 4px;
         background: rgba(255, 255, 255, 0.1);
         transition: all ease 0.5s;
         cursor: pointer;
@@ -1051,7 +1057,7 @@ header .shortcuts .search {
           display: block;
           text-align: center;
           font-size: 13px;
-          font-weight: 100;
+          font-weight: 500;
           img,
           .count {
             width: 40px;
@@ -1060,8 +1066,6 @@ header .shortcuts .search {
 
             border-radius: 100%;
             // background: rgba(255, 255, 255, 1);
-            border: 1px solid #999;
-            padding: 2px;
             box-sizing: border-box; // filter: invert(1);
             display: block;
             margin: 0 auto;

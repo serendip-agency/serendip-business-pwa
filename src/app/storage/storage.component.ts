@@ -40,13 +40,13 @@ export class StorageComponent implements OnInit {
     apk: 'mobile-smart-phone'
   };
 
-  codeEditorVisible = true;
+  codeEditorVisible = false;
   codeEditorLanguage = 'javascript';
-  codeEditorModel = 'console.log("hi")';
+  codeEditorModel = '';
   sUtils = serendip_utility;
   newFolderName = "";
 
-  iframeActive = false;
+  iframeActive = true;
   codeEditorActive = false;
   @Input() mode = "";
   toUpload: {
