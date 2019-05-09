@@ -1,30 +1,30 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { MatSnackBar } from "@angular/material";
-import * as JsZip from "jszip";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
+import * as JsZip from 'jszip';
 import {
   ReportInterface,
   EntityModel,
   ProfileModel
-} from "serendip-business-model";
-import * as utils from "serendip-utility";
-import * as _ from "underscore";
+} from 'serendip-business-model';
+import * as utils from 'serendip-utility';
+import * as _ from 'underscore';
 
-import { AuthService } from "./auth.service";
-import { BusinessService } from "./business.service";
-import { IdbService } from "./idb.service";
-import { ObService } from "./ob.service";
-import * as promiseSerial from "promise-serial";
-import { FormsSchema, ReportsSchema } from "./schema";
-import { createIndex, addDocumentToIndex } from "ndx";
-import { SearchSchema } from "./schema/search";
-import ObjectID from "bson-objectid";
-import * as moment from "moment-jalaali";
-import * as aesjs from "aes-js";
-import { words } from "lodash";
-import { query as ndxQuery } from "ndx-query";
+import { AuthService } from './auth.service';
+import { BusinessService } from './business.service';
+import { IdbService } from './idb.service';
+import { ObService } from './ob.service';
+import * as promiseSerial from 'promise-serial';
+import { FormsSchema, ReportsSchema } from './schema';
+import { createIndex, addDocumentToIndex } from 'ndx';
+import { SearchSchema } from './schema/search';
+import ObjectID from 'bson-objectid';
+import * as moment from 'moment-jalaali';
+import * as aesjs from 'aes-js';
+import { words } from 'lodash';
+import { query as ndxQuery } from 'ndx-query';
 export interface DataRequestInterface {
-  method: string | "POST" | "GET";
+  method: string | 'POST' | 'GET';
   path: string;
   model?: any;
   raw?: boolean;
@@ -44,14 +44,14 @@ export class DataService {
   commonEnglishWordsIndexCache: any;
 
   serversToSelect = [
-    { label: "سرور ایران", value: "https://business.serendip.ir" },
-    { label: "سرور ابری آلمان", value: "https://business.serendip.cloud" },
-    { label: "سرور باکس سرندیپ", value: "box" },
-    { label: "سرور توسعه کلاد", value: "http://dev.serendip.cloud:2040" },
-    { label: "سرور توسعه محلی", value: "http://localhost:2040" }
+    { label: 'سرور ایران', value: 'https://business.serendip.ir' },
+    { label: 'سرور ابری آلمان', value: 'https://business.serendip.cloud' },
+    { label: 'سرور باکس سرندیپ', value: 'box' },
+    { label: 'سرور توسعه کلاد', value: 'http://dev.serendip.cloud:2040' },
+    { label: 'سرور توسعه محلی', value: 'http://localhost:2040' }
   ];
 
-  currentServer = "localhost:2040";
+  currentServer = 'localhost:2040';
   _fieldsCache: any = {};
 
   constructor(
@@ -68,10 +68,10 @@ export class DataService {
   async loadBusiness() {
     try {
       const myBusinesses = await this.request({
-        method: "get",
+        method: 'get',
         timeout: 3000,
         retry: false,
-        path: "/api/business/list"
+        path: '/api/business/list'
       });
 
       this.businessService.business = _.findWhere(myBusinesses, {
@@ -91,33 +91,33 @@ export class DataService {
     if (srv) {
       lsServer = srv;
     } else {
-      if (!lsServer || (lsServer.indexOf && lsServer.indexOf("http") !== 0)) {
+      if (!lsServer || (lsServer.indexOf && lsServer.indexOf('http') !== 0)) {
         switch (location.hostname) {
-          case "serendip.ir":
-            lsServer = "https://business.serendip.ir";
+          case 'serendip.ir':
+            lsServer = 'https://business.serendip.ir';
             break;
-          case "localhost":
-            lsServer = "http://localhost:2040";
+          case 'localhost':
+            lsServer = 'http://localhost:2040';
             break;
           default:
-            lsServer = "https://business.serendip.cloud";
+            lsServer = 'https://business.serendip.cloud';
             break;
         }
       }
     }
 
-    localStorage.setItem("server", lsServer);
+    localStorage.setItem('server', lsServer);
     this.currentServer = lsServer;
   }
 
   async profile(): Promise<ProfileModel> {
-    let profileLs = localStorage.getItem("profile");
+    let profileLs = localStorage.getItem('profile');
 
     try {
-      const res = await this.request({ path: "/api/profile", method: "get" });
+      const res = await this.request({ path: '/api/profile', method: 'get' });
       if (res) {
         profileLs = res;
-        localStorage.setItem("profile", JSON.stringify(profileLs));
+        localStorage.setItem('profile', JSON.stringify(profileLs));
       }
     } catch (error) {
       if (profileLs) {
@@ -130,7 +130,7 @@ export class DataService {
   public request(opts: DataRequestInterface): Promise<any> {
     return new Promise(async (resolve, reject) => {
       setTimeout(() => {
-        reject("timeout");
+        reject('timeout');
       }, opts.timeout || 30000);
 
       opts.method = opts.method.trim().toUpperCase();
@@ -156,14 +156,14 @@ export class DataService {
 
         const options: any = {
           headers: {
-            Authorization: "Bearer " + token.access_token
+            Authorization: 'Bearer ' + token.access_token
             // clientid: environment.clientId
           }
         };
 
         if (opts.raw) {
-          options.responseType = "blob";
-          options.observe = "response";
+          options.responseType = 'blob';
+          options.observe = 'response';
         }
 
         // console.log(
@@ -171,25 +171,25 @@ export class DataService {
         //   opts.host + opts.path
         // );
 
-        if (opts.method.toUpperCase() === "POST") {
+        if (opts.method.toUpperCase() === 'POST') {
           result = await this.http
             .post(opts.host + opts.path, opts.model, options)
             .toPromise();
         }
 
-        if (opts.method.toUpperCase() === "GET") {
+        if (opts.method.toUpperCase() === 'GET') {
           result = await this.http
             .get(
               opts.host +
               opts.path +
-              "?" +
+              '?' +
               utils.querystring.fromObject(opts.model),
               options
             )
             .toPromise();
         }
       } catch (error) {
-        console.warn("request error", opts, error);
+        console.warn('request error', opts, error);
         if (error.status === 401) {
           this.authService.logout();
         }
@@ -197,7 +197,7 @@ export class DataService {
         if (opts.retry) {
           // TODO: add request to push collection
 
-          const pushIdb = await this.idbService.syncIDB("push");
+          const pushIdb = await this.idbService.syncIDB('push');
 
           pushIdb.set(new ObjectID().str, opts);
           return resolve();
@@ -216,12 +216,12 @@ export class DataService {
     to?: number
   ): Promise<A[]> {
     const res: any = await this.request({
-      method: "POST",
+      method: 'POST',
       timeout: 60000,
       path: `/api/entity/${controller}/zip`,
       model: {
-        from: from,
-        to: to
+        from,
+        to
       },
       raw: true
     });
@@ -236,7 +236,7 @@ export class DataService {
       checkCRC32: true
     });
 
-    const unzippedText: any = await zip.file("data.json").async("text");
+    const unzippedText: any = await zip.file('data.json').async('text');
 
     const unzippedArray = JSON.parse(unzippedText);
 
@@ -245,19 +245,19 @@ export class DataService {
 
   public async export(from?: number, to?: number): Promise<void> {
     const res: any = await this.request({
-      method: "POST",
+      method: 'POST',
       timeout: 60000,
       path: `/api/entity/export`,
       model: {
-        from: from,
-        to: to
+        from,
+        to
       },
       raw: true
     });
 
     const data = res.body;
     if (!data) {
-      throw new Error("no data");
+      throw new Error('no data');
     }
 
     const fileReader = new FileReader();
@@ -266,26 +266,26 @@ export class DataService {
 
     fileReader.onload = ev => {
       if ((window as any).cordova) {
-        window.open(fileReader.result.toString(), "_system");
+        window.open(fileReader.result.toString(), '_system');
       } else {
         this.triggerBrowserDownload(
           fileReader.result,
-          "export_" + moment().toISOString() + ".zip"
+          'export_' + moment().toISOString() + '.zip'
         );
       }
     };
   }
 
   triggerBrowserDownload(base64, fileName) {
-    const evt = new MouseEvent("click", {
+    const evt = new MouseEvent('click', {
       view: window,
       bubbles: false,
       cancelable: true
     });
-    const a = document.createElement("a");
-    a.setAttribute("download", fileName);
-    a.setAttribute("href", base64);
-    a.setAttribute("target", "_blank");
+    const a = document.createElement('a');
+    a.setAttribute('download', fileName);
+    a.setAttribute('href', base64);
+    a.setAttribute('target', '_blank');
     a.dispatchEvent(evt);
   }
 
@@ -322,13 +322,13 @@ export class DataService {
     } else {
       try {
         return (await this.request({
-          method: "POST",
+          method: 'POST',
           path: `/api/entity/${controller}/list`,
           timeout: 3000,
           retry: false,
           model: {
-            skip: skip,
-            limit: limit
+            skip,
+            limit
           }
         })).map(p => this.decrypt(p));
       } catch (error) {
@@ -371,13 +371,13 @@ export class DataService {
     } else {
       try {
         return await this.request({
-          method: "POST",
+          method: 'POST',
           path: `/api/entity/${controller}/search`,
           model: {
             properties,
             propertiesSearchMode,
-            take: take,
-            query: query
+            take,
+            query
           },
           timeout: 3000,
           retry: false
@@ -407,7 +407,7 @@ export class DataService {
     } else {
       try {
         return await this.request({
-          method: "POST",
+          method: 'POST',
           timeout: 1000,
           path: `/api/entity/${controller}/count`
         });
@@ -436,13 +436,13 @@ export class DataService {
           throw error;
         }
       } else {
-        throw new Error("not found");
+        throw new Error('not found');
       }
     } else {
       try {
         const result = this.decrypt(
           await this.request({
-            method: "POST",
+            method: 'POST',
 
             path: `/api/entity/${controller}/details`,
             model: { _id }
@@ -451,7 +451,7 @@ export class DataService {
 
         return result;
       } catch (error) {
-        console.log("trying details offline");
+        console.log('trying details offline');
         if (!offline) {
           return this.details(controller, _id, true, error);
         } else {
@@ -469,12 +469,12 @@ export class DataService {
   ): Promise<any> {
     const query = {
       _id,
-      "model._entity": controller,
-      "model._vdate": { $gt: from || 0, $lt: to || Date.now() }
+      'model._entity': controller,
+      'model._vdate': { $gt: from || 0, $lt: to || Date.now() }
     };
 
     return this.request({
-      method: "POST",
+      method: 'POST',
       path: `/api/entity/changes`,
       timeout: 60000,
       model: query,
@@ -490,13 +490,13 @@ export class DataService {
   ): Promise<any> {
     const query = {
       _id,
-      "model._entity": controller,
-      "model._vdate": { $gt: from || 0, $lt: to || Date.now() },
+      'model._entity': controller,
+      'model._vdate': { $gt: from || 0, $lt: to || Date.now() },
       count: true
     };
 
     return this.request({
-      method: "POST",
+      method: 'POST',
       path: `/api/entity/changes`,
       timeout: 60000,
       model: query
@@ -533,15 +533,15 @@ export class DataService {
     }
 
     await this.request({
-      method: "POST",
+      method: 'POST',
       path: `/api/entity/${controller}/insert`,
       timeout: 1000,
-      model: model,
+      model,
       retry: true
     });
 
     await this.updateIDB(model, controller);
-    this.obService.publish(controller, "insert", model);
+    this.obService.publish(controller, 'insert', model);
 
     return model;
   }
@@ -553,12 +553,12 @@ export class DataService {
 
     await this.updateIDB(model, controller);
 
-    this.obService.publish(controller, "update", model);
+    this.obService.publish(controller, 'update', model);
 
     await this.request({
-      method: "POST",
+      method: 'POST',
       path: `/api/entity/${controller}/update`,
-      model: model,
+      model,
       retry: true
     });
 
@@ -566,9 +566,9 @@ export class DataService {
   }
 
   async delete(controller: string, _id: string): Promise<EntityModel> {
-    console.log("delete", controller, _id);
+    console.log('delete', controller, _id);
 
-    let model = { _id: _id };
+    let model = { _id };
 
     const store = await this.idbService.dataIDB();
 
@@ -580,17 +580,17 @@ export class DataService {
       await store.set(controller, data);
     }
 
-    this.obService.publish(controller, "delete", model);
+    this.obService.publish(controller, 'delete', model);
 
     try {
       await this.request({
-        method: "POST",
+        method: 'POST',
         path: `/api/entity/${controller}/delete`,
         model: { _id },
         retry: true
       });
     } catch (error) {
-      console.log("error deleting entity", model, error);
+      console.log('error deleting entity', model, error);
     }
 
     return model;
@@ -605,17 +605,17 @@ export class DataService {
   }
 
   public async pullCollection(collection) {
-    const pullStore = await this.idbService.syncIDB("pull");
+    const pullStore = await this.idbService.syncIDB('pull');
 
     let lastSync = 0;
 
     const syncKeys = _.filter(await pullStore.keys(), (item: string) => {
-      return item.toString().indexOf(collection + "_") === 0;
+      return item.toString().indexOf(collection + '_') === 0;
     }).reverse();
 
     if (syncKeys && syncKeys.length > 0) {
       // tslint:disable-next-line:radix
-      lastSync = parseInt(syncKeys[0].split("_")[1]);
+      lastSync = parseInt(syncKeys[0].split('_')[1]);
     }
     const dataIdb = await this.idbService.dataIDB();
     let changes;
@@ -644,11 +644,11 @@ export class DataService {
     }
 
     console.warn(
-      "changes count for " +
+      'changes count for ' +
       collection +
-      " is " +
+      ' is ' +
       changesCount +
-      " since " +
+      ' since ' +
       lastSync,
       changes
     );
@@ -665,7 +665,7 @@ export class DataService {
 
     await dataIdb.set(collection, currentData);
 
-    await pullStore.set(collection + "_" + Date.now(), {
+    await pullStore.set(collection + '_' + Date.now(), {
       events: changes
     });
   }
@@ -691,8 +691,8 @@ export class DataService {
         )
       );
 
-      delete model["_aes"];
-      delete model["_hex"];
+      delete model['_aes'];
+      delete model['_hex'];
 
       return _.extend(model, decryptedModel);
     } catch (error) {
@@ -702,7 +702,7 @@ export class DataService {
     return model;
   }
   public async pushCollections(callback?: (_id: string, error?: any) => void) {
-    const store = await this.idbService.syncIDB("push");
+    const store = await this.idbService.syncIDB('push');
     const pushKeys = await store.keys();
 
     for (const key of pushKeys) {
@@ -726,7 +726,7 @@ export class DataService {
   public async pullCollections(
     callback?: (collectionName: string, error?: any) => void
   ) {
-    const baseCollections = ["_dashboard", "_entity", "_form", "_report"];
+    const baseCollections = ['_dashboard', '_entity', '_form', '_report'];
     // FormsSchema.forEach(schema => {
     //   if (schema.entityName) {
     //     if (collections.indexOf(schema.entityName) === -1) {
@@ -747,7 +747,7 @@ export class DataService {
       callback(collection);
     }
 
-    const entityCollections = (await this.list("entity"))
+    const entityCollections = (await this.list('entity'))
       .filter(p => p.offline)
       .map(p => p.name);
 
@@ -778,7 +778,7 @@ export class DataService {
     }
 
     if (!report) {
-      report = _.findWhere(await this.list("_report", 0, 0), {
+      report = _.findWhere(await this.list('_report', 0, 0), {
         entityName
       } as ReportInterface);
 
@@ -790,7 +790,7 @@ export class DataService {
     const primaryFields = JSON.parse(
       JSON.stringify(
         _.findWhere(ReportsSchema, {
-          name: "primary"
+          name: 'primary'
         }).fields
       )
     );
@@ -807,7 +807,7 @@ export class DataService {
     ) as EntityModel[]) {
       for (const key in row) {
         if (
-          ["_entity", "_business", "_id", "_vuser", "_uuser"].indexOf(key) !==
+          ['_entity', '_business', '_id', '_vuser', '_uuser'].indexOf(key) !==
           -1
         ) {
           continue;
@@ -815,28 +815,28 @@ export class DataService {
 
         const value = row[key];
 
-        if (typeof value === "undefined" || value === null) {
+        if (typeof value === 'undefined' || value === null) {
           continue;
         }
 
         if (
           report.fields.filter(p => p.name === key).length === 0 &&
-          report.fields.filter(p => p.name.startsWith(key + ".")).length === 0
+          report.fields.filter(p => p.name.startsWith(key + '.')).length === 0
         ) {
-          if (key.toLowerCase().indexOf("date") !== -1) {
+          if (key.toLowerCase().indexOf('date') !== -1) {
             report.fields.push({
               name: key,
               label: key,
               analytical: true,
               enabled: false,
-              type: "date"
+              type: 'date'
             });
             continue;
           }
 
           if (
-            typeof value !== "string" &&
-            typeof value.length !== "undefined" &&
+            typeof value !== 'string' &&
+            typeof value.length !== 'undefined' &&
             value.length !== 24
           ) {
             // report.fields.push({
@@ -865,13 +865,13 @@ export class DataService {
               label: key,
               analytical: true,
               enabled: false,
-              type: "array"
+              type: 'array'
             });
 
             continue;
           }
 
-          if (typeof value === "string" && value.length === 24) {
+          if (typeof value === 'string' && value.length === 24) {
             if (value === row._id) {
               continue;
             }
@@ -891,10 +891,10 @@ export class DataService {
                   parents.concat([entityName])
                 )).forEach(subField => {
                   report.fields.push({
-                    name: key + "." + subField.name,
-                    label: key + "." + subField.name,
+                    name: key + '.' + subField.name,
+                    label: key + '.' + subField.name,
                     analytical: true,
-                    method: "findEntityById",
+                    method: 'findEntityById',
                     methodOptions: {
                       entityName: model._entity,
                       field: subField
@@ -931,18 +931,18 @@ export class DataService {
         field.queries = [];
       }
 
-      if (field.type === "array") {
+      if (field.type === 'array') {
         [
           {
-            label: "سایز آرایه برابر باشد با",
-            method: "array-length-eq",
-            methodInputForm: "field-query-number-eq"
+            label: 'سایز آرایه برابر باشد با',
+            method: 'array-length-eq',
+            methodInputForm: 'field-query-number-eq'
           },
 
           {
-            label: "سایز آرایه برابر نباشد با",
-            method: "array-length-eq",
-            methodInputForm: "field-query-number-eq"
+            label: 'سایز آرایه برابر نباشد با',
+            method: 'array-length-eq',
+            methodInputForm: 'field-query-number-eq'
           }
         ].forEach(f => {
           if (field.queries.filter(p => p.method === f.method).length === 0) {
@@ -951,27 +951,27 @@ export class DataService {
         });
       }
 
-      if (field.type === "number") {
+      if (field.type === 'number') {
         [
           {
-            label: "برابر باشد با",
-            method: "number-eq",
-            methodInputForm: "field-query-number-eq"
+            label: 'برابر باشد با',
+            method: 'number-eq',
+            methodInputForm: 'field-query-number-eq'
           },
           {
-            label: "برابر نباشد با",
-            method: "number-neq",
-            methodInputForm: "field-query-number-eq"
+            label: 'برابر نباشد با',
+            method: 'number-neq',
+            methodInputForm: 'field-query-number-eq'
           },
           {
-            label: "در این بازه باشد",
-            method: "number-in-range",
-            methodInputForm: "field-query-number-range"
+            label: 'در این بازه باشد',
+            method: 'number-in-range',
+            methodInputForm: 'field-query-number-range'
           },
           {
-            label: "در این بازه نباشد",
-            method: "number-nin-range",
-            methodInputForm: "field-query-number-range"
+            label: 'در این بازه نباشد',
+            method: 'number-nin-range',
+            methodInputForm: 'field-query-number-range'
           }
         ].forEach(f => {
           if (field.queries.filter(p => p.method === f.method).length === 0) {
@@ -980,12 +980,13 @@ export class DataService {
         });
       }
 
-      if (field.type === "boolean") {
+      // tslint:disable-next-line: triple-equals
+      if ((field.type as any) == 'boolean') {
         [
           {
-            label: "برابر باشد با",
-            method: "boolean-eq",
-            methodInputForm: "field-query-boolean-eq"
+            label: 'برابر باشد با',
+            method: 'boolean-eq',
+            methodInputForm: 'field-query-boolean-eq'
           }
         ].forEach(f => {
           if (field.queries.filter(p => p.method === f.method).length === 0) {
@@ -994,27 +995,27 @@ export class DataService {
         });
       }
 
-      if (field.type === "date") {
+      if (field.type === 'date') {
         [
           {
-            label: "در این بازه زمانی باشد",
-            method: "date-in-range",
-            methodInputForm: "field-query-date-range"
+            label: 'در این بازه زمانی باشد',
+            method: 'date-in-range',
+            methodInputForm: 'field-query-date-range'
           },
           {
-            label: "در این بازه زمانی نباشد",
-            method: "date-nin-range",
-            methodInputForm: "field-query-date-range"
+            label: 'در این بازه زمانی نباشد',
+            method: 'date-nin-range',
+            methodInputForm: 'field-query-date-range'
           },
           {
-            label: "برابر باشد با",
-            method: "date-eq",
-            methodInputForm: "field-query-date-eq"
+            label: 'برابر باشد با',
+            method: 'date-eq',
+            methodInputForm: 'field-query-date-eq'
           },
           {
-            label: "برابر نباشد با",
-            method: "date-neq",
-            methodInputForm: "field-query-date-eq"
+            label: 'برابر نباشد با',
+            method: 'date-neq',
+            methodInputForm: 'field-query-date-eq'
           }
         ].forEach(f => {
           if (field.queries.filter(p => p.method === f.method).length === 0) {
@@ -1024,31 +1025,31 @@ export class DataService {
 
         if (!field.template) {
           field.template = {
-            component: "DateViewComponent",
+            component: 'DateViewComponent',
             inputs: {
-              format: "jYYYY/jMM/jDD HH:mm:ss"
+              format: 'jYYYY/jMM/jDD HH:mm:ss'
             },
-            formName: "report-async-field-format-date"
+            formName: 'report-async-field-format-date'
           };
         }
       }
 
-      if (field.type === "string") {
+      if (field.type === 'string') {
         [
           {
-            label: "برابر باشد با",
-            method: "string-eq",
-            methodInputForm: "field-query-date-eq"
+            label: 'برابر باشد با',
+            method: 'string-eq',
+            methodInputForm: 'field-query-date-eq'
           },
           {
-            label: "برابر نباشد با",
-            method: "string-neq",
-            methodInputForm: "field-query-date-eq"
+            label: 'برابر نباشد با',
+            method: 'string-neq',
+            methodInputForm: 'field-query-date-eq'
           },
           {
-            label: "شامل شود",
-            method: "string-contain",
-            methodInputForm: "field-query-date-eq"
+            label: 'شامل شود',
+            method: 'string-contain',
+            methodInputForm: 'field-query-date-eq'
           }
         ].forEach(f => {
           if (field.queries.filter(p => p.method === f.method).length === 0) {
@@ -1059,12 +1060,12 @@ export class DataService {
 
       [
         {
-          label: "خالی نباشد",
-          method: "neq-null"
+          label: 'خالی نباشد',
+          method: 'neq-null'
         },
         {
-          label: "خالی باشد",
-          method: "eq-null"
+          label: 'خالی باشد',
+          method: 'eq-null'
         }
       ].forEach(f => {
         if (field.queries.filter(p => p.method === f.method).length === 0) {
@@ -1138,10 +1139,10 @@ export class DataService {
   public async indexCommonEnglishWords() {
     const list =
       (await this.http
-        .get<string[]>("assets/data/common-words.json")
+        .get<string[]>('assets/data/common-words.json')
         .toPromise()) || [];
 
-    const docIndex = this.createDocumentIndex([{ name: "value" }]);
+    const docIndex = this.createDocumentIndex([{ name: 'value' }]);
 
     list.forEach(w => {
       docIndex.add({ value: w });

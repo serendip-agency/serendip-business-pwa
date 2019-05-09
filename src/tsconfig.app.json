@@ -2,12 +2,27 @@
   "extends": "../tsconfig.json",
   "compilerOptions": {
     "outDir": "../out-tsc/app",
-    "module": "es2015",
-    "types": []
+    "types": [],
+    "lib": [
+      "es5",
+      "es6",
+      "dom",
+      "es2017.object",
+      "es2017.string",
+      "es2015.core",
+      "es2015.collection",
+      "es2015.generator",
+      "es2015.iterable",
+      "es2015.promise",
+      "es2015.proxy",
+      "es2015.reflect",
+      "es2015.symbol",
+      "es2015.symbol.wellknown",
+      "esnext.asynciterable"
+    ]
   },
-  
   "exclude": [
-    "src/test.ts",
+    "test.ts",
     "**/*.spec.ts"
   ]
 }

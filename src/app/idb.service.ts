@@ -220,7 +220,7 @@ export class Idb<T> {
 export const IdbDatabases = ["SYNC", "CACHE", "DATA", "REPORT"];
 
 export const IdbDeleteDatabase = dbName => {
-  return idb.default.delete(dbName);
+  return idb.deleteDB(dbName);
 };
 
 export const IdbDeleteAllDatabases = () => {
