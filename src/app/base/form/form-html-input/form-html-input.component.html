@@ -1,11 +1,30 @@
-<div class="iframe-container" *ngIf="model">
-  <iframe [srcdoc]="model | safe: 'html'" frameborder="0"></iframe>
+<div class="menu">
+  <ul>
+    <li *ngIf="label">
+      {{ label }}
+    </li>
+    <li>
+      <a [class.active]="tab == 'source'" (click)="tab = 'source'">
+        سورس
+      </a>
+    </li>
+    <li>
+      <a [class.active]="tab == 'preview'" (click)="tab = 'preview'">
+        پیش‌نمایش
+      </a>
+    </li>
+  </ul>
 </div>
 
-<textarea
-  class="source"
-  (change)="model = $event.target.value; modelChange.emit(model)"
-  id=""
-  cols="30"
-  rows="10"
-></textarea>
+<div class="tabs">
+  <div class="tab iframe-container" *ngIf="model && tab =='preview'">
+    <iframe [srcdoc]="model | safe: 'html'" frameborder="0"></iframe>
+  </div>
+  <!-- <textarea class="tab source" *ngIf="tab =='source'" (change)="model = $event.target.value; modelChange.emit(model)"
+    id="" cols="30" rows="10">{{ model }}</textarea> -->
+ 
+<app-form-code-input *ngIf="tab == 'source'" [model]="model" [language]="'html'" (modelChange)="model = $event;modelChange.emit(model)"></app-form-code-input>
+
+
+  
+</div>

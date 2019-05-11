@@ -27,6 +27,7 @@ import { FormCodeInputComponent } from "../form-code-input/form-code-input.compo
 import { FormStorageInputComponent } from "../form-storage-input/form-storage-input.component";
 import { FormHtmlInputComponent } from "../form-html-input/form-html-input.component";
 import { FormFieldValueCompareComponent } from "../form-field-value-compare/form-field-value-compare.component";
+import { FormQuillInputComponent } from '../form-quill-input/form-quill-input.component';
 
 @Component({
   selector: "app-form-parts",
@@ -63,7 +64,8 @@ export class FormPartsComponent implements OnInit {
     FormIconInputComponent,
     FormCodeInputComponent,
     FormFieldValueCompareComponent,
-    FormStorageInputComponent
+    FormStorageInputComponent,
+    FormQuillInputComponent
   };
   constructor(public ref: ChangeDetectorRef) {}
   filterParts(parts: FormPartInterface[]) {

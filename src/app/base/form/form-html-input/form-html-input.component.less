@@ -1,18 +1,53 @@
 .iframe-container {
   iframe {
-    width: 100%;
-    min-height: 500px;
-    border: 2px dashed #ccc;
-  box-sizing: border-box;
-
+    width     : 100%;
+    min-height: 400px;
+    box-sizing: border-box;
+    border: none;
   }
 }
 
 textarea.source {
-  direction: ltr;
+  direction  : ltr;
   font-family: monospace;
-  width: 100%;
-  border: 2px dashed #ccc;
-  font-size: 12px;
-  box-sizing: border-box;
+  width      : 100%;
+  font-size  : 12px;
+  box-sizing : border-box;
+  border     : none;
+  min-height: 400px;
+
+}
+
+
+.menu {
+
+  ul {
+    margin    : 0;
+    padding   : 0;
+    background: #ddd;
+
+    li {
+      display       : inline-block;
+      vertical-align: top;
+
+      a {
+        color          : #333;
+        padding        : 10px;
+        display        : block;
+        font-weight    : bold;
+        text-decoration: none;
+
+        &.active {
+          background: #cfcfcf;
+        }
+      }
+    }
+  }
+}
+
+.tabs {
+  background: #ddd;
+width:680px;
+max-width: 100%;
+
 }

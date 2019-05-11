@@ -1,30 +1,51 @@
 .code-input {
-  direction: ltr;
+  direction : ltr;
   text-align: left;
-  height: 500px;
+  height    : 500px;
   background: #fff;
-  overflow: auto;
-  position: relative;
-  width: 100%;
+  overflow  : auto;
+  position  : relative;
+  width     : 100%;
 
   * {
-    direction: ltr;
+    direction : ltr;
     text-align: left;
   }
 
   &:after {
-    clear: both;
+    clear  : both;
     display: block;
     content: " ";
   }
 
-  &.full{
-    height:calc(100vh - 50px);
+  &.full {
+    height: calc(100vh - 50px);
+  }
+
+  &.fullscreen {
+
+    height  : 100%;
+    width   : calc(100% - 50px);
+    position: fixed;
+    z-index : 9999;
+    left    : 0;
+    top     : 50px;
   }
 }
 
+.fullscreen-toggle {
+  position   : absolute;
+  top        : 0;
+  right      : 15px;
+  color      : #ccc;
+  font-family: monospace;
+  background : #333;
+  box-sizing : border-box;
+  padding    : 2px 4px;
+  font-size  : 9px;
+  z-index    : 500;
+}
+
 @media (max-width: 860px) {
-  .code-input {
-  
-  }
+  .code-input {}
 }

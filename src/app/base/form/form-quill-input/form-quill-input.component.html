@@ -1,0 +1,6 @@
+<div class="quill-container">
+
+  <quill-editor [(ngModel)]="initial" [format]="'html'" (onContentChanged)="modelChange.emit($event.html)">
+
+  </quill-editor>
+</div>

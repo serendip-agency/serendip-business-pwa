@@ -41,7 +41,7 @@ export class StorageComponent implements OnInit {
   };
 
   codeEditorVisible = false;
-  codeEditorLanguage = 'javascript';
+  codeEditorLanguage = 'text';
   codeEditorModel = '';
   sUtils = serendip_utility;
   newFolderName = "";
@@ -183,6 +183,17 @@ export class StorageComponent implements OnInit {
 
       this.codeEditorVisible = false;
       this.codeEditorModel = '';
+      this.codeEditorLanguage = {
+        json: 'json',
+        html: 'html',
+        hbs: 'html',
+        js: 'javascript',
+        ts: 'typescript',
+        txt: 'text',
+        css: 'css',
+        less: 'less',
+        scss: 'scss'
+      }[item.ext] || 'text';
 
       if (['js', 'html', 'svg', 'ts', 'json'].indexOf(item.ext) !== -1) {
 

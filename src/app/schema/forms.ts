@@ -264,16 +264,16 @@ export const FormsSchema: FormInterface[] = [
       },
       {
         componentName: "FormChipsInputComponent",
-            propertyName: "entity",
-            propertyType: "string",
-            cssClass: "w-60",
-            inputs: {
-              entityName: "entity",
-              propertiesToSearch: ["name"],
-              propertiesSearchMode: "mix",
-              selectType: "single",
-              label: "شی "
-            }
+        propertyName: "entity",
+        propertyType: "string",
+        cssClass: "w-60",
+        inputs: {
+          entityName: "entity",
+          propertiesToSearch: ["name"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "شی "
+        }
       },
       {
         label: "شرایط فعال سازی",
@@ -1126,26 +1126,10 @@ export const FormsSchema: FormInterface[] = [
         }
       },
       {
-        label: "قالب ایمیل",
-        propertyName: "template",
-        propertyType: "object",
-        parts: [
-          {
-            componentName: "FormTextInputComponent",
-            propertyName: "name",
-            inputs: {
-              label: "نام قالب",
-              dir: "ltr"
-            }
-          },
-          {
-            componentName: "FormHtmlInputComponent",
-            propertyName: "source",
-            inputs: {}
-          }
-        ]
+        componentName: "FormHtmlInputComponent",
+        propertyName: "source",
+        inputs: {}
       }
-
       // {
       //   componentName: "FormFileInputComponent",
       //   propertyName: "attachments",

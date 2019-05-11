@@ -125,6 +125,10 @@ import { JsonViewComponent } from "./base/report/json-view/json-view.component";
 import { IframeComponent } from './iframe/iframe.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { FormQuillInputComponent } from './base/form/form-quill-input/form-quill-input.component';
+
+import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
+
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -173,7 +177,7 @@ export const dynamicComponents = [
   FormStorageInputComponent,
   FormHtmlInputComponent,
   FormFieldValueCompareComponent,
-
+  FormQuillInputComponent,
   // Business related form parts
 
   ContactInputComponent,
@@ -272,6 +276,7 @@ export const primaryComponents = [
     MatPaginatorModule,
     MatMomentDateModule,
     MatBottomSheetModule,
+    MonacoEditorModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
   ],
   providers: [

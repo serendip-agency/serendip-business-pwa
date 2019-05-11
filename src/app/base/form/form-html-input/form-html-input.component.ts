@@ -7,7 +7,9 @@ import { Component, OnInit, Input, EventEmitter, Output } from "@angular/core";
 })
 export class FormHtmlInputComponent implements OnInit {
   @Input() model;
+  @Input() tab = 'source'
+  @Input() label;
   @Output() modelChange = new EventEmitter<any>();
 
-  ngOnInit() {}
+  ngOnInit() { }
 }

@@ -34,7 +34,6 @@
             "styles": [
               "src/assets/styles.less",
               "src/assets/material-theme.scss"
-
             ],
             "scripts": [],
             "es5BrowserSupport": true
