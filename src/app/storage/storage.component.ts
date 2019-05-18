@@ -177,9 +177,18 @@ export class StorageComponent implements OnInit {
   async clickOnItem(item) {
     if (item.isFile) {
       this.previewItem = item;
-      this.previewPath = this.dataService.currentServer + '/api/storage/preview' +
+      var itemPreviewPath = this.dataService.currentServer + '/api/storage/preview' +
         item.path + '?access_token=' + encodeURIComponent((await this.authService.token()).access_token);
 
+      if (this.previewPath == itemPreviewPath) {
+
+        this.previewPath = null;
+        this.previewItem = null;
+        return;
+
+      } else {
+        this.previewPath = itemPreviewPath;
+      }
 
       this.codeEditorVisible = false;
       this.codeEditorModel = '';

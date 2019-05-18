@@ -22,7 +22,8 @@ export class FormQuillInputComponent implements OnInit {
   @Input()
 
   public set model(value) {
-    this.initial = this._model = value;
+    //this.initial = this._model = value;
+    this._model = value;
   }
 
   @Output() modelChange = new EventEmitter<string>();
