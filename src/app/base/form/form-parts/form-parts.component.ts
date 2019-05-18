@@ -67,7 +67,7 @@ export class FormPartsComponent implements OnInit {
     FormStorageInputComponent,
     FormQuillInputComponent
   };
-  constructor(public ref: ChangeDetectorRef) {}
+  constructor(public ref: ChangeDetectorRef) { }
   filterParts(parts: FormPartInterface[]) {
     if (!parts) {
       return [];
@@ -115,7 +115,7 @@ export class FormPartsComponent implements OnInit {
           evalResult = eval(
             part.if.replace(/\^form/g, "(" + JSON.stringify(this.model) + ")")
           );
-        } catch (error) {}
+        } catch (error) { }
 
         return evalResult;
       }
@@ -138,7 +138,7 @@ export class FormPartsComponent implements OnInit {
               "(" + JSON.stringify(this.model) + ")"
             )
           );
-        } catch (error) {}
+        } catch (error) { }
       }
     });
 
@@ -169,12 +169,7 @@ export class FormPartsComponent implements OnInit {
           this.model[property][subPropertyIndexInArray][subProperty] = newValue;
         }
       }
-
-      this.WidgetChange.emit({
-        inputs: {
-          model: this.model
-        }
-      });
+ 
       this.detectChange();
     };
   }
@@ -194,5 +189,8 @@ export class FormPartsComponent implements OnInit {
     if (!this.document && this.model) {
       this.document = this.model;
     }
+
+ 
+
   }
 }

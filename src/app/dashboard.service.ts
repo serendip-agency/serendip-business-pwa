@@ -1,24 +1,24 @@
-import { HttpClient } from "@angular/common/http";
-import { Subscription } from "rxjs";
-import { ActivatedRoute, Router, NavigationEnd } from "@angular/router";
-import { Injectable, ChangeDetectorRef } from "@angular/core";
-import * as _ from "underscore";
-import { DataService } from "./data.service";
+import { HttpClient } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { Injectable, ChangeDetectorRef } from '@angular/core';
+import * as _ from 'underscore';
+import { DataService } from './data.service';
 
-import { BusinessService } from "./business.service";
-import * as BusinessSchema from "./schema";
+import { BusinessService } from './business.service';
+import * as BusinessSchema from './schema';
 import {
   ReportInterface,
   DashboardSectionInterface,
   FormInterface,
   DashboardTabInterface
-} from "serendip-business-model";
-import { WsService } from "./ws.service";
-import { EventEmitter } from "events";
-import { ObService } from "./ob.service";
+} from 'serendip-business-model';
+import { WsService } from './ws.service';
+import { EventEmitter } from 'events';
+import { ObService } from './ob.service';
 
 @Injectable({
-  providedIn: "root"
+  providedIn: 'root'
 })
 export class DashboardService {
   schema: {
@@ -29,10 +29,12 @@ export class DashboardService {
 
   syncVisible = false;
 
-  currentSection: DashboardSectionInterface = { name: "", tabs: [] };
-  screen: "desktop" | "mobile" = "desktop";
+  currentSection: DashboardSectionInterface = { name: '', tabs: [] };
+  screen: 'desktop' | 'mobile' = 'desktop';
 
   dashboardCommand = new EventEmitter();
+
+
 
   constructor(private dataService: DataService, private obService: ObService) {
     this.setScreen();
@@ -40,7 +42,7 @@ export class DashboardService {
       this.setScreen();
     };
 
-    this.obService.listen("dashboard").subscribe(msg => {
+    this.obService.listen('dashboard').subscribe(msg => {
       setTimeout(() => {
         this.setDefaultSchema();
       }, 10);
@@ -48,7 +50,7 @@ export class DashboardService {
   }
 
   setScreen() {
-    this.screen = window.innerWidth < 860 ? "mobile" : "desktop";
+    this.screen = window.innerWidth < 860 ? 'mobile' : 'desktop';
   }
 
   async setDefaultSchema() {
@@ -59,13 +61,13 @@ export class DashboardService {
     };
 
     this.schema.dashboard = ((await this.dataService.list(
-      "_dashboard",
+      '_dashboard',
       0,
       0,
       true
     )) as any).concat(this.schema.dashboard);
 
-    console.log("set default schema");
+    console.log('set default schema');
     this.schema.dashboard = this.schema.dashboard.map(dashboard => {
       dashboard.tabs = dashboard.tabs.map(tab => {
         if (tab.widget) {
@@ -77,21 +79,21 @@ export class DashboardService {
       return dashboard;
     });
 
-    const entities = (await this.dataService.list("_entity"));
+    const entities = (await this.dataService.list('_entity'));
     console.log(entities);
     this.schema.dashboard.push({
-      name: "raw",
-      icon: "copy",
-      title: "گزارشات خام",
+      name: 'raw',
+      icon: 'copy',
+      title: 'گزارشات خام',
       tabs: entities.map(record => {
         const entityName = record.name;
         return {
-          icon: "copy",
+          icon: 'copy',
           active: true,
-          title: "گزارش " + entityName,
+          title: 'گزارش ' + entityName,
           widgets: [
             {
-              component: "ReportComponent",
+              component: 'ReportComponent',
               inputs: {
                 entityName
               }

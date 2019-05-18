@@ -3,6 +3,12 @@
     <li *ngIf="label">
       {{ label }}
     </li>
+
+    <li>
+      <a [class.active]="tab == 'editor'" (click)="tab = 'editor'">
+        ویرایشگر
+      </a>
+    </li>
     <li>
       <a [class.active]="tab == 'source'" (click)="tab = 'source'">
         سورس
@@ -22,9 +28,15 @@
   </div>
   <!-- <textarea class="tab source" *ngIf="tab =='source'" (change)="model = $event.target.value; modelChange.emit(model)"
     id="" cols="30" rows="10">{{ model }}</textarea> -->
- 
-<app-form-code-input *ngIf="tab == 'source'" [model]="model" [language]="'html'" (modelChange)="model = $event;modelChange.emit(model)"></app-form-code-input>
 
 
-  
+  <app-form-quill-input *ngIf="tab == 'editor'" [model]="model" (modelChange)="model = $event;modelChange.emit(model)">
+  </app-form-quill-input>
+
+
+  <app-form-code-input *ngIf="tab == 'source'" [model]="model" [language]="'html'"
+    (modelChange)="model = $event;modelChange.emit(model)"></app-form-code-input>
+
+
+
 </div>

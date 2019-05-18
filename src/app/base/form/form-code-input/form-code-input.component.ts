@@ -28,12 +28,12 @@ export class FormCodeInputComponent implements OnInit {
 
   @Input() set model(value: string) {
 
-    if (this._model !== value) {
+
+     
 
 
-      this._model = value;
+    this._internalModel = this._model = value;
 
-    }
   }
 
   get model(): string {

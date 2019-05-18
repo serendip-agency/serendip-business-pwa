@@ -31,7 +31,7 @@ export class FormComponent implements OnInit {
     if (this.model && this.model._id) {
       return `businesses/${this.businessService.business._id}/${
         this.entityName
-      }/${this.model._id}`;
+        }/${this.model._id}`;
     } else {
       return null;
     }
@@ -68,7 +68,19 @@ export class FormComponent implements OnInit {
   @Input() minimal: boolean;
 
   @Input()
-  model: EntityModel = null;
+  private _model: EntityModel = null;
+  public get model(): EntityModel {
+    return this._model;
+  }
+  public set model(value: EntityModel) {
+    if (this._model !== value) {
+
+      console.log('new model', value);
+      this._model = value;
+      // this.WidgetChange.emit({ inputs: { model: value } });
+    }
+
+  }
 
   @Input()
   formSchema: FormInterface;
@@ -217,7 +229,7 @@ export class FormComponent implements OnInit {
   jsonCodeChange(code) {
     try {
       this.model = JSON.parse(code);
-    } catch (error) {}
+    } catch (error) { }
     this.WidgetChange.emit({ inputs: { model: this.model } });
   }
   findFormInSchema(formName): FormInterface {
@@ -231,5 +243,7 @@ export class FormComponent implements OnInit {
 
     this.loading = false;
     this.ref.detectChanges();
+
+
   }
 }

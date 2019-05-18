@@ -904,6 +904,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
     return (newWidget: DashboardWidgetInterface) => {
+
       newWidget.inputs = _.extend(
         this.grid.containers[containerIndex].tabs[tabIndex].widgets[widgetIndex]
           .inputs,
@@ -919,7 +920,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         newWidget
       );
 
+      // this.grid = JSON.parse(JSON.stringify(this.grid))
+
+
+
+      this.changeRef.markForCheck();
       this.syncGrid();
+
     };
   }
 
@@ -1112,9 +1119,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
       });
 
-      setTimeout(() => {
-        this.handleFullNav();
-      }, 300);
+      // setTimeout(() => {
+      //   this.handleFullNav();
+      // }, 300);
     }, 1);
   }
   downloadExport() {
@@ -1377,7 +1384,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           msg.data.section === this.dashboardService.currentSection.name &&
           msg.data.grid.version > this.grid.version
         ) {
-          if (Date.now() - this.lastGridSync > 1000) {
+          if (Date.now() - this.lastGridSync > 100) {
             console.log('should change grid');
 
             this.lastGridSync = Date.now();
@@ -1416,6 +1423,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+
+
     this.initEntitySocket()
       .then()
       .catch();
