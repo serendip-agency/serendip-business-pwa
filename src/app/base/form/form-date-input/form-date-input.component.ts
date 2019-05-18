@@ -100,7 +100,7 @@ export class FormDateInputComponent implements OnInit {
     this.changeRef.detectChanges();
   }
   timeHelperClick() {
-    console.log(this.model);
+    
     if (!this.model) {
       this.model = new Date();
     }

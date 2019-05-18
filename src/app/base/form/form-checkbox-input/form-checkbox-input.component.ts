@@ -44,7 +44,7 @@ export class FormCheckboxInputComponent implements OnInit {
 
   checkboxInArrayChange(event: { checked: boolean }, item: any | { label: string, value: string } | string, index: number) {
 
-// console.log(event,item,this.model,item.value || item);
+// 
 
     if (!this.model) {
       this.model = [];
@@ -69,7 +69,7 @@ export class FormCheckboxInputComponent implements OnInit {
 
 
   log(input) {
-    console.log(input);
+    
   }
 
   constructor() { }

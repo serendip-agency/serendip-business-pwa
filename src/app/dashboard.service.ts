@@ -67,7 +67,7 @@ export class DashboardService {
       true
     )) as any).concat(this.schema.dashboard);
 
-    console.log('set default schema');
+    
     this.schema.dashboard = this.schema.dashboard.map(dashboard => {
       dashboard.tabs = dashboard.tabs.map(tab => {
         if (tab.widget) {
@@ -80,7 +80,7 @@ export class DashboardService {
     });
 
     const entities = (await this.dataService.list('_entity'));
-    console.log(entities);
+    
     this.schema.dashboard.push({
       name: 'raw',
       icon: 'copy',

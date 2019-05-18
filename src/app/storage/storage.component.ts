@@ -128,7 +128,7 @@ export class StorageComponent implements OnInit {
 
 
   codeEditorChange(event) {
-    console.log('codeEditorChange', event);
+    
   }
   setMode(mode) {
     this.modeSelectedPaths = [];
@@ -244,7 +244,7 @@ export class StorageComponent implements OnInit {
     return Object.keys(object);
   }
   cdBack(path: string) {
-    console.log(path, path.replace("/" + path.split("/").reverse()[0], ""));
+    
 
     const pathToReturn = path.replace("/" + path.split("/").reverse()[0], "");
 
@@ -293,13 +293,13 @@ export class StorageComponent implements OnInit {
       }
     );
 
-    console.log(this.folders[this.folderPath]);
+    
   }
   async ngOnInit() {
-    console.log("storage init");
+    
 
     this.selectEvents.subscribe((paths) => {
-      console.log(this.mode, paths);
+      
 
       if (this.mode === 'newFolder') {
 
@@ -331,19 +331,19 @@ export class StorageComponent implements OnInit {
 
       this.folderPath = arrayWithoutFileName.join("/");
 
-      console.log(this.folderPath);
+      
     }
 
     this.socket = await this.wsService.newSocket("/storage", true);
 
     this.socket.onclose = async closeEv => {
-      console.log(closeEv);
+      
       this.socket = null;
       this.socket = await this.wsService.newSocket("/storage", true);
     };
 
     this.socket.onmessage = msg => {
-      console.log(msg);
+      
     };
 
     this.token = await this.authService.token();
@@ -351,7 +351,7 @@ export class StorageComponent implements OnInit {
     await this.refreshFolder();
   }
   async uploadZoneChange(zoneChangeEv) {
-    console.log(zoneChangeEv);
+    
 
     const files: FileList = (zoneChangeEv.target as any).files;
 
@@ -365,7 +365,7 @@ export class StorageComponent implements OnInit {
             fileReader.readAsArrayBuffer(files.item(i));
 
             fileReader.onprogress = ev => {
-              console.log((ev.loaded / ev.total) * 100);
+              
             };
 
             fileReader.onerror = ev => {
@@ -404,10 +404,10 @@ export class StorageComponent implements OnInit {
     this.processQueue().then().catch();
   }
   async processQueue() {
-    console.log('upload queue', Object.keys(this.toUpload));
+    
     if (Object.keys(this.toUpload).length > 0) {
       const item: any = this.toUpload[Object.keys(this.toUpload)[0]];
-      console.log('to upload ', this.toUpload);
+      
       await this.upload(item.path, item.data);
 
       delete this.toUpload[item.path];
@@ -440,7 +440,7 @@ export class StorageComponent implements OnInit {
     });
 
 
-    console.log('remoteParts', remoteParts);
+    
 
     const partSize = 1024 * 1024;
 
@@ -465,9 +465,9 @@ export class StorageComponent implements OnInit {
                 }
               )
             ) {
-              console.log(`skipping ${i + 1} of ${numberOfParts}`);
+              
             } else {
-              console.log(`uploading ${i + 1} of ${numberOfParts}`);
+              
 
               await this.dataService.request({
                 method: "POST",

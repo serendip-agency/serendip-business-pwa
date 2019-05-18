@@ -133,7 +133,7 @@ const methods = {
 
 self.module = {
   exports: function(input, send) {
-    console.log("received msg", input);
+   
     methods[input.method](input.options)
       .then(result => {
         send({

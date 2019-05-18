@@ -451,7 +451,7 @@ export class DataService {
 
         return result;
       } catch (error) {
-        console.log('trying details offline');
+        
         if (!offline) {
           return this.details(controller, _id, true, error);
         } else {
@@ -566,7 +566,7 @@ export class DataService {
   }
 
   async delete(controller: string, _id: string): Promise<EntityModel> {
-    console.log('delete', controller, _id);
+    
 
     let model = { _id };
 
@@ -590,7 +590,7 @@ export class DataService {
         retry: true
       });
     } catch (error) {
-      console.log('error deleting entity', model, error);
+      
     }
 
     return model;
@@ -696,7 +696,7 @@ export class DataService {
 
       return _.extend(model, decryptedModel);
     } catch (error) {
-      console.log(error);
+      
     }
 
     return model;

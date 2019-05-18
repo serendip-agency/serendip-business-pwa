@@ -48,6 +48,6 @@ export class FormStorageInputComponent implements OnInit {
   }
 
   log(input) {
-    console.log(input);
+    
   }
 }

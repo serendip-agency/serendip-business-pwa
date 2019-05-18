@@ -301,7 +301,7 @@ export class GmapsService {
     };
 
     // _opts.styles = undefined;
-    console.log("map instance being created with options:", _opts);
+    
 
     return new google.maps.Map(opts.mapWrapper, _opts);
   }

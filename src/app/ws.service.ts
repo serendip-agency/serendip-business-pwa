@@ -32,9 +32,9 @@ export class WsService {
           resolve(ws);
         })
         .catch(ev => {
-          console.log(`newSocket at ${path} initiate ended with catch`, ev);
+          
           if (retry && maxRetry > 1) {
-            console.log(`Trying again for newSocket at ${path} in 3sec`);
+            
             const tryTimer = setInterval(() => {
               tries++;
 
@@ -66,7 +66,7 @@ export class WsService {
   }
 
   private initiateSocket(path?: string): Promise<WebSocket> {
-    console.log("request for websocket to", path);
+    
     return new Promise(async (resolve, reject) => {
       let wsConnection;
 
@@ -93,7 +93,7 @@ export class WsService {
 
       wsConnection.onmessage = (ev: MessageEvent) => {
         // FIXME: saw this method fired twice. find out why;
-        // console.log("ws initiate onmessage", ev);
+        // 
 
         if (ev.data === "authenticated") {
           resolve(wsConnection);

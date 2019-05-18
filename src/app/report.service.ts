@@ -69,7 +69,7 @@ export class ReportService {
     if (!report.data || report.data.length === 0) {
       await this.dataService.pushCollections();
 
-      console.log("generate report", report);
+      
       let data = await this.dataService.list(report.entityName, 0, 0);
       if (!data) {
         data = [];
@@ -414,7 +414,7 @@ export class ReportService {
 
           return evaluatedCode(input.document, input.field);
         } catch (error) {
-          console.log(error);
+          
           return error.message || error;
         }
       }

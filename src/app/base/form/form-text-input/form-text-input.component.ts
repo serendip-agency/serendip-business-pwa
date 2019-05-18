@@ -50,6 +50,6 @@ export class FormTextInputComponent implements OnInit {
     return input.toString().replace(/\d/g, convert);
   }
   log(input) {
-    console.log(input);
+    
   }
 }

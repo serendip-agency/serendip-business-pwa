@@ -43,7 +43,7 @@ export class MapComponent implements OnInit, OnDestroy {
   private addMarker(
     latLng: google.maps.LatLng | { lat: number; lng: number }
   ): google.maps.Marker {
-    console.log("addMarker", latLng, Date.now(), this.mapMarkers.length);
+    
     if (!this._map) {
       return;
     }
@@ -59,7 +59,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.changeRef.detectChanges();
 
-    console.log(this.mapMarkers.length);
+    
 
     return marker;
   }
@@ -117,7 +117,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   async map(): Promise<google.maps.Map> {
     if (!this._map) {
-      console.log(document.getElementById(this.mapId));
+      
       this._map = await this.gmapsService.newMap({
         mapWrapper: document.getElementById(this.mapId)
       });
@@ -140,12 +140,12 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.changeRef.detach();
 
-    console.log(`${this.mapId} being initialized.`);
+    
 
     this.subscription_OnSetMode = this.gmapsService
       .subscribeOnSetMode(this.mapId)
       .subscribe(mode => {
-        console.log(`${this.mapId} received setMode ${mode}`);
+        
 
         this.mapMode = mode as any;
 
@@ -159,7 +159,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.subscription_OnSetVisible = this.gmapsService
       .subscribeOnSetVisible(this.mapId)
       .subscribe(visible => {
-        console.log(`${this.mapId} received setVisible ${visible}`);
+        
         this.mapVisible = visible;
 
         if (visible) {

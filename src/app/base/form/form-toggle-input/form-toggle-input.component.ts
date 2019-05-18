@@ -22,7 +22,7 @@ export class FormToggleInputComponent implements OnInit {
   @Output() modelChange = new EventEmitter<any>();
 
   log(input) {
-    console.log(input);
+    
   }
   constructor() {}
 

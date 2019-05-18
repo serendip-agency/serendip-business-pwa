@@ -1,25 +1,24 @@
-import { Component, ViewChild, OnInit, OnDestroy } from "@angular/core";
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 
-import * as _moment from "moment-jalaali";
-import { MatSnackBar } from "@angular/material";
+import * as _moment from 'moment-jalaali';
+import { MatSnackBar } from '@angular/material';
 import {
   ActivatedRoute,
   Router,
   NavigationEnd,
   NavigationCancel
-} from "@angular/router";
-import { Subscription } from "rxjs";
-import { HttpClient } from "@angular/common/http";
-import swal from "sweetalert2";
-import { environment } from "src/environments/environment";
+} from '@angular/router';
+import { Subscription } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import swal from 'sweetalert2';
+import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: "app-root",
-  templateUrl: "./app.component.html",
-  styleUrls: ["./app.component.less"]
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.less']
 })
 export class AppComponent implements OnInit, OnDestroy {
-  currentPwa = "v0.05";
 
   moment: any;
   snackBar: MatSnackBar;
@@ -36,10 +35,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
   rpd(input) {
     if (!input) {
-      input = "";
+      input = '';
     }
     const convert = a => {
-      return ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"][a];
+      return ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'][a];
     };
     return input.toString().replace(/\d/g, convert);
   }
@@ -50,7 +49,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   updatePwa() {
     navigator.serviceWorker.getRegistration().then(function(registration) {
-      caches.delete("cache-from-zip");
+      caches.delete('cache-from-zip');
 
       if (registration) {
         registration.unregister();
@@ -61,45 +60,14 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.warn(
-      "PWA version: " + this.currentPwa + " mode: " + environment.mode
-    );
+
 
     swal.setDefaults({
       buttonsStyling: false,
-      cancelButtonText: "انصراف",
-      confirmButtonText: "بسیار خب"
+      cancelButtonText: 'انصراف',
+      confirmButtonText: 'بسیار خب'
     });
 
-    this.httpClient
-      .get(
-        "versions.json?v=" +
-          Math.random()
-            .toString()
-            .split(".")[1]
-      )
-      .toPromise()
-      .then(versions => {
-        console.warn("available Serendip PWA versions", versions);
-
-        if (versions[0] !== this.currentPwa) {
-          this.updatePwa();
-        }
-      })
-      .catch(() => {});
-    // if (localStorage.getItem("pwa-app-version")) {
-
-    //   if (localStorage.getItem("pwa-app-version") != this.currentPwa)
-    //     this.updatePwa();
-
-    // } else {
-    //   localStorage.setItem("pwa-app-version", this.currentPwa);
-    // }
-    // setTimeout(() => {
-    //   html2canvas(document.getElementsByClassName("grid-container")[0]).then(canvas => {
-    //     document.body.appendChild(canvas)
-    //   });
-    // }, 2000);
 
     this.routerSubscription = this.router.events.subscribe(
       async (event: any) => {

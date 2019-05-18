@@ -428,7 +428,7 @@ export class ReportComponent implements OnInit {
         .sort((a, b) => Math.random())[0].name;
     }
 
-    console.log(this.format);
+    
 
     if (this.format) {
       this.formatted = await this.reportService.formatReport(
@@ -566,7 +566,7 @@ export class ReportComponent implements OnInit {
         "_report",
         this.reportId
       )) as any;
-      console.log("getting report with id", this.report, this.reportId);
+      
     }
 
     if (!this.entityName) {
@@ -671,7 +671,7 @@ export class ReportComponent implements OnInit {
 
     //  this.report = await this.dataService.details("report", reportId);
 
-    console.log("change report to", reportId);
+    
 
     this.report = null;
     this.reportId = reportId;
@@ -711,7 +711,7 @@ export class ReportComponent implements OnInit {
           if (this.page.filter(p => p._id === event.model._id).length === 0) {
             this.page.unshift(event.model);
           }
-          console.log("insert");
+          
           this.report.count++;
         }
 

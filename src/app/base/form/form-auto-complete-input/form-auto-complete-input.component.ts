@@ -60,7 +60,7 @@ export class FormAutoCompleteInputComponent implements OnInit {
 
   @Input()
   set model(value: any) {
-    // console.log('set model chips',value);
+    // 
 
     // if (!value) {
     //   if (this.selectType == "multiple") {

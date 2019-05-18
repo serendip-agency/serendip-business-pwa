@@ -456,7 +456,7 @@ export class AuthComponent implements OnInit {
         this.router.navigateByUrl("/");
       }
 
-      console.log("has valid token no need to login");
+      
     } else {
       if (!this.model.mobile && this.tab !== "user-pass") {
         this.router.navigate(["/auth", "login"]);

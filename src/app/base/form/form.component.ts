@@ -75,7 +75,7 @@ export class FormComponent implements OnInit {
   public set model(value: EntityModel) {
     if (this._model !== value) {
 
-      console.log('new model', value);
+      
       this._model = value;
       // this.WidgetChange.emit({ inputs: { model: value } });
     }

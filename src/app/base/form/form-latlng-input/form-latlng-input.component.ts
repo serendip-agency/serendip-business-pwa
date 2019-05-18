@@ -92,7 +92,7 @@ export class FormLatlngInputComponent implements OnInit {
 
     // navigator.geolocation.getCurrentPosition((data) => {
     //   contact.get('address').get('geo').setValue(data.coords.latitude + ',' + data.coords.longitude)
-    //   console.log(data);
+    //   
     // }, (error) => {
     //   console.error(error);
     // });

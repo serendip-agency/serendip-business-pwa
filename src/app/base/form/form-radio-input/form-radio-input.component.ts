@@ -26,7 +26,7 @@ export class FormRadioInputComponent implements OnInit {
     return index;
   }
   log(input) {
-    console.log(input);
+    
   }
   typeof(obj) {
     return typeof obj;

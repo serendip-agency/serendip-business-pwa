@@ -151,7 +151,7 @@ export class FormPartsComponent implements OnInit {
 
   dynamicPartModelChange(property, subProperty, subPropertyIndexInArray) {
     return newValue => {
-      console.log("form property change", property, subProperty, newValue);
+      
 
       if (!subProperty) {
         this.model[property] = newValue;

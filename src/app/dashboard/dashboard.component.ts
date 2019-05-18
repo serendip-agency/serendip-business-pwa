@@ -457,7 +457,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   tabDragStart(tab: DashboardTabInterface) {
     this.tabDragging = tab;
 
-    console.log('drag start', tab);
+    
   }
 
   tabDragEnd() {
@@ -469,7 +469,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onTabDragover(event: DragEvent, containerIndex: number) {
-    console.log('onTabDragover');
+    
     // if (this.screen === "mobile") {
     //   return;
     // }
@@ -606,7 +606,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
-    console.log('tab drop');
+    
     if (this.screen === 'mobile') {
       this.explorerMouseOut();
     }
@@ -1155,7 +1155,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           resolve();
         })
         .catch(res => {
-          console.log('sync error', res);
+          
           if (res.status === 0 || res.status === 500) {
             this.dashboardLoadingText = 'Postponing Sync ...';
             resolve();
@@ -1306,7 +1306,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       });
     } catch (error) { }
 
-    console.log('remoteGrid', remoteGrid, 'localGrid', localGrid);
+    
 
     if (localGrid && localGrid.version) {
       if (remoteGrid) {
@@ -1332,7 +1332,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (localGrid && remoteGrid) {
       if (localGrid.version < remoteGrid.version) {
-        console.log('localGrid version lower than remoteGrid');
+        
 
         this.grid = remoteGrid.grid;
         this.changeRef.detectChanges();
@@ -1385,7 +1385,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
           msg.data.grid.version > this.grid.version
         ) {
           if (Date.now() - this.lastGridSync > 100) {
-            console.log('should change grid');
+            
 
             this.lastGridSync = Date.now();
             this.grid = msg.data.grid;
@@ -1438,7 +1438,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardLoadingText = 'Initiating dashboard ...';
     this.dashboardDateTimeTick();
 
-    console.log('initiating dashboard');
+    
 
     this.dashboardLoadingText = 'Loading business ...';
 

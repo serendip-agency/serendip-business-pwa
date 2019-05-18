@@ -53,7 +53,7 @@ export class AuthService {
       localStorage.removeItem("token");
     }
 
-    // console.log('token()',token);
+    // 
 
     if (token && token.access_token) {
       this.loggedIn = true;
@@ -146,7 +146,7 @@ export class AuthService {
     password: string,
     oneTimePassword: string
   ): Promise<TokenModel> {
-    console.log(this.apiUrl);
+    
     const newToken = await this.http
       .post<TokenModel>(this.apiUrl + "/api/auth/token", {
         username,
@@ -161,7 +161,7 @@ export class AuthService {
       throw new Error("empty token");
     }
 
-    // console.log("newToken", newToken);
+    // 
 
     this.loggedIn = true;
 

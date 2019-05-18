@@ -231,7 +231,7 @@ export class IdbService {
   resultStream = new EventEmitter();
   thread: any;
   constructor() {
-    console.log("IdbService constructed ...");
+    
 
     this.thread = spawn(location.origin + "/workers/idb.js");
 
@@ -240,7 +240,7 @@ export class IdbService {
     this.thread
 
       .on("message", msg => {
-        console.log(msg);
+        
         this.resultStream.emit(msg.pid, msg);
       })
       .on("error", e => {});

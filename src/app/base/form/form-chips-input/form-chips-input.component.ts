@@ -55,7 +55,7 @@ export class FormChipsInputComponent implements OnInit {
 
   @Input()
   set model(value: any) {
-    // console.log('set model chips',value);
+    // 
 
     // if (!value) {
     //   if (this.selectType == "multiple") {
@@ -244,7 +244,7 @@ export class FormChipsInputComponent implements OnInit {
       .listen(this.entityName)
       .subscribe(async (msg: { eventType: any; model: any }) => {
         const model = msg.model;
-        console.log("message received from obService", model);
+        
         this.cachedEntities[model._id] = model;
         this.changeRef.detectChanges();
         if (this.creatingEntity) {

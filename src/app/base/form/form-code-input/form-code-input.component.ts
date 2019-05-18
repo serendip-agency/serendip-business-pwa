@@ -31,8 +31,8 @@ export class FormCodeInputComponent implements OnInit {
 
      
 
-
-    this._internalModel = this._model = value;
+   this._model = value;
+    // this._internalModel = this._model = value;
 
   }
 

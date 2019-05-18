@@ -61,7 +61,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
     const decodedHex = aesjs.utils.utf8.fromBytes(
       aesjs.utils.hex.toBytes(rsaHex)
     );
-    console.log(decodedHex);
+    
 
     try {
     } catch (error) { }
@@ -99,7 +99,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
         }
       })
       .then(async res => {
-        console.log(res);
+        
         this.snackBar.open("کاربر جدید اضافه شد!", "", { duration: 3000 });
 
         await this.dataService.loadBusiness();
@@ -202,7 +202,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
           this.offline = false;
           this.loading = false;
-          console.log(this.list);
+          
         } catch (error) {
           this.offline = true;
           this.loading = false;
@@ -223,7 +223,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
     await this.refresh();
 
-    console.log(this.list);
+    
 
     if (!this.offline && this.tab === "list" && this.list.length === 0) {
       this.router.navigate(["/business", "new"]);
