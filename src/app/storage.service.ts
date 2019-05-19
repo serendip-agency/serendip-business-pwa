@@ -4,7 +4,7 @@ import { Injectable, EventEmitter } from '@angular/core';
   providedIn: 'root'
 })
 export class StorageService {
-  fileManagerVisible: boolean = false;
+  fileManagerVisible: boolean = true;
 
   fileManagerSelectEvent = new EventEmitter();
 

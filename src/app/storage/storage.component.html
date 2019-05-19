@@ -2,7 +2,7 @@
   <section class="browser">
 
     <ul class="commands bottom" *ngIf="mode">
-      <li *ngIf="mode && mode != 'newFolder' && !modePathsSelected"
+      <li *ngIf="mode && mode != 'newFolder' && mode != 'newZip' && !modePathsSelected"
         (click)="modeSelectedPaths.length > 0 ? selectEvents.emit(modeSelectedPaths) : null">
         <span>
           انتخاب شد ({{modeSelectedPaths.length.toString() | rpd}})
@@ -12,6 +12,13 @@
       <li *ngIf="mode && mode === 'newFolder' " (click)="selectEvents.emit([newFolderName])  ">
         <span>
           ساخت فولدر
+        </span>
+      </li>
+
+
+      <li *ngIf="mode && mode === 'newZip' " (click)="selectEvents.emit([newZipName])  ">
+        <span>
+          ساخت ZIP
         </span>
       </li>
 
@@ -35,14 +42,14 @@
 
       <li [class.spanned]="mode == 'select'" *ngIf="mode == 'select'" (click)="setMode('download')">
 
-        <span >
-          فایل و یا فولدر‌های مورد نظر  
+        <span>
+          فایل و یا فولدر‌های مورد نظر
           را انتخاب کنید
         </span>
       </li>
 
-      <li [class.spanned]="mode == 'download'" *ngIf="mode == 'download' ? true : (modeSelectedPaths?.length != 0 && !mode)"
-        (click)="setMode('download')">
+      <li [class.spanned]="mode == 'download'"
+        *ngIf="mode == 'download' ? true : (modeSelectedPaths?.length != 0 && !mode)" (click)="setMode('download')">
         <img src="assets/icons/download.svg" title="دانلود" />
         <span *ngIf="mode == 'download'">
           فایل و یا فولدر‌های مورد نظر برای
@@ -51,6 +58,23 @@
         </span>
       </li>
 
+      <li [class.spanned]="mode == 'zip'" *ngIf="mode == 'zip' ? true : (modeSelectedPaths?.length != 0 && !mode)"
+        (click)="setMode('zip')">
+        <div class="icon">ZIP</div>
+        <span *ngIf="mode == 'zip'">
+          فایل‌های مورد نظر برای
+          <b>فشرده‌سازی</b>
+          را
+          انتخاب کنید
+        </span>
+      </li>
+      <li *ngIf="(!mode || mode == 'newZip') && modeSelectedPaths?.length == 0">
+        <span *ngIf="mode == 'newZip'">
+          نام
+          <b>فایل ZIP</b>
+          را وارد کنید
+        </span>
+      </li>
       <li *ngIf="(!mode || mode == 'newFolder') && modeSelectedPaths?.length == 0" (click)="setMode('newFolder')">
         <img src="assets/icons/new-folder-1.svg" title="فولدر جدید" />
 
@@ -134,7 +158,8 @@
       ({{ folders[folderPath].length || "0" | rpd }})
     </div>
 
-    <ul *ngIf=" !mode || (mode && mode !='newFolder' && !modePathsSelected)" class="files to-download">
+    <ul *ngIf=" !mode || (mode && mode !='newFolder' && mode !='newZip' && !modePathsSelected)"
+      class="files to-download">
 
       <li *ngFor="let path of objectKeys(toUpload)">
 
@@ -252,10 +277,22 @@
 
     <div class="form-wrapper" *ngIf="mode == 'newFolder'">
       <app-form-text-input [model]="newFolderName" (modelChange)="newFolderName = $event" [dir]="
-            sUtils.text.persianKeyChar.indexOf(newFolderName[0]) != -1
-              ? 'rtl'
-              : 'ltr'
-          " label="نام فولدر جدید"></app-form-text-input>
+              sUtils.text.persianKeyChar.indexOf(newFolderName[0]) != -1
+                ? 'rtl'
+                : 'ltr'
+            " label="نام فولدر جدید"></app-form-text-input>
+    </div>
+
+
+    <div class="form-wrapper" *ngIf="mode == 'newZip'">
+      <app-form-text-input [model]="newZipName" (modelChange)="newZipName = $event" [dir]="
+              sUtils.text.persianKeyChar.indexOf(newZipName[0]) != -1
+                ? 'rtl'
+                : 'ltr'
+            " label="نام فایل ZIP"></app-form-text-input>
+      <div class="hint">
+        در صورت خالی گذاشتن فیلد بالا، فایلی با نام تاریخ امروز ساخته خواهد شد.
+      </div>
     </div>
 
   </section>

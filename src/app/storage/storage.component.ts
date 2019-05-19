@@ -47,10 +47,12 @@ export class StorageComponent implements OnInit {
   codeEditorModel = '';
   sUtils = serendip_utility;
   newFolderName = "";
+  newZipName = "";
 
   iframeActive = true;
   codeEditorActive = false;
   private _mode = "";
+  tempPaths: string[];
 
   public get mode() {
 
@@ -161,8 +163,11 @@ export class StorageComponent implements OnInit {
 
   }
   setMode(mode) {
+
     this.modePathsSelected = false;
     this.mode = mode;
+
+
   }
 
 
@@ -357,14 +362,50 @@ export class StorageComponent implements OnInit {
   async ngOnInit() {
 
 
-    this.selectEvents.subscribe((paths) => {
+    this.selectEvents.subscribe((paths: string[]) => {
 
+      if (!paths || paths.length == 0) {
+        return;
+      }
 
       if (this.mode == 'select') {
 
         this.storageService.fileManagerSelectEvent.emit(paths);
 
       }
+
+
+      if (this.mode === 'zip') {
+
+        this.tempPaths = paths;
+        this.setMode('newZip');
+
+        return;
+      }
+
+      if (this.mode === 'newZip') {
+
+        console.log(this.tempPaths);
+        this.dataService.request({
+          method: 'post',
+          path: '/api/storage/zip',
+          model: {
+            zipName: this.folderPath + '/' + (this.newZipName || ('zip-' + Date.now())) + '.zip',
+            paths: this.tempPaths
+          }
+        }).then(() => {
+
+
+          this.mode = '';
+          this.changeRef.detectChanges();
+
+
+          this.refreshFolder().then(() => { }).catch(() => { });
+        }).catch(() => { });
+
+      }
+
+
 
       if (this.mode === 'newFolder') {
 
