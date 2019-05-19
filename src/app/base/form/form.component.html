@@ -109,7 +109,7 @@
     </mat-card-content>
 
     <mat-card-content *ngIf="mode == 'json' && !loading">
-      <div class="form-wrapper">
+      <div class="json-wrapper">
         <app-form-code-input [model]="model" [language]="'json'" (modelChange)="jsonCodeChange($event)">
         </app-form-code-input>
       </div>

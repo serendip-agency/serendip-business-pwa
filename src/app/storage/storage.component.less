@@ -31,7 +31,9 @@
       top: 0;
       left: 0;
       width: calc(~"100% - 360px");
-      min-height: 100vh;
+      height: 100%;
+      line-height: calc(100vh - 50px);
+      max-height: 100%;
     }
   }
 
@@ -39,6 +41,7 @@
 
     ul.files {
       max-height: calc(~"100vh - 250px");
+
     }
 
     .browser {
@@ -46,8 +49,8 @@
       overflow: scroll;
     }
 
-    .preview{
-      width:100%;
+    .preview {
+      width: 100%;
       position: relative;
       min-height: 400px;
     }
@@ -107,7 +110,7 @@
     }
 
     ul.crumbs {
-      padding: 0;
+      padding: 0 5px;
       margin: 0;
       display: inline-block;
       vertical-align: top;
@@ -142,7 +145,7 @@
   }
 
   ul.commands {
-    padding: 5px 10px;
+    padding: 5px  ;
     margin: 0;
     border-bottom: 1px solid #e3e0db;
     box-sizing: border-box;
@@ -201,6 +204,11 @@
       border-radius: 10px;
       overflow: hidden;
 
+
+      &.spanned {
+        width: calc(100% - 47px);
+      }
+
       img {
         height: 100%;
         width: auto;
@@ -211,7 +219,7 @@
       span {
         vertical-align: top;
         display: inline-block;
-        font-size: 11px;
+        font-size: 10px;
         padding: 0 5px;
       }
 
@@ -398,30 +406,60 @@
   background: #f1f1f1;
   box-sizing: border-box;
   position: relative;
+  text-align: center;
+
+
+  .empty-bg{
+    position: absolute;
+    top:0;
+    right:0;
+    width: 400px;
+    max-width: 85%;
+    height:auto;
+    user-select: none;
+  }
+  img.preview-image {
+    margin: 0 auto;
+    display: inline-block;
+    vertical-align: middle;
+    max-width: 95%;
+    height:auto;
+    padding:15px;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px #ccc;
+  }
+
   ul.nav {
     position: absolute;
     width: 100%;
-    height: 30px;
-    top: 20px;
-    right: 15px;
+    bottom: 0;
+    left: 0;
     z-index: 500;
     padding: 0;
     margin: 0;
+    line-height: 0;
 
     li {
       padding: 0;
-      margin: 0;
-      background: #333;
-      color: #ccc;
+      margin: 0 2px;
+      background: rgba(255, 255, 255, 0.85);
+      color: #333;
       display: inline-block;
-      margin: 0;
       text-align: center;
       padding: 0 4px;
-      line-height: 20px;
+      line-height: 22px;
       font-size: 11px;
       box-sizing: border-box;
       font-family: monospace;
+      min-width: 60px;
+      border:1px solid #ccc;
+      border-bottom: none;
 
+
+      &.active{
+        color:#000;
+        font-weight: bold;
+      }
     }
   }
 

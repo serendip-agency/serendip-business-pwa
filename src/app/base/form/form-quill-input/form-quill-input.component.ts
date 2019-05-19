@@ -26,6 +26,7 @@ export class FormQuillInputComponent implements OnInit {
     this._model = value;
   }
 
+  @Input() theme = 'snow';
   @Output() modelChange = new EventEmitter<string>();
 
   ngOnInit() {

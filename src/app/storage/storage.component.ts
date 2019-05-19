@@ -41,6 +41,7 @@ export class StorageComponent implements OnInit {
   };
 
   codeEditorVisible = false;
+  visualEditorVisible = false;
   codeEditorLanguage = 'text';
   codeEditorModel = '';
   sUtils = serendip_utility;
@@ -64,7 +65,10 @@ export class StorageComponent implements OnInit {
   modePathsSelected: boolean;
   @Input() modeSelectedPaths: string[] = [];
   previewPath: any;
+  imgViewerActive = false;
   previewItem: any;
+
+  visualEditorActive = false;
 
   get folders() {
     return this._folders;
@@ -128,14 +132,30 @@ export class StorageComponent implements OnInit {
 
 
   codeEditorChange(event) {
-    
+
   }
   setMode(mode) {
-    this.modeSelectedPaths = [];
     this.modePathsSelected = false;
     this.mode = mode;
   }
 
+
+  selectAllToggle() {
+
+    console.log(this.modeSelectedPaths, this.folders[this.folderPath]);
+
+    if (this.modeSelectedPaths.length === this.folders[this.folderPath].length) {
+
+      this.modeSelectedPaths = [];
+
+    } else {
+      this.modeSelectedPaths = [];
+
+      this.folders[this.folderPath].map(p => this.modeSelectedPaths.push(p.path));
+
+    }
+
+  }
   getCrumbs() {
     const labeledPath = this.folderPath
       .replace("users/" + this.token.userId, "فایل‌های من")
@@ -191,6 +211,9 @@ export class StorageComponent implements OnInit {
       }
 
       this.codeEditorVisible = false;
+      this.visualEditorVisible = false;
+      this.iframeActive = false;
+      this.imgViewerActive = false;
       this.codeEditorModel = '';
       this.codeEditorLanguage = {
         json: 'json',
@@ -223,9 +246,19 @@ export class StorageComponent implements OnInit {
         };
 
         fileReader.readAsText(file.body);
+      }
+
+      if(item.mime.indexOf('image/') == 0){
+        this.imgViewerActive = true;
+      }
+
+      if (item.ext == 'html') {
+        this.visualEditorVisible = true;
+      }
 
 
-
+      if(!this.imgViewerActive) {
+      this.iframeActive = true;
       }
 
     } else {
@@ -244,7 +277,7 @@ export class StorageComponent implements OnInit {
     return Object.keys(object);
   }
   cdBack(path: string) {
-    
+
 
     const pathToReturn = path.replace("/" + path.split("/").reverse()[0], "");
 
@@ -293,13 +326,13 @@ export class StorageComponent implements OnInit {
       }
     );
 
-    
+
   }
   async ngOnInit() {
-    
+
 
     this.selectEvents.subscribe((paths) => {
-      
+
 
       if (this.mode === 'newFolder') {
 
@@ -331,19 +364,19 @@ export class StorageComponent implements OnInit {
 
       this.folderPath = arrayWithoutFileName.join("/");
 
-      
+
     }
 
     this.socket = await this.wsService.newSocket("/storage", true);
 
     this.socket.onclose = async closeEv => {
-      
+
       this.socket = null;
       this.socket = await this.wsService.newSocket("/storage", true);
     };
 
     this.socket.onmessage = msg => {
-      
+
     };
 
     this.token = await this.authService.token();
@@ -351,7 +384,7 @@ export class StorageComponent implements OnInit {
     await this.refreshFolder();
   }
   async uploadZoneChange(zoneChangeEv) {
-    
+
 
     const files: FileList = (zoneChangeEv.target as any).files;
 
@@ -365,7 +398,7 @@ export class StorageComponent implements OnInit {
             fileReader.readAsArrayBuffer(files.item(i));
 
             fileReader.onprogress = ev => {
-              
+
             };
 
             fileReader.onerror = ev => {
@@ -404,10 +437,10 @@ export class StorageComponent implements OnInit {
     this.processQueue().then().catch();
   }
   async processQueue() {
-    
+
     if (Object.keys(this.toUpload).length > 0) {
       const item: any = this.toUpload[Object.keys(this.toUpload)[0]];
-      
+
       await this.upload(item.path, item.data);
 
       delete this.toUpload[item.path];
@@ -440,7 +473,7 @@ export class StorageComponent implements OnInit {
     });
 
 
-    
+
 
     const partSize = 1024 * 1024;
 
@@ -465,9 +498,9 @@ export class StorageComponent implements OnInit {
                 }
               )
             ) {
-              
+
             } else {
-              
+
 
               await this.dataService.request({
                 method: "POST",

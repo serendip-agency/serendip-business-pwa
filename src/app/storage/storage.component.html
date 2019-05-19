@@ -24,23 +24,27 @@
       </li>
     </ul>
     <ul class="commands" *ngIf="folderPath" [class.disabled]="folderPath == '/'">
-      <li class="upload" *ngIf="!mode || mode == 'select'">
+
+
+
+      <li class="upload" *ngIf="(!mode || mode == 'select') && modeSelectedPaths?.length == 0">
         <input type="file" multiple (change)="uploadZoneChange($event)" id="upload-zone" />
         <img src="assets/icons/upload.svg" title="آپلود" />
       </li>
 
 
 
-      <li *ngIf="!mode || mode == 'download'" (click)="setMode('download')">
+      <li [class.spanned]="mode == 'download'" *ngIf="modeSelectedPaths?.length != 0 || mode == 'download'"
+        (click)="setMode('download')">
         <img src="assets/icons/download.svg" title="دانلود" />
-        <span *ngIf="mode == 'newFolder'">
+        <span *ngIf="mode == 'download'">
           فایل و یا فولدر‌های مورد نظر برای
           <b>دانلود</b>
           را انتخاب کنید
         </span>
       </li>
 
-      <li *ngIf="!mode || mode == 'newFolder'" (click)="setMode('newFolder')">
+      <li *ngIf="(!mode || mode == 'newFolder') && modeSelectedPaths?.length == 0" (click)="setMode('newFolder')">
         <img src="assets/icons/new-folder-1.svg" title="فولدر جدید" />
 
         <span *ngIf="mode == 'newFolder'">
@@ -50,7 +54,8 @@
         </span>
       </li>
 
-      <li *ngIf="!mode || mode == 'share'" (click)="setMode('share')">
+      <li [class.spanned]="mode == 'share'" *ngIf="modeSelectedPaths?.length != 0 || mode == 'share'"
+        (click)="setMode('share')">
         <img src="assets/icons/share.svg" title="اشتراک گذاری" />
         <span *ngIf="mode == 'share'">
           فایل و یا پوشه های مورد نظر برای
@@ -70,7 +75,8 @@
         <img src="assets/icons/refresh.svg" title="به‌روز رسانی" />
       </li>
 
-      <li *ngIf="!mode || mode == 'delete'" [class.trash]="!mode" (click)="setMode('delete')">
+      <li [class.spanned]="mode == 'delete'" *ngIf="(!mode || mode == 'delete') && modeSelectedPaths.length > 0"
+        [class.trash]="!mode" (click)="setMode('delete')">
         <img src="assets/icons/recycle-bin-trash-full.svg" title="حدف" />
         <span *ngIf="mode == 'delete'">
           فایل و یا پوشه های مورد نظر برای
@@ -115,63 +121,74 @@
     <div class="title" *ngIf="folderPath && folderPath != '/' && folders[folderPath]">
       <img src="assets/icons/folder-archive-open.svg" />
       <ul class="crumbs">
-        <li *ngFor="let c of getCrumbs()" >
-        پوشه {{ c.label }}</li>
+        <li *ngFor="let c of getCrumbs()">
+          پوشه {{ c.label }}</li>
       </ul>
       ({{ folders[folderPath].length || "0" | rpd }})
     </div>
 
     <ul *ngIf=" !mode || (mode && mode !='newFolder' && !modePathsSelected)" class="files to-download">
 
-        <li *ngFor="let path of objectKeys(toUpload)">
+      <li *ngFor="let path of objectKeys(toUpload)">
 
-          <div class="img">
-            <img src="assets/icons/upload.svg" class="icon" alt="" />
+        <div class="img">
+          <img src="assets/icons/upload.svg" class="icon" alt="" />
 
-          </div>
+        </div>
 
-          <div class="progress" [style.width]="toUpload[path].percent + '%'"></div>
+        <div class="progress" [style.width]="toUpload[path].percent + '%'"></div>
 
 
-          <div class="size">
-            {{ readableSize(toUpload[path].size / 1024 / 1024) | rpd }}
+        <div class="size">
+          {{ readableSize(toUpload[path].size / 1024 / 1024) | rpd }}
 
-            <div class="en">MB</div>
-          </div>
+          <div class="en">MB</div>
+        </div>
 
-          <input type="text" readonly [class]="
+        <input type="text" readonly [class]="
           sUtils.text.persianKeyChar.indexOf(toUpload[path].name[0]) != -1
             ? 'fa'
             : 'en'
         " [value]="toUpload[path].name" />
 
-        </li>
+      </li>
 
-        <li *ngIf="folderPath != '/'" (click)="folderPath = cdBack(folderPath); refreshFolder()">
+      <li *ngIf="folderPath != '/'">
 
-          <div class="select"></div>
+        <div class="select">
+          <div class="select" (click)="selectAllToggle()">
 
-          <input type="text" name="" style="text-align: left" readonly disabled value="بازگشت به فولدر بالایی" id="" />
-          <div class="size">&nbsp;</div>
+            <img src="assets/icons/tab-1.svg" *ngIf="modeSelectedPaths?.length == 0" class=" " />
 
-          <div class="img  no-hover">
-            <img class="icon" src="assets/icons/arrow-left-back-10.svg" />
-          </div>
-
-        </li>
-        <li *ngFor="let item of folders[folderPath || '/']" [title]="item.basename">
-          <div *ngIf="item.uploadPercent && item.uploadPercent != 100" class="progress"
-            [style.width]="item.uploadPercent + '%'"></div>
-
-          <div class="select" (click)="item.isFile ? clickOnSelect(item) : null">
-
-            <img src="assets/icons/tab-1.svg" *ngIf="item.isFile && mode && modeSelectedPaths.indexOf(item.path) == -1"
+            <img src="assets/icons/tab-4.svg" *ngIf="modeSelectedPaths?.length != folders[folderPath || '/']?.length"
               class=" " />
-            <img src="assets/icons/check-9.svg"
-              *ngIf="item.isFile && mode && modeSelectedPaths.indexOf(item.path) != -1" class=" selected" />
+
+            <img src="assets/icons/check-9.svg" *ngIf="modeSelectedPaths?.length == folders[folderPath || '/']?.length"
+              class=" selected" />
           </div>
 
-          <input type="text" (click)="clickOnItem(item)" readonly [class]="
+        </div>
+
+        <input (click)="folderPath = cdBack(folderPath); refreshFolder()" type="text" name="" style="text-align: left"
+          readonly disabled value="بازگشت به فولدر بالایی" id="" />
+        <div class="size">&nbsp;</div>
+
+        <div (click)="folderPath = cdBack(folderPath); refreshFolder()" class="img  no-hover">
+          <img class="icon" src="assets/icons/arrow-left-back-10.svg" />
+        </div>
+
+      </li>
+      <li *ngFor="let item of folders[folderPath || '/']" [title]="item.basename">
+        <div *ngIf="item.uploadPercent && item.uploadPercent != 100" class="progress"
+          [style.width]="item.uploadPercent + '%'"></div>
+
+        <div class="select" (click)=" clickOnSelect(item) ">
+
+          <img src="assets/icons/tab-1.svg" *ngIf="  modeSelectedPaths.indexOf(item.path) == -1" class=" " />
+          <img src="assets/icons/check-9.svg" *ngIf=" modeSelectedPaths.indexOf(item.path) != -1" class=" selected" />
+        </div>
+
+        <input type="text" (click)="clickOnItem(item)" readonly [class]="
             sUtils.text.persianKeyChar.indexOf(item.basename[0]) != -1
               ? 'fa'
               : 'en'
@@ -180,59 +197,59 @@
 
 
 
-          <div class="size" (click)="clickOnItem(item)" *ngIf="item.isFile">
-            <span *ngIf="item.sizeInMB">
-              <div class="en">{{ item.ext | uppercase }}</div>
-              {{ readableSize(item.sizeInMB) | rpd }}
-              <div class="en">MB</div>
-            </span>
+        <div class="size" (click)="clickOnItem(item)" *ngIf="item.isFile">
+          <span *ngIf="item.sizeInMB">
+            <div class="en">{{ item.ext | uppercase }}</div>
+            {{ readableSize(item.sizeInMB) | rpd }}
+            <div class="en">MB</div>
+          </span>
 
-            <span *ngIf="!item.sizeInMB">
-              <div class="en">{{ item.ext | uppercase }}</div>
-              {{ readableSize(item.size / 1024) | rpd }}
-              <div class="en">KB</div>
-            </span>
-          </div>
+          <span *ngIf="!item.sizeInMB">
+            <div class="en">{{ item.ext | uppercase }}</div>
+            {{ readableSize(item.size / 1024) | rpd }}
+            <div class="en">KB</div>
+          </span>
+        </div>
 
-          <div class="size" *ngIf="item.isDirectory">
-            <span class=en>
-              DIR
-            </span>
-          </div>
+        <div class="size" *ngIf="item.isDirectory">
+          <span class=en>
+            DIR
+          </span>
+        </div>
 
-          <div class="img">
-            <img *ngIf="item.isFile " [class.icon]="mode"
-              [src]="'assets/mimetypes/' + item.mime?.replace('/','-') + '.svg'" />
+        <div class="img">
+          <img *ngIf="item.isFile " [class.icon]="mode"
+            [src]="'assets/mimetypes/' + item.mime?.replace('/','-') + '.svg'" />
 
-            <img *ngIf="
+          <img *ngIf="
                 item.isDirectory 
               " [class.icon]="mode" src="assets/icons/folder-archive.svg" />
 
-          </div>
+        </div>
 
-        </li>
-
-
+      </li>
 
 
 
-      </ul>
 
-      <div class="folder-empty" *ngIf="
+
+    </ul>
+
+    <div class="folder-empty" *ngIf="
         folders[folderPath || '/'] && folders[folderPath || '/'].length == 0
       ">
-        <span>
-          فایلی در این فولدر یافت نشد
-        </span>
-      </div>
+      <span>
+        فایلی در این فولدر یافت نشد
+      </span>
+    </div>
 
-      <div class="form-wrapper" *ngIf="mode == 'newFolder'">
-        <app-form-text-input [model]="newFolderName" (modelChange)="newFolderName = $event" [dir]="
+    <div class="form-wrapper" *ngIf="mode == 'newFolder'">
+      <app-form-text-input [model]="newFolderName" (modelChange)="newFolderName = $event" [dir]="
             sUtils.text.persianKeyChar.indexOf(newFolderName[0]) != -1
               ? 'rtl'
               : 'ltr'
           " label="نام فولدر جدید"></app-form-text-input>
-      </div>
+    </div>
 
   </section>
 
@@ -241,22 +258,44 @@
 
   </section> -->
 
-  <section class="preview" *ngIf="viewMode != 'mini' || previewPath">
+  <section class="preview" *ngIf="viewMode != 'mini' || previewItem">
 
-    <ul class="nav en">
-      <li (click)="codeEditorActive = false;iframeActive = true">
+    <img src="assets/graphics/filemanager.svg" class="empty-bg" *ngIf="!previewItem">
+    <ul class="nav en" *ngIf="previewItem">
+
+      <li [class.active]="imgViewerActive" *ngIf="previewItem.mime.indexOf('image/') == 0"
+        (click)="imgViewerActive = true; codeEditorActive = false;visualEditorActive = false;iframeActive = false">
+        Image Viewer
+      </li>
+      <li  [class.active]="iframeActive" (click)="imgViewerActive = false; codeEditorActive = false;visualEditorActive = false;iframeActive = true">
         iFrame
       </li>
-      <li *ngIf="codeEditorVisible" (click)="iframeActive = false; codeEditorActive = true">
+      <li  [class.active]="codeEditorActive" *ngIf="codeEditorVisible"
+        (click)="imgViewerActive = false; iframeActive = false; visualEditorActive = false; codeEditorActive = true">
         Code Editor
+      </li>
+
+      <li  [class.active]="visualEditorActive" *ngIf="visualEditorVisible"
+        (click)="imgViewerActive = false; codeEditorActive = false;iframeActive = false; visualEditorActive = true">
+        Visual Editor
+      </li>
+      <li>
+        {{previewItem?.mime}}
       </li>
     </ul>
 
-    <app-iframe *ngIf="iframeActive" [url]="previewPath"></app-iframe>
+    <app-iframe *ngIf="iframeActive && previewPath" [url]="previewPath"></app-iframe>
 
     <app-form-code-input [layout]="'full'" *ngIf="codeEditorVisible && codeEditorActive"
       (modelChange)="codeEditorChange($event)" [model]="codeEditorModel" [language]="codeEditorLanguage">
     </app-form-code-input>
+
+
+    <app-form-quill-input *ngIf="visualEditorActive" [theme]="'bubble'" [model]="codeEditorModel">
+
+    </app-form-quill-input>
+
+    <img [src]="previewPath" class="preview-image" *ngIf="previewItem && imgViewerActive">
 
   </section>
 
