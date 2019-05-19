@@ -33,8 +33,15 @@
       </li>
 
 
+      <li [class.spanned]="mode == 'select'" *ngIf="mode == 'select'" (click)="setMode('download')">
 
-      <li [class.spanned]="mode == 'download'" *ngIf="modeSelectedPaths?.length != 0 || mode == 'download'"
+        <span >
+          فایل و یا فولدر‌های مورد نظر  
+          را انتخاب کنید
+        </span>
+      </li>
+
+      <li [class.spanned]="mode == 'download'" *ngIf="mode == 'download' ? true : (modeSelectedPaths?.length != 0 && !mode)"
         (click)="setMode('download')">
         <img src="assets/icons/download.svg" title="دانلود" />
         <span *ngIf="mode == 'download'">
@@ -54,7 +61,7 @@
         </span>
       </li>
 
-      <li [class.spanned]="mode == 'share'" *ngIf="modeSelectedPaths?.length != 0 || mode == 'share'"
+      <li [class.spanned]="mode == 'share'" *ngIf="mode == 'share' ? true : (modeSelectedPaths?.length != 0 && !mode)"
         (click)="setMode('share')">
         <img src="assets/icons/share.svg" title="اشتراک گذاری" />
         <span *ngIf="mode == 'share'">
@@ -267,15 +274,16 @@
         (click)="imgViewerActive = true; codeEditorActive = false;visualEditorActive = false;iframeActive = false">
         Image Viewer
       </li>
-      <li  [class.active]="iframeActive" (click)="imgViewerActive = false; codeEditorActive = false;visualEditorActive = false;iframeActive = true">
+      <li [class.active]="iframeActive"
+        (click)="imgViewerActive = false; codeEditorActive = false;visualEditorActive = false;iframeActive = true">
         iFrame
       </li>
-      <li  [class.active]="codeEditorActive" *ngIf="codeEditorVisible"
+      <li [class.active]="codeEditorActive" *ngIf="codeEditorVisible"
         (click)="imgViewerActive = false; iframeActive = false; visualEditorActive = false; codeEditorActive = true">
         Code Editor
       </li>
 
-      <li  [class.active]="visualEditorActive" *ngIf="visualEditorVisible"
+      <li [class.active]="visualEditorActive" *ngIf="visualEditorVisible"
         (click)="imgViewerActive = false; codeEditorActive = false;iframeActive = false; visualEditorActive = true">
         Visual Editor
       </li>

@@ -8,7 +8,7 @@ export class StorageService {
 
   fileManagerSelectEvent = new EventEmitter();
 
-  fileManagerSelecting = false;
+  fileManagerSelecting: string = null;
 
 
   constructor() { }

@@ -1108,6 +1108,14 @@ export const FormsSchema: FormInterface[] = [
       //   }
       // },
       {
+        componentName: 'FormFileInputComponent',
+        propertyName: 'attachments',
+        inputs: {
+          type: 'multiple',
+          label: 'فایل‌های ضمیمه'
+        }
+      },
+      {
         if: '^form.sentDate',
         componentName: 'FormDateInputComponent',
         propertyName: 'sentDate',
@@ -1121,14 +1129,7 @@ export const FormsSchema: FormInterface[] = [
         propertyName: 'html',
         inputs: {}
       }
-      // {
-      //   componentName: "FormFileInputComponent",
-      //   propertyName: "attachments",
-      //   inputs: {
-      //     type: "multiple",
-      //     label: "فایل‌های ضمیمه"
-      //   }
-      // }
+
     ],
     defaultModel: {
 

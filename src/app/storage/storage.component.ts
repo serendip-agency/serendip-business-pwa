@@ -17,6 +17,7 @@ import { DashboardService } from "../dashboard.service";
 import { TokenModel } from "serendip-business-model";
 import { Buffer } from "buffer";
 import { DomSanitizer } from "@angular/platform-browser";
+import { StorageService } from '../storage.service';
 
 
 @Component({
@@ -49,7 +50,22 @@ export class StorageComponent implements OnInit {
 
   iframeActive = true;
   codeEditorActive = false;
-  @Input() mode = "";
+  private _mode = "";
+
+  public get mode() {
+
+
+    if (this.storageService.fileManagerSelecting) {
+      return 'select';
+    }
+    return this._mode;
+
+  }
+  @Input()
+
+  public set mode(value) {
+    this._mode = value;
+  }
   toUpload: {
     [key: string]: {
       path: string,
@@ -118,7 +134,16 @@ export class StorageComponent implements OnInit {
   toDownload: any = {};
 
   public token: TokenModel;
-  @Input() selectType = "multiple";
+  private _selectType = "multiple";
+  public get selectType() {
+
+    return this.storageService.fileManagerSelecting || this._selectType;
+  }
+  @Input()
+
+  public set selectType(value) {
+    this._selectType = value;
+  }
 
   constructor(
     public wsService: WsService,
@@ -127,7 +152,8 @@ export class StorageComponent implements OnInit {
     public businessService: BusinessService,
     public dashboardService: DashboardService,
     public changeRef: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    public storageService: StorageService
   ) { }
 
 
@@ -248,7 +274,7 @@ export class StorageComponent implements OnInit {
         fileReader.readAsText(file.body);
       }
 
-      if(item.mime.indexOf('image/') == 0){
+      if (item.mime.indexOf('image/') == 0) {
         this.imgViewerActive = true;
       }
 
@@ -257,8 +283,8 @@ export class StorageComponent implements OnInit {
       }
 
 
-      if(!this.imgViewerActive) {
-      this.iframeActive = true;
+      if (!this.imgViewerActive) {
+        this.iframeActive = true;
       }
 
     } else {
@@ -333,6 +359,12 @@ export class StorageComponent implements OnInit {
 
     this.selectEvents.subscribe((paths) => {
 
+
+      if (this.mode == 'select') {
+
+        this.storageService.fileManagerSelectEvent.emit(paths);
+
+      }
 
       if (this.mode === 'newFolder') {
 

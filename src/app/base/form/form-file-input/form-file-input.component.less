@@ -1,9 +1,10 @@
 .file-input {
-  label {
-  }
+  margin: 10px 0 30px 0;
 
-  .file-dropzone {
-    margin: 15px;
+  label {}
+
+  .filezone {
+    margin: 5px 15px;
     min-height: 60px;
     position: relative;
 
@@ -20,6 +21,28 @@
       font-weight: 100;
       border-radius: 15px;
       border: 1px dashed #ccc;
+      color: #777;
+      box-sizing: border-box;
+      z-index: 0;
+    }
+  }
+
+  .files {}
+
+  .file {
+    display: inline-block;
+    border-radius: 5px;
+    border: 1px solid #6C87C3;
+    padding: 4px 8px;
+    direction: ltr;
+    line-height: 20px;
+    margin: 4px;
+    vertical-align: top;
+
+    img{
+      display: inline-block;
+      height:20px;
+      vertical-align: middle;
     }
   }
 }
