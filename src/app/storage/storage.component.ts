@@ -48,7 +48,7 @@ export class StorageComponent implements OnInit {
   sUtils = serendip_utility;
   newFolderName = "";
   newZipName = "";
-
+  newName = "";
   iframeActive = true;
   codeEditorActive = false;
   private _mode = "";
@@ -167,13 +167,27 @@ export class StorageComponent implements OnInit {
     this.modePathsSelected = false;
     this.mode = mode;
 
+    if (mode == 'rename')
+      this.selectType = 'single'
+    else
+      this.selectType = this.storageService.fileManagerSelecting || 'multiple'
+
+
+    if (this.modeSelectedPaths.length > 0) {
+
+      this.selectEvents.emit(this.modeSelectedPaths);
+
+    }
 
   }
 
 
   selectAllToggle() {
 
-    console.log(this.modeSelectedPaths, this.folders[this.folderPath]);
+    if (this.selectType == 'single') {
+      this.modeSelectedPaths = [];
+      return;
+    }
 
     if (this.modeSelectedPaths.length === this.folders[this.folderPath].length) {
 
@@ -378,10 +392,47 @@ export class StorageComponent implements OnInit {
       if (this.mode === 'zip') {
 
         this.tempPaths = paths;
+        this.modeSelectedPaths = [];
+
         this.setMode('newZip');
+
+
 
         return;
       }
+
+      if (this.mode === 'rename') {
+
+        this.tempPaths = paths;
+        this.modeSelectedPaths = [];
+        this.setMode('newName');
+
+        return;
+      }
+
+      if (this.mode === 'newName') {
+
+        console.log(this.tempPaths);
+        this.dataService.request({
+          method: 'post',
+          path: '/api/storage/rename',
+          model: {
+            newName: paths[0],
+            path: this.tempPaths[0]
+          }
+        }).then(() => {
+
+          this.modeSelectedPaths = [];
+          this.selectType = 'multiple';
+
+          this.mode = '';
+          this.changeRef.detectChanges();
+
+          this.refreshFolder().then(() => { }).catch(() => { });
+        }).catch(() => { });
+
+      }
+
 
       if (this.mode === 'newZip') {
 
@@ -395,10 +446,33 @@ export class StorageComponent implements OnInit {
           }
         }).then(() => {
 
+          this.modeSelectedPaths = [];
+          this.selectType = 'multiple';
 
           this.mode = '';
           this.changeRef.detectChanges();
 
+
+          this.refreshFolder().then(() => { }).catch(() => { });
+        }).catch(() => { });
+
+      }
+
+
+
+      if (this.mode === 'delete') {
+        this.dataService.request({
+          method: 'post',
+          path: '/api/storage/delete',
+          model: {
+            paths
+          }
+        }).then(() => {
+
+          this.selectType = 'multiple';
+          this.modeSelectedPaths = [];
+          this.mode = '';
+          this.changeRef.detectChanges();
 
           this.refreshFolder().then(() => { }).catch(() => { });
         }).catch(() => { });
