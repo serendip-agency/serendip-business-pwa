@@ -9,7 +9,21 @@ export class StorageService {
   fileManagerSelectEvent = new EventEmitter();
 
   fileManagerSelecting: string = null;
+  fileManagerSelectedPaths: any = [];
 
+  fileManagerFolderPath = '/';
+
+  previewItem: {
+
+    mime: string,
+    ext: string
+
+  } = null;
+
+  previewPath: string = null;
 
   constructor() { }
+
+
+
 }

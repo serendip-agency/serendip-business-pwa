@@ -108,25 +108,25 @@ export class StorageComponent implements OnInit {
 
 
 
-  private _folderPath;
-  public get folderPath(): string {
+  // private _folderPath;
+  // public get folderPath(): string {
 
-    if (!this._folderPath) {
-      this._folderPath = localStorage.getItem('fileManagerFolderPath') || '/';
-    }
+  //   if (!this._folderPath) {
+  //     this._folderPath = localStorage.getItem('fileManagerFolderPath') || '/';
+  //   }
 
-    return this._folderPath;
+  //   return this._folderPath;
 
-  }
+  // }
 
-  @Input()
-  public set folderPath(v: string) {
+  // @Input()
+  // public set folderPath(v: string) {
 
-    if (this._folderPath !== v) {
-      this._folderPath = v;
-      localStorage.setItem('fileManagerFolderPath', v);
-    }
-  }
+  //   if (this._folderPath !== v) {
+  //     this._folderPath = v;
+  //     localStorage.setItem('fileManagerFolderPath', v);
+  //   }
+  // }
 
 
   @Input() public viewMode: "full" | "mini" = "mini";
@@ -173,9 +173,9 @@ export class StorageComponent implements OnInit {
       this.selectType = this.storageService.fileManagerSelecting || 'multiple'
 
 
-    if (this.modeSelectedPaths.length > 0) {
+    if (this.storageService.fileManagerSelectedPaths.length > 0) {
 
-      this.selectEvents.emit(this.modeSelectedPaths);
+      this.selectEvents.emit(this.storageService.fileManagerSelectedPaths);
 
     }
 
@@ -185,24 +185,24 @@ export class StorageComponent implements OnInit {
   selectAllToggle() {
 
     if (this.selectType == 'single') {
-      this.modeSelectedPaths = [];
+      this.storageService.fileManagerSelectedPaths = [];
       return;
     }
 
-    if (this.modeSelectedPaths.length === this.folders[this.folderPath].length) {
+    if (this.storageService.fileManagerSelectedPaths.length === this.folders[this.storageService.fileManagerFolderPath].length) {
 
-      this.modeSelectedPaths = [];
+      this.storageService.fileManagerSelectedPaths = [];
 
     } else {
-      this.modeSelectedPaths = [];
+      this.storageService.fileManagerSelectedPaths = [];
 
-      this.folders[this.folderPath].map(p => this.modeSelectedPaths.push(p.path));
+      this.folders[this.storageService.fileManagerFolderPath].map(p => this.storageService.fileManagerSelectedPaths.push(p.path));
 
     }
 
   }
   getCrumbs() {
-    const labeledPath = this.folderPath
+    const labeledPath = this.storageService.fileManagerFolderPath
       .replace("users/" + this.token.userId, "فایل‌های من")
       .replace(
         "businesses/" + this.businessService.getActiveBusinessId(),
@@ -213,7 +213,7 @@ export class StorageComponent implements OnInit {
       const path = "";
 
       // for (let i = index; i <= 0; i--) {
-      //   path = this.folderPath.split("/")[i] + path;
+      //   path = this.storageService.fileManagerFolderPath.split("/")[i] + path;
       // }
 
       return {
@@ -226,13 +226,13 @@ export class StorageComponent implements OnInit {
   async clickOnSelect(item) {
 
     if (this.selectType === "single") {
-      this.modeSelectedPaths = [item.path];
+      this.storageService.fileManagerSelectedPaths = [item.path];
     } else {
-      if (this.modeSelectedPaths.indexOf(item.path) === -1) {
-        this.modeSelectedPaths.push(item.path);
+      if (this.storageService.fileManagerSelectedPaths.indexOf(item.path) === -1) {
+        this.storageService.fileManagerSelectedPaths.push(item.path);
       } else {
-        this.modeSelectedPaths.splice(
-          this.modeSelectedPaths.indexOf(item.path),
+        this.storageService.fileManagerSelectedPaths.splice(
+          this.storageService.fileManagerSelectedPaths.indexOf(item.path),
           1
         );
       }
@@ -241,18 +241,18 @@ export class StorageComponent implements OnInit {
   }
   async clickOnItem(item) {
     if (item.isFile) {
-      this.previewItem = item;
+      this.storageService.previewItem = item;
       var itemPreviewPath = this.dataService.currentServer + '/api/storage/preview' +
         item.path + '?access_token=' + encodeURIComponent((await this.authService.token()).access_token);
 
-      if (this.previewPath == itemPreviewPath) {
+      if (this.storageService.previewPath == itemPreviewPath) {
 
-        this.previewPath = null;
-        this.previewItem = null;
+        this.storageService.previewPath = null;
+        this.storageService.previewItem = null;
         return;
 
       } else {
-        this.previewPath = itemPreviewPath;
+        this.storageService.previewPath = itemPreviewPath;
       }
 
       this.codeEditorVisible = false;
@@ -307,11 +307,11 @@ export class StorageComponent implements OnInit {
       }
 
     } else {
-      this.modeSelectedPaths = [];
-      if (this.folderPath !== '/') {
-        this.folderPath = this.folderPath + "/" + item.basename;
+      this.storageService.fileManagerSelectedPaths = [];
+      if (this.storageService.fileManagerFolderPath !== '/') {
+        this.storageService.fileManagerFolderPath = this.storageService.fileManagerFolderPath + "/" + item.basename;
       } else {
-        this.folderPath = item.path;
+        this.storageService.fileManagerFolderPath = item.path;
       }
     }
 
@@ -342,7 +342,7 @@ export class StorageComponent implements OnInit {
     // return path.replace("/" + path.split("/").reverse()[0], "");
   }
   async refreshFolder() {
-    if (!this.folderPath || this.folderPath === "/") {
+    if (!this.storageService.fileManagerFolderPath || this.storageService.fileManagerFolderPath === "/") {
       this.folders["/"] = [
         {
           isFile: false,
@@ -360,10 +360,10 @@ export class StorageComponent implements OnInit {
       return;
     }
 
-    this.folders[this.folderPath] = _.sortBy(
+    this.folders[this.storageService.fileManagerFolderPath] = _.sortBy(
       await this.dataService.request({
         path: "/api/storage/list",
-        model: { path: this.folderPath },
+        model: { path: this.storageService.fileManagerFolderPath },
         method: "POST"
       }),
       (item: any) => {
@@ -371,6 +371,21 @@ export class StorageComponent implements OnInit {
       }
     );
 
+
+  }
+
+  selectCancel() {
+    this.selectEvents.emit([]); this.mode = '';
+
+    if (this.storageService.fileManagerSelecting) {
+
+      this.storageService.fileManagerVisible = false;
+      this.storageService.fileManagerSelecting = null;
+
+
+    } else {
+
+    }
 
   }
   async ngOnInit() {
@@ -384,7 +399,8 @@ export class StorageComponent implements OnInit {
 
       if (this.mode == 'select') {
 
-        this.storageService.fileManagerSelectEvent.emit(paths);
+        if (this.storageService.fileManagerSelecting)
+          this.storageService.fileManagerSelectEvent.emit(paths);
 
       }
 
@@ -392,7 +408,14 @@ export class StorageComponent implements OnInit {
       if (this.mode === 'zip') {
 
         this.tempPaths = paths;
-        this.modeSelectedPaths = [];
+        this.storageService.fileManagerSelectedPaths = [];
+
+
+        if (this.tempPaths.length <= 3) {
+          this.newZipName = this.tempPaths.map(p => p.split('/').reverse()[0].split('.')[0]).join('-') + '.zip';
+        } else {
+          this.newZipName = '';
+        }
 
         this.setMode('newZip');
 
@@ -404,7 +427,7 @@ export class StorageComponent implements OnInit {
       if (this.mode === 'rename') {
 
         this.tempPaths = paths;
-        this.modeSelectedPaths = [];
+        this.storageService.fileManagerSelectedPaths = [];
         this.setMode('newName');
 
         return;
@@ -422,9 +445,8 @@ export class StorageComponent implements OnInit {
           }
         }).then(() => {
 
-          this.modeSelectedPaths = [];
+          this.storageService.fileManagerSelectedPaths = [];
           this.selectType = 'multiple';
-
           this.mode = '';
           this.changeRef.detectChanges();
 
@@ -441,12 +463,12 @@ export class StorageComponent implements OnInit {
           method: 'post',
           path: '/api/storage/zip',
           model: {
-            zipName: this.folderPath + '/' + (this.newZipName || ('zip-' + Date.now())) + '.zip',
+            zipPath: this.storageService.fileManagerFolderPath + '/' + (this.newZipName || ('zip-' + Date.now() + '.zip')),
             paths: this.tempPaths
           }
         }).then(() => {
 
-          this.modeSelectedPaths = [];
+          this.storageService.fileManagerSelectedPaths = [];
           this.selectType = 'multiple';
 
           this.mode = '';
@@ -470,7 +492,7 @@ export class StorageComponent implements OnInit {
         }).then(() => {
 
           this.selectType = 'multiple';
-          this.modeSelectedPaths = [];
+          this.storageService.fileManagerSelectedPaths = [];
           this.mode = '';
           this.changeRef.detectChanges();
 
@@ -491,7 +513,7 @@ export class StorageComponent implements OnInit {
           method: 'post',
           path: '/api/storage/newFolder',
           model: {
-            path: this.folderPath + '/' + paths[0]
+            path: this.storageService.fileManagerFolderPath + '/' + paths[0]
           }
         }).then(() => {
 
@@ -503,13 +525,13 @@ export class StorageComponent implements OnInit {
 
     });
 
-    if (this.modeSelectedPaths && this.modeSelectedPaths[0]) {
+    if (this.storageService.fileManagerSelectedPaths && this.storageService.fileManagerSelectedPaths[0]) {
       const arrayWithoutFileName = _.clone(
-        this.modeSelectedPaths[0].split("/")
+        this.storageService.fileManagerSelectedPaths[0].split("/")
       );
       arrayWithoutFileName.pop();
 
-      this.folderPath = arrayWithoutFileName.join("/");
+      this.storageService.fileManagerFolderPath = arrayWithoutFileName.join("/");
 
 
     }
@@ -561,7 +583,7 @@ export class StorageComponent implements OnInit {
               //   path: 'users/' + token.userId + '/' + files.item(0).name
               // } as StorageCommandInterface));
 
-              const path = this.folderPath + "/" + files.item(i).name;
+              const path = this.storageService.fileManagerFolderPath + "/" + files.item(i).name;
 
               this.toUpload[path] = {
                 path,

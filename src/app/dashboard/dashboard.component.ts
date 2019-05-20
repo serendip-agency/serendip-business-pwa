@@ -178,6 +178,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   explorerToggleClick() {
+
+    if(this.storageService.previewItem){
+
+      this.storageService.previewItem = null;
+      this.storageService.previewPath = null;
+      return;
+
+    }
+
     if (this.startActive) {
       return this.hideStart();
     }

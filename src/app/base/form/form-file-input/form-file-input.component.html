@@ -7,22 +7,17 @@
 
   <div class="filezone">
 
-
     <ul class="files">
-
       <li class="file en" *ngFor="let item of model;let i = index">
         {{item.split('/')[item.split('/').length - 1]}}
-
+        <!-- {{item}} -->
         <img src="assets/icons/close-5.svg" (click)="model.splice(index,1);modelChange.emit(model);" alt="">
       </li>
 
-      <li class="file"  (click)="selectFiles()">
+      <li class="file" (click)="selectFiles()">
         انتخاب فایل
       </li>
-
     </ul>
 
-
   </div>
-
 </div>

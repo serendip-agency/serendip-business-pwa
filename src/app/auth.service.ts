@@ -140,13 +140,23 @@ export class AuthService {
       .toPromise();
   }
 
+
+  /**
+   * Sends a POST request to /api/auth/token.
+   * If request was succesfull it will store it in localStorage as "token"
+   * and change loggedIn Property of service to true
+   * @param username 
+   * @param mobile 
+   * @param password 
+   * @param oneTimePassword 
+   */
   async login(
     username: string,
     mobile: string,
     password: string,
     oneTimePassword: string
   ): Promise<TokenModel> {
-    
+
     const newToken = await this.http
       .post<TokenModel>(this.apiUrl + "/api/auth/token", {
         username,
@@ -169,7 +179,12 @@ export class AuthService {
 
     return newToken;
   }
-
+  /**
+   * POST current access_token and refresh_token to /api/auth/refreshToken.
+   * if request was succesful, it will store new token in loclalStorage as "token"
+   * if request failed. it will call [[logout()]]
+   * @param token [[TokenModel]]
+   */
   async refreshToken(token: TokenModel): Promise<TokenModel> {
     try {
       const newToken = await this.http
@@ -192,6 +207,9 @@ export class AuthService {
 }
 
 @Injectable()
+/**
+ * AuthGuard is responsible for redirecting routes to [AuthComponent] ( /auth/login ) when [AuthService.loggedIn] is falsy
+ */
 export class AuthGuard implements CanActivate {
   constructor(
     private authService: AuthService,
@@ -199,6 +217,13 @@ export class AuthGuard implements CanActivate {
     private router: Router
   ) { }
 
+
+
+  /**
+   * Main function of [AuthGuard] checks [AuthService.loggedIn] and set "lastUrl" in localStorage before redirecting to auth/login
+   * @param route 
+   * @param state 
+   */
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
