@@ -5,25 +5,25 @@ import {
   Input,
   Output,
   EventEmitter
-} from "@angular/core";
-import { WsService } from "../ws.service";
-import { AuthService } from "../auth.service";
-import * as promise_serial from "promise-serial";
-import * as _ from "underscore";
-import * as serendip_utility from "serendip-utility";
-import { DataService } from "../data.service";
-import { BusinessService } from "../business.service";
-import { DashboardService } from "../dashboard.service";
-import { TokenModel } from "serendip-business-model";
-import { Buffer } from "buffer";
-import { DomSanitizer } from "@angular/platform-browser";
+} from '@angular/core';
+import { WsService } from '../ws.service';
+import { AuthService } from '../auth.service';
+import * as promise_serial from 'promise-serial';
+import * as _ from 'underscore';
+import * as serendip_utility from 'serendip-utility';
+import { DataService } from '../data.service';
+import { BusinessService } from '../business.service';
+import { DashboardService } from '../dashboard.service';
+import { TokenModel } from 'serendip-business-model';
+import { Buffer } from 'buffer';
+import { DomSanitizer } from '@angular/platform-browser';
 import { StorageService } from '../storage.service';
 
 
 @Component({
-  selector: "app-storage",
-  templateUrl: "./storage.component.html",
-  styleUrls: ["./storage.component.less"]
+  selector: 'app-storage',
+  templateUrl: './storage.component.html',
+  styleUrls: ['./storage.component.less']
 })
 export class StorageComponent implements OnInit {
   socket: WebSocket;
@@ -46,12 +46,12 @@ export class StorageComponent implements OnInit {
   codeEditorLanguage = 'text';
   codeEditorModel = '';
   sUtils = serendip_utility;
-  newFolderName = "";
-  newZipName = "";
-  newName = "";
+  newFolderName = '';
+  newZipName = '';
+  newName = '';
   iframeActive = true;
   codeEditorActive = false;
-  private _mode = "";
+  private _mode = '';
   tempPaths: string[];
 
   public get mode() {
@@ -95,14 +95,14 @@ export class StorageComponent implements OnInit {
     if (_.isEqual(obj, this._folders)) {
       return;
     }
-    let lsFolders: any = localStorage.getItem("folders");
+    let lsFolders: any = localStorage.getItem('folders');
     if (lsFolders) {
       lsFolders = _.extend(JSON.parse(lsFolders), obj);
     } else {
       lsFolders = obj;
     }
 
-    localStorage.setItem("folders", JSON.stringify(lsFolders));
+    localStorage.setItem('folders', JSON.stringify(lsFolders));
   }
 
 
@@ -129,14 +129,14 @@ export class StorageComponent implements OnInit {
   // }
 
 
-  @Input() public viewMode: "full" | "mini" = "mini";
+  @Input() public viewMode: 'full' | 'mini' = 'mini';
 
   @Output() public selectEvents = new EventEmitter<string[]>();
 
   toDownload: any = {};
 
   public token: TokenModel;
-  private _selectType = "multiple";
+  private _selectType = 'multiple';
   public get selectType() {
 
     return this.storageService.fileManagerSelecting || this._selectType;
@@ -167,10 +167,12 @@ export class StorageComponent implements OnInit {
     this.modePathsSelected = false;
     this.mode = mode;
 
-    if (mode == 'rename')
+    if (mode == 'rename') {
       this.selectType = 'single'
-    else
+    }
+    else {
       this.selectType = this.storageService.fileManagerSelecting || 'multiple'
+    }
 
 
     if (this.storageService.fileManagerSelectedPaths.length > 0) {
@@ -203,14 +205,14 @@ export class StorageComponent implements OnInit {
   }
   getCrumbs() {
     const labeledPath = this.storageService.fileManagerFolderPath
-      .replace("users/" + this.token.userId, "فایل‌های من")
+      .replace('users/' + this.token.userId, 'فایل‌های من')
       .replace(
-        "businesses/" + this.businessService.getActiveBusinessId(),
-        "فایل‌ های " + this.businessService.business.title
+        'businesses/' + this.businessService.getActiveBusinessId(),
+        'فایل‌ های ' + this.businessService.business.title
       );
 
-    return labeledPath.split("/").map((label, index) => {
-      const path = "";
+    return labeledPath.split('/').map((label, index) => {
+      const path = '';
 
       // for (let i = index; i <= 0; i--) {
       //   path = this.storageService.fileManagerFolderPath.split("/")[i] + path;
@@ -225,7 +227,7 @@ export class StorageComponent implements OnInit {
 
   async clickOnSelect(item) {
 
-    if (this.selectType === "single") {
+    if (this.selectType === 'single') {
       this.storageService.fileManagerSelectedPaths = [item.path];
     } else {
       if (this.storageService.fileManagerSelectedPaths.indexOf(item.path) === -1) {
@@ -242,7 +244,7 @@ export class StorageComponent implements OnInit {
   async clickOnItem(item) {
     if (item.isFile) {
       this.storageService.previewItem = item;
-      var itemPreviewPath = this.dataService.currentServer + '/api/storage/preview' +
+      let itemPreviewPath = this.dataService.currentServer + '/api/storage/preview' +
         item.path + '?access_token=' + encodeURIComponent((await this.authService.token()).access_token);
 
       if (this.storageService.previewPath == itemPreviewPath) {
@@ -309,7 +311,7 @@ export class StorageComponent implements OnInit {
     } else {
       this.storageService.fileManagerSelectedPaths = [];
       if (this.storageService.fileManagerFolderPath !== '/') {
-        this.storageService.fileManagerFolderPath = this.storageService.fileManagerFolderPath + "/" + item.basename;
+        this.storageService.fileManagerFolderPath = this.storageService.fileManagerFolderPath + '/' + item.basename;
       } else {
         this.storageService.fileManagerFolderPath = item.path;
       }
@@ -324,10 +326,10 @@ export class StorageComponent implements OnInit {
   cdBack(path: string) {
 
 
-    const pathToReturn = path.replace("/" + path.split("/").reverse()[0], "");
+    const pathToReturn = path.replace('/' + path.split('/').reverse()[0], '');
 
-    if (pathToReturn === "businesses" || pathToReturn === "users") {
-      return "/";
+    if (pathToReturn === 'businesses' || pathToReturn === 'users') {
+      return '/';
     }
 
     return pathToReturn;
@@ -342,34 +344,37 @@ export class StorageComponent implements OnInit {
     // return path.replace("/" + path.split("/").reverse()[0], "");
   }
   async refreshFolder() {
-    if (!this.storageService.fileManagerFolderPath || this.storageService.fileManagerFolderPath === "/") {
-      this.folders["/"] = [
+    if (!this.storageService.fileManagerFolderPath || this.storageService.fileManagerFolderPath === '/') {
+      this.folders['/'] = [
         {
           isFile: false,
           isDirectory: true,
-          path: "users/" + this.token.userId,
-          basename: "فایل‌های من"
+          path: 'users/' + this.token.userId,
+          basename: 'فایل‌های من'
         },
         {
           isFile: false,
           isDirectory: true,
-          path: "businesses/" + this.businessService.business._id,
-          basename: "فایل‌های " + this.businessService.business.title
+          path: 'businesses/' + this.businessService.business._id,
+          basename: 'فایل‌های ' + this.businessService.business.title
         }
       ];
       return;
     }
 
+    this.storageService.loadingText = 'Listing files ...';
     this.folders[this.storageService.fileManagerFolderPath] = _.sortBy(
       await this.dataService.request({
-        path: "/api/storage/list",
+        path: '/api/storage/list',
         model: { path: this.storageService.fileManagerFolderPath },
-        method: "POST"
+        method: 'POST'
       }),
       (item: any) => {
-        return item.isDirectory ? "000-" : "111-" + item.path;
+        return item.isDirectory ? '000-' : '111-' + item.path;
       }
     );
+
+    this.storageService.loadingText = null;
 
 
   }
@@ -399,8 +404,9 @@ export class StorageComponent implements OnInit {
 
       if (this.mode == 'select') {
 
-        if (this.storageService.fileManagerSelecting)
+        if (this.storageService.fileManagerSelecting) {
           this.storageService.fileManagerSelectEvent.emit(paths);
+        }
 
       }
 
@@ -411,7 +417,7 @@ export class StorageComponent implements OnInit {
         this.storageService.fileManagerSelectedPaths = [];
 
 
-        if (this.tempPaths.length <= 3) {
+        if (this.tempPaths.length <= 3 && this.tempPaths.length > 0) {
           this.newZipName = this.tempPaths.map(p => p.split('/').reverse()[0].split('.')[0]).join('-') + '.zip';
         } else {
           this.newZipName = '';
@@ -458,7 +464,10 @@ export class StorageComponent implements OnInit {
 
       if (this.mode === 'newZip') {
 
-        console.log(this.tempPaths);
+
+        this.storageService.loadingText = 'Compressing files ...';
+
+
         this.dataService.request({
           method: 'post',
           path: '/api/storage/zip',
@@ -470,7 +479,7 @@ export class StorageComponent implements OnInit {
 
           this.storageService.fileManagerSelectedPaths = [];
           this.selectType = 'multiple';
-
+          this.storageService.loadingText = null;
           this.mode = '';
           this.changeRef.detectChanges();
 
@@ -483,6 +492,9 @@ export class StorageComponent implements OnInit {
 
 
       if (this.mode === 'delete') {
+
+        this.storageService.loadingText = 'Deleting files ...';
+
         this.dataService.request({
           method: 'post',
           path: '/api/storage/delete',
@@ -493,6 +505,7 @@ export class StorageComponent implements OnInit {
 
           this.selectType = 'multiple';
           this.storageService.fileManagerSelectedPaths = [];
+          this.storageService.loadingText = null;
           this.mode = '';
           this.changeRef.detectChanges();
 
@@ -509,6 +522,9 @@ export class StorageComponent implements OnInit {
           return;
         }
 
+        this.storageService.loadingText = 'Creating new folder ...';
+
+
         this.dataService.request({
           method: 'post',
           path: '/api/storage/newFolder',
@@ -517,8 +533,14 @@ export class StorageComponent implements OnInit {
           }
         }).then(() => {
 
+          this.selectType = 'multiple';
+          this.storageService.fileManagerSelectedPaths = [];
+          this.storageService.loadingText = null;
           this.mode = '';
+          this.changeRef.detectChanges();
+
           this.refreshFolder().then(() => { }).catch(() => { });
+
         }).catch(() => { });
 
       }
@@ -527,21 +549,21 @@ export class StorageComponent implements OnInit {
 
     if (this.storageService.fileManagerSelectedPaths && this.storageService.fileManagerSelectedPaths[0]) {
       const arrayWithoutFileName = _.clone(
-        this.storageService.fileManagerSelectedPaths[0].split("/")
+        this.storageService.fileManagerSelectedPaths[0].split('/')
       );
       arrayWithoutFileName.pop();
 
-      this.storageService.fileManagerFolderPath = arrayWithoutFileName.join("/");
+      this.storageService.fileManagerFolderPath = arrayWithoutFileName.join('/');
 
 
     }
 
-    this.socket = await this.wsService.newSocket("/storage", true);
+    this.socket = await this.wsService.newSocket('/storage', true);
 
     this.socket.onclose = async closeEv => {
 
       this.socket = null;
-      this.socket = await this.wsService.newSocket("/storage", true);
+      this.socket = await this.wsService.newSocket('/storage', true);
     };
 
     this.socket.onmessage = msg => {
@@ -583,7 +605,7 @@ export class StorageComponent implements OnInit {
               //   path: 'users/' + token.userId + '/' + files.item(0).name
               // } as StorageCommandInterface));
 
-              const path = this.storageService.fileManagerFolderPath + "/" + files.item(i).name;
+              const path = this.storageService.fileManagerFolderPath + '/' + files.item(i).name;
 
               this.toUpload[path] = {
                 path,
@@ -601,7 +623,7 @@ export class StorageComponent implements OnInit {
       });
 
     await promise_serial(readPromises, { parallelize: 1 });
-    (zoneChangeEv.target as any).value = "";
+    (zoneChangeEv.target as any).value = '';
 
     this.processQueue().then().catch();
   }
@@ -633,11 +655,11 @@ export class StorageComponent implements OnInit {
       exists: { start: number; end: number }[];
       missing: { start: number; end: number }[];
     } = await this.dataService.request({
-      path: "/api/storage/parts",
-      method: "post",
+      path: '/api/storage/parts',
+      method: 'post',
       model: {
-        type: "parts",
-        path: path
+        type: 'parts',
+        path
       }
     });
 
@@ -672,10 +694,10 @@ export class StorageComponent implements OnInit {
 
 
               await this.dataService.request({
-                method: "POST",
+                method: 'POST',
                 retry: false,
                 model: {
-                  type: "upload",
+                  type: 'upload',
                   data: buffer.slice(i * partSize, (i + 1) * partSize).toString('hex'),
                   start: i * partSize,
                   end:
@@ -685,7 +707,7 @@ export class StorageComponent implements OnInit {
                   total: buffer.byteLength,
                   path
                 } as StorageCommandInterface,
-                path: "/api/storage/upload"
+                path: '/api/storage/upload'
               });
             }
 
@@ -707,8 +729,8 @@ export class StorageComponent implements OnInit {
     );
 
     this.dataService.request({
-      method: "POST",
-      path: "/api/storage/assemble",
+      method: 'POST',
+      path: '/api/storage/assemble',
       model: {
         path
       }
@@ -717,7 +739,7 @@ export class StorageComponent implements OnInit {
 }
 
 export interface StorageCommandInterface {
-  type: "upload" | "download";
+  type: 'upload' | 'download';
   path: string;
   data?: string;
   start?: number;

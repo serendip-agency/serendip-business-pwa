@@ -1,11 +1,13 @@
-#serendip-loader {
+#serendip-loader,
+.serendip-loader {
   text-align: center;
   line-height: calc(100vh - 100px);
   height: 100vh;
   background: #000 url("/assets/graphics/star-back.svg");
   background-size: cover;
 }
-#serendip-loader .text {
+#serendip-loader .text,
+.serendip-loader .text {
   font-weight: 100;
   line-height: 30px;
   font-size: 11px;
@@ -22,7 +24,8 @@
   margin: 20px auto 0 auto;
   text-align: center;
 }
-#serendip-loader .box {
+#serendip-loader .box,
+.serendip-loader .box {
   line-height: 0;
   display: inline-block;
   width: 100%;

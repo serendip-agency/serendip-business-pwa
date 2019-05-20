@@ -1,5 +1,22 @@
 <div [class]="viewMode + ' storage'">
-  <section class="browser">
+
+
+  <div class="serendip-loader" *ngIf="!!storageService.loadingText">
+    <div class="box">
+      <div class="logo-wrapper out-of-the-box">
+        <div class="loader"></div>
+
+        <div class="logo">
+          <img src="assets/graphics/brand/serendip-fav-2-1.svg" alt="" />
+        </div>
+      </div>
+      <div class="text">
+        {{ storageService.loadingText }}
+      </div>
+    </div>
+  </div>
+
+  <section class="browser" *ngIf="!storageService.loadingText">
 
     <ul class="commands bottom" *ngIf="mode">
       <li *ngIf="mode && mode != 'newFolder' && mode != 'newZip' && mode != 'newName' && !modePathsSelected"
@@ -348,9 +365,9 @@
 
   </section> -->
 
-  <section class="preview" [class.active]="!!storageService.previewItem" *ngIf="viewMode != 'mini' || storageService.previewItem">
+  <section class="preview" [class.active]="!!storageService.previewItem" *ngIf="!storageService.loadingText">
 
-   
+
     <img src="assets/graphics/filemanager.svg" class="empty-bg" *ngIf="!storageService.previewItem">
     <ul class="nav en" *ngIf="storageService.previewItem">
 
