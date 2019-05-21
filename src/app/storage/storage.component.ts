@@ -81,7 +81,6 @@ export class StorageComponent implements OnInit {
   _folders: any = {};
   pathsSelected: boolean;
   modePathsSelected: boolean;
-  @Input() modeSelectedPaths: string[] = [];
   previewPath: any;
   imgViewerActive = false;
   previewItem: any;
@@ -168,12 +167,19 @@ export class StorageComponent implements OnInit {
     this.mode = mode;
 
     if (mode == 'rename') {
-      this.selectType = 'single'
-    }
-    else {
-      this.selectType = this.storageService.fileManagerSelecting || 'multiple'
+      this.selectType = 'single';
+    } else {
+      this.selectType = this.storageService.fileManagerSelecting || 'multiple';
     }
 
+    if (mode == 'moveTo') {
+      this.selectType = 'folder';
+    }
+
+
+    if (mode == 'copyTo') {
+      this.selectType = 'folder';
+    }
 
     if (this.storageService.fileManagerSelectedPaths.length > 0) {
 
@@ -227,8 +233,11 @@ export class StorageComponent implements OnInit {
 
   async clickOnSelect(item) {
 
-    if (this.selectType === 'single') {
-      this.storageService.fileManagerSelectedPaths = [item.path];
+    if (this.selectType === 'single' || this.selectType === 'file' || this.selectType === 'folder') {
+      if (this.storageService.fileManagerSelectedPaths[0] == item.path)
+        this.storageService.fileManagerSelectedPaths = [];
+      else
+        this.storageService.fileManagerSelectedPaths = [item.path];
     } else {
       if (this.storageService.fileManagerSelectedPaths.indexOf(item.path) === -1) {
         this.storageService.fileManagerSelectedPaths.push(item.path);
@@ -244,7 +253,7 @@ export class StorageComponent implements OnInit {
   async clickOnItem(item) {
     if (item.isFile) {
       this.storageService.previewItem = item;
-      let itemPreviewPath = this.dataService.currentServer + '/api/storage/preview' +
+      const itemPreviewPath = this.dataService.currentServer + '/api/storage/preview' +
         item.path + '?access_token=' + encodeURIComponent((await this.authService.token()).access_token);
 
       if (this.storageService.previewPath == itemPreviewPath) {
@@ -380,7 +389,10 @@ export class StorageComponent implements OnInit {
   }
 
   selectCancel() {
-    this.selectEvents.emit([]); this.mode = '';
+    this.selectEvents.emit([]);
+    this.mode = '';
+    this.selectType = 'multiple';
+    this.storageService.fileManagerSelectedPaths = [];
 
     if (this.storageService.fileManagerSelecting) {
 
@@ -438,6 +450,71 @@ export class StorageComponent implements OnInit {
 
         return;
       }
+
+
+      if (this.mode === 'move') {
+
+        this.tempPaths = paths;
+        this.storageService.fileManagerSelectedPaths = [];
+        this.setMode('moveTo');
+
+        return;
+      }
+
+
+
+      if (this.mode === 'copy') {
+
+        this.tempPaths = paths;
+        this.storageService.fileManagerSelectedPaths = [];
+        this.setMode('copyTo');
+        return;
+      }
+
+
+      if (this.mode === 'copyTo') {
+
+        this.dataService.request({
+          method: 'post',
+          path: '/api/storage/copy',
+          model: {
+            dest: paths[0],
+            paths: this.tempPaths
+          }
+        }).then(() => {
+
+          this.storageService.fileManagerSelectedPaths = [];
+          this.selectType = 'multiple';
+          this.mode = '';
+          this.changeRef.detectChanges();
+
+          this.refreshFolder().then(() => { }).catch(() => { });
+        }).catch(() => { });
+
+      }
+
+
+      if (this.mode === 'moveTo') {
+
+        this.dataService.request({
+          method: 'post',
+          path: '/api/storage/move',
+          model: {
+            dest: paths[0],
+            paths: this.tempPaths
+          }
+        }).then(() => {
+
+          this.storageService.fileManagerSelectedPaths = [];
+          this.selectType = 'multiple';
+          this.mode = '';
+          this.changeRef.detectChanges();
+
+          this.refreshFolder().then(() => { }).catch(() => { });
+        }).catch(() => { });
+
+      }
+
 
       if (this.mode === 'newName') {
 

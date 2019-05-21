@@ -1,8 +1,7 @@
 <div class="input" [class.selecting]="selectActive">
   <app-storage
     *ngIf="selectActive"
-    [mode]="'select'"
-    [modeSelectedPaths]="selectType == 'single' ? [model] : model"
+    [mode]="'select'" 
     [selectType]="selectType"
     (selectEvents)="onSelect($event)"
     [viewMode]="'in-form'"

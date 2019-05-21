@@ -19,7 +19,8 @@
   <section class="browser" *ngIf="!storageService.loadingText">
 
     <ul class="commands bottom" *ngIf="mode">
-      <li *ngIf="mode && mode != 'newFolder' && mode != 'newZip' && mode != 'newName' && !modePathsSelected"
+      <li
+        *ngIf="mode && mode != 'newFolder' && mode != 'copyTo' && mode != 'moveTo' && mode != 'newZip' && mode != 'newName' && !modePathsSelected"
         (click)="storageService.fileManagerSelectedPaths.length > 0 ? selectEvents.emit(storageService.fileManagerSelectedPaths) : null">
         <span>
           انتخاب شد ({{storageService.fileManagerSelectedPaths.length.toString() | rpd}})
@@ -42,6 +43,21 @@
       <li *ngIf="mode && mode === 'newName' " (click)="selectEvents.emit([newName])  ">
         <span>
           تغییر نام
+        </span>
+      </li>
+
+
+      <li *ngIf="mode && mode === 'copyTo' "
+        (click)="selectEvents.emit(storageService.fileManagerSelectedPaths.length != 0 ? storageService.fileManagerSelectedPaths : [storageService.fileManagerFolderPath])  ">
+        <span>
+          کپی
+        </span>
+      </li>
+
+      <li *ngIf="mode && mode === 'moveTo' "
+        (click)="selectEvents.emit(storageService.fileManagerSelectedPaths.length != 0 ? storageService.fileManagerSelectedPaths : [storageService.fileManagerFolderPath])  ">
+        <span>
+          انتقال
         </span>
       </li>
 
@@ -116,6 +132,33 @@
           انتخاب کنید
         </span>
       </li>
+
+
+
+      <li [class.spanned]="mode == 'move'"
+        *ngIf="mode == 'move' ? true : (storageService.fileManagerSelectedPaths?.length > 0 && !mode)"
+        (click)="setMode('move')">
+        <div class="icon">MOVE</div>
+        <span *ngIf="mode == 'move'">
+          فایل یا پوشه مورد نظر برای
+          <b>انتقال</b>
+          را
+          انتخاب کنید
+        </span>
+      </li>
+
+      <li [class.spanned]="mode == 'copy'"
+        *ngIf="mode == 'copy' ? true : (storageService.fileManagerSelectedPaths?.length > 0 && !mode)"
+        (click)="setMode('copy')">
+        <div class="icon">COPY</div>
+        <span *ngIf="mode == 'copy'">
+          فایل یا پوشه مورد نظر برای
+          <b>کپی</b>
+          را
+          انتخاب کنید
+        </span>
+      </li>
+
 
 
       <li *ngIf="mode == 'newZip'">
@@ -232,7 +275,7 @@
       <li *ngIf="storageService.fileManagerFolderPath != '/'">
 
         <div class="select">
-          <div class="select" (click)="selectAllToggle()">
+          <div class="select" *ngIf="mode != 'moveTo' && mode != 'copyTo'" (click)="selectAllToggle()">
 
             <img src="assets/icons/tab-1.svg" *ngIf="storageService.fileManagerSelectedPaths?.length == 0" class=" " />
 
@@ -249,7 +292,7 @@
 
         <input
           (click)="storageService.fileManagerFolderPath = cdBack(storageService.fileManagerFolderPath); refreshFolder()"
-          type="text" name="" style="text-align: left" readonly disabled value="بازگشت به فولدر بالایی" id="" />
+          type="text" name="" style="text-align: left" readonly value="بازگشت به فولدر بالایی" id="" />
         <div class="size">&nbsp;</div>
 
         <div
@@ -263,12 +306,18 @@
         <div *ngIf="item.uploadPercent && item.uploadPercent != 100" class="progress"
           [style.width]="item.uploadPercent + '%'"></div>
 
-        <div class="select" (click)=" clickOnSelect(item) ">
-
+        <div class="select"
+         
+          (click)=" clickOnSelect(item) ">
+<div  *ngIf="storageService.fileManagerFolderPath != '/' &&( item.isDirectory ? (selectType != 'file' && selectType != 'files') :  (selectType != 'folder' && selectType != 'folders'))">
+  
           <img src="assets/icons/tab-1.svg" *ngIf="  storageService.fileManagerSelectedPaths.indexOf(item.path) == -1"
             class=" " />
           <img src="assets/icons/check-9.svg" *ngIf=" storageService.fileManagerSelectedPaths.indexOf(item.path) != -1"
             class=" selected" />
+
+
+</div>
         </div>
 
 
@@ -320,14 +369,14 @@
 
 
     </ul>
-
+<!-- 
     <div class="folder-empty" *ngIf="
         folders[storageService.fileManagerFolderPath || '/'] && folders[storageService.fileManagerFolderPath || '/'].length == 0
       ">
       <span>
         فایلی در این فولدر یافت نشد
       </span>
-    </div>
+    </div> -->
 
     <div class="form-wrapper" *ngIf="mode == 'newFolder'">
       <app-form-text-input [model]="newFolderName" (modelChange)="newFolderName = $event" [dir]="
