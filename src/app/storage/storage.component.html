@@ -1,22 +1,9 @@
 <div [class]="viewMode + ' storage'">
 
 
-  <div class="serendip-loader" *ngIf="!!storageService.loadingText">
-    <div class="box">
-      <div class="logo-wrapper out-of-the-box">
-        <div class="loader"></div>
 
-        <div class="logo">
-          <img src="assets/graphics/brand/serendip-fav-2-1.svg" alt="" />
-        </div>
-      </div>
-      <div class="text">
-        {{ storageService.loadingText }}
-      </div>
-    </div>
-  </div>
 
-  <section class="browser" *ngIf="!storageService.loadingText">
+  <section class="browser">
 
     <ul class="commands bottom" *ngIf="mode">
       <li
@@ -203,35 +190,6 @@
       </li>
     </ul>
 
-
-    <!-- 
-    <div *ngIf="objectKeys(toDownload).length > 0" class="title">
-      <img src="assets/icons/download.svg" /> فایل‌های در حال دانلود ({{
-        objectKeys(toDownload).length || "0" | rpd
-      }})
-    </div>
-    <ul *ngIf="objectKeys(toDownload).length > 0" class="files to-download">
-      <li *ngFor="let path of objectKeys(toDownload)" [title]="path">
-        <div
-          class="progress"
-          [style.width]="toDownload[path].percent + '%'"
-        ></div>
-        <img src="assets/icons/export-3.svg" alt="" />
-
-        <input type="text" readonly [value]="toDownload[path].name" />
-        <div class="size">
-          {{ readableSize(toDownload[path].size / 1024 / 1024) | rpd }}
-          <div class="en">MB</div>
-        </div>
-      </li>
-    </ul> -->
-    <!-- 
-    <div
-      style="font-family: Arial, Helvetica, sans-serif;direction: ltr;text-align: left"
-    >
-      {{ storageService.fileManagerFolderPath }}
-    </div> -->
-
     <div class="title" *ngIf="!storageService.fileManagerFolderPath">
       <img src="assets/icons/folder-archive-open.svg" /> مدیریت فایل
     </div>
@@ -246,31 +204,9 @@
     </div>
 
     <ul *ngIf=" !mode || (mode && mode !='newFolder' && mode !='newZip' && mode !='newName' && !modePathsSelected)"
-      class="files to-download">
-
-      <li *ngFor="let path of objectKeys(toUpload)">
-
-        <div class="img">
-          <img src="assets/icons/upload.svg" class="icon" alt="" />
-
-        </div>
-
-        <div class="progress" [style.width]="toUpload[path].percent + '%'"></div>
+      class="files">
 
 
-        <div class="size">
-          {{ readableSize(toUpload[path].size / 1024 / 1024) | rpd }}
-
-          <div class="en">MB</div>
-        </div>
-
-        <input type="text" readonly [class]="
-          sUtils.text.persianKeyChar.indexOf(toUpload[path].name[0]) != -1
-            ? 'fa'
-            : 'en'
-        " [value]="toUpload[path].name" />
-
-      </li>
 
       <li *ngIf="storageService.fileManagerFolderPath != '/'">
 
@@ -302,22 +238,49 @@
         </div>
 
       </li>
+
+
+      <li *ngFor="let path of objectKeys(toUpload)">
+
+        <div class="img">
+          <img src="assets/icons/upload.svg" class="icon" alt="" />
+
+        </div>
+
+        <div class="progress" [style.width]="toUpload[path].percent + '%'"></div>
+
+
+        <div class="select"></div>
+
+        <div class="size">
+          {{ readableSize(toUpload[path].size / 1024 / 1024) | rpd }}
+
+          <div class="en">MB</div>
+        </div>
+
+        <input type="text" readonly [class]="
+          sUtils.text.persianKeyChar.indexOf(toUpload[path].name[0]) != -1
+            ? 'fa'
+            : 'en'
+        " [value]="toUpload[path].name" />
+
+      </li>
+
       <li *ngFor="let item of folders[storageService.fileManagerFolderPath || '/']" [title]="item.basename">
         <div *ngIf="item.uploadPercent && item.uploadPercent != 100" class="progress"
           [style.width]="item.uploadPercent + '%'"></div>
 
-        <div class="select"
-         
-          (click)=" clickOnSelect(item) ">
-<div  *ngIf="storageService.fileManagerFolderPath != '/' &&( item.isDirectory ? (selectType != 'file' && selectType != 'files') :  (selectType != 'folder' && selectType != 'folders'))">
-  
-          <img src="assets/icons/tab-1.svg" *ngIf="  storageService.fileManagerSelectedPaths.indexOf(item.path) == -1"
-            class=" " />
-          <img src="assets/icons/check-9.svg" *ngIf=" storageService.fileManagerSelectedPaths.indexOf(item.path) != -1"
-            class=" selected" />
+        <div class="select" (click)=" clickOnSelect(item) ">
+          <div
+            *ngIf="storageService.fileManagerFolderPath != '/' &&( item.isDirectory ? (selectType != 'file' && selectType != 'files') :  (selectType != 'folder' && selectType != 'folders'))">
+
+            <img src="assets/icons/tab-1.svg" *ngIf="  storageService.fileManagerSelectedPaths.indexOf(item.path) == -1"
+              class=" " />
+            <img src="assets/icons/check-9.svg"
+              *ngIf=" storageService.fileManagerSelectedPaths.indexOf(item.path) != -1" class=" selected" />
 
 
-</div>
+          </div>
         </div>
 
 
@@ -367,9 +330,8 @@
 
 
 
-
     </ul>
-<!-- 
+    <!-- 
     <div class="folder-empty" *ngIf="
         folders[storageService.fileManagerFolderPath || '/'] && folders[storageService.fileManagerFolderPath || '/'].length == 0
       ">
@@ -414,27 +376,33 @@
 
   </section> -->
 
-  <section class="preview" [class.active]="!!storageService.previewItem" *ngIf="!storageService.loadingText">
+  <section class="preview" [class.active]="!!storageService.previewItem">
 
 
     <img src="assets/graphics/filemanager.svg" class="empty-bg" *ngIf="!storageService.previewItem">
     <ul class="nav en" *ngIf="storageService.previewItem">
 
       <li [class.active]="imgViewerActive" *ngIf="storageService.previewItem.mime.indexOf('image/') == 0"
-        (click)="imgViewerActive = true; codeEditorActive = false;visualEditorActive = false;iframeActive = false">
+        (click)="downloadViewActive =false; imgViewerActive = true; codeEditorActive = false;visualEditorActive = false;iframeActive = false">
         Image Viewer
       </li>
       <li [class.active]="iframeActive"
-        (click)="imgViewerActive = false; codeEditorActive = false;visualEditorActive = false;iframeActive = true">
+        (click)="downloadViewActive =false; imgViewerActive = false; codeEditorActive = false;visualEditorActive = false;iframeActive = true">
         iFrame
       </li>
+
+      <li [class.active]="downloadViewActive"
+        (click)="imgViewerActive = false; codeEditorActive = false;visualEditorActive = false;iframeActive = false;downloadViewActive = true">
+        Download
+      </li>
+
       <li [class.active]="codeEditorActive" *ngIf="codeEditorVisible"
-        (click)="imgViewerActive = false; iframeActive = false; visualEditorActive = false; codeEditorActive = true">
+        (click)="downloadViewActive =false; imgViewerActive = false; iframeActive = false; visualEditorActive = false; codeEditorActive = true">
         Code Editor
       </li>
 
       <li [class.active]="visualEditorActive" *ngIf="visualEditorVisible"
-        (click)="imgViewerActive = false; codeEditorActive = false;iframeActive = false; visualEditorActive = true">
+        (click)="downloadViewActive =false; imgViewerActive = false; codeEditorActive = false;iframeActive = false; visualEditorActive = true">
         Visual Editor
       </li>
       <li>
@@ -455,6 +423,52 @@
 
     <img [src]="storageService.previewPath" class="preview-image" *ngIf="storageService.previewItem && imgViewerActive">
 
+
+    <div class="download-view en" *ngIf="downloadViewActive && storageService.previewItem">
+
+
+      <ul>
+        <li>
+          <label for="">size:</label>
+
+          <span *ngIf="storageService.previewItem.sizeInMB">
+
+            {{ readableSize(storageService.previewItem.sizeInMB)  }}
+            MB
+          </span>
+
+          <span *ngIf="!storageService.previewItem.sizeInMB">
+
+            {{ readableSize(storageService.previewItem.size / 1024)   }}
+            KB
+          </span>
+        </li>
+        <li>
+          <label for="">name:</label>
+          <span>
+            {{storageService.previewItem.basename}}
+          </span>
+        </li>
+        <li>
+          <label for="">mime:</label>
+          <span>
+            {{storageService.previewItem.mime}}
+          </span>
+        </li>
+
+        <li>
+          <label for="">ext:</label>
+          <span>
+            {{storageService.previewItem.ext}}
+          </span>
+        </li>
+
+  
+
+
+      </ul>
+      <a class="download-link" [href]="storageService.previewPath">Download</a>
+    </div>
   </section>
 
 

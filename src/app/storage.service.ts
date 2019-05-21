@@ -14,10 +14,13 @@ export class StorageService {
   fileManagerFolderPath = '/';
 
 
-  loadingText : string = null;
+  loadingText: string = null;
   previewItem: {
-
+    basename: string,
+    sizeInMB: number,
+    size: number,
     mime: string,
+    path:string,
     ext: string
 
   } = null;

@@ -53,6 +53,7 @@ export class StorageComponent implements OnInit {
   codeEditorActive = false;
   private _mode = '';
   tempPaths: string[];
+  downloadViewActive: boolean;
 
   public get mode() {
 
@@ -81,9 +82,7 @@ export class StorageComponent implements OnInit {
   _folders: any = {};
   pathsSelected: boolean;
   modePathsSelected: boolean;
-  previewPath: any;
   imgViewerActive = false;
-  previewItem: any;
 
   visualEditorActive = false;
 
@@ -234,10 +233,12 @@ export class StorageComponent implements OnInit {
   async clickOnSelect(item) {
 
     if (this.selectType === 'single' || this.selectType === 'file' || this.selectType === 'folder') {
-      if (this.storageService.fileManagerSelectedPaths[0] == item.path)
+      if (this.storageService.fileManagerSelectedPaths[0] == item.path) {
         this.storageService.fileManagerSelectedPaths = [];
-      else
+      }
+      else {
         this.storageService.fileManagerSelectedPaths = [item.path];
+      }
     } else {
       if (this.storageService.fileManagerSelectedPaths.indexOf(item.path) === -1) {
         this.storageService.fileManagerSelectedPaths.push(item.path);
@@ -256,7 +257,7 @@ export class StorageComponent implements OnInit {
       const itemPreviewPath = this.dataService.currentServer + '/api/storage/preview' +
         item.path + '?access_token=' + encodeURIComponent((await this.authService.token()).access_token);
 
-      if (this.storageService.previewPath == itemPreviewPath) {
+      if (this.storageService.previewPath === itemPreviewPath) {
 
         this.storageService.previewPath = null;
         this.storageService.previewItem = null;
@@ -264,13 +265,19 @@ export class StorageComponent implements OnInit {
 
       } else {
         this.storageService.previewPath = itemPreviewPath;
+        this.storageService.previewItem = item;
+
+
       }
 
       this.codeEditorVisible = false;
       this.visualEditorVisible = false;
       this.iframeActive = false;
+      this.downloadViewActive = false;
       this.imgViewerActive = false;
       this.codeEditorModel = '';
+
+
       this.codeEditorLanguage = {
         json: 'json',
         html: 'html',
@@ -313,9 +320,20 @@ export class StorageComponent implements OnInit {
       }
 
 
-      if (!this.imgViewerActive) {
+      if (item.mime.indexOf('video/') !== -1 || item.mime.indexOf('audio/') !== -1 || item.mime.indexOf('text/') !== -1) {
+
+
         this.iframeActive = true;
+
+      } else {
+
+        this.downloadViewActive = true;
       }
+
+      if (item.mime.indexOf('image/') !== -1) {
+        this.imgViewerActive = true;
+      }
+
 
     } else {
       this.storageService.fileManagerSelectedPaths = [];
@@ -324,9 +342,12 @@ export class StorageComponent implements OnInit {
       } else {
         this.storageService.fileManagerFolderPath = item.path;
       }
+
+      this.refreshFolder();
+
     }
 
-    this.refreshFolder();
+
   }
 
   objectKeys(object) {

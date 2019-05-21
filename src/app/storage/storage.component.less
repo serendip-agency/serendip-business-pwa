@@ -12,20 +12,21 @@
   background: #fff;
 
 
-  .serendip-loader{
+  .serendip-loader {
     background: rgba(255, 255, 255, 0.5);
-    top:0;
-    right:0;
-    left:unset;
+    top: 0;
+    right: 0;
+    left: unset;
     bottom: 0;
-    width:360px;
+    width: 360px;
     position: absolute;
 
-    .text{
-      color:#000;
+    .text {
+      color: #000;
     }
 
   }
+
   &.in-form {
     position: absolute;
     top: 0;
@@ -327,7 +328,7 @@
         outline: none;
         background: none;
         float: right;
-        width: calc(~" 100% - 160px");
+        width: calc(~" 100% - 130px");
         font-size: 10px;
         color: #000;
         height: 30px;
@@ -439,6 +440,60 @@
       &.active {
         color: #000;
         font-weight: bold;
+      }
+    }
+  }
+
+
+  .download-view {
+    line-height: 26px;
+    display: inline-block;
+    box-shadow: 0 0 10px #ccc;
+    padding: 10px;
+    display: inline-block;
+    max-width: 400px;
+    width:100%;
+
+
+
+    .download-link{
+      margin:10px auto 0 auto;
+      padding:5px;
+      text-align:center;
+      display: block;
+      border-radius: 5px;
+      border:1px solid #6C87C3;
+      text-decoration: none;
+      font-weight: bold;
+      color:#576E9E;
+      font-size: 13px;
+    }
+    ul {
+      direction: ltr;
+      text-align: left;
+      padding:0;
+      margin:0;
+
+
+      li {
+        display: block;
+        margin-bottom: 10px;
+        padding:0;
+        margin:0;
+        span{
+          display: inline-block;
+          margin-left: 15px;
+          line-height: 16px;
+          width:auto;
+          text-overflow: ellipsis;
+        }
+        label {
+          display: block;
+          font-weight: bold;
+          &::first-letter{
+            text-transform: uppercase;
+          }
+        }
       }
     }
   }
