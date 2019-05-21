@@ -463,7 +463,17 @@
           </span>
         </li>
 
-  
+        <li *ngIf="storageService.previewItem.path.indexOf('/public/') !== -1">
+          <label for="">public link:</label>
+          <span>
+
+            <a target="_blank" [href]="sanitizer.bypassSecurityTrustResourceUrl( dataService.currentServer + '/dl/' + storageService.previewItem.path)">
+              {{dataService.currentServer + '/dl/' + storageService.previewItem.path}}
+            </a>
+          </span>
+        </li>
+
+
 
 
       </ul>

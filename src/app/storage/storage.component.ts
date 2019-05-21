@@ -152,7 +152,7 @@ export class StorageComponent implements OnInit {
     public businessService: BusinessService,
     public dashboardService: DashboardService,
     public changeRef: ChangeDetectorRef,
-    private sanitizer: DomSanitizer,
+    public sanitizer: DomSanitizer,
     public storageService: StorageService
   ) { }
 
@@ -332,6 +332,8 @@ export class StorageComponent implements OnInit {
 
       if (item.mime.indexOf('image/') !== -1) {
         this.imgViewerActive = true;
+        this.downloadViewActive = false;
+
       }
 
 

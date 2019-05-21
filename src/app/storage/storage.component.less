@@ -481,11 +481,14 @@
         padding:0;
         margin:0;
         span{
-          display: inline-block;
-          margin-left: 15px;
+          display: block;
+          padding-left: 15px;
           line-height: 16px;
-          width:auto;
+          width:100%;
           text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          box-sizing: border-box;
         }
         label {
           display: block;
@@ -493,6 +496,13 @@
           &::first-letter{
             text-transform: uppercase;
           }
+        }
+
+        a{
+          text-overflow: ellipsis;
+          overflow: hidden;
+          user-select: all;
+          color:#6C87C3;
         }
       }
     }
