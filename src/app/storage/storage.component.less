@@ -144,10 +144,10 @@
 
       &:after {
         position: absolute;
-        left: 0;
+        left: 40px;
         top: 0;
         content: 0;
-        width: 100%;
+        width: calc(100% - 40px);
         height: 100%;
         background: transparent;
       }
@@ -186,7 +186,7 @@
 
 
       &.spanned {
-        width: calc(100% - 95px);
+        width: calc(100% - 40px);
       }
 
       img {
@@ -242,13 +242,7 @@
     margin: 0;
 
     overflow-x: hidden;
-    overflow-y: hidden;
-    border-left: 2px solid transparent;
-
-    &:hover {
-      overflow-y: scroll;
-      border-left: none;
-    }
+    overflow-y: scroll;
 
 
     li {
@@ -422,17 +416,15 @@
 
     li {
       padding: 0;
-      margin: 0 2px;
       background: rgba(255, 255, 255, 0.85);
       color: #333;
       display: inline-block;
       text-align: center;
-      padding: 0 4px;
+      padding: 0 2px;
       line-height: 22px;
       font-size: 11px;
       box-sizing: border-box;
       font-family: monospace;
-      min-width: 60px;
       border: 1px solid #ccc;
       border-bottom: none;
 
@@ -452,12 +444,14 @@
     padding: 10px;
     display: inline-block;
     max-width: 400px;
-    width:100%;
-
+  width:90%;
+box-sizing: border-box;
+margin:30px auto;
 
 
     .download-link{
       margin:10px auto 0 auto;
+      
       padding:5px;
       text-align:center;
       display: block;

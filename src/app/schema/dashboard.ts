@@ -252,5 +252,76 @@ export const DashboardSchema: DashboardSectionInterface[] = [
         ]
       }
     ]
+  },
+  {
+    name: "infstructure",
+    title: "زیرساخت",
+    icon: "settings-1",
+    tabs: [
+      {
+        status: "default",
+        title: "سرورها",
+        icon: "efficiency-chart-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "server-default",
+              formName: "server-form",
+              icon: "efficiency-chart-1",
+              title: "سرورها"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "مخازن نرم‌افزاری",
+        icon: "efficiency-chart-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "repository-default",
+              formName: "repository-form",
+              icon: "efficiency-chart-1",
+              title: "مخازن نرم‌افزاری"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "اسکریپت‌ها",
+        icon: "efficiency-chart-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "server-script-default",
+              formName: "server-script-form",
+              icon: "efficiency-chart-1",
+              title: "اسکریپت‌ها"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "سرویس‌ها",
+        icon: "efficiency-chart-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "server-service-default",
+              formName: "server-service-form",
+              icon: "efficiency-chart-1",
+              title: "سرویس‌ها"
+            }
+          }
+        ]
+      }
+    ]
   }
 ];

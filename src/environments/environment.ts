@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   mode : 'development',
+  default : '/dashboard',
   //sso: 'http://localhost:8888',
   sso : false,
   googleApiKey: "AIzaSyB1ZFq-cxNYtuxRXSZgpMrdUfBe7Mr-X_g"

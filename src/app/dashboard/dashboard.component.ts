@@ -41,7 +41,6 @@ import { GmapsService } from '../gmaps.service';
 import { DataService } from '../data.service';
 import { AuthService } from '../auth.service';
 import { MatSnackBar } from '@angular/material';
-import swal from 'sweetalert2';
 import { text, validate } from 'serendip-utility';
 import { BusinessComponent } from '../business/business.component';
 import { AccountProfileComponent } from '../account/account-profile/account-profile.component';
@@ -714,25 +713,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     }
   }
-  logout() {
-    swal({
-      title: 'خارج می‌شوید؟',
-      text: 'تمام اطلاعات ذخیره شده به صورت آفلاین، حذف خواهند شد.',
-      type: 'warning',
-      showCancelButton: true,
 
-      preConfirm: () => {
-        return new Promise((resolve, reject) => {
-          swal.showLoading();
-          swal.getConfirmButton().innerText = 'در حال خروج';
-
-          this.authService.logout();
-          this.router.navigate(['/auth']);
-          resolve();
-        });
-      }
-    });
-  }
   addContainer() {
     if (this.dashboardService.currentSection) {
       // JSON.parse(JSON.stringify(this.dashboardService.currentSection.tabs))

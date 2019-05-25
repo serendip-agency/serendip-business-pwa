@@ -122,13 +122,12 @@ import { SafePipe } from "./safe.pipe";
 import { FormFieldValueCompareComponent } from "./base/form/form-field-value-compare/form-field-value-compare.component";
 import { NoteComponent } from "./note/note.component";
 import { JsonViewComponent } from "./base/report/json-view/json-view.component";
-import { IframeComponent } from './iframe/iframe.component';
-import { ServiceWorkerModule } from '@angular/service-worker';
-import { environment } from '../environments/environment';
-import { FormQuillInputComponent } from './base/form/form-quill-input/form-quill-input.component';
+import { IframeComponent } from "./iframe/iframe.component";
+import { ServiceWorkerModule } from "@angular/service-worker";
+import { environment } from "../environments/environment";
+import { FormQuillInputComponent } from "./base/form/form-quill-input/form-quill-input.component";
 
-import { MonacoEditorModule } from '@materia-ui/ngx-monaco-editor';
-
+import { MonacoEditorModule } from "@materia-ui/ngx-monaco-editor";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -277,7 +276,9 @@ export const primaryComponents = [
     MatMomentDateModule,
     MatBottomSheetModule,
     MonacoEditorModule,
-    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: environment.production
+    })
   ],
   providers: [
     DataService,
@@ -290,4 +291,4 @@ export const primaryComponents = [
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

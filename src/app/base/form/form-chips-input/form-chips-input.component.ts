@@ -45,6 +45,7 @@ export class FormChipsInputComponent implements OnInit {
 
   @Input() selectType: "single" | "multiple";
 
+  @Input() formName;
   @Input() entityName: string;
   @Input() label: string;
 
@@ -55,7 +56,7 @@ export class FormChipsInputComponent implements OnInit {
 
   @Input()
   set model(value: any) {
-    // 
+    //
 
     // if (!value) {
     //   if (this.selectType == "multiple") {
@@ -122,7 +123,7 @@ export class FormChipsInputComponent implements OnInit {
               {
                 component: "FormComponent",
                 inputs: {
-                  name: "" + this.entityName + "-form",
+                  name: this.formName,
                   documentId: _id,
                   model: { _id },
                   entityName: this.entityName,
@@ -153,7 +154,7 @@ export class FormChipsInputComponent implements OnInit {
             {
               component: "FormComponent",
               inputs: {
-                name: "" + this.entityName + "-form",
+                name: this.formName,
                 entityName: this.entityName,
                 entityLabel: this.label
               }
@@ -244,7 +245,7 @@ export class FormChipsInputComponent implements OnInit {
       .listen(this.entityName)
       .subscribe(async (msg: { eventType: any; model: any }) => {
         const model = msg.model;
-        
+
         this.cachedEntities[model._id] = model;
         this.changeRef.detectChanges();
         if (this.creatingEntity) {

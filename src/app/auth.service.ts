@@ -1,16 +1,16 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import {
   ActivatedRouteSnapshot,
   CanActivate,
   Router,
   RouterStateSnapshot
-} from "@angular/router";
-import { TokenModel } from "serendip-business-model";
+} from '@angular/router';
+import { TokenModel } from 'serendip-business-model';
 
-import { BusinessService } from "./business.service";
-import { IdbDeleteAllDatabases } from "./idb.service";
-import { environment } from "src/environments/environment";
+import { BusinessService } from './business.service';
+import { IdbDeleteAllDatabases } from './idb.service';
+import { environment } from 'src/environments/environment';
 import { querystring } from 'serendip-utility';
 
 @Injectable()
@@ -39,45 +39,42 @@ export class AuthService {
   }
   async token(): Promise<TokenModel> {
     let token: TokenModel;
-    if (localStorage.getItem("token")) {
-      token = JSON.parse(localStorage.getItem("token"));
-    }
 
-    if (token) {
-      if (token.expires_at - Date.now() < 60000) {
-        token = await this.refreshToken(token);
-      }
+  
+
+    token = JSON.parse(localStorage.getItem('token') || null);
+
+    if (token && token.expires_at - Date.now() < 60000) {
+      token = await this.refreshToken(token);
     }
 
     if (!token) {
-      localStorage.removeItem("token");
+      localStorage.removeItem('token');
     }
-
-    // 
 
     if (token && token.access_token) {
       this.loggedIn = true;
       return token;
     } else {
       this.loggedIn = false;
-      throw new Error("cant get token");
+      throw new Error('cant get token');
     }
   }
 
   async register(mobile: string, password: string): Promise<any> {
     return this.http
-      .post<TokenModel>(this.apiUrl + "/api/auth/register", {
+      .post<TokenModel>(this.apiUrl + '/api/auth/register', {
         username: mobile,
-        mobile: mobile,
-        password: password
+        mobile,
+        password
       })
       .toPromise();
   }
 
   async sendVerify(mobile: string): Promise<any> {
     return this.http
-      .post(this.apiUrl + "/api/auth/sendVerifySms", {
-        mobile: mobile
+      .post(this.apiUrl + '/api/auth/sendVerifySms', {
+        mobile
       })
       .toPromise();
   }
@@ -93,7 +90,7 @@ export class AuthService {
       }, timeout || 10000);
 
       this.http
-        .post(this.apiUrl + "/api/auth/oneTimePassword", {
+        .post(this.apiUrl + '/api/auth/oneTimePassword', {
           mobile,
           mobileCountryCode
         })
@@ -109,17 +106,17 @@ export class AuthService {
 
   async sendResetPasswordToken(mobile: string): Promise<any> {
     return this.http
-      .post(this.apiUrl + "/api/auth/sendResetPasswordToken", {
-        mobile: mobile
+      .post(this.apiUrl + '/api/auth/sendResetPasswordToken', {
+        mobile
       })
       .toPromise();
   }
 
   async verifyMobile(mobile: string, code: string): Promise<any> {
     return this.http
-      .post(this.apiUrl + "/api/auth/verifyMobile", {
-        mobile: mobile,
-        code: code
+      .post(this.apiUrl + '/api/auth/verifyMobile', {
+        mobile,
+        code
       })
       .toPromise();
   }
@@ -131,11 +128,11 @@ export class AuthService {
     passwordConfirm: string
   ): Promise<any> {
     return this.http
-      .post(this.apiUrl + "/api/auth/resetPassword", {
-        mobile: mobile,
-        code: code,
-        password: password,
-        passwordConfirm: passwordConfirm
+      .post(this.apiUrl + '/api/auth/resetPassword', {
+        mobile,
+        code,
+        password,
+        passwordConfirm
       })
       .toPromise();
   }
@@ -145,10 +142,10 @@ export class AuthService {
    * Sends a POST request to /api/auth/token.
    * If request was succesfull it will store it in localStorage as "token"
    * and change loggedIn Property of service to true
-   * @param username 
-   * @param mobile 
-   * @param password 
-   * @param oneTimePassword 
+   * @param username
+   * @param mobile
+   * @param password
+   * @param oneTimePassword
    */
   async login(
     username: string,
@@ -158,24 +155,24 @@ export class AuthService {
   ): Promise<TokenModel> {
 
     const newToken = await this.http
-      .post<TokenModel>(this.apiUrl + "/api/auth/token", {
+      .post<TokenModel>(this.apiUrl + '/api/auth/token', {
         username,
         mobile,
         password,
         oneTimePassword,
-        grant_type: "password"
+        grant_type: 'password'
       })
       .toPromise();
 
     if (!newToken) {
-      throw new Error("empty token");
+      throw new Error('empty token');
     }
 
-    // 
+    //
 
     this.loggedIn = true;
 
-    localStorage.setItem("token", JSON.stringify(newToken));
+    localStorage.setItem('token', JSON.stringify(newToken));
 
     return newToken;
   }
@@ -188,13 +185,13 @@ export class AuthService {
   async refreshToken(token: TokenModel): Promise<TokenModel> {
     try {
       const newToken = await this.http
-        .post<TokenModel>(this.apiUrl + "/api/auth/refreshToken", {
+        .post<TokenModel>(this.apiUrl + '/api/auth/refreshToken', {
           refresh_token: token.refresh_token,
           access_token: token.access_token
         })
         .toPromise();
 
-      localStorage.setItem("token", JSON.stringify(newToken));
+      localStorage.setItem('token', JSON.stringify(newToken));
       return newToken;
     } catch (res) {
       if (res.status === 401 || res.status === 400) {
@@ -221,8 +218,8 @@ export class AuthGuard implements CanActivate {
 
   /**
    * Main function of [AuthGuard] checks [AuthService.loggedIn] and set "lastUrl" in localStorage before redirecting to auth/login
-   * @param route 
-   * @param state 
+   * @param route
+   * @param state
    */
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -234,7 +231,7 @@ export class AuthGuard implements CanActivate {
       return true;
     } else {
       // Store the attempted URL for redirecting
-      localStorage.setItem("lastUrl", url);
+      localStorage.setItem('lastUrl', url);
       // Navigate to the login page with extras
       this.router.navigate(['/auth', 'login']);
     }

@@ -1,3 +1,48 @@
+<header *ngIf="router.url.indexOf('/filemanager') != -1" id="header">
+
+
+
+  <div class="inner">
+
+
+    <div class="logo">
+      <img src="assets/graphics/brand/logo-6.svg" />
+    </div>
+
+    <div class="explorer-toggle active"
+      (click)="!storageService.previewItem ? router.navigate(['/filemanager']) : storageService.previewItem = storageService.previewPath = null">
+      <img *ngIf="!storageService.previewItem" src="assets/icon-crm-header/file-manager-cloud-4.svg" alt="" />
+      <img *ngIf="storageService.previewItem" src="assets/icons/close-2.svg" />
+    </div>
+
+
+    <div class="nav">
+      <ul>
+
+
+        <li class="logout">
+          <a (click)="dashboardService.logout()">
+            <img [src]="'assets/icons/off-1.svg'" />
+          </a>
+        </li>
+        <li class="">
+          <a>
+            <img [src]="'assets/icons/account-profile-user-4.svg'" />
+          </a>
+        </li>
+
+
+      </ul>
+    </div>
+
+    <div class="clear"></div>
+  </div>
+
+  <div class="clearfix"></div>
+  <mat-progress-bar [color]="'primary'" mode="indeterminate">
+  </mat-progress-bar>
+</header>
+
 <div [class]="viewMode + ' storage'">
 
 
@@ -76,12 +121,12 @@
       </li>
 
       <li [class.spanned]="mode == 'download'"
-        *ngIf="mode == 'download' ? true : (storageService.fileManagerSelectedPaths?.length > 0 && !mode)"
+        *ngIf="mode == 'download' ? true : (storageService.fileManagerSelectedPaths?.length == 1 && !mode)"
         (click)="setMode('download')">
         <img src="assets/icons/download.svg" title="دانلود" />
         <span *ngIf="mode == 'download'">
           فایل های مورد نظر برای
-          <b>دانلود</b>
+          <strong>دانلود</strong>
           را انتخاب کنید
         </span>
       </li>
@@ -91,7 +136,7 @@
         <img src="assets/icons/share.svg" title="اشتراک گذاری" />
         <span *ngIf="mode == 'share'">
           فایل و یا پوشه های مورد نظر برای
-          <b>اشتراک گذاری</b>
+          <strong>اشتراک گذاری</strong>
           را انتخاب کنید
         </span>
       </li>
@@ -101,7 +146,7 @@
         <div class="icon">ZIP</div>
         <span *ngIf="mode == 'zip'">
           فایل‌های مورد نظر برای
-          <b>فشرده‌سازی</b>
+          <strong>فشرده‌سازی</strong>
           را
           انتخاب کنید
         </span>
@@ -114,9 +159,15 @@
         <div *ngIf="mode != 'rename'" class="icon">RENAME</div>
         <span *ngIf="mode == 'rename'">
           فایل یا پوشه مورد نظر برای
-          <b>تغییر نام</b>
+          <strong>تغییر نام</strong>
           را
           انتخاب کنید
+        </span>
+      </li>
+
+      <li [class.spanned]="true" *ngIf="mode == 'moveTo' || mode == 'copyTo'">
+        <span>
+          مقصد را انتخاب کنید و دکمه انتقال را بزنید
         </span>
       </li>
 
@@ -128,7 +179,7 @@
         <div class="icon">MOVE</div>
         <span *ngIf="mode == 'move'">
           فایل یا پوشه مورد نظر برای
-          <b>انتقال</b>
+          <strong>انتقال</strong>
           را
           انتخاب کنید
         </span>
@@ -140,7 +191,7 @@
         <div class="icon">COPY</div>
         <span *ngIf="mode == 'copy'">
           فایل یا پوشه مورد نظر برای
-          <b>کپی</b>
+          <strong>کپی</strong>
           را
           انتخاب کنید
         </span>
@@ -151,7 +202,7 @@
       <li *ngIf="mode == 'newZip'">
         <span>
           نام
-          <b>فایل ZIP</b>
+          <strong>فایل ZIP</strong>
           را وارد کنید
         </span>
       </li>
@@ -161,7 +212,7 @@
 
         <span *ngIf="mode == 'newFolder'">
           نام
-          <b>فولدر جدید</b>
+          <strong>فولدر جدید</strong>
           را وارد کنید
         </span>
       </li>
@@ -242,15 +293,26 @@
 
       <li *ngFor="let path of objectKeys(toUpload)">
 
-        <div class="img">
-          <img src="assets/icons/upload.svg" class="icon" alt="" />
 
-        </div>
 
         <div class="progress" [style.width]="toUpload[path].percent + '%'"></div>
 
 
-        <div class="select"></div>
+        <div class="select" style="background: none;">
+
+          <img *ngIf="toUpload[path].uploading" (click)="toUpload[path].uploading = false" src="assets/icons/pause.svg"
+            class="icon" alt="" />
+          <img *ngIf="!toUpload[path].uploading" (click)="upload(path, toUpload[path].data)"
+            src="assets/icons/refresh.svg" class="icon" alt="" />
+
+        </div>
+
+        <input type="text" readonly [class]="
+        sUtils.text.persianKeyChar.indexOf(toUpload[path].name[0]) != -1
+          ? 'fa'
+          : 'en'
+      " [value]="toUpload[path].name" />
+
 
         <div class="size">
           {{ readableSize(toUpload[path].size / 1024 / 1024) | rpd }}
@@ -258,11 +320,10 @@
           <div class="en">MB</div>
         </div>
 
-        <input type="text" readonly [class]="
-          sUtils.text.persianKeyChar.indexOf(toUpload[path].name[0]) != -1
-            ? 'fa'
-            : 'en'
-        " [value]="toUpload[path].name" />
+        <div class="img">
+          <img src="assets/icons/upload.svg" class="icon" alt="" />
+        </div>
+
 
       </li>
 
@@ -270,30 +331,21 @@
         <div *ngIf="item.uploadPercent && item.uploadPercent != 100" class="progress"
           [style.width]="item.uploadPercent + '%'"></div>
 
-        <div class="select" (click)=" clickOnSelect(item) ">
+        <div class="select" (click)="clickOnSelect(item) ">
           <div
             *ngIf="storageService.fileManagerFolderPath != '/' &&( item.isDirectory ? (selectType != 'file' && selectType != 'files') :  (selectType != 'folder' && selectType != 'folders'))">
-
             <img src="assets/icons/tab-1.svg" *ngIf="  storageService.fileManagerSelectedPaths.indexOf(item.path) == -1"
               class=" " />
             <img src="assets/icons/check-9.svg"
               *ngIf=" storageService.fileManagerSelectedPaths.indexOf(item.path) != -1" class=" selected" />
-
-
           </div>
         </div>
 
-
-
-
         <input type="text" (click)="clickOnItem(item)" readonly [class]="
-            sUtils.text.persianKeyChar.indexOf(item.basename[0]) != -1
+            isPersian(item.basename)
               ? 'fa'
               : 'en'
-          " [value]="item.basename" />
-
-
-
+          " [value]="item.basename " />
 
         <div class="size" (click)="clickOnItem(item)" *ngIf="item.isFile">
           <span *ngIf="item.sizeInMB">
@@ -315,7 +367,7 @@
           </span>
         </div>
 
-        <div class="img">
+        <div class="img" (click)="clickOnItem(item)">
           <img *ngIf="item.isFile " [class.icon]="mode"
             [src]="'assets/mimetypes/' + item.mime?.replace('/','-') + '.svg'" />
 
@@ -396,7 +448,7 @@
         Download
       </li>
 
-      <li [class.active]="codeEditorActive" *ngIf="codeEditorVisible"
+      <li [class.active]="codeEditorActive" *ngIf="router.url.indexOf('/filemanager') == -1 && codeEditorVisible"
         (click)="downloadViewActive =false; imgViewerActive = false; iframeActive = false; visualEditorActive = false; codeEditorActive = true">
         Code Editor
       </li>
@@ -467,7 +519,8 @@
           <label for="">public link:</label>
           <span>
 
-            <a target="_blank" [href]="sanitizer.bypassSecurityTrustResourceUrl( dataService.currentServer + '/dl/' + storageService.previewItem.path)">
+            <a target="_blank"
+              [href]="sanitizer.bypassSecurityTrustResourceUrl( dataService.currentServer + '/dl/' + storageService.previewItem.path)">
               {{dataService.currentServer + '/dl/' + storageService.previewItem.path}}
             </a>
           </span>

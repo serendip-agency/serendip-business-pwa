@@ -423,5 +423,87 @@ export const ReportsSchema: ReportInterface[] = [
     entityName: "service",
     label: "",
     fields: []
+  },
+  {
+    name: "server-default",
+    entityName: "_server",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام ",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "ip",
+        label: "IP",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "provider",
+        label: "تامین‌کننده ",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "datacenter",
+        label: "دیتاسنتر ",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "services",
+        label: "سرویس‌ها ",
+        template: { component: "ShortTextViewComponent" }
+      }
+    ]
+  },
+  {
+    name: "repository-default",
+    entityName: "_repository",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام ",
+        template: { component: "ShortTextViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "description",
+        label: "توضیحات ",
+        template: { component: "LongTextViewComponent" }
+      }
+    ]
+  },
+  {
+    name: "server-script-default",
+    entityName: "_serverScript",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام ",
+        template: { component: "ShortTextViewComponent" }
+      }
+    ]
+  },
+  {
+    name: "server-service-default",
+    entityName: "_serverService",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام ",
+        template: { component: "ShortTextViewComponent" }
+      }
+    ]
   }
 ];
