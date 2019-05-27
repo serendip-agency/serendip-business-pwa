@@ -130,6 +130,12 @@ export const ReportsSchema: ReportInterface[] = [
         name: "icon",
         label: "آیکون",
         template: { component: "IconViewComponent" }
+      },
+      {
+        enabled: true,
+        name: "webhook",
+        label: "Web Hook",
+        template: { component: "EntityWebhookViewComponent" }
       }
     ]
   },

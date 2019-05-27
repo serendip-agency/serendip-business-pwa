@@ -128,6 +128,7 @@ import { environment } from "../environments/environment";
 import { FormQuillInputComponent } from "./base/form/form-quill-input/form-quill-input.component";
 
 import { MonacoEditorModule } from "@materia-ui/ngx-monaco-editor";
+import { EntityWebhookViewComponent } from "./base/report/entity-webhook-view/entity-webhook-view.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -189,6 +190,7 @@ export const dynamicComponents = [
   StarRatingViewComponent,
   DateViewComponent,
   CurrencyViewComponent,
+  EntityWebhookViewComponent,
   // Business related  report views
 
   ClubRatingViewComponent,

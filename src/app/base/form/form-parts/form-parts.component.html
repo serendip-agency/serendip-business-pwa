@@ -1,11 +1,6 @@
 <div *ngFor="let part of filterParts(formSchema.parts)">
-  <div
-    *ngIf="part.propertyType != 'array' && part.propertyType != 'object'"
-    [class]="part.cssClass"
-  >
-    <ndc-dynamic
-      *ngIf="getDynamicPart(part.componentName)"
-      [ndcDynamicInputs]="
+  <div *ngIf="part.propertyType != 'array' && part.propertyType != 'object'" [class]="part.cssClass">
+    <ndc-dynamic *ngIf="getDynamicPart(part.componentName)" [ndcDynamicInputs]="
         extendObj(
           {
             model: model[part.propertyName],
@@ -14,12 +9,9 @@
           },
           part.inputs || {}
         )
-      "
-      [ndcDynamicOutputs]="{
+      " [ndcDynamicOutputs]="{
         modelChange: dynamicPartModelChange(part.propertyName)
-      }"
-      [ndcDynamicComponent]="getDynamicPart(part.componentName)"
-    ></ndc-dynamic>
+      }" [ndcDynamicComponent]="getDynamicPart(part.componentName)"></ndc-dynamic>
 
     <div *ngIf="!getDynamicPart(part.componentName)" class="logbox auto-height">
       {{ part.componentName }} not found.
@@ -30,30 +22,18 @@
     <div *ngFor="let item of model[part.propertyName]; let itemIndex = index">
       <div class="form-array-row">
         <div class="item">
-          <app-form-parts
-            [WidgetChange]="WidgetChange"
-            [document]="document"
-            [formSchema]="
+          <app-form-parts [WidgetChange]="WidgetChange" [document]="document" [formSchema]="
               part.parts.toString() === 'clone-top-parts' ? formSchema : part
-            "
-            [model]="model[part.propertyName][itemIndex]"
-          >
+            " [model]="(model || {})[part.propertyName][itemIndex]">
           </app-form-parts>
         </div>
         <div class="action">
-          <div
-            class="plus"
-            (click)="model[part.propertyName].push({}); detectChange()"
-          >
+          <div class="plus" (click)="(model || {})[part.propertyName].push({}); detectChange()">
             <img src="assets/icons/plus-add-2.svg" />
           </div>
-          <div
-            class="minus"
-            *ngIf="itemIndex != 0"
-            (click)="
-              model[part.propertyName].splice(itemIndex, 1); detectChange()
-            "
-          >
+          <div class="minus" *ngIf="itemIndex != 0" (click)="
+            (model || {})[part.propertyName].splice(itemIndex, 1); detectChange()
+            ">
             <img src="assets/icons/recycle-bin-trash.svg" />
           </div>
         </div>
@@ -65,14 +45,9 @@
     <div class="form-object-row" [class]="part.cssClass">
       <div class="object-label" *ngIf="part.label">{{ part.label }}</div>
 
-      <app-form-parts
-        [document]="document"
-        [WidgetChange]="WidgetChange"
-        [formSchema]="
+      <app-form-parts [document]="document" [WidgetChange]="WidgetChange" [formSchema]="
           part.parts.toString() === 'clone-top-parts' ? formSchema : part
-        "
-        [model]="model[part.propertyName]"
-      >
+        " [model]="(model || {})[part.propertyName]">
       </app-form-parts>
     </div>
   </div>

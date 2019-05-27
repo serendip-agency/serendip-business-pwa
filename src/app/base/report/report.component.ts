@@ -36,6 +36,7 @@ import { DateViewComponent } from "./date-view/date-view.component";
 import { IconViewComponent } from "./icon-view/icon-view.component";
 import { PriceViewComponent } from "./price-view/price-view.component";
 import { JsonViewComponent } from "./json-view/json-view.component";
+import { EntityWebhookViewComponent } from "./entity-webhook-view/entity-webhook-view.component";
 
 @Component({
   selector: "app-report",
@@ -244,7 +245,8 @@ export class ReportComponent implements OnInit {
     JsonViewComponent,
     // Business related  report views
     ClubRatingViewComponent,
-    ContactsViewComponent
+    ContactsViewComponent,
+    EntityWebhookViewComponent
   };
 
   resultLoading = false;
@@ -428,8 +430,6 @@ export class ReportComponent implements OnInit {
         .sort((a, b) => Math.random())[0].name;
     }
 
-    
-
     if (this.format) {
       this.formatted = await this.reportService.formatReport(
         this.report,
@@ -566,7 +566,6 @@ export class ReportComponent implements OnInit {
         "_report",
         this.reportId
       )) as any;
-      
     }
 
     if (!this.entityName) {
@@ -671,8 +670,6 @@ export class ReportComponent implements OnInit {
 
     //  this.report = await this.dataService.details("report", reportId);
 
-    
-
     this.report = null;
     this.reportId = reportId;
     this.WidgetChange.emit({ inputs: { reportId } });
@@ -711,7 +708,7 @@ export class ReportComponent implements OnInit {
           if (this.page.filter(p => p._id === event.model._id).length === 0) {
             this.page.unshift(event.model);
           }
-          
+
           this.report.count++;
         }
 

@@ -9,22 +9,15 @@
 
       <mat-card-subtitle> {{ subtitle }} </mat-card-subtitle>
 
-      <div
-        class="menu"
-        [class.active]="mode == 'chart'"
-        (click)="mode == 'chart' ? setMode('data') : setMode('format')"
-      >
+      <div class="menu" [class.active]="mode == 'chart'"
+        (click)="mode == 'chart' ? setMode('data') : setMode('format')">
         <img src="assets/icons/efficiency-chart-3.svg" />
       </div>
 
-      <div
-        class="menu spanned"
-        [class.active]="mode == 'report'"
-        (click)="
+      <div class="menu spanned" [class.active]="mode == 'report'" (click)="
           setMode(mode == 'report' ? 'data' : 'report');
           mode == 'data' ? refresh() : ''
-        "
-      >
+        ">
         <img [src]="'assets/icons/funnel.svg'" />
 
         <span *ngIf="activeFieldQueries().length > 0">
@@ -32,11 +25,8 @@
         </span>
       </div>
 
-      <div
-        class="menu spanned"
-        [class.active]="mode == 'data'"
-        (click)="setMode('data'); mode != 'data' ? refresh() : ''"
-      >
+      <div class="menu spanned" [class.active]="mode == 'data'"
+        (click)="setMode('data'); mode != 'data' ? refresh() : ''">
         <img [src]="'assets/icons/check-list-2.svg'" />
 
         <span>
@@ -45,10 +35,7 @@
         </span>
       </div>
     </mat-card-header>
-    <mat-progress-bar
-      *ngIf="resultLoading"
-      mode="indeterminate"
-    ></mat-progress-bar>
+    <mat-progress-bar *ngIf="resultLoading" mode="indeterminate"></mat-progress-bar>
     <mat-card-content *ngIf="initDone && error">
       <div class="logbox">
         {{ error.message || error.statusText || error | json }}
@@ -57,25 +44,15 @@
 
     <mat-card-content *ngIf="initDone && !error">
       <div class="form-wrapper report-save" *ngIf="mode == 'save' && report">
-        <app-form-text-input
-          [label]="'نام گزارش'"
-          (modelChange)="report.label = $event"
-          [model]="report.label"
-        ></app-form-text-input>
-        <app-form-radio-input
-          (modelChange)="saveMode = $event"
-          [model]="!report.offline ? 'report' : 'data'"
-          [data]="[
+        <app-form-text-input [label]="'نام گزارش'" (modelChange)="report.label = $event" [model]="report.label">
+        </app-form-text-input>
+        <app-form-radio-input (modelChange)="saveMode = $event" [model]="!report.offline ? 'report' : 'data'" [data]="[
             { value: 'report', label: 'ذخیره گزارش' },
             { value: 'data', label: 'ذخیره گزارش و نتیجه' }
-          ]"
-        ></app-form-radio-input>
+          ]"></app-form-radio-input>
       </div>
 
-      <div
-        class="report-chart form-wrapper"
-        *ngIf="!formatsLoading && !resultLoading && mode == 'format'"
-      >
+      <div class="report-chart form-wrapper" *ngIf="!formatsLoading && !resultLoading && mode == 'format'">
         <!-- <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label> -->
 
         <!-- <app-form-radio-input
@@ -90,107 +67,66 @@
 
         <br />
 
-        <app-form-radio-input
-          [model]="format.options.groupBy"
-          [label]="
+        <app-form-radio-input [model]="format.options.groupBy" [label]="
             'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید (DATASET)' +
               ' (' +
               getFieldsForSelect('string', 'boolean', 'number', 'array')
                 .length +
               ')' | rpd
-          "
-          [data]="getFieldsForSelect('string', 'boolean', 'number', 'array')"
-          [display]="'block'"
-          (modelChange)="
+          " [data]="getFieldsForSelect('string', 'boolean', 'number', 'array')" [display]="'block'" (modelChange)="
             format.options.groupBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
-          "
-        ></app-form-radio-input>
+          "></app-form-radio-input>
 
-        <app-form-radio-input
-          [model]="format?.options?.dateBy"
-          [label]="
+        <app-form-radio-input [model]="format?.options?.dateBy" [label]="
             'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید' +
               ' (' +
               getFieldsForSelect('date').length +
               ')' | rpd
-          "
-          [data]="getFieldsForSelect('date')"
-          [display]="'block'"
-          (modelChange)="
+          " [data]="getFieldsForSelect('date')" [display]="'block'" (modelChange)="
             format.options.dateBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
-          "
-        ></app-form-radio-input>
+          "></app-form-radio-input>
 
-        <app-form-radio-input
-          [model]="format?.options?.valueBy"
-          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'"
-          [data]="getFieldsForY()"
-          [display]="'block'"
+        <app-form-radio-input [model]="format?.options?.valueBy"
+          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'" [data]="getFieldsForY()" [display]="'block'"
           (modelChange)="
             format.options.valueBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
-          "
-        ></app-form-radio-input>
+          "></app-form-radio-input>
 
-        <app-form-radio-input
-          [model]="format?.options?.sizeBy"
-          [label]="'ویژگی را برای عمق و یا سایز انتخاب کنید  (Z)'"
-          [data]="getFieldsForSelect('number')"
-          [display]="'block'"
-          (modelChange)="
+        <app-form-radio-input [model]="format?.options?.sizeBy" [label]="'ویژگی را برای عمق و یا سایز انتخاب کنید  (Z)'"
+          [data]="getFieldsForSelect('number')" [display]="'block'" (modelChange)="
             format.options.sizeBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
-          "
-        ></app-form-radio-input>
+          "></app-form-radio-input>
       </div>
       <div *ngIf="formatted && mode == 'chart'">
         <div class="form-wrapper" style="text-align: center;">
-          <div
-            class="double-field"
-            *ngIf="format?.type != '1d'"
-            style="max-width: 400px"
-          >
+          <div class="double-field" *ngIf="format?.type != '1d'" style="max-width: 400px">
             <div class="w-20">
-              <app-form-select-input
-                [data]="dateRangeUnitsToSelect"
-                [label]="'بازه‌های زمانی'"
-                [selectType]="'single'"
-                (modelChange)="formatDateRangeUnitChange($event)"
-                [modelTrackBy]="['unit', 'format']"
-                [model]="format.options.dateRangeUnit"
-              ></app-form-select-input>
+              <app-form-select-input [data]="dateRangeUnitsToSelect" [label]="'بازه‌های زمانی'" [selectType]="'single'"
+                (modelChange)="formatDateRangeUnitChange($event)" [modelTrackBy]="['unit', 'format']"
+                [model]="format.options.dateRangeUnit"></app-form-select-input>
             </div>
 
             <div class="w-20">
-              <app-form-text-input
-                [label]="'تعداد بازه'"
-                dir="ltr"
-                (modelChange)="
+              <app-form-text-input [label]="'تعداد بازه'" dir="ltr" (modelChange)="
                   format.options.dateRangeCount = $event;
                   generateFormat();
                   WidgetChange.emit({ inputs: { format: format } })
-                "
-                [model]="format.options.dateRangeCount"
-              ></app-form-text-input>
+                " [model]="format.options.dateRangeCount"></app-form-text-input>
             </div>
 
             <div class="w-60">
-              <app-form-date-input
-                [label]="'تا تاریخ'"
-                dir="ltr"
-                (modelChange)="
+              <app-form-date-input [label]="'تا تاریخ'" dir="ltr" (modelChange)="
                   format.options.dateRangeEnd = $event;
                   generateFormat();
                   WidgetChange.emit({ inputs: { format: format } })
-                "
-                [model]="format.options.dateRangeEnd"
-              ></app-form-date-input>
+                " [model]="format.options.dateRangeEnd"></app-form-date-input>
             </div>
           </div>
-          <div
-            *ngFor="
+          <div *ngFor="
               let item of filterChartsByDataType(
                 format.options.dateBy
                   ? '2d'
@@ -198,23 +134,17 @@
                   ? '3d'
                   : '1d'
               )
-            "
-            class="chart-type"
-            (click)="
+            " class="chart-type" (click)="
               format.chart == item.name
                 ? (format.chart = '')
                 : (format.chart = item.name);
               WidgetChange.emit({ inputs: { format: format } })
-            "
-            [class.selected]="format.chart == item.name"
-          >
+            " [class.selected]="format.chart == item.name">
             <img [src]="'/assets/charts/' + item.icon + '.svg'" alt="" />
           </div>
         </div>
 
-        <div
-          style="margin:15px auto 0 auto;text-align: center;font-weight: bold;font-size:14px;"
-        >
+        <div style="margin:15px auto 0 auto;text-align: center;font-weight: bold;font-size:14px;">
           <div class="title" *ngIf="format.type == '1d'">
             {{
               format?.options?.valueBy
@@ -246,14 +176,8 @@
           </div>
         </div>
 
-        <app-chart
-          [chartType]="format.chart"
-          [data]="formatted.data"
-        ></app-chart>
-        <table
-          class="formatted-report-table"
-          *ngIf="formatted && format.type == '1d'"
-        >
+        <app-chart [chartType]="format.chart" [data]="formatted.data"></app-chart>
+        <table class="formatted-report-table" *ngIf="formatted && format.type == '1d'">
           <thead>
             <tr>
               <th *ngFor="let field of formatted.fields">
@@ -273,192 +197,118 @@
       <div class="report-model" *ngIf="mode == 'report' && report">
         <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
         <div class="fields">
-          <app-form-select-input
-            [data]="reports"
-            [selectType]="'single'"
-            [label]="'انتخاب از گزارشات ذخیره شده'"
-            (modelChange)="changeReport($event)"
-            [model]="report._id"
-          ></app-form-select-input>
+          <app-form-select-input [data]="reports" [selectType]="'single'" [label]="'انتخاب از گزارشات ذخیره شده'"
+            (modelChange)="changeReport($event)" [model]="report._id"></app-form-select-input>
 
           <div dndDropzone (dndDrop)="reportFieldDrop($event)">
-            <div
-              class="field"
-              dndEffectAllowed="all"
-              [dndDraggable]="{ field: field, index: fieldIndex }"
+            <div class="field" dndEffectAllowed="all" [dndDraggable]="{ field: field, index: fieldIndex }"
               (dndStart)="reportFieldDragStart(field, $event)"
-              *ngFor="let field of report.fields; let fieldIndex = index"
-            >
-              <img
-                dndHandle
-                class="drag-handle"
-                src="assets/icons/menu-6.svg"
-                alt=""
-              />
+              *ngFor="let field of report.fields; let fieldIndex = index">
+              <img dndHandle class="drag-handle" src="assets/icons/menu-6.svg" alt="" />
 
-              <img
-                *ngIf="
+              <img *ngIf="
                   field.enabled && field.queries && field.queries.length > 0
-                "
-                (click)="field.showQueries = !field.showQueries"
-                class="queries-icon"
-                [class.active]="
+                " (click)="field.showQueries = !field.showQueries" class="queries-icon" [class.active]="
                   _.findWhere(field.queries, { enabled: true }) ||
                   field.showQueries
-                "
-                src="assets/icons/filter-6.svg"
-                alt=""
-              />
+                " src="assets/icons/filter-6.svg" alt="" />
 
-              <div
-                class="field-name"
-                [class.ltr]="
+              <div class="field-name" [class.ltr]="
                   sUtil.text.englishKeyChar.indexOf(field.label[0]) !== -1
-                "
-              >
+                ">
                 <mat-slide-toggle [(ngModel)]="field.enabled">
                 </mat-slide-toggle>
                 <span> {{ field.label }} ({{ field.type }}) </span>
               </div>
 
-              <div
-                class="template-inputs"
-                *ngIf="
+              <div class="template-inputs" *ngIf="
                   field.template &&
                   (field.template.formId || field.template.formName) &&
                   field.enabled
-                "
-              >
+                ">
                 <div class="form">
-                  <app-form
-                    (WidgetChange)="field.template.inputs = $event.inputs.model"
-                    [formType]="'inline'"
-                    [name]="field.template.formName"
-                    [formId]="field.template.formId"
-                  ></app-form>
+                  <app-form (WidgetChange)="field.template.inputs = $event.inputs.model" [formType]="'inline'"
+                    [name]="field.template.formName" [formId]="field.template.formId"></app-form>
                 </div>
               </div>
 
-              <div
-                *ngIf="
+              <div *ngIf="
                   field.enabled &&
                   field.queries &&
                   (_.findWhere(field.queries, { enabled: true }) ||
                     field.showQueries) &&
                   field.queries.length > 0
-                "
-                class="queries"
-              >
-                <div
-                  [class]="'property-query'"
-                  *ngFor="let query of field.queries"
-                >
-                  <app-form-checkbox-input
-                    [label]="field.label + ' ' + query.label"
-                    [model]="query.enabled"
-                    (modelChange)="query.enabled = $event"
-                  ></app-form-checkbox-input>
+                " class="queries">
+                <div [class]="'property-query'" *ngFor="let query of field.queries">
+                  <app-form-checkbox-input [label]="field.label + ' ' + query.label" [model]="query.enabled"
+                    (modelChange)="query.enabled = $event"></app-form-checkbox-input>
                   <!-- <label for=""> {{ field.label }} {{ query.label }} </label>
                 <div class="en">{{ query.methodInputForm }}</div> -->
                   <div class="form">
-                    <app-form
-                      *ngIf="query.enabled"
-                      [formType]="'inline'"
-                      [defaultModel]="query.methodInput || {}"
-                      (WidgetChange)="query.methodInput = $event.inputs.model"
-                      [name]="query.methodInputForm"
-                    ></app-form>
+                    <app-form *ngIf="query.enabled" [formType]="'inline'" [defaultModel]="query.methodInput || {}"
+                      (WidgetChange)="query.methodInput = $event.inputs.model" [name]="query.methodInputForm">
+                    </app-form>
                   </div>
                 </div>
               </div>
             </div>
 
             <div dndPlaceholderRef>
-              <div
-                style="margin:5px 0;height:30px;border:1px dashed #ccc;border-radius: 10px;"
-                *ngIf="fieldDragging"
-              ></div>
+              <div style="margin:5px 0;height:30px;border:1px dashed #ccc;border-radius: 10px;" *ngIf="fieldDragging">
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div
-        class="report-result"
-        [style.overflowX]="resultLoading ? 'hidden' : 'scroll'"
-        *ngIf="!resultLoading && report && mode == 'data'"
-      >
+      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'"
+        *ngIf="!resultLoading && report && mode == 'data'">
         <div class="report-header">
           <div class="inner">
             <div class="select">
-              <mat-checkbox
-                *ngIf="page && page[0] && page[0]._id"
-                (change)="allSelectChange($event)"
-                [checked]="allSelected()"
-              ></mat-checkbox>
+              <mat-checkbox *ngIf="page && page[0] && page[0]._id" (change)="allSelectChange($event)"
+                [checked]="allSelected()"></mat-checkbox>
             </div>
-            <div
-              class="field-label"
-              *ngFor="let field of enabledReportFields()"
-              [class.ltr]="
+            <div class="field-label" *ngFor="let field of enabledReportFields()" [class.ltr]="
                 sUtil.text.englishKeyChar.indexOf(field.label[0]) !== -1
-              "
-            >
-              <ndc-dynamic
-                [ndcDynamicInputs]="
+              ">
+              <ndc-dynamic [ndcDynamicInputs]="
                   extendObj(field.template?.inputs || {}, {
                     label: field.label,
                     viewType: 'label'
                   })
-                "
-                [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
-                [ndcDynamicComponent]="
+                " [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }" [ndcDynamicComponent]="
                   getViewComponent(
                     field.template?.component || 'JsonViewComponent'
                   )
-                "
-              ></ndc-dynamic>
+                "></ndc-dynamic>
             </div>
           </div>
         </div>
 
-        <mat-progress-bar
-          *ngIf="resultLoading"
-          [color]="'warn'"
-          [mode]="'indeterminate'"
-        >
+        <mat-progress-bar *ngIf="resultLoading" [color]="'warn'" [mode]="'indeterminate'">
         </mat-progress-bar>
 
         <div class="records" *ngIf="!resultLoading">
-          <div
-            class="record"
-            *ngFor="
+          <div class="record" *ngFor="
               let record of _.take(page || [], pageSize);
               trackBy: trackByFn
-            "
-          >
+            ">
             <div class="select">
-              <mat-checkbox
-                *ngIf="record._id"
-                [checked]="selected.indexOf(record._id) != -1"
-                (change)="recordSelectChange(record._id, $event)"
-              ></mat-checkbox>
+              <mat-checkbox *ngIf="record._id" [checked]="selected.indexOf(record._id) != -1"
+                (change)="recordSelectChange(record._id, $event)"></mat-checkbox>
             </div>
 
             <div class="field" *ngFor="let field of enabledReportFields()">
-              <ndc-dynamic
-                [ndcDynamicInputs]="
+              <ndc-dynamic [ndcDynamicInputs]="
                   extendObj(
-                    { label: field.label, model: record[field.name] },
+                    { label: field.label, model: record[field.name], name : field.name, record : record  },
                     field.template?.inputs || {}
                   )
-                "
-                [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }"
-                [ndcDynamicComponent]="
+                " [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }" [ndcDynamicComponent]="
                   getViewComponent(
                     field.template?.component || 'JsonViewComponent'
                   )
-                "
-              ></ndc-dynamic>
+                "></ndc-dynamic>
             </div>
           </div>
 
@@ -469,84 +319,56 @@
       </div>
     </mat-card-content>
 
-    <mat-card-actions
-      *ngIf="
+    <mat-card-actions *ngIf="
         initDone &&
         !resultLoading &&
         report &&
         (mode == 'chart' || mode == 'format')
-      "
-    >
-      <button
-        *ngIf="mode == 'format'"
-        class="sp-button-icon with-text pull-left"
-        (click)="generateFormat()"
-      >
+      ">
+      <button *ngIf="mode == 'format'" class="sp-button-icon with-text pull-left" (click)="generateFormat()">
         <span>نمایش نتیجه</span>
       </button>
 
-      <button
-        *ngIf="mode == 'chart'"
-        class="sp-button-icon pull-left"
-        (click)="WidgetChange.emit({ inputs: { mode: 'format' } })"
-      >
+      <button *ngIf="mode == 'chart'" class="sp-button-icon pull-left"
+        (click)="WidgetChange.emit({ inputs: { mode: 'format' } })">
         <img src="assets/icons/settings-adjust-reg.svg" />
       </button>
 
-      <button
-        *ngIf="mode == 'chart'"
-        class="sp-button-icon pull-left"
-        (click)="generateFormat()"
-      >
+      <button *ngIf="mode == 'chart'" class="sp-button-icon pull-left" (click)="generateFormat()">
         <img src="assets/icons/refresh.svg" />
       </button>
 
       <div class="clearfix"></div>
     </mat-card-actions>
 
-    <mat-card-actions
-      *ngIf="
+    <mat-card-actions *ngIf="
         initDone &&
         !resultLoading &&
         report &&
         (mode == 'report' || mode == 'save')
-      "
-    >
+      ">
       <button class="sp-button-icon with-text" (click)="save()">
         <img src="assets/icons/save-backup-1.svg" />
         <span>ذخیره گزارش</span>
       </button>
     </mat-card-actions>
 
-    <mat-card-actions
-      *ngIf="initDone && !resultLoading && report && mode == 'data'"
-    >
+    <mat-card-actions *ngIf="initDone && !resultLoading && report && mode == 'data'">
       <button class="sp-button-icon" (click)="new()">
         <img src="assets/icons/plus-add-3.svg" />
       </button>
 
-      <button
-        class="sp-button-icon"
-        (click)="edit()"
-        *ngIf="selected.length > 0"
-      >
+      <button class="sp-button-icon" (click)="edit()" *ngIf="selected.length > 0">
         <!-- ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }} انتخاب‌شده -->
 
         <img src="assets/icons/office-paper-work-pen.svg" />
       </button>
 
-      <button
-        class="sp-button-icon"
-        (click)="delete()"
-        *ngIf="selected.length > 0"
-      >
+      <button class="sp-button-icon" (click)="delete()" *ngIf="selected.length > 0">
         <img src="assets/icons/recycle-bin-trash.svg" />
       </button>
 
-      <div
-        class="paginator pull-left"
-        *ngIf="!resultLoading && report && report.count && pageCount > 0"
-      >
+      <div class="paginator pull-left" *ngIf="!resultLoading && report && report.count && pageCount > 1">
         <div class="next" *ngIf="pageIndex < pageCount" (click)="changePage(1)">
           <img src="assets/icons/arrow-left-back-10.svg" />
         </div>

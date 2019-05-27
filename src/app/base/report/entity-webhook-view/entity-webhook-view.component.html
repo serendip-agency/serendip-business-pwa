@@ -1,0 +1,12 @@
+<div class="view">
+  <div class="label en" *ngIf="viewType == 'label'">
+    {{ label | rpd }}
+  </div>
+
+
+
+  <div class="cell" *ngIf="viewType != 'label'">
+    <input type="text" readonly [value]="model ? (dataService.currentServer + '/api/hooks/submit?key=' + model) : ''">
+    <img src="assets/icons/refresh.svg" (click)="refresh()" />
+  </div>
+</div>

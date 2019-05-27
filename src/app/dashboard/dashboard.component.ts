@@ -4,26 +4,26 @@ import {
   EventEmitter,
   OnDestroy,
   OnInit
-} from '@angular/core';
+} from "@angular/core";
 import {
   ActivatedRoute,
   NavigationCancel,
   NavigationEnd,
   Router
-} from '@angular/router';
-import { polyfill } from 'mobile-drag-drop';
-import { scrollBehaviourDragImageTranslateOverride } from 'mobile-drag-drop/scroll-behaviour';
-import * as moment from 'moment-jalaali';
-import { DndDropEvent } from 'ngx-drag-drop';
-import { Subscription } from 'rxjs';
-import * as _ from 'underscore';
+} from "@angular/router";
+import { polyfill } from "mobile-drag-drop";
+import { scrollBehaviourDragImageTranslateOverride } from "mobile-drag-drop/scroll-behaviour";
+import * as moment from "moment-jalaali";
+import { DndDropEvent } from "ngx-drag-drop";
+import { Subscription } from "rxjs";
+import * as _ from "underscore";
 
-import { FormComponent } from '../base/form/form.component';
-import { ReportComponent } from '../base/report/report.component';
-import { TriggersComponent } from '../base/triggers/triggers.component';
-import { BusinessService } from '../business.service';
-import { IdbService, IdbDeleteAllDatabases } from '../idb.service';
-import * as lunr from 'lunr';
+import { FormComponent } from "../base/form/form.component";
+import { ReportComponent } from "../base/report/report.component";
+import { TriggersComponent } from "../base/triggers/triggers.component";
+import { BusinessService } from "../business.service";
+import { IdbService, IdbDeleteAllDatabases } from "../idb.service";
+import * as lunr from "lunr";
 import {
   DashboardContainerInterface,
   DashboardGridInterface,
@@ -31,24 +31,24 @@ import {
   DashboardTabInterface,
   DashboardWidgetInterface,
   EntityModel
-} from 'serendip-business-model';
-import { WidgetService } from '../widget.service';
-import { WsService } from '../ws.service';
-import { DashboardService } from './../dashboard.service';
-import { CalendarService } from '../calendar.service';
-import { WeatherService } from '../weather.service';
-import { GmapsService } from '../gmaps.service';
-import { DataService } from '../data.service';
-import { AuthService } from '../auth.service';
-import { MatSnackBar } from '@angular/material';
-import { text, validate } from 'serendip-utility';
-import { BusinessComponent } from '../business/business.component';
-import { AccountProfileComponent } from '../account/account-profile/account-profile.component';
-import { AccountPasswordComponent } from '../account/account-password/account-password.component';
-import { AccountSessionsComponent } from '../account/account-sessions/account-sessions.component';
-import { ObService } from '../ob.service';
-import { StorageService } from '../storage.service';
-import { ReportService } from '../report.service';
+} from "serendip-business-model";
+import { WidgetService } from "../widget.service";
+import { WsService } from "../ws.service";
+import { DashboardService } from "./../dashboard.service";
+import { CalendarService } from "../calendar.service";
+import { WeatherService } from "../weather.service";
+import { GmapsService } from "../gmaps.service";
+import { DataService } from "../data.service";
+import { AuthService } from "../auth.service";
+import { MatSnackBar } from "@angular/material";
+import { text, validate } from "serendip-utility";
+import { BusinessComponent } from "../business/business.component";
+import { AccountProfileComponent } from "../account/account-profile/account-profile.component";
+import { AccountPasswordComponent } from "../account/account-password/account-password.component";
+import { AccountSessionsComponent } from "../account/account-sessions/account-sessions.component";
+import { ObService } from "../ob.service";
+import { StorageService } from "../storage.service";
+import { ReportService } from "../report.service";
 
 // optional import of scroll behavior
 polyfill({
@@ -58,8 +58,8 @@ polyfill({
 
 // workaround to make scroll prevent work in iOS Safari > 10
 try {
-  window.addEventListener('touchmove', function () { }, { passive: false });
-} catch (e) { }
+  window.addEventListener("touchmove", function() {}, { passive: false });
+} catch (e) {}
 
 const dynamicComponents = {
   FormComponent,
@@ -72,9 +72,9 @@ const dynamicComponents = {
 };
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.less']
+  selector: "app-dashboard",
+  templateUrl: "./dashboard.component.html",
+  styleUrls: ["./dashboard.component.less"]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
   explorerVisible = false;
@@ -89,21 +89,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
     didYouMean: string;
     text: string;
     results: { [key: string]: { docId: string; score: number } }[];
-  } = { mode: '', text: '', didYouMean: '', results: [] };
+  } = { mode: "", text: "", didYouMean: "", results: [] };
 
   isGridEmpty = false;
   lastGridEmptyCheck = 0;
-  dashboardDate = '';
-  dashboardTime = '';
-  dashboardLoadingText = '';
+  dashboardDate = "";
+  dashboardTime = "";
+  dashboardLoadingText = "";
   dashboardDateTimeTimeout;
   dashboardDateTimeFormats = [
-    'dddd jD jMMMM jYYYY',
-    'dddd D MMMM YYYY',
-    'jYYYY/jMM/jDD',
-    'YYYY/MM/DD'
+    "dddd jD jMMMM jYYYY",
+    "dddd D MMMM YYYY",
+    "jYYYY/jMM/jDD",
+    "YYYY/MM/DD"
   ];
-  screen: 'mobile' | 'desktop';
+  screen: "mobile" | "desktop";
   gridSizeChange = new EventEmitter();
   private _grid: DashboardGridInterface;
   tabDragging: DashboardTabInterface;
@@ -117,7 +117,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (this._lastDataSync) {
       return this._lastDataSync;
     } else {
-      const fromLs = localStorage.getItem('last-data-sync');
+      const fromLs = localStorage.getItem("last-data-sync");
       if (fromLs) {
         this._lastDataSync = parseInt(fromLs, 10);
         return this._lastDataSync;
@@ -128,14 +128,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   set lastDataSync(val) {
-    localStorage.setItem('last-data-sync', val.toString());
+    localStorage.setItem("last-data-sync", val.toString());
     this._lastDataSync = val;
   }
   get lastGridSync() {
     if (this._lastGridSync) {
       return this._lastGridSync;
     } else {
-      const fromLs = localStorage.getItem('last-grid-sync');
+      const fromLs = localStorage.getItem("last-grid-sync");
       if (fromLs) {
         this._lastGridSync = parseInt(fromLs, 10);
         return this._lastGridSync;
@@ -146,7 +146,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   set lastGridSync(val) {
-    localStorage.setItem('last-grid-sync', val.toString());
+    localStorage.setItem("last-grid-sync", val.toString());
     this._lastGridSync = val;
   }
 
@@ -168,22 +168,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
   explorerAnimOutTimeout = null;
   rpd(input) {
     if (!input) {
-      input = '';
+      input = "";
     }
     const convert = a => {
-      return ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'][a];
+      return ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"][a];
     };
     return input.toString().replace(/\d/g, convert);
   }
 
   explorerToggleClick() {
-
-    if(this.storageService.previewItem){
-
+    if (this.storageService.previewItem) {
       this.storageService.previewItem = null;
       this.storageService.previewPath = null;
       return;
-
     }
 
     if (this.startActive) {
@@ -217,19 +214,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (section) {
       return section.icon;
     } else {
-      return 'folder-archive-open';
+      return "folder-archive-open";
     }
   }
 
   getInputDirection(input: string) {
     if (!input) {
-      return 'rtl';
+      return "rtl";
     }
 
-    return text.englishKeyChar.indexOf(input[0] || ' ') === -1 ? 'rtl' : 'ltr';
+    return text.englishKeyChar.indexOf(input[0] || " ") === -1 ? "rtl" : "ltr";
   }
   doSearch(q) {
-    this.search.didYouMean = '';
+    this.search.didYouMean = "";
 
     if (!q) {
       return;
@@ -257,7 +254,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
 
     if (
-      text.englishKeyChar.indexOf(q[0] || ' ') !== -1 &&
+      text.englishKeyChar.indexOf(q[0] || " ") !== -1 &&
       searchInCommonEnglishWords.length === 0 &&
       !validate.isNumeric(q)
     ) {
@@ -279,7 +276,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   public async indexCollections(
     callback?: (collectionName: string, error: any) => void
   ) {
-    for (const entity of await this.dataService.list('entity')) {
+    for (const entity of await this.dataService.list("entity")) {
       const fields = JSON.parse(
         JSON.stringify(await this.dataService.fields(entity.name, null, 0, 1))
       )
@@ -309,7 +306,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (!this.dashboardDateFormat) {
       this.dashboardDateFormat = localStorage.getItem(
-        'dashboardDateTimeFormat'
+        "dashboardDateTimeFormat"
       );
     }
     if (!this.dashboardDateFormat) {
@@ -322,13 +319,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardTime = now
       .getHours()
       .toString()
-      .padStart(2, '0');
+      .padStart(2, "0");
     this.dashboardTime +=
-      '-' +
+      "-" +
       now
         .getMinutes()
         .toString()
-        .padStart(2, '0');
+        .padStart(2, "0");
 
     this.changeRef.detectChanges();
     // this.dashboardTime +=
@@ -346,7 +343,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   toggleDashboardDateTimeFormat() {
     this.dashboardDateTimeFormats.push(this.dashboardDateTimeFormats.shift());
     localStorage.setItem(
-      'dashboardDateTimeFormat',
+      "dashboardDateTimeFormat",
       this.dashboardDateTimeFormats[0]
     );
 
@@ -373,19 +370,19 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public dataService: DataService,
     private snackBar: MatSnackBar
   ) {
-    moment.loadPersian({ dialect: 'persian-modern', usePersianDigits: false });
+    moment.loadPersian({ dialect: "persian-modern", usePersianDigits: false });
   }
 
   clickOnStartWrapper(event: MouseEvent) {
-    if ((event.target as HTMLElement).getAttribute('id') === 'start') {
-      document.getElementById('start').classList.remove('fadeIn');
+    if ((event.target as HTMLElement).getAttribute("id") === "start") {
+      document.getElementById("start").classList.remove("fadeIn");
       this.startActive = false;
     }
   }
 
   getExplorerTabs(tabs: any) {
     return _.filter(tabs, (tab: any) => {
-      return tab.title != null && tab.name !== 'default';
+      return tab.title != null && tab.name !== "default";
     });
   }
 
@@ -464,8 +461,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   tabDragStart(tab: DashboardTabInterface) {
     this.tabDragging = tab;
-
-    
   }
 
   tabDragEnd() {
@@ -477,7 +472,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   onTabDragover(event: DragEvent, containerIndex: number) {
-    
     // if (this.screen === "mobile") {
     //   return;
     // }
@@ -568,9 +562,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.hideStart();
     this.gmapsService.dashboardMapVisible = !this.gmapsService
       .dashboardMapVisible;
-    this.gmapsService.emitSetMode({ mapId: 'dashboard-map', mode: 'explorer' });
+    this.gmapsService.emitSetMode({ mapId: "dashboard-map", mode: "explorer" });
     this.gmapsService.emitSetVisible({
-      mapId: 'dashboard-map',
+      mapId: "dashboard-map",
       visible: this.gmapsService.dashboardMapVisible
     });
   }
@@ -586,7 +580,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   hideMap() {
     this.gmapsService.dashboardMapVisible = false;
     this.gmapsService.emitSetVisible({
-      mapId: 'dashboard-map',
+      mapId: "dashboard-map",
       visible: this.gmapsService.dashboardMapVisible
     });
   }
@@ -607,15 +601,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.grid.containers[0].tabs.push(tab);
 
-
     this.syncGrid();
-
   }
 
-
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
-    
-    if (this.screen === 'mobile') {
+    if (this.screen === "mobile") {
       this.explorerMouseOut();
     }
 
@@ -626,7 +616,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!eventData.tab && typeof eventData.tabIndex !== 'number') {
+    if (!eventData.tab && typeof eventData.tabIndex !== "number") {
       return;
     }
 
@@ -687,7 +677,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async initGrid(tabs: DashboardTabInterface[]) {
-    const tabsToAdd = _.where(tabs, { status: 'default' });
+    const tabsToAdd = _.where(tabs, { status: "default" });
 
     this.grid = { containers: [{ tabs: tabsToAdd }] };
     this.grid.version = Date.now();
@@ -695,7 +685,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       this.grid.containers[0].tabs[0].active = true;
     }
 
-    if (this.dashboardService.screen === 'desktop') {
+    if (this.dashboardService.screen === "desktop") {
       for (let i = 0; i < tabsToAdd.length - 1; i++) {
         this.addContainer();
       }
@@ -752,7 +742,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     tabIndex: number,
     widgetIndex: number
   ) {
-    return (options: { command: 'open-tab'; tab: DashboardTabInterface }) => {
+    return (options: { command: "open-tab"; tab: DashboardTabInterface }) => {
       // FIXME:S
       const existInGrid = _.chain(this.grid.containers)
         .map((c: DashboardContainerInterface) => {
@@ -775,7 +765,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         .value();
 
       if (existInGrid) {
-        console.warn('widget already exist');
+        console.warn("widget already exist");
         return;
       }
 
@@ -807,13 +797,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
 
         setTimeout(() => {
-          const gridElem = document.querySelector('.grid-container');
+          const gridElem = document.querySelector(".grid-container");
 
           let navPassed = 0;
           let widthToRightOfGrid = 0;
           const tabContainers = document
-            .querySelector('.grid-container')
-            .querySelectorAll('.tabs-container') as any;
+            .querySelector(".grid-container")
+            .querySelectorAll(".tabs-container") as any;
           tabContainers.forEach(tabContainer => {
             if (navPassed >= containerModifiedId) {
               return;
@@ -825,7 +815,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
           gridElem.scroll({
             left: gridElem.scrollWidth - widthToRightOfGrid - 440,
-            behavior: 'smooth'
+            behavior: "smooth"
           });
         }, 500);
       } else {
@@ -847,8 +837,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async syncGrid() {
-
-
     if (this.lastGridSync) {
       if (Date.now() - this.lastGridSync < 1000) {
         return;
@@ -856,9 +844,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
     this.grid.version = Date.now();
 
-
     localStorage.setItem(
-      'grid-' + this.dashboardService.currentSection.name,
+      "grid-" + this.dashboardService.currentSection.name,
       JSON.stringify({
         section: this.dashboardService.currentSection.name,
         grid: this.grid,
@@ -867,16 +854,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     );
 
     if (this.dashboardSocket) {
-
-
-      console.warn('syncing grid ...');
+      console.warn("syncing grid ...");
 
       this.dashboardSocket.send(
         JSON.stringify({
-          command: 'sync_grid',
+          command: "sync_grid",
           business: this.businessService.getActiveBusinessId(),
           data: JSON.stringify({
-            section: this.dashboardService.currentSection.name || 'start',
+            section: this.dashboardService.currentSection.name || "start",
             grid: this.grid
           })
         })
@@ -894,7 +879,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
       return;
     }
     return (newWidget: DashboardWidgetInterface) => {
-
       newWidget.inputs = _.extend(
         this.grid.containers[containerIndex].tabs[tabIndex].widgets[widgetIndex]
           .inputs,
@@ -905,18 +889,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
         widgetIndex
       ] = _.extend(
         this.grid.containers[containerIndex].tabs[tabIndex].widgets[
-        widgetIndex
+          widgetIndex
         ],
         newWidget
       );
 
       // this.grid = JSON.parse(JSON.stringify(this.grid))
 
-
-
       this.changeRef.markForCheck();
       this.syncGrid();
-
     };
   }
 
@@ -958,8 +939,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   startButtonClick() {
     this.startActive = !this.startActive;
-    document.getElementById('start').classList.toggle('fadeIn');
-    document.querySelector('body').classList.toggle('hideScroll');
+    document.getElementById("start").classList.toggle("fadeIn");
+    document.querySelector("body").classList.toggle("hideScroll");
   }
   async handleStartButtonMove() {
     return;
@@ -1039,12 +1020,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   hideStart() {
-    document.getElementById('start').classList.remove('fadeIn');
+    document.getElementById("start").classList.remove("fadeIn");
     this.startActive = false;
   }
 
   showStart() {
-    document.getElementById('start').classList.add('fadeIn');
+    document.getElementById("start").classList.add("fadeIn");
     this.startActive = true;
   }
   isNavTabFull(navTabId) {
@@ -1052,7 +1033,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   adjustLayout() {
-    const gridElem = document.querySelector('.grid-container');
+    const gridElem = document.querySelector(".grid-container");
 
     if (!gridElem) {
       return;
@@ -1069,11 +1050,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
   handleFullNav() {
     setTimeout(() => {
-      _.forEach(document.querySelectorAll('ul.tabs-nav'), navTab => {
-        const navTabId = navTab.getAttribute('id');
+      _.forEach(document.querySelectorAll("ul.tabs-nav"), navTab => {
+        const navTabId = navTab.getAttribute("id");
 
         const container = this.grid.containers[
-          parseInt(navTabId.split('-').reverse()[0], 10)
+          parseInt(navTabId.split("-").reverse()[0], 10)
         ];
         if (!container) {
           return;
@@ -1081,9 +1062,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
         let listItemsWith = 0;
 
-        (document.querySelectorAll('#' + navTabId + ' li') as any).forEach(
+        (document.querySelectorAll("#" + navTabId + " li") as any).forEach(
           (item: HTMLElement) => {
-            if (!item.classList.contains('full-nav')) {
+            if (!item.classList.contains("full-nav")) {
               listItemsWith += item.getBoundingClientRect().width;
             }
           }
@@ -1119,15 +1100,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
   dataSync() {
     return new Promise((resolve, reject) => {
-      this.dashboardLoadingText = 'Syncing dashboard ...';
+      this.dashboardLoadingText = "Syncing dashboard ...";
 
       const syncStart = Date.now();
       this.dataService
         .sync({
           onCollectionPush: (collectionName, error) => {
             this.dashboardLoadingText = `${collectionName} entity ${
-              !error ? 'pushed' : 'push error ' + error.message
-              }`;
+              !error ? "pushed" : "push error " + error.message
+            }`;
           },
           onCollectionPull: collectionName => {
             this.dashboardLoadingText = `${collectionName} collection pulled`;
@@ -1145,17 +1126,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
           resolve();
         })
         .catch(res => {
-          
-          if (res.status === 0 || res.status === 500) {
-            this.dashboardLoadingText = 'Postponing Sync ...';
-            resolve();
-          } else {
-            this.dashboardLoadingText = 'Choose business for Syncing ...';
-            setTimeout(() => {
-              localStorage.removeItem('businessId');
-              this.router.navigate(['/business']);
-            }, 2500);
-          }
+          this.dashboardLoadingText = "Postponing Sync ...";
+          resolve();
+          // if (res.status === 0 || res.status === 500) {
+          //   this.dashboardLoadingText = "Postponing Sync ...";
+          //   resolve();
+          // } else {
+          //   this.dashboardLoadingText = "Choose business for Syncing ...";
+          //   setTimeout(() => {
+          //     localStorage.removeItem("businessId");
+          //     this.router.navigate(["/business"]);
+          //   }, 2500);
+          // }
         });
     });
   }
@@ -1164,11 +1146,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     if (!Element.prototype.matches) {
       Element.prototype.matches =
         Element.prototype.webkitMatchesSelector ||
-        function (s) {
+        function(s) {
           // tslint:disable-next-line:prefer-const
-          let matches = (this.document || this.ownerDocument).querySelectorAll(s);
+          let matches = (this.document || this.ownerDocument).querySelectorAll(
+            s
+          );
           let i = matches.length;
-          while (--i >= 0 && matches.item(i) !== this) { }
+          while (--i >= 0 && matches.item(i) !== this) {}
           return i > -1;
         };
     }
@@ -1184,7 +1168,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   handleGridMouseDragScroll() {
     let capture = false;
     // let lastCapture = 0;
-    const grid = document.querySelector('.grid-container') as any;
+    const grid = document.querySelector(".grid-container") as any;
 
     if (!grid) {
       setTimeout(() => {
@@ -1214,9 +1198,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
       const target = down_ev.target as HTMLElement;
 
       if (
-        !this.getClosest(target, '.mat-card-content') &&
-        !this.getClosest(target, '.tab-handle') &&
-        target.id !== 'start-button'
+        !this.getClosest(target, ".mat-card-content") &&
+        !this.getClosest(target, ".tab-handle") &&
+        target.id !== "start-button"
       ) {
         if (captureTimeout) {
           clearTimeout(captureTimeout);
@@ -1231,7 +1215,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       if (capture) {
         grid.scroll({
           left: grid.scrollLeft - (move_ev.clientX - last.x),
-          behavior: 'instant'
+          behavior: "instant"
         });
         last = { x: move_ev.clientX, y: move_ev.clientY };
       }
@@ -1275,11 +1259,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
       {
-        name: params.section || 'start'
+        name: params.section || "start"
       }
     );
 
-    let localGrid: any = localStorage.getItem('grid-' + params.section);
+    let localGrid: any = localStorage.getItem("grid-" + params.section);
     if (localGrid) {
       localGrid = JSON.parse(localGrid);
     }
@@ -1288,15 +1272,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
     let remoteGrid;
     try {
       remoteGrid = await this.dataService.request({
-        method: 'post',
-        path: '/api/business/grid',
-        model: { section: params.section || 'start' },
+        method: "post",
+        path: "/api/business/grid",
+        model: { section: params.section || "start" },
         timeout: 1000,
         retry: false
       });
-    } catch (error) { }
-
-    
+    } catch (error) {}
 
     if (localGrid && localGrid.version) {
       if (remoteGrid) {
@@ -1322,8 +1304,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (localGrid && remoteGrid) {
       if (localGrid.version < remoteGrid.version) {
-        
-
         this.grid = remoteGrid.grid;
         this.changeRef.detectChanges();
         return;
@@ -1338,7 +1318,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       await this.initGrid(this.dashboardService.currentSection.tabs);
     } else {
       console.warn(
-        'didn\'t initGrid(), dashboardService.currentSection was not set'
+        "didn't initGrid(), dashboardService.currentSection was not set"
       );
     }
   }
@@ -1352,12 +1332,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async initDashboardSocket() {
-    this.dashboardSocket = await this.wsService.newSocket('/dashboard', true);
+    this.dashboardSocket = await this.wsService.newSocket("/dashboard", true);
 
     this.dashboardSocket.onclose = () => this.initDashboardSocket();
     this.dashboardSocket.onmessage = (ev: MessageEvent) => {
       const msg: {
-        command: 'change_grid';
+        command: "change_grid";
         data: {
           version: number;
           section: string;
@@ -1365,9 +1345,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         };
       } = JSON.parse(ev.data);
 
-      if (msg.command === 'change_grid') {
+      if (msg.command === "change_grid") {
         localStorage.setItem(
-          'grid-' + msg.data.section,
+          "grid-" + msg.data.section,
           JSON.stringify(msg.data)
         );
         if (
@@ -1375,8 +1355,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
           msg.data.grid.version > this.grid.version
         ) {
           if (Date.now() - this.lastGridSync > 100) {
-            
-
             this.lastGridSync = Date.now();
             this.grid = msg.data.grid;
 
@@ -1387,11 +1365,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     };
   }
   async initEntitySocket() {
-    this.entitySocket = await this.wsService.newSocket('/entity', true);
+    this.entitySocket = await this.wsService.newSocket("/entity", true);
     this.entitySocket.onclose = () => this.initEntitySocket();
     this.entitySocket.onmessage = msg => {
       const data: {
-        event: 'update' | 'delete' | 'insert';
+        event: "update" | "delete" | "insert";
         model: EntityModel;
       } = JSON.parse(msg.data);
 
@@ -1408,13 +1386,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     try {
       await this.dataSync();
       this.lastDataSync = Date.now();
-    } catch (error) { }
+    } catch (error) {}
     this.dashboardReady = true;
   }
 
   async ngOnInit() {
-
-
     this.initEntitySocket()
       .then()
       .catch();
@@ -1425,19 +1401,20 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.lastDataSync = 0;
     //  await (await this.idbService.syncIDB("pull")).clear();
 
-    this.dashboardLoadingText = 'Initiating dashboard ...';
+    this.dashboardLoadingText = "Initiating dashboard ...";
     this.dashboardDateTimeTick();
 
-    
-
-    this.dashboardLoadingText = 'Loading business ...';
+    this.dashboardLoadingText = "Loading business ...";
 
     if (!this.businessService.getActiveBusinessId()) {
-      this.router.navigate(['/business']);
+      this.router.navigate(["/business"]);
       return;
     }
 
-    await this.dataService.loadBusiness();
+    this.dataService
+      .loadBusiness()
+      .then(() => {})
+      .catch(() => {});
 
     // if (!this.businessService.business.publicKey) {
     //   this.router.navigate(["/business", "encryption"]);
@@ -1449,16 +1426,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //   return;
     // }
 
-    this.dashboardLoadingText = 'Syncing Data ...';
+    this.dashboardLoadingText = "Syncing Data ...";
 
     if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
       try {
         await this.dataSync();
         this.lastDataSync = Date.now();
-      } catch (error) { }
+      } catch (error) {}
     }
 
-    this.dashboardLoadingText = 'Loading schemas ...';
+    this.dashboardLoadingText = "Loading schemas ...";
 
     await this.dashboardService.setDefaultSchema();
 
@@ -1468,13 +1445,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.handleFullNav();
 
-    this.dashboardLoadingText = 'Indexing Data ...';
+    this.dashboardLoadingText = "Indexing Data ...";
 
     await this.indexCollections();
 
-    this.dashboardLoadingText = 'Connecting to socket ...';
+    this.dashboardLoadingText = "Connecting to socket ...";
 
-    this.dashboardService.dashboardCommand.on('command', command => {
+    this.dashboardService.dashboardCommand.on("command", command => {
       this.dashboardCommand(0, 0, 0)(command);
     });
 
@@ -1509,15 +1486,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // document.querySelector("body").classList.toggle("hideScroll");
 
     document.onscroll = () => {
-      const toNotify = ['aside#explorer', '.grid-container', 'header'];
+      const toNotify = ["aside#explorer", ".grid-container", "header"];
 
       if (document.scrollingElement.scrollTop > 1) {
         toNotify.forEach(s =>
-          document.querySelector(s).classList.add('docScrolled')
+          document.querySelector(s).classList.add("docScrolled")
         );
       } else {
         toNotify.forEach(s =>
-          document.querySelector(s).classList.remove('docScrolled')
+          document.querySelector(s).classList.remove("docScrolled")
         );
       }
     };
