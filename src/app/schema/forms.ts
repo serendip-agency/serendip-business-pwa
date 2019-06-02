@@ -269,10 +269,11 @@ export const FormsSchema: FormInterface[] = [
         cssClass: "w-60",
         inputs: {
           entityName: "_entity",
+          formName: "entity-form",
           propertiesToSearch: ["name"],
           propertiesSearchMode: "mix",
           selectType: "single",
-          label: "شی "
+          label: "شی مرتبط"
         }
       },
       {
@@ -285,33 +286,53 @@ export const FormsSchema: FormInterface[] = [
             componentName: "FormRadioInputComponent",
             inputs: {
               display: "inline-block",
-              label: "رویداد",
+              label: "نوع شرط",
               data: [
                 {
-                  label: "رویداد‌های اطلاعات",
-                  value: "form"
+                  label: "ثبت",
+                  value: "insert"
                 },
                 {
-                  label: "رویداد‌های گزارش",
-                  value: "report"
+                  label: "ویرایش",
+                  value: "update"
+                },
+                {
+                  label: "حذف",
+                  value: "delete"
+                },
+                {
+                  label: "زمان مشخص",
+                  value: "date"
+                },
+                {
+                  label: "تایمر",
+                  value: "timer"
                 }
               ]
             }
           },
           {
-            if: '^form.type == "report"',
-            componentName: "FormChipsInputComponent",
-            propertyName: "reportId",
-            propertyType: "string",
-            cssClass: "w-60",
+            componentName: "ReportComponent",
+            propertyName: "report",
             inputs: {
-              entityName: "_report",
-              propertiesToSearch: ["name"],
-              propertiesSearchMode: "mix",
-              selectType: "single",
-              label: "گزارش مرتبط"
+              entityName : '_entity',
+              layout : 'report'
             }
           },
+          // {
+          //   componentName: "FormChipsInputComponent",
+          //   propertyName: "reportId",
+          //   propertyType: "string",
+          //   cssClass: "w-60",
+          //   inputs: {
+          //     entityName: "_report",
+          //     formName: "report-form",
+          //     propertiesToSearch: ["name"],
+          //     propertiesSearchMode: "mix",
+          //     selectType: "single",
+          //     label: "گزارش مرتبط"
+          //   }
+          // },
           {
             if: '^form.type == "form"',
             propertyName: "formEvent",

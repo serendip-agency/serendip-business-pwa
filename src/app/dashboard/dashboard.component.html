@@ -1,8 +1,14 @@
-<app-calendar></app-calendar>
+<div *ngIf="dashboardReady">
 
-<app-storage [viewMode]="'full'" *ngIf="storageService.fileManagerVisible"></app-storage>
+  <app-calendar></app-calendar>
 
-<app-map [mapId]="'dashboard-map'"></app-map>
+  <app-storage [viewMode]="'full'" *ngIf="storageService.fileManagerVisible"></app-storage>
+
+  <app-map [mapId]="'dashboard-map'"></app-map>
+
+</div>
+
+
 <div id="serendip-loader" *ngIf="!dashboardReady">
   <div class="box">
     <div class="logo-wrapper out-of-the-box">

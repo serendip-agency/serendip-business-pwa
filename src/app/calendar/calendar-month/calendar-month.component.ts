@@ -1,12 +1,9 @@
-import { Component, OnInit, Input, ChangeDetectorRef } from "@angular/core";
+import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import * as Moment from "moment";
 import * as MomentJalaali from "moment-jalaali";
-
-import * as sUtil from "serendip-utility";
-import * as _ from "underscore";
-import IranCalendarEvents from "../calendar.iran.events";
-import { IdbService } from "src/app/idb.service";
 import { CalendarService } from "src/app/calendar.service";
+import * as _ from "underscore";
+import { DashboardService } from "src/app/dashboard.service";
 
 @Component({
   selector: "app-calendar-month",
@@ -16,9 +13,9 @@ import { CalendarService } from "src/app/calendar.service";
 export class CalendarMonthComponent implements OnInit {
   moment: typeof Moment;
 
-  layoutTimeout;
+  layoutTimeout: any;
 
-  @Input() size: "mini" | "large" = "large";
+  @Input() size: "mini" | "large" | "year-month" = "large";
   @Input() showYearTitle: boolean;
 
   private _calendarType: "persian" | "gregorian" = "persian";
@@ -29,6 +26,8 @@ export class CalendarMonthComponent implements OnInit {
     class: string[];
     formats: any;
     holiday: boolean;
+    today: boolean;
+    events?: any[];
   }[];
 
   @Input() set calendarType(value: "persian" | "gregorian") {
@@ -81,6 +80,7 @@ export class CalendarMonthComponent implements OnInit {
 
   constructor(
     public calendarService: CalendarService,
+    public dashboardService: DashboardService,
     private changeRef: ChangeDetectorRef
   ) {}
 
@@ -137,7 +137,7 @@ export class CalendarMonthComponent implements OnInit {
             element.formats["jYYYY/jMM/jDD"]
           )
           .then(events => {
-       //     element.events = events;
+            element.events = events;
 
             element.holiday = _.findWhere(events, { holiday: true });
           });
@@ -157,15 +157,5 @@ export class CalendarMonthComponent implements OnInit {
         .then(() => {})
         .catch(() => {});
     });
-  }
-
-  rpd(input) {
-    if (!input) {
-      input = "";
-    }
-    const convert = a => {
-      return ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"][a];
-    };
-    return input.toString().replace(/\d/g, convert);
   }
 }

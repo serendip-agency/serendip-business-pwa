@@ -32,8 +32,10 @@ export class DashboardService {
   syncVisible = false;
 
   currentSection: DashboardSectionInterface = { name: "", tabs: [] };
-  screen: "desktop" | "mobile" = "desktop";
 
+  get screen() {
+    return window.innerWidth < 860 ? "mobile" : "desktop";
+  }
   dashboardCommand = new EventEmitter();
 
   constructor(
@@ -42,15 +44,16 @@ export class DashboardService {
     private obService: ObService,
     private router: Router
   ) {
-    this.setScreen();
-    window.onresize = () => {
-      this.setScreen();
-    };
-
-    this.obService.listen("dashboard").subscribe(msg => {
+    this.obService.listen("_dashboard").subscribe(msg => {
       setTimeout(() => {
         this.setDefaultSchema();
-      }, 10);
+      }, 100);
+    });
+
+    this.obService.listen("_entity").subscribe(msg => {
+      setTimeout(() => {
+        this.setDefaultSchema();
+      }, 100);
     });
   }
   logout() {
@@ -71,9 +74,6 @@ export class DashboardService {
         });
       }
     });
-  }
-  setScreen() {
-    this.screen = window.innerWidth < 860 ? "mobile" : "desktop";
   }
 
   async setDefaultSchema() {

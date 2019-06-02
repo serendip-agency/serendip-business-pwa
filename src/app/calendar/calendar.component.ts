@@ -5,6 +5,7 @@ import * as MomentJalaali from "moment-jalaali";
 import * as sUtil from "serendip-utility";
 import * as _ from "underscore";
 import { CalendarService } from "../calendar.service";
+import { DashboardService } from "../dashboard.service";
 
 @Component({
   selector: "app-calendar",
@@ -41,6 +42,7 @@ export class CalendarComponent implements OnInit {
 
   constructor(
     private changeRef: ChangeDetectorRef,
+    public dashboardService: DashboardService,
     public calendarService: CalendarService
   ) {}
 

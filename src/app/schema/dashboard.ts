@@ -8,6 +8,144 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     tabs: []
   },
   {
+    name: "peoples",
+    title: "اشخاص",
+    icon: "people-users-2",
+    tabs: [
+      {
+        status: "default",
+        title: "اشخاص",
+        icon: "people-users-2",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "people-default",
+              formName: "people-form",
+              icon: "people-users-2",
+              title: "اشخاص"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "companies",
+    title: "شرکت‌ها",
+    icon: "building-company-1",
+    tabs: [
+      {
+        status: "default",
+        title: "شرکت‌ها",
+        icon: "building-company-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "company-default",
+              formName: "company-form",
+              icon: "building-company-1",
+              title: "شرکت‌ها"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "services",
+    title: "خدمات",
+    icon: "service",
+    tabs: [
+      {
+        status: "default",
+        title: "خدمات",
+        icon: "service",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "company-default",
+              formName: "company-form",
+              icon: "service",
+              title: "خدمات"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "complaints",
+    title: "شکایات",
+    icon: "building-company-1",
+    tabs: [
+      {
+        status: "default",
+        title: "شکایات",
+        icon: "building-company-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "company-default",
+              formName: "company-form",
+              icon: "building-company-1",
+              title: "شکایات"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "invoices",
+    title: "فاکتورها",
+    icon: "sell-money-expense-10",
+    tabs: [
+      {
+        status: "default",
+        title: "فاکتورها",
+        icon: "sell-money-expense-10",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "company-default",
+              formName: "company-form",
+              icon: "sell-money-expense-10",
+              title: "فاکتورها"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "inventory",
+    title: "انبار",
+    icon: "barcode-product-1",
+    tabs: [
+      {
+        status: "default",
+        title: "انبار",
+        icon: "barcode-product-1",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              reportName: "company-default",
+              formName: "company-form",
+              icon: "barcode-product-1",
+              title: "انبار"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
     name: "mail",
     title: "ایمیل",
     icon: "email-reg",

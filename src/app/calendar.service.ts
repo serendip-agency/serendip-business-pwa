@@ -12,7 +12,7 @@ import { spawn } from "threads";
 })
 export class CalendarService {
   CalendarsToShow: string[];
-  public calendarVisible = false;
+  public calendarVisible = true;
   public weekDays: { persian: string[]; gregorian: string[] };
 
   today = {
@@ -106,7 +106,7 @@ export class CalendarService {
     return _.where(_month.days, { day: day });
   }
 
-  async findEvents(YYYYMMDD, jYYYYjMMjDD) {
+  async findEvents(YYYYMMDD, jYYYYjMMjDD): Promise<any[]> {
     let eventsModel = [];
 
     if (this.CalendarsToShow.indexOf("iran") !== -1) {
@@ -126,6 +126,7 @@ export class CalendarService {
       date: Date;
       class: string[];
       formats: any;
+      today: boolean;
     }[]
   > {
     const cacheKey = `calendar-month-days-${calendarType}-${year}-${month}`;

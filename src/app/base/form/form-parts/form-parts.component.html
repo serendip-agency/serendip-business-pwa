@@ -23,7 +23,7 @@
       <div class="form-array-row">
         <div class="item">
           <app-form-parts [WidgetChange]="WidgetChange" [document]="document" [formSchema]="
-              part.parts.toString() === 'clone-top-parts' ? formSchema : part
+              part?.parts?.toString() === 'clone-top-parts' ? formSchema : part
             " [model]="(model || {})[part.propertyName][itemIndex]">
           </app-form-parts>
         </div>
@@ -46,7 +46,7 @@
       <div class="object-label" *ngIf="part.label">{{ part.label }}</div>
 
       <app-form-parts [document]="document" [WidgetChange]="WidgetChange" [formSchema]="
-          part.parts.toString() === 'clone-top-parts' ? formSchema : part
+          part?.parts?.toString() === 'clone-top-parts' ? formSchema : part
         " [model]="(model || {})[part.propertyName]">
       </app-form-parts>
     </div>

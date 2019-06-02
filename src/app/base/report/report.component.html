@@ -1,4 +1,4 @@
-<div class="widget" class="minimal">
+<div class="widget" *ngIf="layout == 'widget'">
   <mat-card class="report">
     <mat-card-header>
       <div mat-card-avatar class="pull-right">
@@ -7,21 +7,31 @@
 
       <mat-card-title> {{ title }} </mat-card-title>
 
-      <mat-card-subtitle> {{ subtitle }} </mat-card-subtitle>
+      <mat-card-subtitle>
+
+        <span *ngIf="subtitle">
+          {{ subtitle }}
+        </span>
+        <span class="en" *ngIf="!subtitle">
+          REPORT COMPONENT
+        </span>
+
+
+      </mat-card-subtitle>
 
       <div class="menu" [class.active]="mode == 'chart'"
         (click)="mode == 'chart' ? setMode('data') : setMode('format')">
         <img src="assets/icons/efficiency-chart-3.svg" />
       </div>
 
-      <div class="menu spanned" [class.active]="mode == 'report'" (click)="
+      <div class="menu " [class.active]="mode == 'report'" (click)="
           setMode(mode == 'report' ? 'data' : 'report');
           mode == 'data' ? refresh() : ''
         ">
         <img [src]="'assets/icons/funnel.svg'" />
 
         <span *ngIf="activeFieldQueries().length > 0">
-          {{ activeFieldQueries().length | rpd }} فیلتر
+          {{ activeFieldQueries()?.length?.toString() | rpd }} فیلتر
         </span>
       </div>
 
@@ -30,7 +40,7 @@
         <img [src]="'assets/icons/check-list-2.svg'" />
 
         <span>
-          {{ report?.count | rpd }}
+          {{ report?.count?.toString() | rpd }}
           {{ report?.offline ? "آفلاین" : "" }}
         </span>
       </div>
@@ -194,72 +204,13 @@
           </tbody>
         </table>
       </div>
-      <div class="report-model" *ngIf="mode == 'report' && report">
-        <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
-        <div class="fields">
-          <app-form-select-input [data]="reports" [selectType]="'single'" [label]="'انتخاب از گزارشات ذخیره شده'"
-            (modelChange)="changeReport($event)" [model]="report._id"></app-form-select-input>
 
-          <div dndDropzone (dndDrop)="reportFieldDrop($event)">
-            <div class="field" dndEffectAllowed="all" [dndDraggable]="{ field: field, index: fieldIndex }"
-              (dndStart)="reportFieldDragStart(field, $event)"
-              *ngFor="let field of report.fields; let fieldIndex = index">
-              <img dndHandle class="drag-handle" src="assets/icons/menu-6.svg" alt="" />
+      <ng-container *ngTemplateOutlet="reportModel">
 
-              <img *ngIf="
-                  field.enabled && field.queries && field.queries.length > 0
-                " (click)="field.showQueries = !field.showQueries" class="queries-icon" [class.active]="
-                  _.findWhere(field.queries, { enabled: true }) ||
-                  field.showQueries
-                " src="assets/icons/filter-6.svg" alt="" />
 
-              <div class="field-name" [class.ltr]="
-                  sUtil.text.englishKeyChar.indexOf(field.label[0]) !== -1
-                ">
-                <mat-slide-toggle [(ngModel)]="field.enabled">
-                </mat-slide-toggle>
-                <span> {{ field.label }} ({{ field.type }}) </span>
-              </div>
+      </ng-container>
 
-              <div class="template-inputs" *ngIf="
-                  field.template &&
-                  (field.template.formId || field.template.formName) &&
-                  field.enabled
-                ">
-                <div class="form">
-                  <app-form (WidgetChange)="field.template.inputs = $event.inputs.model" [formType]="'inline'"
-                    [name]="field.template.formName" [formId]="field.template.formId"></app-form>
-                </div>
-              </div>
 
-              <div *ngIf="
-                  field.enabled &&
-                  field.queries &&
-                  (_.findWhere(field.queries, { enabled: true }) ||
-                    field.showQueries) &&
-                  field.queries.length > 0
-                " class="queries">
-                <div [class]="'property-query'" *ngFor="let query of field.queries">
-                  <app-form-checkbox-input [label]="field.label + ' ' + query.label" [model]="query.enabled"
-                    (modelChange)="query.enabled = $event"></app-form-checkbox-input>
-                  <!-- <label for=""> {{ field.label }} {{ query.label }} </label>
-                <div class="en">{{ query.methodInputForm }}</div> -->
-                  <div class="form">
-                    <app-form *ngIf="query.enabled" [formType]="'inline'" [defaultModel]="query.methodInput || {}"
-                      (WidgetChange)="query.methodInput = $event.inputs.model" [name]="query.methodInputForm">
-                    </app-form>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div dndPlaceholderRef>
-              <div style="margin:5px 0;height:30px;border:1px dashed #ccc;border-radius: 10px;" *ngIf="fieldDragging">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'"
         *ngIf="!resultLoading && report && mode == 'data'">
         <div class="report-header">
@@ -388,3 +339,78 @@
     </mat-card-actions>
   </mat-card>
 </div>
+
+
+<div *ngIf="layout == 'report'">
+  <ng-container *ngTemplateOutlet="reportModel">
+  </ng-container>
+</div>
+
+<ng-template #reportModel>
+  <div class="report-model" *ngIf="mode == 'report' && report">
+
+    <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
+    <div class="fields">
+      <app-form-select-input [data]="reports" [selectType]="'single'" [label]="'انتخاب از گزارشات ذخیره شده'"
+        (modelChange)="changeReport($event)" [model]="report._id"></app-form-select-input>
+
+      <div dndDropzone (dndDrop)="reportFieldDrop($event)">
+        <div class="field" dndEffectAllowed="all" [dndDraggable]="{ field: field, index: fieldIndex }"
+          (dndStart)="reportFieldDragStart(field, $event)" *ngFor="let field of report.fields; let fieldIndex = index">
+          <img dndHandle class="drag-handle" src="assets/icons/menu-6.svg" alt="" />
+
+          <img *ngIf="
+                  field.enabled && field.queries && field.queries.length > 0
+                " (click)="field.showQueries = !field.showQueries" class="queries-icon" [class.active]="
+                  _.findWhere(field.queries, { enabled: true }) ||
+                  field.showQueries
+                " src="assets/icons/filter-6.svg" alt="" />
+
+          <div class="field-name" [class.ltr]="
+                  sUtil.text.englishKeyChar.indexOf(field.label[0]) !== -1
+                ">
+            <mat-slide-toggle [(ngModel)]="field.enabled">
+            </mat-slide-toggle>
+            <span> {{ field.label }} ({{ field.type }}) </span>
+          </div>
+
+          <div class="template-inputs" *ngIf="
+                  field.template &&
+                  (field.template.formId || field.template.formName) &&
+                  field.enabled
+                ">
+            <div class="form">
+              <app-form (WidgetChange)="field.template.inputs = $event.inputs.model" [formType]="'inline'"
+                [name]="field.template.formName" [formId]="field.template.formId"></app-form>
+            </div>
+          </div>
+
+          <div *ngIf="
+                  field.enabled &&
+                  field.queries &&
+                  (_.findWhere(field.queries, { enabled: true }) ||
+                    field.showQueries) &&
+                  field.queries.length > 0
+                " class="queries">
+            <div [class]="'property-query'" *ngFor="let query of field.queries">
+              <app-form-checkbox-input [label]="field.label + ' ' + query.label" [model]="query.enabled"
+                (modelChange)="query.enabled = $event"></app-form-checkbox-input>
+              <!-- <label for=""> {{ field.label }} {{ query.label }} </label>
+                <div class="en">{{ query.methodInputForm }}</div> -->
+              <div class="form">
+                <app-form *ngIf="query.enabled" [formType]="'inline'" [defaultModel]="query.methodInput || {}"
+                  (WidgetChange)="query.methodInput = $event.inputs.model" [name]="query.methodInputForm">
+                </app-form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div dndPlaceholderRef>
+          <div style="margin:5px 0;height:30px;border:1px dashed #ccc;border-radius: 10px;" *ngIf="fieldDragging">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

@@ -365,6 +365,19 @@ export const ReportsSchema: ReportInterface[] = [
     ]
   },
   {
+    name: "company-default",
+    entityName: "company",
+    label: "",
+    fields: [
+      {
+        enabled: true,
+        name: "name",
+        label: "نام ",
+        template: { component: "ShortTextViewComponent" }
+      }
+    ]
+  },
+  {
     name: "people-default",
     entityName: "people",
     label: "",

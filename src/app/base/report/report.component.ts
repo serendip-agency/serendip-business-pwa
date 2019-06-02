@@ -48,6 +48,8 @@ export class ReportComponent implements OnInit {
   @Output()
   WidgetChange = new EventEmitter<DashboardWidgetInterface>();
 
+  @Output() modelChange = new EventEmitter();
+
   formatLoaded = false;
   saveMode = "report";
   dateRangeUnitsToSelect = [
@@ -168,8 +170,6 @@ export class ReportComponent implements OnInit {
     tab: DashboardTabInterface;
   }>();
 
-  @Input() minimal: boolean;
-
   @Output()
   TabChange = new EventEmitter<DashboardTabInterface>();
 
@@ -199,6 +199,8 @@ export class ReportComponent implements OnInit {
 
   @Input() selected = [];
 
+  @Input() layout: "widget" | "report" = "widget";
+
   @Input() mode: string | "save" | "chart" | "format" | "report" | "data" =
     "data";
   @Input() page: any[];
@@ -221,6 +223,12 @@ export class ReportComponent implements OnInit {
   initDone = false;
   error: any;
   _formatFields: any[];
+
+  @Input()
+  public set model(v: ReportInterface) {
+    this._report = v;
+  }
+
   set report(value: ReportInterface) {
     this._report = value;
 
@@ -233,7 +241,6 @@ export class ReportComponent implements OnInit {
 
   viewComponents = {
     // report views
-
     ObjectidViewComponent,
     ShortTextViewComponent,
     LongTextViewComponent,
@@ -549,6 +556,12 @@ export class ReportComponent implements OnInit {
     //  await this.reportStore.delete(this.report.name);
   }
   async refresh() {
+    console.log(
+      "report refresh",
+      this.report,
+      this.entityName,
+      this.reportName
+    );
     if (this.report && !this.report.offline) {
       delete this.report.data;
     }
@@ -580,7 +593,7 @@ export class ReportComponent implements OnInit {
     }
 
     this.report.fields = _.sortBy(
-      await this.dataService.fields(this.entityName, this.report, 0, 3),
+      await this.dataService.fields(this.entityName, this.report, 1, 3),
       item => item.name.length
     );
 

@@ -103,7 +103,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     "jYYYY/jMM/jDD",
     "YYYY/MM/DD"
   ];
-  screen: "mobile" | "desktop";
+
   gridSizeChange = new EventEmitter();
   private _grid: DashboardGridInterface;
   tabDragging: DashboardTabInterface;
@@ -590,6 +590,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   clickOnNavTab(tab) {
+
     _.forEach(
       this.definedItemsOfArray(this.grid.containers[0].tabs),
       (tab: { active: boolean }) => {
@@ -602,10 +603,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.grid.containers[0].tabs.push(tab);
 
     this.syncGrid();
+
   }
 
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
-    if (this.screen === "mobile") {
+    if (this.dashboardService.screen === "mobile") {
       this.explorerMouseOut();
     }
 
@@ -1428,7 +1430,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.dashboardLoadingText = "Syncing Data ...";
 
-    if (Date.now() - this.lastDataSync > 1000 * 60 * 3) {
+    if (Date.now() - this.lastDataSync > 1000 * 60 * 5) {
       try {
         await this.dataSync();
         this.lastDataSync = Date.now();
@@ -1443,7 +1445,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     this.dashboardReady = true;
 
-    this.handleFullNav();
+    // this.handleFullNav();
 
     this.dashboardLoadingText = "Indexing Data ...";
 

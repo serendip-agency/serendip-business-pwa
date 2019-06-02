@@ -4,7 +4,8 @@ import {
   Input,
   EventEmitter,
   Output,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  OnDestroy
 } from "@angular/core";
 import { DataService } from "src/app/data.service";
 import { MatSnackBar, MatAutocompleteSelectedEvent } from "@angular/material";
@@ -14,14 +15,16 @@ import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { DashboardService } from "src/app/dashboard.service";
 import { ObService } from "src/app/ob.service";
 import * as sUtil from "serendip-utility";
+import { Subscription } from "rxjs";
 @Component({
   selector: "app-form-chips-input",
   templateUrl: "./form-chips-input.component.html",
   styleUrls: ["./form-chips-input.component.less"]
 })
-export class FormChipsInputComponent implements OnInit {
+export class FormChipsInputComponent implements OnInit, OnDestroy {
   creatingEntity: boolean;
   loading = false;
+  obServiceSubscription: Subscription;
   constructor(
     private dataService: DataService,
     private snackBar: MatSnackBar,
@@ -125,7 +128,6 @@ export class FormChipsInputComponent implements OnInit {
                 inputs: {
                   name: this.formName,
                   documentId: _id,
-                  model: { _id },
                   entityName: this.entityName,
                   entityLabel: this.label
                 }
@@ -229,6 +231,7 @@ export class FormChipsInputComponent implements OnInit {
         this.model = [];
       }
     }
+
     this.filterEntities(" ", []);
 
     if (this.model) {
@@ -241,7 +244,7 @@ export class FormChipsInputComponent implements OnInit {
       }
     }
 
-    this.obService
+    this.obServiceSubscription = this.obService
       .listen(this.entityName)
       .subscribe(async (msg: { eventType: any; model: any }) => {
         const model = msg.model;
@@ -254,5 +257,9 @@ export class FormChipsInputComponent implements OnInit {
           this.creatingEntity = false;
         }
       });
+  }
+
+  ngOnDestroy() {
+    this.obServiceSubscription.unsubscribe();
   }
 }

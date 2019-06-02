@@ -27,7 +27,8 @@ import { FormCodeInputComponent } from "../form-code-input/form-code-input.compo
 import { FormStorageInputComponent } from "../form-storage-input/form-storage-input.component";
 import { FormHtmlInputComponent } from "../form-html-input/form-html-input.component";
 import { FormFieldValueCompareComponent } from "../form-field-value-compare/form-field-value-compare.component";
-import { FormQuillInputComponent } from '../form-quill-input/form-quill-input.component';
+import { FormQuillInputComponent } from "../form-quill-input/form-quill-input.component";
+import { ReportComponent } from "../../report/report.component";
 
 @Component({
   selector: "app-form-parts",
@@ -65,9 +66,10 @@ export class FormPartsComponent implements OnInit {
     FormCodeInputComponent,
     FormFieldValueCompareComponent,
     FormStorageInputComponent,
-    FormQuillInputComponent
+    FormQuillInputComponent,
+    ReportComponent
   };
-  constructor(public ref: ChangeDetectorRef) { }
+  constructor(public ref: ChangeDetectorRef) {}
   filterParts(parts: FormPartInterface[]) {
     if (!parts) {
       return [];
@@ -115,7 +117,7 @@ export class FormPartsComponent implements OnInit {
           evalResult = eval(
             part.if.replace(/\^form/g, "(" + JSON.stringify(this.model) + ")")
           );
-        } catch (error) { }
+        } catch (error) {}
 
         return evalResult;
       }
@@ -138,7 +140,7 @@ export class FormPartsComponent implements OnInit {
               "(" + JSON.stringify(this.model) + ")"
             )
           );
-        } catch (error) { }
+        } catch (error) {}
       }
     });
 
@@ -151,8 +153,6 @@ export class FormPartsComponent implements OnInit {
 
   dynamicPartModelChange(property, subProperty, subPropertyIndexInArray) {
     return newValue => {
-      
-
       if (!subProperty) {
         this.model[property] = newValue;
       } else {
@@ -169,7 +169,7 @@ export class FormPartsComponent implements OnInit {
           this.model[property][subPropertyIndexInArray][subProperty] = newValue;
         }
       }
- 
+
       this.detectChange();
     };
   }
@@ -189,8 +189,5 @@ export class FormPartsComponent implements OnInit {
     if (!this.document && this.model) {
       this.document = this.model;
     }
-
- 
-
   }
 }
