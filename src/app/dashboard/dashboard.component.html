@@ -228,8 +228,12 @@
 
       <div *ngFor="let tab of definedItemsOfArray(container.tabs); let t = index"
         [hidden]="!tab.active || container.showTabs">
+   
+        
         <div class="widget-container" *ngFor="let widget of getWidgets(tab); let w = index"
           [hidden]="widget.screen && widget.screen != dashboardService.screen">
+
+
           <ndc-dynamic *ngIf="!widget.screen || widget.screen == dashboardService.screen" [ndcDynamicInputs]="
               extendObj({ widgetId: widget.id, tab: tab }, widget.inputs || {})
             " [ndcDynamicOutputs]="{

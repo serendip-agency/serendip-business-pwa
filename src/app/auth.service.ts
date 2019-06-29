@@ -6,7 +6,7 @@ import {
   Router,
   RouterStateSnapshot
 } from "@angular/router";
-import { TokenModel } from "serendip-business-model";
+import { TokenModel, UserModel } from "serendip-business-model";
 
 import { BusinessService } from "./business.service";
 import { IdbDeleteAllDatabases } from "./idb.service";

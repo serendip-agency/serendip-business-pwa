@@ -12,7 +12,7 @@ import { spawn } from "threads";
 })
 export class CalendarService {
   CalendarsToShow: string[];
-  public calendarVisible = true;
+  public calendarVisible = false;
   public weekDays: { persian: string[]; gregorian: string[] };
 
   today = {
