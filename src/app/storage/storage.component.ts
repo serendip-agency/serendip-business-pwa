@@ -537,7 +537,7 @@ export class StorageComponent implements OnInit {
       }
 
       if (this.mode === "newName") {
-        console.log(this.tempPaths);
+     
         this.dataService
           .request({
             method: "post",

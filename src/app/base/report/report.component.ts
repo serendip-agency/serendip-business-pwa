@@ -563,12 +563,7 @@ export class ReportComponent implements OnInit {
     //  await this.reportStore.delete(this.report.name);
   }
   async refresh() {
-    console.log(
-      "report refresh",
-      this.report,
-      this.entityName,
-      this.reportName
-    );
+   
     if (this.report && !this.report.offline) {
       delete this.report.data;
     }
@@ -604,8 +599,6 @@ export class ReportComponent implements OnInit {
       this.pageIndex * this.pageSize,
       this.pageSize
     );
-
-    console.log("generated report", this.report);
 
   
       for (let i = 0; i < 3; i++) {

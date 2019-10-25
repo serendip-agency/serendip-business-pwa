@@ -101,7 +101,6 @@ export class PanelComponent implements OnInit {
         p => p.title === params.tab
       ) || this.dashboardService.currentSection.tabs[0];
 
-    console.log(this.dashboardService.currentTab);
   }
 
   dashboardCommand() {
@@ -113,6 +112,13 @@ export class PanelComponent implements OnInit {
 
   async ngOnInit() {
     await this.dashboardService.setDefaultSchema();
+
+
+    if (!this.businessService.getActiveBusinessId()) {
+      this.router.navigate(["/business"]);
+      return;
+    }
+
 
     await this.handleParams(this.activatedRoute.snapshot.params);
 

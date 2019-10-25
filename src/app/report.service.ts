@@ -74,7 +74,7 @@ export class ReportService {
     const matchQuery = {
       _entity: report.entityName
     };
-    console.log(fieldsWithQuery);
+    
 
     fieldsWithQuery.forEach(f => {
       f.queries
@@ -116,8 +116,7 @@ export class ReportService {
         });
     });
 
-    console.log(matchQuery);
-
+    
     const pipeline = [
       {
         $match: matchQuery

@@ -126,7 +126,7 @@
       <ul>
         <li *ngFor="let section of dashboardService.schema.dashboard">
           <a (click)="section.toggleUl = !section.toggleUl">
-            <img [src]="'assets/icons/' + section.icon + '.svg'" />
+            <!-- <img [src]="'assets/icons/' + section.icon + '.svg'" /> -->
             <span> {{ section.title }} </span>
 
             <img *ngIf="section.tabs && section.tabs.length > 0" class="toggle-ul" [class.active]="!section.toggleUl"
