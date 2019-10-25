@@ -787,7 +787,9 @@ export class DataService {
     report?: ReportInterface,
     depth?: number,
     maxDepth?: number,
-    parents?: string[]
+    parents: string[] = [],
+    enableFields : boolean = false
+    
   ) {
     if (!parents) {
       parents = [];
@@ -866,27 +868,7 @@ export class DataService {
             value.length !== 0 &&
             value.length !== 24
           ) {
-            // report.fields.push({
-            //   name: key + "Length",
-            //   label: typeof value === "string" ? "طول " + key : "تعداد " + key,
-            //   enabled: false,
-            //   analytical: true,
-            //   method: "javascript",
-            //   methodOptions: {
-            //     code: `(async (
-            //           document,
-            //           field
-            //         ) => {
-            //           if (document['${key}']) {
-            //             return document['${key}'].length;
-            //           } else {
-            //             return 0;
-            //           }
-            //         })`.toString()
-            //   },
-            //   type: "number"
-            // });
-
+    
             report.fields.push({
               name: key,
               label: key,
@@ -934,12 +916,7 @@ export class DataService {
 
               continue;
             }
-
-            // for (const entityName of entityNamesToCheck) {
-            //   try {
-            //     await this.dataService.details(entityName, value);
-            //   } catch (error) {}
-            // }
+           
           }
 
           report.fields.push({
@@ -1103,6 +1080,9 @@ export class DataService {
       return field;
     });
 
+    if(enableFields){
+      
+
     const nonPrimaryFields = report.fields.filter(
       p => primaryFields.filter(d => d.name === p.name).length === 0
     );
@@ -1114,6 +1094,9 @@ export class DataService {
           value.enabled = true;
         }
       });
+
+
+    }
 
     return report.fields;
   }

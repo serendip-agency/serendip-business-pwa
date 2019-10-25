@@ -607,28 +607,33 @@ export class ReportComponent implements OnInit {
 
     console.log("generated report", this.report);
 
-    if (this.report.fields.length === 0) {
+  
       for (let i = 0; i < 3; i++) {
         this.report.fields = await this.dataService.fields(
           this.entityName,
           this.report,
           1,
-          3
+          3,
+          [],
+          this.report.fields.length === 0
         );
       }
-    }
+    
 
     this.pageCount = Math.ceil(this.report.count / this.pageSize);
 
     this.resultLoading = false;
 
-    // this.WidgetChange.emit({
-    //   inputs: {
-    //     entityName: this.entityName,
-    //     page: this.page,
-    //     pageCount: this.pageCount
-    //   }
-    // });
+    this.WidgetChange.emit({
+      inputs: {
+        report : this.report,
+        entityName: this.entityName,
+        page: this.page,
+        pageCount: this.pageCount
+      }
+    });
+
+
   }
 
   async save() {
@@ -885,9 +890,9 @@ export class ReportComponent implements OnInit {
     if (iterate !== 0) {
       this.selected = [];
     }
-    console.log(this.report.data.length, this.report.count);
-
-    if (this.report.data.length !== this.report.count) {
+    if(!this.report.data)
+    this.report.data = [];
+    if (this.report.data && this.report.data.length !== this.report.count) {
       if (iterate !== 0) {
         await this.refresh();
       }
@@ -898,6 +903,8 @@ export class ReportComponent implements OnInit {
         this.pageSize
       );
     }
+
+    this.WidgetChange.emit({ inputs: { page: this.page } });
 
     this.resultLoading = false;
   }

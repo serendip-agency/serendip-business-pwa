@@ -68,7 +68,7 @@ export class ReportService {
     }
 
     const fieldsWithQuery = report.fields.filter(p =>
-      p.queries.find(p => p.enabled)
+     p.queries && p.queries.find(p => p.enabled)
     );
 
     const matchQuery = {
@@ -122,13 +122,13 @@ export class ReportService {
       {
         $match: matchQuery
       },
-      {
+      skip ? {
         $skip: skip
-      },
-      {
+      } : null,
+limit ?      {
         $limit: limit
-      }
-    ];
+      } : null
+    ].filter(p=>p);
     if (!report.data || report.data.length === 0) {
       //   await this.dataService.pushCollections();
 
@@ -216,6 +216,8 @@ export class ReportService {
           dateRangeFormat: _input.format.options.dateRangeFormat || "kk-mm",
           dateRangeCount: _input.format.options.dateRangeCount || 10
         };
+
+        _input.report = await this.generate(_input.report,0,0);
 
         const thread = spawn(location.origin + "/workers/analyze/2d.js");
 

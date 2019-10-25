@@ -72,9 +72,9 @@ self.module = {
           .format(formatOptions.dateRangeFormat);
       });
 
-      let count = 0;
       // tslint:disable-next-line:forin
       for (const timeRange of timeRanges) {
+        let count = 0;
         for (const row of dataGroup) {
           try {
             if (

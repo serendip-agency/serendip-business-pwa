@@ -71,6 +71,7 @@ export const ReportsSchema: ReportInterface[] = [
         name: "section",
         analytical: true,
         label: "بخش",
+        type : "string",
         method: "javascript",
         methodOptions: { code: "(doc,field)=> doc.data.section" },
         template: { component: "ShortTextViewComponent" }
