@@ -29,9 +29,7 @@ import * as sUtil from "serendip-utility";
 export class FormComponent implements OnInit {
   public get filesPath() {
     if (this.model && this.model._id) {
-      return `businesses/${this.businessService.business._id}/${
-        this.entityName
-        }/${this.model._id}`;
+      return `businesses/${this.businessService.business._id}/${this.entityName}/${this.model._id}`;
     } else {
       return null;
     }
@@ -68,19 +66,7 @@ export class FormComponent implements OnInit {
   @Input() minimal: boolean;
 
   @Input()
-  private _model: EntityModel = null;
-  public get model(): EntityModel {
-    return this._model;
-  }
-  public set model(value: EntityModel) {
-    if (this._model !== value) {
-
-      
-      this._model = value;
-      // this.WidgetChange.emit({ inputs: { model: value } });
-    }
-
-  }
+  private model: EntityModel = null;
 
   @Input()
   formSchema: FormInterface;
@@ -199,12 +185,12 @@ export class FormComponent implements OnInit {
       //   }
       // });
 
-      const tempMode = this.mode || "form";
-      this.mode = null;
+      // const tempMode = this.mode || "form";
+      // this.mode = null;
 
-      setTimeout(() => {
-        this.mode = tempMode;
-      }, 100);
+      // setTimeout(() => {
+      //   this.mode = tempMode;
+      // }, 100);
 
       if (this.defaultModel && Object.keys(this.defaultModel).length > 0) {
         this.model = _.clone(this.defaultModel);
@@ -229,7 +215,7 @@ export class FormComponent implements OnInit {
   jsonCodeChange(code) {
     try {
       this.model = JSON.parse(code);
-    } catch (error) { }
+    } catch (error) {}
     this.WidgetChange.emit({ inputs: { model: this.model } });
   }
   findFormInSchema(formName): FormInterface {
@@ -243,7 +229,5 @@ export class FormComponent implements OnInit {
 
     this.loading = false;
     this.ref.detectChanges();
-
-
   }
 }

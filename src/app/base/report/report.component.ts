@@ -262,12 +262,18 @@ export class ReportComponent implements OnInit {
     private dashboardService: DashboardService,
     private dataService: DataService,
     private reportService: ReportService,
-    private changeRef: ChangeDetectorRef,
+    public changeRef: ChangeDetectorRef,
     private obService: ObService
   ) {
     moment.loadPersian();
   }
 
+  map(array, key) {
+    return array.map(p => p[key]);
+  }
+  log(input) {
+    console.log(input);
+  }
   getFieldsForY() {
     const fields = JSON.parse(
       JSON.stringify(this.getFieldsForSelect("number"))
@@ -500,7 +506,7 @@ export class ReportComponent implements OnInit {
       await this.changePage(0);
     }
 
-    this.WidgetChange.emit({ inputs: { mode } });
+    this.WidgetChange.emit({ inputs: { mode, report: this.report } });
   }
 
   setFormat(format: any) {
@@ -599,15 +605,17 @@ export class ReportComponent implements OnInit {
       this.pageSize
     );
 
+    console.log("generated report", this.report);
+
     if (this.report.fields.length === 0) {
-    for (let i = 0; i < 3; i++) {
-      this.report.fields = await this.dataService.fields(
-        this.entityName,
-        this.report,
-        1,
-        3
-      );
-    }
+      for (let i = 0; i < 3; i++) {
+        this.report.fields = await this.dataService.fields(
+          this.entityName,
+          this.report,
+          1,
+          3
+        );
+      }
     }
 
     this.pageCount = Math.ceil(this.report.count / this.pageSize);

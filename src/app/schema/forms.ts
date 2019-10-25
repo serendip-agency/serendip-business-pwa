@@ -34,15 +34,13 @@ export const FormsSchema: FormInterface[] = [
   },
 
   {
-    name: "report-sync-field-query-range",
+    name: "report-sync-field-query−date-range",
     parts: [
       {
         propertyName: "value",
-        cssClass: "double-field",
         propertyType: "object",
         parts: [
           {
-            cssClass: "w-50",
             componentName: "FormDateInputComponent",
             propertyName: "from",
             inputs: {
@@ -50,7 +48,6 @@ export const FormsSchema: FormInterface[] = [
             }
           },
           {
-            cssClass: "w-50",
             componentName: "FormDateInputComponent",
             propertyName: "to",
             inputs: {

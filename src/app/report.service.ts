@@ -13,6 +13,7 @@ import { WebWorkerService } from "./web-worker.service";
 import ObjectID from "bson-objectid";
 import { ObService } from "./ob.service";
 import * as moment from "moment-jalaali";
+import * as Moment from "moment";
 import { spawn } from "threads";
 import { ReportsSchema } from "./schema";
 export const DateUnitToFormatMap = {
@@ -66,11 +67,76 @@ export class ReportService {
       report.fields = [];
     }
 
+    const fieldsWithQuery = report.fields.filter(p =>
+      p.queries.find(p => p.enabled)
+    );
+
+    const matchQuery = {
+      _entity: report.entityName
+    };
+    console.log(fieldsWithQuery);
+
+    fieldsWithQuery.forEach(f => {
+      f.queries
+        .filter(p => p.enabled)
+        .forEach(q => {
+          if (q.method === "neq-null") {
+            matchQuery[f.name] = {
+              $nin: [null, []],
+              $exists: true
+            };
+          }
+
+          if (q.method === "string-eq") {
+            matchQuery[f.name] = q.methodInput.value;
+          }
+
+          if (q.method === "string-neq") {
+            matchQuery[f.name] = { $ne: q.methodInput.value };
+          }
+
+          if (q.method === "string-contain" && q.methodInput.value) {
+            matchQuery[f.name] = {
+              $regex: `${q.methodInput.value}`,
+              $options: "i"
+            };
+          }
+
+          if (q.method === "date-in-range" && q.methodInput.value) {
+            matchQuery[f.name] = {};
+
+            if (q.methodInput.value.from) {
+              matchQuery[f.name].$gte = Moment(q.methodInput.value.from).valueOf();
+            }
+
+            if (q.methodInput.value.to) {
+              matchQuery[f.name].$lte = Moment(q.methodInput.value.to).valueOf();
+            }
+          }
+        });
+    });
+
+    console.log(matchQuery);
+
+    const pipeline = [
+      {
+        $match: matchQuery
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: limit
+      }
+    ];
     if (!report.data || report.data.length === 0) {
       //   await this.dataService.pushCollections();
 
-      report.data = await this.dataService.list(report.entityName, skip, limit);
-      report.count = await this.dataService.count(report.entityName);
+      report.data = await this.dataService.aggregate(
+        report.entityName,
+        pipeline
+      );
+      report.count = await this.dataService.count(report.entityName,matchQuery);
     }
 
     return report;

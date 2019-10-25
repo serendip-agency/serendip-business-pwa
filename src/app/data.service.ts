@@ -424,7 +424,11 @@ export class DataService {
     }
   }
 
-  async count(controller: string, offline?: boolean): Promise<number> {
+  async count(
+    controller: string,
+    query: any,
+    offline?: boolean
+  ): Promise<number> {
     if (offline) {
       const store = await this.idbService.dataIDB();
 
@@ -434,11 +438,14 @@ export class DataService {
         return await this.request({
           method: "POST",
           timeout: 1000,
-          path: `/api/entity/${controller}/count`
+          path: `/api/entity/${controller}/count`,
+          model: {
+            query
+          }
         });
       } catch (error) {
         if (!offline) {
-          return await this.count(controller, true);
+          return await this.count(controller, query, true);
         }
       }
     }
@@ -1020,12 +1027,12 @@ export class DataService {
           {
             label: "در این بازه زمانی باشد",
             method: "date-in-range",
-            methodInputForm: "field-query-date-range"
+            methodInputForm: "report-sync-field-query−date-range"
           },
           {
             label: "در این بازه زمانی نباشد",
             method: "date-nin-range",
-            methodInputForm: "field-query-date-range"
+            methodInputForm: "report-sync-field-query−date-range"
           },
           {
             label: "برابر باشد با",
@@ -1059,17 +1066,17 @@ export class DataService {
           {
             label: "برابر باشد با",
             method: "string-eq",
-            methodInputForm: "field-query-date-eq"
+            methodInputForm: "report-sync-field-query-eq"
           },
           {
             label: "برابر نباشد با",
             method: "string-neq",
-            methodInputForm: "field-query-date-eq"
+            methodInputForm: "report-sync-field-query-eq"
           },
           {
             label: "شامل شود",
             method: "string-contain",
-            methodInputForm: "field-query-date-eq"
+            methodInputForm: "report-sync-field-query-eq"
           }
         ].forEach(f => {
           if (field.queries.filter(p => p.method === f.method).length === 0) {
