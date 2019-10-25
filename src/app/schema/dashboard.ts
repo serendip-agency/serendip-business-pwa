@@ -1,20 +1,16 @@
 import { DashboardSectionInterface } from "serendip-business-model";
 
-export const DashboardSchema: DashboardSectionInterface[] = [
-  {
-    name: "start",
-    title: "شروع",
-    icon: "expand-1",
-    tabs: []
-  },
+export const DashboardSchema: DashboardSectionInterface[] | any[] = [
   {
     name: "peoples",
     title: "اشخاص",
     icon: "people-users-2",
+    product: "crm",
     tabs: [
       {
+        name: "list",
         status: "default",
-        title: "اشخاص",
+        title: "گزارش اشخاص",
         icon: "people-users-2",
         widgets: [
           {
@@ -34,6 +30,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "companies",
     title: "شرکت‌ها",
     icon: "building-company-1",
+    product: "crm",
+
     tabs: [
       {
         status: "default",
@@ -57,6 +55,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "services",
     title: "خدمات",
     icon: "service",
+    product: "crm",
+
     tabs: [
       {
         status: "default",
@@ -79,6 +79,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
   {
     name: "complaints",
     title: "شکایات",
+    product: "crm",
+
     icon: "building-company-1",
     tabs: [
       {
@@ -102,6 +104,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
   {
     name: "invoices",
     title: "فاکتورها",
+    product: "crm",
+
     icon: "sell-money-expense-10",
     tabs: [
       {
@@ -122,33 +126,13 @@ export const DashboardSchema: DashboardSectionInterface[] = [
       }
     ]
   },
-  {
-    name: "inventory",
-    title: "انبار",
-    icon: "barcode-product-1",
-    tabs: [
-      {
-        status: "default",
-        title: "انبار",
-        icon: "barcode-product-1",
-        widgets: [
-          {
-            component: "ReportComponent",
-            inputs: {
-              reportName: "company-default",
-              formName: "company-form",
-              icon: "barcode-product-1",
-              title: "انبار"
-            }
-          }
-        ]
-      }
-    ]
-  },
+
   {
     name: "mail",
     title: "ایمیل",
     icon: "email-reg",
+    product: "crm",
+
     tabs: [
       {
         status: "default",
@@ -173,6 +157,8 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "sms",
     title: "پیامک",
     icon: "sms-bold-1",
+    product: "crm",
+
     tabs: [
       {
         status: "default",
@@ -197,6 +183,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "telegram",
     title: "تلگرام",
     icon: "send",
+    product: "telegram",
     tabs: [
       {
         status: "default",
@@ -236,6 +223,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "settings",
     title: "تنظیمات",
     icon: "settings-1",
+    product: "base",
     tabs: [
       {
         active: true,
@@ -270,6 +258,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
     name: "configurations",
     title: "پیکربندی",
     icon: "dashboard-1",
+    product: "base",
     tabs: [
       {
         status: "default",
@@ -394,6 +383,7 @@ export const DashboardSchema: DashboardSectionInterface[] = [
   {
     name: "infstructure",
     title: "زیرساخت",
+    product: "devops",
     icon: "settings-1",
     tabs: [
       {

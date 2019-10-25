@@ -289,6 +289,32 @@ export class DataService {
     a.dispatchEvent(evt);
   }
 
+  async aggregate<A>(
+    controller: string,
+    pipeline: any[] = [],
+    offline?: boolean
+  ): Promise<EntityModel[]> {
+    if (offline) {
+      return [];
+    } else {
+      try {
+        return (await this.request({
+          method: "POST",
+          path: `/api/entity/${controller}/aggregate`,
+          timeout: 60000,
+          retry: false,
+          model: {
+            pipeline
+          }
+        })).map((p: EntityModel) => this.decrypt(p));
+      } catch (error) {
+        if (!offline) {
+          return await this.aggregate(controller, pipeline, true);
+        }
+      }
+    }
+  }
+
   async list<A>(
     controller: string,
     skip?: number,
@@ -793,7 +819,8 @@ export class DataService {
       }
     });
 
-    const sampleList = await this.list(entityName, 0, 1000);
+    // const sampleList = await this.list(entityName, 0, 1000);
+    const sampleList = report.data || [];
     for (const row of _.times(10, p => p).map(
       p => _.sample(sampleList, 1)[0]
     ) as EntityModel[]) {
@@ -829,6 +856,7 @@ export class DataService {
           if (
             typeof value !== "string" &&
             typeof value.length !== "undefined" &&
+            value.length !== 0 &&
             value.length !== 24
           ) {
             // report.fields.push({

@@ -15,6 +15,7 @@ import * as aesjs from "aes-js";
 import * as sUtil from "serendip-utility";
 
 import * as _ from "underscore";
+import { environment } from "src/environments/environment";
 
 @Component({
   selector: "app-business",
@@ -53,7 +54,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
     public dashboardService: DashboardService,
     private snackBar: MatSnackBar,
     public dataService: DataService
-  ) { }
+  ) {}
 
   validateHexToImport(keyArea) {
     const rsaHex = keyArea.value;
@@ -61,10 +62,9 @@ export class BusinessComponent implements OnInit, OnDestroy {
     const decodedHex = aesjs.utils.utf8.fromBytes(
       aesjs.utils.hex.toBytes(rsaHex)
     );
-    
 
     try {
-    } catch (error) { }
+    } catch (error) {}
     const rsaKey = window.cryptico.RSAKey.parse(decodedHex);
 
     console.log(
@@ -99,7 +99,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
         }
       })
       .then(async res => {
-        
         this.snackBar.open("کاربر جدید اضافه شد!", "", { duration: 3000 });
 
         await this.dataService.loadBusiness();
@@ -138,7 +137,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
   choose(id) {
     localStorage.setItem("businessId", id);
-    this.router.navigate(["/dashboard"]);
+    this.router.navigate([environment.default]);
   }
 
   async savePrivateKey(keyArea) {
@@ -146,7 +145,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
       "rsa",
       aesjs.utils.utf8.fromBytes(aesjs.utils.hex.toBytes(keyArea.value))
     );
-    this.router.navigate(["/dashboard"]);
+    this.router.navigate([environment.default]);
   }
   async savePublicKey() {
     await this.dataService.loadBusiness();
@@ -164,7 +163,7 @@ export class BusinessComponent implements OnInit, OnDestroy {
       retry: false
     });
 
-    this.router.navigate(["/dashboard"]);
+    this.router.navigate([environment.default]);
   }
 
   async saveBusiness() {
@@ -202,7 +201,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
 
           this.offline = false;
           this.loading = false;
-          
         } catch (error) {
           this.offline = true;
           this.loading = false;
@@ -222,8 +220,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
     this.tab = this.activatedRoute.snapshot.params.tab || "list";
 
     await this.refresh();
-
-    
 
     if (!this.offline && this.tab === "list" && this.list.length === 0) {
       this.router.navigate(["/business", "new"]);
@@ -260,12 +256,12 @@ export class BusinessComponent implements OnInit, OnDestroy {
   downloadRsaKey() {
     this.dataService.triggerBrowserDownload(
       "data:text/plain;charset=utf-8," +
-      this.rsaKeyHex.split("").reduce((prev, current, index) => {
-        return prev + current + ((index + 1) % 40 === 0 ? "\n" : "");
-      }),
+        this.rsaKeyHex.split("").reduce((prev, current, index) => {
+          return prev + current + ((index + 1) % 40 === 0 ? "\n" : "");
+        }),
       "business-key-کلید-کسب‌‌وکار-" +
-      this.businessService.business.title +
-      ".txt"
+        this.businessService.business.title +
+        ".txt"
     );
   }
   async ngOnInit() {

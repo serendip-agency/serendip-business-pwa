@@ -36,7 +36,10 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserModule } from "@angular/platform-browser";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import {
+  NoopAnimationsModule,
+  BrowserAnimationsModule
+} from "@angular/platform-browser/animations";
 import { NgxChartsModule } from "@swimlane/ngx-charts";
 import { DynamicModule } from "ng-dynamic-component";
 import { NgxCurrencyModule } from "ngx-currency";
@@ -129,6 +132,9 @@ import { FormQuillInputComponent } from "./base/form/form-quill-input/form-quill
 
 import { MonacoEditorModule } from "@materia-ui/ngx-monaco-editor";
 import { EntityWebhookViewComponent } from "./base/report/entity-webhook-view/entity-webhook-view.component";
+import { HomeComponent } from "./home/home.component";
+import { AggregationComponent } from "./base/aggregation/aggregation.component";
+import { PanelComponent } from "./panel/panel.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -229,7 +235,14 @@ export const primaryComponents = [
 ];
 
 @NgModule({
-  declarations: [...primaryComponents, ...dynamicComponents, IframeComponent],
+  declarations: [
+    ...primaryComponents,
+    ...dynamicComponents,
+    IframeComponent,
+    HomeComponent,
+    AggregationComponent,
+    PanelComponent
+  ],
   entryComponents: [],
   imports: [
     QuillModule,

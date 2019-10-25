@@ -4,7 +4,7 @@
     [id]="chartId"
     [xAxis]="true"
     [autoScale]="true"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     [yAxis]="true"
     class="chart-container"
     [class.loading]="loading"
@@ -19,7 +19,7 @@
     *ngIf="chartType == 'polar'"
     [id]="chartId"
     [xAxis]="true"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     [autoScale]="true"
     [yAxis]="true"
     class="chart-container"
@@ -30,7 +30,7 @@
 
   <ngx-charts-bar-vertical-stacked
     *ngIf="chartType == 'vertical-stacked-bar'"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     [id]="chartId"
     [xAxis]="true"
     [yAxis]="true"
@@ -43,7 +43,7 @@
   <ngx-charts-bar-vertical-2d
     *ngIf="chartType == 'vertical-grouped-bar'"
     [id]="chartId"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     [xAxis]="true"
     [yAxis]="true"
     class="chart-container"
@@ -55,7 +55,7 @@
   <ngx-charts-bar-horizontal-2d
   *ngIf="chartType == 'horizontal-grouped-bar'"
   [id]="chartId"
-  [view]="[380, 260]"
+  [view]="[420, 300]"
   [xAxis]="true"
   [yAxis]="true"
   class="chart-container"
@@ -67,7 +67,7 @@
   <ngx-charts-pie-chart
     *ngIf="chartType == 'pie'"
     [id]="chartId"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     [doughnut]="false"
     [labels]="true"
     class="chart-container"
@@ -80,7 +80,7 @@
   <ngx-charts-pie-chart
     *ngIf="chartType == 'doughnut'"
     [id]="chartId"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     [doughnut]="true"
     [labels]="true"
     class="chart-container"
@@ -95,7 +95,7 @@
     [id]="chartId"
     [yAxis]="true"
     [xAxis]="true"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     class="chart-container"
     [class.loading]="loading"
     [results]="data"
@@ -108,7 +108,7 @@
     [id]="chartId"
     [yAxis]="true"
     [xAxis]="true"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     class="chart-container"
     [class.loading]="loading"
     [results]="data"
@@ -118,7 +118,7 @@
   <ngx-charts-number-card
     *ngIf="chartType == 'number-card'"
     [id]="chartId"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     class="chart-container"
     [class.loading]="loading"
     [results]="data"
@@ -127,7 +127,7 @@
   <ngx-charts-advanced-pie-chart
     *ngIf="chartType == 'pie-advanced'"
     [id]="chartId"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     class="chart-container"
     [class.loading]="loading"
     [results]="data"
@@ -137,7 +137,7 @@
   <ngx-charts-tree-map
     *ngIf="chartType == 'tree-map'"
     [id]="chartId"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     class="chart-container"
     [class.loading]="loading"
     [results]="data"
@@ -148,7 +148,7 @@
   <ngx-charts-gauge
     *ngIf="chartType == 'gauge'"
     [id]="chartId"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     class="chart-container"
     [class.loading]="loading"
     [scheme]="'flame'"
@@ -159,7 +159,7 @@
   <ngx-charts-pie-grid
     *ngIf="chartType == 'pie-grid'"
     [id]="chartId"
-    [view]="[380, 260]"
+    [view]="[420, 300]"
     class="chart-container"
     [class.loading]="loading"
     [results]="data"

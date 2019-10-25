@@ -24,7 +24,7 @@
   </div>
 </div>
 
-<div class="dashboard-wrapper" [class.empty]="gridEmpty()" *ngIf="dashboardReady">
+<div class="dashboard-wrapper" [class.empty]="true || gridEmpty()" *ngIf="dashboardReady">
   <header id="header">
     <div class="inner">
       <div class="logo" (click)="clickOnLogo()">
@@ -129,11 +129,11 @@
             <img [src]="'assets/icons/' + section.icon + '.svg'" />
             <span> {{ section.title }} </span>
 
-            <img *ngIf="section.tabs && section.tabs.length > 0" class="toggle-ul" [class.active]="section.toggleUl"
+            <img *ngIf="section.tabs && section.tabs.length > 0" class="toggle-ul" [class.active]="!section.toggleUl"
               [src]="'assets/icons/arrow-right-next-8.svg'" />
           </a>
 
-          <ul [class.show]="section.toggleUl" *ngIf="section.tabs && section.tabs.length > 0">
+          <ul [class.show]="!section.toggleUl" *ngIf="section.tabs && section.tabs.length > 0">
             <li *ngFor="let tab of getExplorerTabs(section.tabs)">
               <a [dndEffectAllowed]="'all'" [dndDraggable]="{ tab: tab }" (dndStart)="tabDragStart(tab)"
                 (dndEnd)="tabDragEnd()" (click)="clickOnNavTab(tab)" [title]="tab.title">
@@ -353,16 +353,26 @@
       <li>
         <a (click)="toggleCalendar()" [class.active]="calendarService.calendarVisible">
           <img src="assets/icon-crm-header/calendar-2.svg" alt="" />
+          <span>
+            تقویم
+          </span>
         </a>
       </li>
 
       <li>
-        <a> <img src="assets/icon-crm-header/note.svg" alt="" /> </a>
+        <a> <img src="assets/icon-crm-header/note.svg" alt="" />
+          <span>
+            یادداشت
+          </span>
+         </a>
       </li>
 
       <li>
         <a (click)="toggleFileManager()" [class.active]="storageService.fileManagerVisible">
           <img src="assets/icon-crm-header/file-manager-cloud-4.svg" alt="" />
+           <span>
+             فایل
+           </span>
         </a>
       </li>
       <!-- <li>
@@ -374,6 +384,9 @@
       <li>
         <a (click)="toggleMap()" [class.active]="gmapsService.dashboardMapVisible">
           <img src="assets/icon-crm-header/map.svg" alt="" />
+          <span>
+            نقشه
+          </span>
         </a>
       </li>
     </ul>

@@ -75,7 +75,7 @@
           "
         ></app-form-radio-input> -->
 
-        <br />
+  
 
         <app-form-radio-input [model]="format.options.groupBy" [label]="
             'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید (DATASET)' +
@@ -211,7 +211,7 @@
       </ng-container>
 
 
-      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'scroll'"
+      <div class="report-result" [style.overflowX]="resultLoading ? 'hidden' : 'auto'"
         *ngIf="!resultLoading && report && mode == 'data'">
         <div class="report-header">
           <div class="inner">
@@ -267,6 +267,21 @@
             تا کنون رکورد {{ entityLabelSingular }} ثبت نشده است.
           </div> -->
         </div>
+
+        <div class="empty" *ngIf="!resultLoading && page.length === 0">
+
+          <img class="icon" [src]="'assets/icons/'+ icon +'.svg'" />
+
+          <h1>{{ title }}</h1>
+          <p>
+            موردی پیدا نشد!
+          </p>
+          <button class="button-bordered" (click)="new()">
+            <img src="assets/icons/plus-add-3.svg" />
+            ثبت {{title}}
+          </button>
+        </div>
+
       </div>
     </mat-card-content>
 
@@ -292,7 +307,7 @@
       <div class="clearfix"></div>
     </mat-card-actions>
 
-    <mat-card-actions *ngIf="
+    <!-- <mat-card-actions *ngIf="
         initDone &&
         !resultLoading &&
         report &&
@@ -302,7 +317,7 @@
         <img src="assets/icons/save-backup-1.svg" />
         <span>ذخیره گزارش</span>
       </button>
-    </mat-card-actions>
+    </mat-card-actions> -->
 
     <mat-card-actions *ngIf="initDone && !resultLoading && report && mode == 'data'">
       <button class="sp-button-icon" (click)="new()">
@@ -351,8 +366,8 @@
 
     <!-- <textarea name="" class="logbox" id="" cols="30" rows="10">{{report.fields | json}}</textarea> -->
     <div class="fields">
-      <app-form-select-input [data]="reports" [selectType]="'single'" [label]="'انتخاب از گزارشات ذخیره شده'"
-        (modelChange)="changeReport($event)" [model]="report._id"></app-form-select-input>
+      <!-- <app-form-select-input [data]="reports" [selectType]="'single'" [label]="'انتخاب از گزارشات ذخیره شده'"
+        (modelChange)="changeReport($event)" [model]="report._id"></app-form-select-input> -->
 
       <div dndDropzone (dndDrop)="reportFieldDrop($event)">
         <div class="field" dndEffectAllowed="all" [dndDraggable]="{ field: field, index: fieldIndex }"

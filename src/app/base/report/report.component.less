@@ -1,6 +1,5 @@
 .report {
-  width    : auto;
-  max-width: 100%;
+  width    : 100%;
 }
 
 table.formatted-report-table {
@@ -24,11 +23,14 @@ table.formatted-report-table {
 }
 
 .report-chart {
+
+  max-width: 360px;
+  margin:0 auto;
   .empty {
     margin       : 30px;
     padding      : 10px;
     border-radius: 10px;
-    background   : #f3e0c2;
+    opacity      : .7;
   }
 }
 
@@ -77,10 +79,7 @@ table.formatted-report-table {
   padding-top: 0;
 
   box-sizing: border-box;
-
-  .list {
-    max-width: 360px;
-  }
+  
 }
 
 .report-model {
@@ -94,6 +93,10 @@ table.formatted-report-table {
     font-size      : 11px;
   }
 
+  .fields{
+    max-width: 360px;
+  margin:0 auto;
+  }
   .reset-query {
     img {
       width     : auto;
@@ -205,7 +208,6 @@ table.formatted-report-table {
   }
 
   .records {
-    overflow  : auto;
     max-height: calc(~"100vh - 315px");
   }
 
@@ -213,14 +215,27 @@ table.formatted-report-table {
     margin: 0;
   }
 
+
   .empty {
     border-radius: 30px;
     text-align   : center;
-    font-style   : italic;
-    font-size    : 11px;
     font-weight  : 100;
     padding      : 40px 0;
-    background   : #f2f2f2;
+
+    img.icon{
+      width:128px;
+      height: auto;
+    }
+    h1 {
+      font-weight: 900;
+      font-size  : 23px;
+      color      : #777;
+    }
+
+    p {
+      font-size  : 11px;
+      font-weight: 100;
+    }
   }
 
   .record,
@@ -263,7 +278,7 @@ table.formatted-report-table {
     top          : 0;
     right        : 0;
     border-bottom: 1px solid #ddd;
-
+min-width: 100%;
     .inner {}
 
     .field,

@@ -58,7 +58,7 @@ export class ReportService {
     moment.loadPersian();
   }
 
-  async generate(report: ReportInterface) {
+  async generate(report: ReportInterface, skip: number = 0, limit: number = 0) {
     if (!report) {
       return;
     }
@@ -67,63 +67,13 @@ export class ReportService {
     }
 
     if (!report.data || report.data.length === 0) {
-      await this.dataService.pushCollections();
+      //   await this.dataService.pushCollections();
 
-      
-      let data = await this.dataService.list(report.entityName, 0, 0);
-      if (!data) {
-        data = [];
-      }
-
-      data = await Promise.all(
-        data.map((document, index) => {
-          return this.formatDocument(document, report.fields);
-        })
-      );
-
-      const queriedData = [];
-      await Promise.all(
-        data.map((document, index) => {
-          return new Promise(async (resolve, reject) => {
-            const isMatch = await this.documentMatchFieldQueries(
-              document,
-              report.fields
-            );
-
-            if (isMatch) {
-              queriedData.push(document);
-            }
-            resolve();
-          });
-        })
-      );
-
-      report.data = queriedData;
-      report.count = report.data.length;
-
-      // report.formats = [
-      //   {
-      //     method: "javascript",
-      //     options: {
-      //       code: groupMethod.toString()
-      //     }
-      //   }
-      //   // {
-      //   //   method : 'groupByQueries',
-      //   //   options : {
-      //   //     queries : [{method : 'eq',}] as FieldQueryInterface[]
-      //   //   }
-      //   // }
-      // ];
+      report.data = await this.dataService.list(report.entityName, skip, limit);
+      report.count = await this.dataService.count(report.entityName);
     }
 
     return report;
-  }
-
-  queueFormatReport(): Promise<ReportFormatInterface> {
-    return new Promise<ReportFormatInterface>((resolve, reject) => {
-      this.formatReportQueue = ObjectID.generate();
-    });
   }
 
   wait(timeout) {
@@ -165,102 +115,6 @@ export class ReportService {
     }
   }
 
-  async formatDocument(document: EntityModel, fields: ReportFieldInterface[]) {
-    // iterate throw fields in document
-    const fieldsToFormat = await Promise.all(
-      fields
-        .filter(field => {
-          return (
-            field.enabled && this.getAsyncFieldFormatMethods()[field.method]
-          );
-        })
-        // map each field to get value from
-        .map(field => {
-          return new Promise(async (resolve, reject) => {
-            let value = null;
-
-            // check if field method exists
-            value = await this.getAsyncFieldFormatMethods()[field.method]({
-              document,
-              field
-            });
-
-            const fieldToSet = {};
-            fieldToSet[field.name] = value;
-            resolve(fieldToSet);
-          });
-        })
-    );
-
-    return _.extend(document, ...fieldsToFormat);
-  }
-
-  async documentMatchFieldQuery(
-    record: EntityModel,
-    fields: ReportFieldInterface[],
-    field: ReportFieldInterface,
-    query: FieldQueryInterface
-  ) {
-    if (!query.enabled) {
-      return true;
-    }
-
-    if (!query.methodInput) {
-      query.methodInput = {};
-    }
-
-    if (this.getSyncFieldQueryMethods()[query.method]) {
-      if (!query.methodInput.value) {
-        query.methodInput.value = "";
-      }
-      return this.getSyncFieldQueryMethods()[query.method](
-        record[field.name],
-        query.methodInput.value
-      );
-    }
-    if (this.getAsyncFieldQueryMethods[query.method]) {
-      return await this.getAsyncFieldQueryMethods()[query.method]({
-        document: record,
-        field,
-        query
-      });
-    } else {
-      return false;
-    }
-  }
-
-  /**
-   *
-   * @param record Document record to check
-   * @param fields Fields to check their queries
-   */
-  async documentMatchFieldQueries(
-    record: EntityModel,
-    fields: ReportFieldInterface[]
-  ): Promise<boolean> {
-    const results = await Promise.all(
-      fields.map(async field => {
-        if (!field.enabled) {
-          return true;
-        }
-        if (!field.queries) {
-          return true;
-        }
-        return Promise.all(
-          field.queries.map(query =>
-            this.documentMatchFieldQuery(record, fields, field, query)
-          )
-        );
-      })
-    );
-
-    return (
-      _.flatten(results).filter(r => {
-        return r === false;
-      }).length === 0
-    );
-  }
-
   getAsyncReportFormatMethods(): {
     [key: string]: (input: {
       report: ReportInterface;
@@ -276,11 +130,7 @@ export class ReportService {
 
         const method = methodContainer({ _ });
 
-        //    try {
         return await method(input.report);
-        // } catch (error) {
-        //   return input.report;
-        // }
       },
       analyze2d: async _input => {
         const _formatOptions: {
@@ -345,157 +195,6 @@ export class ReportService {
               reject(e);
             });
         }).catch(e => console.log(e)) as any;
-      }
-    };
-  }
-
-  /**
-   * will return al async field formatting method available. each method takes document and field as input and return value to set on field
-   */
-  getAsyncFieldFormatMethods(): {
-    [key: string]: (input: {
-      document: EntityModel;
-      field: ReportFieldInterface;
-    }) => Promise<any>;
-  } {
-    return {
-      findEntityById: async input => {
-        const methodOptions: {
-          entityName: string;
-          field: ReportFieldInterface;
-        } = input.field.methodOptions;
-
-        let model;
-
-        try {
-          model = await this.dataService.details(
-            methodOptions.entityName,
-            input.document[input.field.name.split(".")[0]]
-          );
-        } catch (error) {}
-
-        if (model) {
-          if (methodOptions.field) {
-            return model[methodOptions.field.name];
-          }
-
-          return model;
-        }
-
-        return null;
-      },
-      findEntitiesById: async input => {
-        const methodOptions: { entity: string } = input.field.methodOptions;
-
-        return await this.dataService.details(
-          methodOptions.entity,
-          input.document[input.field.name]
-        );
-      },
-
-      joinFields: async input => {
-        const methodOptions: { fields: string[]; separator: string } =
-          input.field.methodOptions;
-
-        return _.map(methodOptions.fields, f => input.document[f]).join(
-          methodOptions.separator
-        );
-      },
-      javascript: async input => {
-        const methodOptions = { code: input.field.methodOptions.code };
-
-        let evaluatedCode;
-        try {
-          // tslint:disable-next-line:no-eval
-          evaluatedCode = eval(methodOptions.code);
-          if (typeof evaluatedCode !== "function") {
-            return "evaluated code is not a function";
-          }
-
-          return evaluatedCode(input.document, input.field);
-        } catch (error) {
-          
-          return error.message || error;
-        }
-      }
-    };
-  }
-
-  getAsyncFieldQueryMethods(): {
-    [key: string]: (opts: {
-      document: EntityModel;
-      field: ReportFieldInterface;
-      query: FieldQueryInterface;
-    }) => Promise<boolean>;
-  } {
-    return {
-      javascript: async opts => {
-        return true;
-      }
-    };
-  }
-
-  getSyncFieldQueryMethods(): {
-    [key: string]: (value: any, input: any) => boolean;
-  } {
-    return {
-      eq: (value, input) => {
-        return value === input;
-      },
-
-      neq: (value, input) => {
-        return value !== input;
-      },
-
-      gt: (value, input) => {
-        return value < input;
-      },
-
-      gte: (value, input) => {
-        return value <= input;
-      },
-
-      lt: (value, input) => {
-        return value > input;
-      },
-
-      lte: (value, input) => {
-        return value >= input;
-      },
-
-      nin: (value, input) => {
-        if (!value.indexOf) {
-          return false;
-        }
-        return value.indexOf(input) === -1;
-      },
-      inDateRange: (value, input) => {
-        value = new Date(value).getTime();
-
-        const from = new Date(input.from).getTime();
-        const to = new Date(input.to).getTime();
-
-        if (from && to) {
-          return (
-            (value >= from && value <= to) || (value >= to && value <= from)
-          );
-        }
-
-        if (from) {
-          return value >= from;
-        }
-
-        if (to) {
-          return value <= to;
-        }
-
-        return false;
-      },
-      in: (value, input) => {
-        if (!value.indexOf) {
-          return false;
-        }
-        return value.indexOf(input) !== -1;
       }
     };
   }

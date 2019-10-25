@@ -31,7 +31,12 @@ export class DashboardService {
 
   syncVisible = false;
 
-  currentSection: DashboardSectionInterface = { name: "", tabs: [] };
+  currentSection: DashboardSectionInterface = {
+    product: "base",
+    name: "",
+    tabs: []
+  };
+  currentTab: DashboardTabInterface;
 
   get screen() {
     return window.innerWidth < 860 ? "mobile" : "desktop";
@@ -78,52 +83,53 @@ export class DashboardService {
 
   async setDefaultSchema() {
     this.schema = {
+      reports: BusinessSchema.ReportsSchema,
       forms: BusinessSchema.FormsSchema,
-      dashboard: BusinessSchema.DashboardSchema,
-      reports: BusinessSchema.ReportsSchema
+      dashboard: BusinessSchema.DashboardSchema.concat(
+        (await this.dataService.list("_dashboard", 0, 0, true)) as any
+      )
+        .filter((p: any) => ["base"].indexOf(p.product) !== -1)
+        .map(dashboard => {
+          dashboard.tabs = dashboard.tabs.map(tab => {
+            if (tab.widget) {
+              tab.widgets = [tab.widget];
+              delete tab.widget;
+            }
+            return tab;
+          });
+          return dashboard;
+        }),
     };
 
-    this.schema.dashboard = ((await this.dataService.list(
-      "_dashboard",
-      0,
-      0,
-      true
-    )) as any).concat(this.schema.dashboard);
-
-    this.schema.dashboard = this.schema.dashboard.map(dashboard => {
-      dashboard.tabs = dashboard.tabs.map(tab => {
-        if (tab.widget) {
-          tab.widgets = [tab.widget];
-          delete tab.widget;
-        }
-        return tab;
-      });
-      return dashboard;
+    const entityTypes = await this.dataService.request({
+      method: "get",
+      path: "/api/entity/types",
+      retry: false
     });
 
-    const entities = await this.dataService.list("_entity");
-
-    this.schema.dashboard.push({
-      name: "raw",
-      icon: "copy",
-      title: "گزارشات خام",
-      tabs: entities.map(record => {
-        const entityName = record.name;
-        return {
-          icon: "copy",
-          active: true,
-          title: "گزارش " + entityName,
-          widgets: [
-            {
-              component: "ReportComponent",
-              inputs: {
-                entityName
+    if (entityTypes.length > 0) {
+      this.schema.dashboard.unshift({
+        name: "raw",
+        product: "base",
+        icon: "copy",
+        title: "اسناد",
+        tabs: entityTypes.map(name => {
+          return {
+            icon: "copy",
+            active: true,
+            title: name,
+            widgets: [
+              {
+                component: "ReportComponent",
+                inputs: {
+                  entityName: name
+                }
               }
-            }
-          ]
-        };
-      })
-    });
+            ]
+          };
+        })
+      });
+    }
   }
   getActiveTabs() {
     if (!this.currentSection) {

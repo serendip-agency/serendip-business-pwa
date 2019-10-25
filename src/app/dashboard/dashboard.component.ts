@@ -77,7 +77,7 @@ const dynamicComponents = {
   styleUrls: ["./dashboard.component.less"]
 })
 export class DashboardComponent implements OnInit, OnDestroy {
-  explorerVisible = false;
+  explorerVisible = window.innerWidth > 1024;
   explorerAnimDone = true;
 
   textUtils = text;
@@ -590,7 +590,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   clickOnNavTab(tab) {
-
     _.forEach(
       this.definedItemsOfArray(this.grid.containers[0].tabs),
       (tab: { active: boolean }) => {
@@ -603,7 +602,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     this.grid.containers[0].tabs.push(tab);
 
     this.syncGrid();
-
   }
 
   onTabDrop(event: DndDropEvent | any, dropToContainerIndex) {
@@ -1428,14 +1426,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
     //   return;
     // }
 
-    this.dashboardLoadingText = "Syncing Data ...";
+    // this.dashboardLoadingText = "Syncing Data ...";
 
-    if (Date.now() - this.lastDataSync > 1000 * 60 * 5) {
-      try {
-        await this.dataSync();
-        this.lastDataSync = Date.now();
-      } catch (error) {}
-    }
+    // if (Date.now() - this.lastDataSync > 1000 * 60 * 5) {
+    //   try {
+    //     await this.dataSync();
+    //     this.lastDataSync = Date.now();
+    //   } catch (error) {}
+    // }
 
     this.dashboardLoadingText = "Loading schemas ...";
 

@@ -1,48 +1,52 @@
 .iframe-container {
   iframe {
-    width: 100%;
+    width     : 100%;
     min-height: 400px;
     box-sizing: border-box;
-  border:1px solid #ccc;
+    border    : 1px solid #ccc;
 
   }
 }
 
 textarea.source {
-  direction: ltr;
+  direction  : ltr;
   font-family: monospace;
-  width: 100%;
-  font-size: 12px;
-  box-sizing: border-box;
-  border: none;
-  min-height: 400px;
+  width      : 100%;
+  font-size  : 12px;
+  box-sizing : border-box;
+  border     : none;
+  min-height : 400px;
 
 }
 
 
 .menu {
-  width: 680px;
   margin-top: 30px;
-  
+
   max-width: 100%;
+
   ul {
-    margin: 0;
-    padding: 0;
-    background: #fff;
+    margin       : 0;
+    padding      : 0;
+    background   : #fff;
+    border       : 1px solid #ccc;
+    border-bottom: none;
 
     li {
-      display: inline-block;
+      display       : inline-block;
       vertical-align: top;
 
       a {
-        color: #333;
-        padding: 10px;
-        display: block;
-        font-weight: bold;
+        color          : #333;
+        padding        : 10px;
+        display        : block;
         text-decoration: none;
-
+        font-weight    : 500;
+        border-left: 1px solid #ccc;
         &.active {
-          background: #cfcfcf;
+          background : #eee;
+          font-weight: bold;
+
         }
       }
     }
@@ -51,8 +55,6 @@ textarea.source {
 
 .tabs {
   background: #fff;
-  width: 680px;
-  max-width: 100%;
+  max-width : 100%;
 
 }
- 

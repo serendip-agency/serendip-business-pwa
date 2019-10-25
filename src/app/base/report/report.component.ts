@@ -194,7 +194,7 @@ export class ReportComponent implements OnInit {
   @Input() entityLabelPlural: string;
 
   @Input() reportName: string;
-  @Input() pageSize = 20;
+  @Input() pageSize = 10;
   @Input() pageIndex = 0;
 
   @Input() selected = [];
@@ -393,7 +393,7 @@ export class ReportComponent implements OnInit {
   }
 
   filterChartsByDataType(dataType): any[] {
-    return _.where(this.charts, { dataType: dataType });
+    return _.where(this.charts, { dataType });
   }
   reportFieldDragStart(field, index, event) {
     this.fieldDragging = field;
@@ -443,13 +443,15 @@ export class ReportComponent implements OnInit {
         this.format
       );
 
-      this.WidgetChange.emit({
-        inputs: {
-          format: this.format,
-          formatted: this.formatted,
-          mode: "chart"
-        }
-      });
+      this.mode = "chart";
+
+      // this.WidgetChange.emit({
+      //   inputs: {
+      //     format: this.format,
+      //     formatted: this.formatted,
+      //     mode: "chart"
+      //   }
+      // });
     }
     this.resultLoading = false;
   }
@@ -490,13 +492,12 @@ export class ReportComponent implements OnInit {
     return this.selected.length === this.pageSize;
   }
 
-  setMode(mode: string) {
+  async setMode(mode: string) {
     this.mode = mode;
 
     if (this.mode === "data") {
-      this.refresh()
-        .then()
-        .catch();
+      await this.refresh();
+      await this.changePage(0);
     }
 
     this.WidgetChange.emit({ inputs: { mode } });
@@ -504,7 +505,7 @@ export class ReportComponent implements OnInit {
 
   setFormat(format: any) {
     this.format = format;
-    this.WidgetChange.emit({ inputs: { format: format } });
+    this.WidgetChange.emit({ inputs: { format } });
   }
   getReportFormatForRadioList() {
     if (!this.formats) {
@@ -592,16 +593,24 @@ export class ReportComponent implements OnInit {
       };
     }
 
-    this.report.fields = _.sortBy(
-      await this.dataService.fields(this.entityName, this.report, 1, 3),
-      item => item.name.length
+    this.report = await this.reportService.generate(
+      this.report,
+      this.pageIndex * this.pageSize,
+      this.pageSize
     );
 
-    this.report = await this.reportService.generate(this.report);
+    if (this.report.fields.length === 0) {
+    for (let i = 0; i < 3; i++) {
+      this.report.fields = await this.dataService.fields(
+        this.entityName,
+        this.report,
+        1,
+        3
+      );
+    }
+    }
 
     this.pageCount = Math.ceil(this.report.count / this.pageSize);
-
-    this.changePage(0);
 
     this.resultLoading = false;
 
@@ -702,6 +711,8 @@ export class ReportComponent implements OnInit {
     } catch (error) {
       this.error = error;
     }
+
+    this.changePage(0);
 
     this.obService.listen(this.entityName).subscribe(event => {
       if (this.obServiceActive) {
@@ -866,11 +877,19 @@ export class ReportComponent implements OnInit {
     if (iterate !== 0) {
       this.selected = [];
     }
+    console.log(this.report.data.length, this.report.count);
 
-    this.page = _.take(
-      _.rest(this.report.data, this.pageSize * this.pageIndex),
-      this.pageSize
-    );
+    if (this.report.data.length !== this.report.count) {
+      if (iterate !== 0) {
+        await this.refresh();
+      }
+      this.page = this.report.data;
+    } else {
+      this.page = _.take(
+        _.rest(this.report.data, this.pageSize * this.pageIndex),
+        this.pageSize
+      );
+    }
 
     this.resultLoading = false;
   }
