@@ -85,21 +85,28 @@ export class DashboardService {
     this.schema = {
       reports: BusinessSchema.ReportsSchema,
       forms: BusinessSchema.FormsSchema,
-      dashboard: BusinessSchema.DashboardSchema.concat(
-        (await this.dataService.list("_dashboard", 0, 0, true)) as any
-      )
+      dashboard: BusinessSchema.DashboardSchema
         .filter((p: any) => ["base"].indexOf(p.product) !== -1)
-        .map(dashboard => {
-          dashboard.tabs = dashboard.tabs.map(tab => {
-            if (tab.widget) {
-              tab.widgets = [tab.widget];
-              delete tab.widget;
-            }
-            return tab;
-          });
-          return dashboard;
-        }),
+       
     };
+
+
+   this.schema.dashboard = this.schema.dashboard.concat(
+      (await this.dataService.list("_dashboard", 0, 0, true)) as any
+    );
+
+
+    this.schema.dashboard =  this.schema.dashboard.map(dashboard => {
+      dashboard.tabs = dashboard.tabs.map(tab => {
+        if (tab.widget) {
+          tab.widgets = [tab.widget];
+          delete tab.widget;
+        }
+        return tab;
+      });
+      return dashboard;
+    });
+
 
     const entityTypes = await this.dataService.request({
       method: "get",

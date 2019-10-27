@@ -59,22 +59,14 @@ export class ReportService {
     moment.loadPersian();
   }
 
-  async generate(report: ReportInterface, skip: number = 0, limit: number = 0) {
-    if (!report) {
-      return;
-    }
-    if (!report.fields) {
-      report.fields = [];
-    }
-
-    const fieldsWithQuery = report.fields.filter(p =>
-     p.queries && p.queries.find(p => p.enabled)
+  createMatchStageQuery(report: ReportInterface) {
+    const fieldsWithQuery = report.fields.filter(
+      p => p.queries && p.queries.find(d => d.enabled)
     );
 
     const matchQuery = {
       _entity: report.entityName
     };
-    
 
     fieldsWithQuery.forEach(f => {
       f.queries
@@ -106,28 +98,53 @@ export class ReportService {
             matchQuery[f.name] = {};
 
             if (q.methodInput.value.from) {
-              matchQuery[f.name].$gte = Moment(q.methodInput.value.from).valueOf();
+              matchQuery[f.name].$gte = Moment(
+                q.methodInput.value.from
+              ).valueOf();
             }
 
             if (q.methodInput.value.to) {
-              matchQuery[f.name].$lte = Moment(q.methodInput.value.to).valueOf();
+              matchQuery[f.name].$lte = Moment(
+                q.methodInput.value.to
+              ).valueOf();
             }
           }
         });
     });
 
-    
+    console.log(matchQuery);
+    return matchQuery;
+  }
+
+  async generate(
+    report: ReportInterface,
+    skip: number = 0,
+    limit: number = 0,
+    offline = false
+  ) {
+    if (!report) {
+      return;
+    }
+    if (!report.fields) {
+      report.fields = [];
+    }
+
     const pipeline = [
       {
-        $match: matchQuery
+        $match: await this.createMatchStageQuery(report)
       },
-      skip ? {
-        $skip: skip
-      } : null,
-limit ?      {
-        $limit: limit
-      } : null
-    ].filter(p=>p);
+      skip
+        ? {
+            $skip: skip
+          }
+        : null,
+      limit
+        ? {
+            $limit: limit
+          }
+        : null
+    ].filter(p => p);
+
     if (!report.data || report.data.length === 0) {
       //   await this.dataService.pushCollections();
 
@@ -135,7 +152,10 @@ limit ?      {
         report.entityName,
         pipeline
       );
-      report.count = await this.dataService.count(report.entityName,matchQuery);
+      report.count = await this.dataService.count(
+        report.entityName,
+        this.createMatchStageQuery(report)
+      );
     }
 
     return report;
@@ -148,7 +168,55 @@ limit ?      {
       }, timeout);
     });
   }
-  async formatReport(report: ReportInterface, format: ReportFormatInterface) {
+
+  async onlineAnalyze(
+    rawReport: ReportInterface,
+    format: ReportFormatInterface
+  ) {
+    let aggregation = [];
+    if (format.method === "aggregate") {
+      aggregation = await this.dataService.aggregate(
+        rawReport.entityName,
+        format.options.pipeline
+      );
+    }
+
+    if (format.method === "analyze1d") {
+      // aggregation = await this.dataService.aggregate(rawReport.entityName, [
+      //   {
+      //     $match: this.createMatchStageQuery(rawReport)
+      //   },
+      //   {
+      //     $group: {
+      //       _id: format.options.groupBy,
+      //       value: {
+      //         ...format.options.valueBy
+      //       }
+      //     }
+      //   }
+      // ]);
+    }
+
+    console.log(format.options.valueBy);
+
+    const report = _.clone(rawReport);
+    report.count = aggregation.length;
+    report.data = aggregation;
+    report.fields = [];
+    for (let i = 0; i < 3; i++) {
+      report.fields = await this.dataService.fields(
+        report.entityName,
+        report,
+        1,
+        3,
+        [],
+        true
+      );
+    }
+
+    return report;
+  }
+  async offlineAnalyze(report: ReportInterface, format: ReportFormatInterface) {
     if (!this.formatterBusy) {
       this.formatterBusy = true;
       // report = await this.generate(_.omit(report, "data"));
@@ -168,7 +236,7 @@ limit ?      {
 
       // TODO: if for offline reports
       report = await this.getAsyncReportFormatMethods()[format.method]({
-        report: await this.generate(report),
+        report: await this.generate(report, 0, 0, false),
         format
       });
 
@@ -176,7 +244,7 @@ limit ?      {
       return report;
     } else {
       await this.wait(1000);
-      return this.formatReport(report, format);
+      return this.offlineAnalyze(report, format);
     }
   }
 
@@ -216,7 +284,7 @@ limit ?      {
           dateRangeCount: _input.format.options.dateRangeCount || 10
         };
 
-        _input.report = await this.generate(_input.report,0,0);
+        _input.report = await this.generate(_input.report, 0, 0);
 
         const thread = spawn(location.origin + "/workers/analyze/2d.js");
 

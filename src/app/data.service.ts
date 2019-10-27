@@ -718,8 +718,8 @@ export class DataService {
         )
       );
 
-      delete model["_aes"];
-      delete model["_hex"];
+      delete model._aes;
+      delete model._hex;
 
       return _.extend(model, decryptedModel);
     } catch (error) {}
@@ -783,13 +783,12 @@ export class DataService {
   }
 
   async fields(
-    entityName: string,
+    entityName?: string,
     report?: ReportInterface,
     depth?: number,
     maxDepth?: number,
     parents: string[] = [],
-    enableFields : boolean = false
-    
+    enableFields: boolean = false
   ) {
     if (!parents) {
       parents = [];
@@ -814,17 +813,21 @@ export class DataService {
       }
     }
 
-    const primaryFields = JSON.parse(
-      JSON.stringify(
-        _.findWhere(ReportsSchema, {
-          name: "primary"
-        }).fields
-      )
+    const primaryFields = _.clone(
+      _.findWhere(ReportsSchema, {
+        name: "primary"
+      }).fields
     );
-
     primaryFields.forEach(pf => {
       if (report.fields.filter(f => f.name === pf.name).length === 0) {
+        let primaryFieldExist = false;
+        for (let i = 0; i < 3; i++) {
+          const sample = _.sample(report.data, 1)[0];
+          if (sample && sample[pf.name]) { primaryFieldExist = true; }
+        }
+        if (primaryFieldExist) {
         report.fields.push(pf);
+        }
       }
     });
 
@@ -868,7 +871,6 @@ export class DataService {
             value.length !== 0 &&
             value.length !== 24
           ) {
-    
             report.fields.push({
               name: key,
               label: key,
@@ -916,7 +918,6 @@ export class DataService {
 
               continue;
             }
-           
           }
 
           report.fields.push({
@@ -1080,22 +1081,18 @@ export class DataService {
       return field;
     });
 
-    if(enableFields){
-      
+    if (enableFields) {
+      const nonPrimaryFields = report.fields.filter(
+        p => primaryFields.filter(d => d.name === p.name).length === 0
+      );
 
-    const nonPrimaryFields = report.fields.filter(
-      p => primaryFields.filter(d => d.name === p.name).length === 0
-    );
-
-    nonPrimaryFields
-      .filter(p => p.name.indexOf(".") === -1)
-      .forEach((value, index) => {
-        if (index < 3) {
-          value.enabled = true;
-        }
-      });
-
-
+      nonPrimaryFields
+        .filter(p => p.name.indexOf(".") === -1)
+        .forEach((value, index) => {
+          if (index < 3) {
+            value.enabled = true;
+          }
+        });
     }
 
     return report.fields;

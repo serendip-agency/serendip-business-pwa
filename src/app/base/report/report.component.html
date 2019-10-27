@@ -53,7 +53,7 @@
       </div>
     </mat-card-content>
 
-   
+
 
 
 
@@ -68,9 +68,9 @@
       </div>
 
       <div class="report-chart form-wrapper" *ngIf="!formatsLoading && !resultLoading && mode == 'format'">
-        <!-- <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label> -->
+        <!-- <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label>
 
-        <!-- <app-form-radio-input
+        <app-form-radio-input
           [display]="'block'"
           [model]="format.type"
           [data]="getFormatTypes()"
@@ -81,40 +81,32 @@
         ></app-form-radio-input> -->
 
 
-
-        <app-form-radio-input [model]="format.options.groupBy" [label]="
-            'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید (DATASET)' +
-              ' (' +
-              getFieldsForSelect('string', 'boolean', 'number', 'array')
-                .length +
-              ')' | rpd
-          " [data]="getFieldsForSelect('string', 'boolean', 'number', 'array')" [display]="'block'" (modelChange)="
+        <app-form-select-input [selectType]="'single'" [model]="format?.options?.groupBy" [label]="
+            'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید ' 
+          " [data]="getFieldsForSelect('string', 'boolean', 'number', 'array')" (modelChange)="
             format.options.groupBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
-          "></app-form-radio-input>
+          "></app-form-select-input>
 
-        <app-form-radio-input [model]="format?.options?.dateBy" [label]="
-            'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید' +
-              ' (' +
-              getFieldsForSelect('date').length +
-              ')' | rpd
-          " [data]="getFieldsForSelect('date')" [display]="'block'" (modelChange)="
+
+        <app-form-select-input [selectType]="'single'" [model]="format?.options?.dateBy" [label]="
+            'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید'           
+          " [data]="getFieldsForSelect('date')" (modelChange)="
             format.options.dateBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
-          "></app-form-radio-input>
+          "></app-form-select-input>
 
-        <app-form-radio-input [model]="format?.options?.valueBy"
-          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'" [data]="getFieldsForY()" [display]="'block'"
-          (modelChange)="
+        <app-form-select-input [selectType]="'single'" [model]="format?.options?.valueBy"
+          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'" [data]="getFieldsForY()" (modelChange)="
             format.options.valueBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
-          "></app-form-radio-input>
+          "></app-form-select-input>
 
-        <app-form-radio-input [model]="format?.options?.sizeBy" [label]="'ویژگی را برای عمق و یا سایز انتخاب کنید  (Z)'"
-          [data]="getFieldsForSelect('number')" [display]="'block'" (modelChange)="
+        <!--   <app-form-select-input [selectType]="'single'" [model]="format?.options?.sizeBy"
+          [label]="'ویژگی را برای عمق و یا سایز انتخاب کنید  (Z)'" [data]="getFieldsForSelect('number')" (modelChange)="
             format.options.sizeBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
-          "></app-form-radio-input>
+          "></app-form-select-input> -->
       </div>
       <div *ngIf="formatted && mode == 'chart'">
         <div class="form-wrapper" style="text-align: center;">
@@ -244,7 +236,7 @@
         <mat-progress-bar *ngIf="resultLoading" [color]="'warn'" [mode]="'indeterminate'">
         </mat-progress-bar>
 
-        <div class="records" *ngIf="!resultLoading">
+        <div class="records" *ngIf="!resultLoading && page">
           <div class="record" *ngFor="
               let record of _.take(page || [], pageSize);
               trackBy: trackByFn
@@ -300,8 +292,7 @@
         <span>نمایش نتیجه</span>
       </button>
 
-      <button *ngIf="mode == 'chart'" class="sp-button-icon pull-left"
-        (click)="WidgetChange.emit({ inputs: { mode: 'format' } })">
+      <button *ngIf="mode == 'chart'" class="sp-button-icon pull-left" (click)="setMode('format')">
         <img src="assets/icons/settings-adjust-reg.svg" />
       </button>
 
@@ -382,7 +373,7 @@
           <img *ngIf="
                   field.enabled && field.queries && field.queries.length > 0
                 " (click)="field.showQueries = !field.showQueries" class="queries-icon" [class.active]="
-                  _.findWhere(field.queries, { enabled: true }) ||
+                  _.find(field.queries, { enabled: true }) ||
                   field.showQueries
                 " src="assets/icons/filter-6.svg" alt="" />
 
@@ -401,14 +392,15 @@
                 ">
             <div class="form">
               <app-form (WidgetChange)="field.template.inputs = $event.inputs.model" [formType]="'inline'"
-               [model]="field.template.inputs" [name]="field.template.formName" [formId]="field.template.formId"></app-form>
+                [model]="field.template.inputs" [name]="field.template.formName" [formId]="field.template.formId">
+              </app-form>
             </div>
           </div>
 
           <div *ngIf="
                   field.enabled &&
                   field.queries &&
-                  (_.findWhere(field.queries, { enabled: true }) ||
+                  (_.find(field.queries, { enabled: true }) ||
                     field.showQueries) &&
                   field.queries.length > 0
                 " class="queries">

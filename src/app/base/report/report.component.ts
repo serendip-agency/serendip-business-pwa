@@ -24,7 +24,7 @@ import { DataService } from "src/app/data.service";
 import { IdbService } from "src/app/idb.service";
 import { ObService } from "src/app/ob.service";
 import { ReportService, DateUnitToFormatMap } from "src/app/report.service";
-import * as _ from "underscore";
+import * as _ from "lodash";
 import * as moment from "moment-jalaali";
 
 import { LongTextViewComponent } from "../report/long-text-view/long-text-view.component";
@@ -275,22 +275,20 @@ export class ReportComponent implements OnInit {
     console.log(input);
   }
   getFieldsForY() {
-    const fields = JSON.parse(
-      JSON.stringify(this.getFieldsForSelect("number"))
-    );
+    const fields: any[] = _.clone(this.getFieldsForSelect("number"));
     const fieldsForY = [];
-
     for (const f of fields) {
       if (f.value === null) {
         f.label = "شمارش تعداد رکوردها";
       } else {
-        if (!f.label.startsWith("مجموع")) {
-          f.label = "مجموع " + _.clone(f.label);
-        }
+        
+        f.label = "مجموع " + _.clone(f.label);
+        f.operator = "sum";
       }
 
-      fieldsForY.push(f);
+      fieldsForY.push(_.clone(f));
     }
+
     return fieldsForY;
   }
 
@@ -399,7 +397,7 @@ export class ReportComponent implements OnInit {
   }
 
   filterChartsByDataType(dataType): any[] {
-    return _.where(this.charts, { dataType });
+    return _.filter(this.charts, { dataType });
   }
   reportFieldDragStart(field, index, event) {
     this.fieldDragging = field;
@@ -416,14 +414,23 @@ export class ReportComponent implements OnInit {
       this.format.options.dateRangeUnitEnd = new Date().toString();
     }
 
-    this.format.method = "analyze1d";
-    this.format.type = "1d";
+    if (this.format.options.groupBy) {
+      this.format.method = "analyze1d";
+      this.format.type = "1d";
+    }
+
     if (this.format.options.dateBy) {
+      if (!this.format.options.groupBy) {
+        return;
+      }
       this.format.method = "analyze2d";
       this.format.type = "2d";
     }
 
     if (this.format.options.sizeBy) {
+      if (!this.format.options.dateBy || !this.format.options.groupBy) {
+        return;
+      }
       this.format.method = "analyze3d";
       this.format.type = "3d";
     }
@@ -444,10 +451,17 @@ export class ReportComponent implements OnInit {
     }
 
     if (this.format) {
-      this.formatted = await this.reportService.formatReport(
-        this.report,
-        this.format
-      );
+      if (this.report.offline) {
+        this.formatted = await this.reportService.offlineAnalyze(
+          this.report,
+          this.format
+        );
+      } else {
+        this.formatted = await this.reportService.onlineAnalyze(
+          this.report,
+          this.format
+        );
+      }
 
       this.mode = "chart";
 
@@ -530,7 +544,7 @@ export class ReportComponent implements OnInit {
   }
 
   enabledReportFields(): ReportFieldInterface[] {
-    return _.where(this.report.fields, { enabled: true });
+    return _.filter(this.report.fields, { enabled: true });
   }
   extendObj(obj1, obj2) {
     return _.extend({}, obj1, obj2);
@@ -555,7 +569,7 @@ export class ReportComponent implements OnInit {
   }
 
   findEnabledFieldQueries(field: ReportFieldInterface) {
-    return _.where(field.queries, { enabled: true });
+    return _.filter(field.queries, { enabled: true });
   }
 
   async deleteReport() {
@@ -563,7 +577,6 @@ export class ReportComponent implements OnInit {
     //  await this.reportStore.delete(this.report.name);
   }
   async refresh() {
-   
     if (this.report && !this.report.offline) {
       delete this.report.data;
     }
@@ -571,7 +584,7 @@ export class ReportComponent implements OnInit {
     this.resultLoading = true;
 
     if (!this.report && this.reportName) {
-      this.report = _.findWhere(this.dashboardService.schema.reports, {
+      this.report = _.find(this.dashboardService.schema.reports, {
         name: this.reportName
       }) as any;
     }
@@ -600,33 +613,30 @@ export class ReportComponent implements OnInit {
       this.pageSize
     );
 
-  
-      for (let i = 0; i < 3; i++) {
-        this.report.fields = await this.dataService.fields(
-          this.entityName,
-          this.report,
-          1,
-          3,
-          [],
-          this.report.fields.length === 0
-        );
-      }
-    
+    for (let i = 0; i < 3; i++) {
+      this.report.fields = await this.dataService.fields(
+        this.entityName,
+        this.report,
+        1,
+        3,
+        [],
+        this.report.fields.length === 0
+      );
+    }
 
     this.pageCount = Math.ceil(this.report.count / this.pageSize);
 
     this.resultLoading = false;
 
+    await this.changePage(0);
     this.WidgetChange.emit({
       inputs: {
-        report : this.report,
+        report: this.report,
         entityName: this.entityName,
         page: this.page,
         pageCount: this.pageCount
       }
     });
-
-
   }
 
   async save() {
@@ -724,7 +734,7 @@ export class ReportComponent implements OnInit {
       if (this.obServiceActive) {
         if (
           event.eventType === "update" &&
-          _.findWhere(this.page, { _id: event.model._id })
+          _.find(this.page, { _id: event.model._id })
         ) {
           this.page = this.page.map(p => {
             if (p._id === event.model._id) {
@@ -770,6 +780,7 @@ export class ReportComponent implements OnInit {
         item.queries.filter(q => q.enabled).length > 0
     );
   }
+  // tslint:disable-next-line: variable-name
   recordSelectChange(_id: string, event: { checked: boolean }) {
     if (event.checked) {
       if (this.selected.indexOf(_id) === -1) {
@@ -835,6 +846,7 @@ export class ReportComponent implements OnInit {
   }
 
   edit() {
+    // tslint:disable-next-line: variable-name
     this.selected.forEach(_id => {
       this.DashboardCommand.emit({
         command: "open-tab",
@@ -859,6 +871,7 @@ export class ReportComponent implements OnInit {
   }
 
   async delete() {
+    // tslint:disable-next-line: prefer-for-of
     for (let i = 0; i < this.selected.length; i++) {
       await this.dataService.delete(this.report.entityName, this.selected[i]);
     }
@@ -883,18 +896,16 @@ export class ReportComponent implements OnInit {
     if (iterate !== 0) {
       this.selected = [];
     }
-    if(!this.report.data)
-    this.report.data = [];
+    if (!this.report.data) {
+      this.report.data = [];
+    }
     if (this.report.data && this.report.data.length !== this.report.count) {
       if (iterate !== 0) {
         await this.refresh();
       }
       this.page = this.report.data;
     } else {
-      this.page = _.take(
-        _.rest(this.report.data, this.pageSize * this.pageIndex),
-        this.pageSize
-      );
+      this.page = _.chunk(this.report.data, this.pageSize)[this.pageIndex];
     }
 
     this.WidgetChange.emit({ inputs: { page: this.page } });
