@@ -288,6 +288,10 @@ input[dir="ltr"] {
   margin-bottom: 0 !important;
 }
 
+.mat-dialog-container{
+  padding:0!important;
+  max-height: 100vh!important;
+}
 .minimal {
   .mat-card-subtitle {
     display: none;
@@ -330,7 +334,10 @@ input[dir="ltr"] {
   height   : 22px;
 }
 
-.mat-card {}
+.mat-card 
+{
+  box-sizing: border-box;;
+}
 
 mat-form-field .location img,
 mat-form-field .plus img,

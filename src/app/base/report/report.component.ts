@@ -203,7 +203,7 @@ export class ReportComponent implements OnInit {
 
   @Input() mode: string | "save" | "chart" | "format" | "report" | "data" =
     "data";
-  @Input() page: any[];
+  @Input() page: any[] = [];
 
   obServiceActive = true;
   reports: { label: string; value: string }[];
@@ -222,7 +222,7 @@ export class ReportComponent implements OnInit {
   @Input() formatted: ReportInterface;
   initDone = false;
   error: any;
-  _formatFields: any[];
+  analyzeFieldsForSelect: any;
 
   @Input()
   public set model(v: ReportInterface) {
@@ -274,37 +274,8 @@ export class ReportComponent implements OnInit {
   log(input) {
     console.log(input);
   }
-  getFieldsForY() {
-    const fields: any[] = _.clone(this.getFieldsForSelect("number"));
-    const fieldsForY = [];
-    for (const f of fields) {
-      if (f.value === null) {
-        f.label = "شمارش تعداد رکوردها";
-      } else {
-        
-        f.label = "مجموع " + _.clone(f.label);
-        f.operator = "sum";
-      }
 
-      fieldsForY.push(_.clone(f));
-    }
-
-    return fieldsForY;
-  }
-
-  getFieldsForSelect(
-    ...typeFilter: string[]
-  ): { label: string; value: ReportFieldInterface }[] {
-    if (this._formatFields) {
-      if (typeFilter) {
-        return this._formatFields.filter(
-          p => !p.value || typeFilter.indexOf(p.value.type) !== -1
-        );
-      } else {
-        return this._formatFields;
-      }
-    }
-
+  setAnalyzeFieldsForSelect() {
     if (
       !this.report ||
       !this.report.fields ||
@@ -313,75 +284,58 @@ export class ReportComponent implements OnInit {
     ) {
       return [];
     }
-    let fields: { label: string; value: ReportFieldInterface }[] = [];
+    const fields: { label: string; value: ReportFieldInterface }[] = [];
 
     this.report.fields.forEach(item => {
       fields.push({
-        label: `  ${item.label} `,
+        label: item.label,
         value: item
       });
     });
 
-    // this.report.data.forEach(row => {
-    //   for (const key in row) {
-    //     if (["_entity", "_business", "_id"].indexOf(key) !== -1) {
-    //       continue;
-    //     }
-
-    //     if (row.hasOwnProperty(key)) {
-    //       const value = row[key];
-
-    //       if (typeof value === "undefined" || value === null) {
-    //         continue;
-    //       }
-    //       if (fields.filter(p => p.value.name === key).length === 0) {
-    //         if (key.toLowerCase().indexOf("date") !== -1) {
-    //           fields.push({
-    //             label: key,
-    //             value: { name: key, type: "date" }
-    //           });
-    //           continue;
-    //         }
-
-    //         fields.push({
-    //           label: key,
-    //           value: { name: key, type: typeof value as any }
-    //         });
-    //       }
-    //     }
-    //   }
-    // });
-
-    fields = fields.map(field => {
-      if (!field.value.type) {
-        for (const row of this.report.data) {
-          if (
-            typeof row[field.value.name] === "undefined" ||
-            row[field.value.name] === null
-          ) {
-            continue;
-          }
-          if (field.value.name.toLowerCase().indexOf("date") !== -1) {
-            field.value.type = "date";
-          } else {
-            field.value.type = typeof row[field.value.name] as any;
-          }
-          break;
-        }
-      }
-      return field;
-    });
-
     fields.unshift({ label: "انتخاب نشده", value: null });
 
-    this._formatFields = fields;
+    this.analyzeFieldsForSelect = {
+      groupBy: fields.filter(
+        p =>
+          !p.value ||
+          ["string", "boolean", "number", "array"].indexOf(p.value.type) !== -1
+      ),
+      dateBy: fields.filter(
+        p => !p.value || ["date"].indexOf(p.value.type) !== -1
+      ),
+      valueBy: fields
+        .filter(p => !p.value || p.value.type === "number")
+        .reduce((prev, curr) => {
+          if (!curr.value) {
+            prev.push({
+              label: "شمارش تعداد رکوردها",
+              value: curr.value,
+              operator: {
+                $sum: 1
+              }
+            });
+          } else {
+            prev.push({
+              label: "مجموع " + _.clone(curr.label),
+              value: curr.value,
+              operator: {
+                $sum: "$" + curr.value.name
+              }
+            });
 
-    if (typeFilter) {
-      return fields.filter(
-        p => !p.value || typeFilter.indexOf(p.value.type) !== -1
-      );
-    }
-    return fields;
+            prev.push({
+              label: "میانگین " + _.clone(curr.label),
+              value: curr.value,
+              operator: {
+                $avg: "$" + curr.value.name
+              }
+            });
+          }
+
+          return prev;
+        }, [])
+    };
   }
   getFormatTypes() {
     return [
@@ -463,7 +417,9 @@ export class ReportComponent implements OnInit {
         );
       }
 
-      this.mode = "chart";
+      if (this.formatted) {
+        this.mode = "chart";
+      }
 
       // this.WidgetChange.emit({
       //   inputs: {
@@ -613,22 +569,25 @@ export class ReportComponent implements OnInit {
       this.pageSize
     );
 
-    for (let i = 0; i < 3; i++) {
-      this.report.fields = await this.dataService.fields(
-        this.entityName,
-        this.report,
-        1,
-        3,
-        [],
-        this.report.fields.length === 0
-      );
+    if (this.report.data && this.report.data.length) {
+      for (let i = 0; i < 3; i++) {
+        this.report.fields = await this.dataService.fields(
+          this.entityName,
+          this.report,
+          1,
+          3,
+          [],
+          this.report.fields.length === 0
+        );
+      }
     }
+
+    this.setAnalyzeFieldsForSelect();
 
     this.pageCount = Math.ceil(this.report.count / this.pageSize);
 
     this.resultLoading = false;
 
-    await this.changePage(0);
     this.WidgetChange.emit({
       inputs: {
         report: this.report,
@@ -637,6 +596,9 @@ export class ReportComponent implements OnInit {
         pageCount: this.pageCount
       }
     });
+
+    await this.changePage(0);
+
   }
 
   async save() {
@@ -728,7 +690,6 @@ export class ReportComponent implements OnInit {
       this.error = error;
     }
 
-    this.changePage(0);
 
     this.obService.listen(this.entityName).subscribe(event => {
       if (this.obServiceActive) {
@@ -905,7 +866,7 @@ export class ReportComponent implements OnInit {
       }
       this.page = this.report.data;
     } else {
-      this.page = _.chunk(this.report.data, this.pageSize)[this.pageIndex];
+      this.page = _.chunk(this.report.data, this.pageSize)[this.pageIndex] || [];
     }
 
     this.WidgetChange.emit({ inputs: { page: this.page } });

@@ -174,6 +174,9 @@ export class ReportService {
     format: ReportFormatInterface
   ) {
     let aggregation = [];
+
+    if (!format.method) { return; }
+
     if (format.method === "aggregate") {
       aggregation = await this.dataService.aggregate(
         rawReport.entityName,
@@ -181,23 +184,31 @@ export class ReportService {
       );
     }
 
-    if (format.method === "analyze1d") {
-      // aggregation = await this.dataService.aggregate(rawReport.entityName, [
-      //   {
-      //     $match: this.createMatchStageQuery(rawReport)
-      //   },
-      //   {
-      //     $group: {
-      //       _id: format.options.groupBy,
-      //       value: {
-      //         ...format.options.valueBy
-      //       }
-      //     }
-      //   }
-      // ]);
-    }
+    console.log(format, !format.options.groupBy || !format.options.valueBy);
 
-    console.log(format.options.valueBy);
+    if (format.method === "analyze1d") {
+
+      if (!format.options.groupBy || !format.options.valueBy ) { return; }
+
+      aggregation = await this.dataService.aggregate(rawReport.entityName, [
+        {
+          $match: this.createMatchStageQuery(rawReport)
+        },
+        {
+          $group: {
+            _id: '$' + format.options.groupBy.name,
+            value: format.options.valueBy.operator
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            name: "$_id",
+            value: "$value"
+          }
+        }
+      ]);
+    }
 
     const report = _.clone(rawReport);
     report.count = aggregation.length;

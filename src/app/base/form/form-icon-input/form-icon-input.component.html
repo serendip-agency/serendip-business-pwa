@@ -4,14 +4,18 @@
   </label>
 
   <div>
+
+    <span class="btn-choose" *ngIf="!browse" (click)="browse = true"> انتخاب از گالری</span>
+    <span class="btn-close" *ngIf="browse" (click)="browse = false"> بستن گالری</span>
+
     <img
-      class="model"
-      *ngIf="model"
-      [src]="'/assets/icons/' + model + '.svg'"
-      alt=""
-    />
-    <span *ngIf="!browse" (click)="browse = true"> انتخاب از گالری</span>
-    <span *ngIf="browse" (click)="browse = false"> بستن گالری</span>
+    class="model"
+    *ngIf="model"
+    [src]="'/assets/icons/' + model + '.svg'"
+    alt=""
+  />
+
+  <div class="clear"></div>
   </div>
 
   <div class="icons" *ngIf="browse">

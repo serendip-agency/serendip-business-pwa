@@ -5,7 +5,8 @@ import {
   EventEmitter,
   Input,
   OnInit,
-  Output
+  Output,
+  Inject
 } from "@angular/core";
 import {
   DashboardTabInterface,
@@ -21,6 +22,7 @@ import { DataService } from "../../data.service";
 import { Idb, IdbService } from "../../idb.service";
 import { BusinessService } from "src/app/business.service";
 import * as sUtil from "serendip-utility";
+import { MAT_DIALOG_DATA } from "@angular/material";
 @Component({
   selector: "app-form",
   templateUrl: "./form.component.html",
@@ -42,11 +44,16 @@ export class FormComponent implements OnInit {
     public businessService: BusinessService,
     public ref: ChangeDetectorRef,
     private dashboardService: DashboardService,
-    public idbService: IdbService
+    public idbService: IdbService,
+    @Inject(MAT_DIALOG_DATA) matDialogData: any
   ) {
     this.ProxyWidgetChange.subscribe(item => {
       this.WidgetChange.emit({ inputs: { model: this.model } });
       console.warn("ProxyWidgetChange", item, this.model);
+    });
+
+    Object.keys(matDialogData).forEach(key => {
+      this[key] = matDialogData[key];
     });
   }
 
@@ -223,6 +230,7 @@ export class FormComponent implements OnInit {
   }
 
   async ngOnInit() {
+    console.log(this.name, this.formId);
     this.loading = true;
 
     await this.init();

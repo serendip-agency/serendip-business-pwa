@@ -83,7 +83,7 @@
 
         <app-form-select-input [selectType]="'single'" [model]="format?.options?.groupBy" [label]="
             'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید ' 
-          " [data]="getFieldsForSelect('string', 'boolean', 'number', 'array')" (modelChange)="
+          " [data]="analyzeFieldsForSelect.groupBy" (modelChange)="
             format.options.groupBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
           "></app-form-select-input>
@@ -91,13 +91,13 @@
 
         <app-form-select-input [selectType]="'single'" [model]="format?.options?.dateBy" [label]="
             'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید'           
-          " [data]="getFieldsForSelect('date')" (modelChange)="
+          " [data]="analyzeFieldsForSelect.dateBy" (modelChange)="
             format.options.dateBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
           "></app-form-select-input>
 
         <app-form-select-input [selectType]="'single'" [model]="format?.options?.valueBy"
-          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'" [data]="getFieldsForY()" (modelChange)="
+          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'" [data]="analyzeFieldsForSelect.valueBy" (modelChange)="
             format.options.valueBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
           "></app-form-select-input>
@@ -236,9 +236,9 @@
         <mat-progress-bar *ngIf="resultLoading" [color]="'warn'" [mode]="'indeterminate'">
         </mat-progress-bar>
 
-        <div class="records" *ngIf="!resultLoading && page">
+        <div class="records" *ngIf="!resultLoading">
           <div class="record" *ngFor="
-              let record of _.take(page || [], pageSize);
+              let record of page;
               trackBy: trackByFn
             ">
             <div class="select">

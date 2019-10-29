@@ -40,7 +40,7 @@ import { WeatherService } from "../weather.service";
 import { GmapsService } from "../gmaps.service";
 import { DataService } from "../data.service";
 import { AuthService } from "../auth.service";
-import { MatSnackBar } from "@angular/material";
+import { MatSnackBar, MatDialog } from "@angular/material";
 import { text, validate } from "serendip-utility";
 import { BusinessComponent } from "../business/business.component";
 import { AccountProfileComponent } from "../account/account-profile/account-profile.component";
@@ -50,6 +50,7 @@ import { ObService } from "../ob.service";
 import { StorageService } from "../storage.service";
 import { ReportService } from "../report.service";
 import { AggregationComponent } from "../base/aggregation/aggregation.component";
+import { DynamicComponent } from "ng-dynamic-component";
 
 @Component({
   selector: "app-panel",
@@ -57,6 +58,7 @@ import { AggregationComponent } from "../base/aggregation/aggregation.component"
   styleUrls: ["./panel.component.less"]
 })
 export class PanelComponent implements OnInit {
+  dialogRef: any;
   constructor(
     public dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute,
@@ -74,7 +76,8 @@ export class PanelComponent implements OnInit {
     public authService: AuthService,
     public gmapsService: GmapsService,
     public dataService: DataService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog
   ) {}
 
   dynamicComponents = {
@@ -100,25 +103,36 @@ export class PanelComponent implements OnInit {
       this.dashboardService.currentSection.tabs.find(
         p => p.title === params.tab
       ) || this.dashboardService.currentSection.tabs[0];
-
   }
 
   dashboardCommand() {
     return (options: { command: "open-tab"; tab: DashboardTabInterface }) => {
-      this.dashboardService.currentSection.tabs.push(options.tab);
-      this.dashboardService.currentTab = options.tab;
+      // this.dashboardService.currentSection.tabs.push(options.tab);
+      // this.dashboardService.currentTab = options.tab;
+      const widget =
+        options.tab.widgets && options.tab.widgets[0]
+          ? options.tab.widgets[0]
+          : options.tab.widget;
+ 
+      if (widget) {
+        this.dialogRef = this.dialog.open(
+          this.dynamicComponents[widget.component],
+          {
+            width: "480px",
+            data: widget.inputs || {}
+          }
+        );
+      }
     };
   }
 
   async ngOnInit() {
     await this.dashboardService.setDefaultSchema();
 
-
     if (!this.businessService.getActiveBusinessId()) {
       this.router.navigate(["/business"]);
       return;
     }
-
 
     await this.handleParams(this.activatedRoute.snapshot.params);
 

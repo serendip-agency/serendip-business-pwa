@@ -49,6 +49,14 @@
   </nav>
 </header>
 
+<section id="popup" *ngFor="let widget of popup?.widgets"
+  class="widget widget-{{widget.component.replace('Component','').toLowerCase()}}">
+
+  <ndc-dynamic [ndcDynamicOutputs]="{
+    DashboardCommand: dashboardCommand()}" [ndcDynamicComponent]="dynamicComponents[widget.component]"
+    [ndcDynamicInputs]="widget.inputs || {}"></ndc-dynamic>
+
+</section>
 
 <section *ngFor="let widget of dashboardService.currentTab?.widgets"
   class="widget widget-{{widget.component.replace('Component','').toLowerCase()}}">

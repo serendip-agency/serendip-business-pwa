@@ -1,31 +1,44 @@
+.icon-input {
+  margin-bottom: 5px;
 
-.icon-input{
-    margin-bottom: 5px;
-    .icons {
-  text-align: center;
-  max-width: 420px;
-  display: block;
+  .btn-choose,
+  .btn-close {
+    border       : 1px solid #ccc;
+    padding      : 2px 4px;
+    border-radius: 5px;
+    margin       : 5px;
+    float:right;
+  }
 
-  .icon {
-    width: 32px;
-    height: 32px;
-    display: inline-block;
+  .icons {
     text-align: center;
-    padding: 4px;
-    box-sizing: border-box;
-    transition: transform linear 0.2s;
-    &:hover {
-      transform: scale(1.8);
-      transition: transform linear 0.05s;
+    max-width : 420px;
+    display   : block;
+
+    .icon {
+      width     : 32px;
+      height    : 32px;
+      display   : inline-block;
+      text-align: center;
+      padding   : 4px;
+      box-sizing: border-box;
+      transition: transform linear 0.2s;
+
+      &:hover {
+        transform : scale(1.8);
+        transition: transform linear 0.05s;
+      }
     }
   }
-}
 
-.model {
-  display: inline-block;
-  vertical-align: middle;
-  width: 32px;
-  height: 32px;
-}
+  .model {
+    vertical-align: middle;
+    width         : 32px;
+    border-radius : 100%;
+    height        : 32px;
+    border        : 1px solid #ccc;
+    float         : right;
+    margin        : 5px;
+  }
 
 }
