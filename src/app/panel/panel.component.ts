@@ -59,6 +59,7 @@ import { DynamicComponent } from "ng-dynamic-component";
 })
 export class PanelComponent implements OnInit {
   dialogRef: any;
+  mobileNavVisible = false;
   constructor(
     public dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute,
