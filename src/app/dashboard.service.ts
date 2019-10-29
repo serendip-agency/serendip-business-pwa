@@ -85,18 +85,16 @@ export class DashboardService {
     this.schema = {
       reports: BusinessSchema.ReportsSchema,
       forms: BusinessSchema.FormsSchema,
-      dashboard: BusinessSchema.DashboardSchema
-        .filter((p: any) => ["base"].indexOf(p.product) !== -1)
-       
+      dashboard: BusinessSchema.DashboardSchema.filter(
+        (p: any) => ["base"].indexOf(p.product) !== -1
+      )
     };
 
-
-   this.schema.dashboard = this.schema.dashboard.concat(
+    this.schema.dashboard = this.schema.dashboard.concat(
       (await this.dataService.list("_dashboard", 0, 0, true)) as any
     );
 
-
-    this.schema.dashboard =  this.schema.dashboard.map(dashboard => {
+    this.schema.dashboard = this.schema.dashboard.map(dashboard => {
       dashboard.tabs = dashboard.tabs.map(tab => {
         if (tab.widget) {
           tab.widgets = [tab.widget];
@@ -107,12 +105,13 @@ export class DashboardService {
       return dashboard;
     });
 
-
     const entityTypes = await this.dataService.request({
       method: "get",
       path: "/api/entity/types",
       retry: false
     });
+
+    const entitiesInDb = await this.dataService.list("_entity");
 
     if (entityTypes.length > 0) {
       this.schema.dashboard.unshift({
@@ -120,7 +119,7 @@ export class DashboardService {
         product: "base",
         icon: "copy",
         title: "اسناد",
-        tabs: entityTypes.map(name => {
+        tabs: _.uniq( entityTypes.concat(entitiesInDb.map(p => p.name))).map(name => {
           return {
             icon: "copy",
             active: true,
@@ -134,7 +133,7 @@ export class DashboardService {
               }
             ]
           };
-        })
+        }) as any
       });
     }
   }

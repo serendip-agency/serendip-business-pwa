@@ -823,10 +823,12 @@ export class DataService {
         let primaryFieldExist = false;
         for (let i = 0; i < 3; i++) {
           const sample = _.sample(report.data, 1)[0];
-          if (sample && sample[pf.name]) { primaryFieldExist = true; }
+          if (sample && sample[pf.name]) {
+            primaryFieldExist = true;
+          }
         }
         if (primaryFieldExist) {
-        report.fields.push(pf);
+          report.fields.push(pf);
         }
       }
     });
@@ -882,6 +884,29 @@ export class DataService {
             continue;
           }
 
+          if (typeof value === "object") {
+            report.fields = report.fields.concat(
+              (await this.fields(
+                null,
+                {
+                  data: [value],
+                  fields: []
+                },
+                (depth || 0) + 1,
+                maxDepth === undefined ? 0 : maxDepth,
+                parents.concat([entityName]),
+                enableFields
+              )).map(p => {
+                console.log(p);
+                p.name = key + "." + p.name;
+                p.label = key + "." + p.label;
+                return p;
+              })
+            );
+
+            continue;
+          }
+
           if (typeof value === "string" && value.length === 24) {
             if (value === row._id) {
               continue;
@@ -899,7 +924,8 @@ export class DataService {
                   null,
                   (depth || 0) + 1,
                   maxDepth === undefined ? 0 : maxDepth,
-                  parents.concat([entityName])
+                  parents.concat([entityName]),
+                  enableFields
                 )).forEach(subField => {
                   report.fields.push({
                     name: key + "." + subField.name,

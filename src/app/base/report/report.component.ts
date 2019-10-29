@@ -598,7 +598,6 @@ export class ReportComponent implements OnInit {
     });
 
     await this.changePage(0);
-
   }
 
   async save() {
@@ -690,9 +689,11 @@ export class ReportComponent implements OnInit {
       this.error = error;
     }
 
-
-    this.obService.listen(this.entityName).subscribe(event => {
+    this.obService.listen(this.entityName).subscribe(async event => {
       if (this.obServiceActive) {
+
+      
+
         if (
           event.eventType === "update" &&
           _.find(this.page, { _id: event.model._id })
@@ -718,6 +719,16 @@ export class ReportComponent implements OnInit {
 
           this.report.count--;
         }
+
+        this.report.fields = await this.dataService.fields(
+          this.entityName,
+          this.report,
+          1,
+          3,
+          [],
+          this.report.fields.length === 0
+        );
+        
       }
     });
 
@@ -775,6 +786,7 @@ export class ReportComponent implements OnInit {
             component: "FormComponent",
             inputs: {
               name: this.formName,
+              entityName: this.entityName || this.report.entityName,
               entityIcon: this.icon,
               formId: this.formId
             }
@@ -866,7 +878,8 @@ export class ReportComponent implements OnInit {
       }
       this.page = this.report.data;
     } else {
-      this.page = _.chunk(this.report.data, this.pageSize)[this.pageIndex] || [];
+      this.page =
+        _.chunk(this.report.data, this.pageSize)[this.pageIndex] || [];
     }
 
     this.WidgetChange.emit({ inputs: { page: this.page } });

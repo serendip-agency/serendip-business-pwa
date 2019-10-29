@@ -135,6 +135,7 @@ import { EntityWebhookViewComponent } from "./base/report/entity-webhook-view/en
 import { HomeComponent } from "./home/home.component";
 import { AggregationComponent } from "./base/aggregation/aggregation.component";
 import { PanelComponent } from "./panel/panel.component";
+import { FormDialogComponent } from './base/form/form-dialog/form-dialog.component';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -231,7 +232,9 @@ export const primaryComponents = [
   SyncComponent,
   ChartComponent,
   SafePipe,
-  NoteComponent
+  NoteComponent,
+  FormDialogComponent
+
 ];
 
 @NgModule({
@@ -241,7 +244,7 @@ export const primaryComponents = [
     IframeComponent,
     HomeComponent,
     AggregationComponent,
-    PanelComponent
+    PanelComponent,
   ],
   entryComponents: [],
   imports: [

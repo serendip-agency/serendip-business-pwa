@@ -15,12 +15,12 @@ import {
   FormPartInterface,
   EntityModel
 } from "serendip-business-model";
-import { DashboardService } from "src/app/dashboard.service";
+import { DashboardService } from "../../dashboard.service";
 import * as _ from "underscore";
 
 import { DataService } from "../../data.service";
 import { Idb, IdbService } from "../../idb.service";
-import { BusinessService } from "src/app/business.service";
+import { BusinessService } from "../../business.service";
 import * as sUtil from "serendip-utility";
 import { MAT_DIALOG_DATA } from "@angular/material";
 @Component({
@@ -44,8 +44,7 @@ export class FormComponent implements OnInit {
     public businessService: BusinessService,
     public ref: ChangeDetectorRef,
     private dashboardService: DashboardService,
-    public idbService: IdbService,
-    @Inject(MAT_DIALOG_DATA) matDialogData: any
+    public idbService: IdbService
   ) {
     this.ProxyWidgetChange.subscribe(item => {
       this.WidgetChange.emit({ inputs: { model: this.model } });
@@ -93,13 +92,15 @@ export class FormComponent implements OnInit {
   loading = false;
 
   @Input()
-  defaultModel: any = {};
+  defaultModel: any = {
+    _entity: this.entityName
+  };
   @Input()
-  private _mode: "form" | "triggers" = "form";
-  public get mode(): "form" | "triggers" {
+  private _mode = "form";
+  public get mode(): string {
     return this._mode;
   }
-  public set mode(value: "form" | "triggers") {
+  public set mode(value) {
     if (this._mode !== value) {
       this.WidgetChange.emit({ inputs: { mode: value } });
     }
@@ -137,6 +138,13 @@ export class FormComponent implements OnInit {
   async save() {
     this.loading = true;
     let doc;
+
+    if (!this.model._entity) {
+      this.model._entity =
+        this.entityName ||
+        (this.formSchema ? this.formSchema.entityName : undefined);
+    }
+
     if (!this.model._id) {
       doc = await this.dataService.insert(this.entityName, this.model);
     } else {
@@ -235,7 +243,12 @@ export class FormComponent implements OnInit {
 
     await this.init();
 
+    if (!this.formSchema || !this.formSchema.parts.length) {
+      this.mode = "json";
+    }
+
     this.loading = false;
+
     this.ref.detectChanges();
   }
 }

@@ -249,7 +249,7 @@
             <div class="field" *ngFor="let field of enabledReportFields()">
               <ndc-dynamic [ndcDynamicInputs]="
                   extendObj(
-                    { label: field.label, model: record[field.name], name : field.name, record : record  },
+                    { label: field.label, model: _.get( record,field.name), name : field.name, record : record  },
                     field.template?.inputs || {}
                   )
                 " [ndcDynamicOutputs]="{ widgetCommand: DashboardCommand.emit }" [ndcDynamicComponent]="
