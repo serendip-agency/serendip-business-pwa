@@ -18,17 +18,21 @@ export class FormDialogComponent extends FormComponent {
     public httpClient: HttpClient,
     public businessService: BusinessService,
     public ref: ChangeDetectorRef,
-    private dashboardService: DashboardService,
+    public dashboardService: DashboardService,
     public idbService: IdbService,
     @Inject(MAT_DIALOG_DATA) matDialogData: any = {}
   ) {
     super(
+      dashboardService,
       dataService,
       httpClient,
       businessService,
       ref,
-      dashboardService,
       idbService
     );
+
+    Object.keys(matDialogData).forEach(key => {
+      this[key] = matDialogData[key];
+    });
   }
 }

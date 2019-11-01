@@ -83,9 +83,9 @@ export class DashboardService {
 
   async setDefaultSchema() {
     this.schema = {
-      reports: BusinessSchema.ReportsSchema,
-      forms: BusinessSchema.FormsSchema,
-      dashboard: BusinessSchema.DashboardSchema.filter(
+      reports: _.clone(BusinessSchema.ReportsSchema),
+      forms: _.clone(BusinessSchema.FormsSchema),
+      dashboard: _.clone(BusinessSchema.DashboardSchema).filter(
         (p: any) => ["base"].indexOf(p.product) !== -1
       )
     };
@@ -114,26 +114,32 @@ export class DashboardService {
     const entitiesInDb = await this.dataService.list("_entity");
 
     if (entityTypes.length > 0) {
+      this.schema.dashboard = this.schema.dashboard.filter(
+        p => p.name !== "raw"
+      );
+
       this.schema.dashboard.unshift({
         name: "raw",
         product: "base",
         icon: "copy",
         title: "اسناد",
-        tabs: _.uniq( entityTypes.concat(entitiesInDb.map(p => p.name))).map(name => {
-          return {
-            icon: "copy",
-            active: true,
-            title: name,
-            widgets: [
-              {
-                component: "ReportComponent",
-                inputs: {
-                  entityName: name
+        tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name))).map(
+          name => {
+            return {
+              icon: "copy",
+              active: true,
+              title: name,
+              widgets: [
+                {
+                  component: "ReportComponent",
+                  inputs: {
+                    entityName: name
+                  }
                 }
-              }
-            ]
-          };
-        }) as any
+              ]
+            };
+          }
+        ) as any
       });
     }
   }

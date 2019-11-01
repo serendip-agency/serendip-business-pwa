@@ -175,7 +175,9 @@ export class ReportService {
   ) {
     let aggregation = [];
 
-    if (!format.method) { return; }
+    if (!format.method) {
+      return;
+    }
 
     if (format.method === "aggregate") {
       aggregation = await this.dataService.aggregate(
@@ -187,8 +189,9 @@ export class ReportService {
     console.log(format, !format.options.groupBy || !format.options.valueBy);
 
     if (format.method === "analyze1d") {
-
-      if (!format.options.groupBy || !format.options.valueBy ) { return; }
+      if (!format.options.groupBy || !format.options.valueBy) {
+        return;
+      }
 
       aggregation = await this.dataService.aggregate(rawReport.entityName, [
         {
@@ -196,7 +199,7 @@ export class ReportService {
         },
         {
           $group: {
-            _id: '$' + format.options.groupBy.name,
+            _id: "$" + format.options.groupBy.name,
             value: format.options.valueBy.operator
           }
         },
@@ -208,6 +211,11 @@ export class ReportService {
           }
         }
       ]);
+
+      aggregation = aggregation.map(p => {
+        if (!p.name) p.name = "null";
+        return p;
+      });
     }
 
     const report = _.clone(rawReport);

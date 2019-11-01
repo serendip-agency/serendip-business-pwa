@@ -39,20 +39,16 @@ export class FormComponent implements OnInit {
 
   public sUtil = sUtil;
   constructor(
+    public dashboardService: DashboardService,
     public dataService: DataService,
     public httpClient: HttpClient,
     public businessService: BusinessService,
     public ref: ChangeDetectorRef,
-    private dashboardService: DashboardService,
     public idbService: IdbService
   ) {
     this.ProxyWidgetChange.subscribe(item => {
       this.WidgetChange.emit({ inputs: { model: this.model } });
       console.warn("ProxyWidgetChange", item, this.model);
-    });
-
-    Object.keys(matDialogData).forEach(key => {
-      this[key] = matDialogData[key];
     });
   }
 

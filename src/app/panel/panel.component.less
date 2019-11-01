@@ -133,34 +133,30 @@ header {
 
         margin-top: 15px;
         padding   : 10px 0;
+        position  : fixed;
+        left      : 0;
+        top       : 100px;
+        width     : 240px;
 
         ul {
             max-width : 980px;
             margin    : 0 auto;
             padding   : 0 10px;
             box-sizing: border-box;
-
             text-align: center;
 
             li {
-                display: inline-block;
-                margin : 0 5px;
-
+                display: block;
 
                 a {
                     display        : block;
-                    text-align     : center;
-                    color          : #576E9E;
+                    text-align     : left;
+                    color          : #555;
                     text-decoration: none;
-                    border         : 1px solid #576E9E;
-                    border-radius  : 15px;
-                    padding        : 0 10px;
+                    border-bottom  : 1px solid #ccc;
+                    padding        : 0 5px;
                     font-weight    : bold;
-
-
-
-                    line-height: 26px;
-
+                    line-height    : 26px;
 
                     &.active {
                         color     : #fff;
@@ -246,37 +242,40 @@ section.widget {
             }
         }
 
-        .bread-crumb{
-            display: block;
+        .bread-crumb {
+            display    : block;
             line-height: 20px;
-            padding:10px;
-            ul{
-                padding:0;
-                margin:0;
-                li{
-                    padding:0;
-                margin:0;
-                    display: inline-block;
-                    margin-left: 5px;
-                    padding-left:5px;
+            padding    : 10px;
 
-                    &:after{
+            ul {
+                padding: 0;
+                margin : 0;
+
+                li {
+                    padding     : 0;
+                    margin      : 0;
+                    display     : inline-block;
+                    margin-left : 5px;
+                    padding-left: 5px;
+
+                    &:after {
                         display: inline-block;
                         content: '>';
-                        color:#777;
+                        color  : #777;
                     }
 
-                    &:last-child:after{
+                    &:last-child:after {
                         display: none;
                     }
-                    a{
-                        text-decoration: none;
-                        color:#000;
 
-                        img{
-                            display: inline-block;
-                            width:20px;
-                            height:20px;
+                    a {
+                        text-decoration: none;
+                        color          : #000;
+
+                        img {
+                            display       : inline-block;
+                            width         : 20px;
+                            height        : 20px;
                             vertical-align: middle;
                         }
                     }

@@ -133,9 +133,9 @@ import { FormQuillInputComponent } from "./base/form/form-quill-input/form-quill
 import { MonacoEditorModule } from "@materia-ui/ngx-monaco-editor";
 import { EntityWebhookViewComponent } from "./base/report/entity-webhook-view/entity-webhook-view.component";
 import { HomeComponent } from "./home/home.component";
-import { AggregationComponent } from "./base/aggregation/aggregation.component";
 import { PanelComponent } from "./panel/panel.component";
-import { FormDialogComponent } from './base/form/form-dialog/form-dialog.component';
+import { FormDialogComponent } from "./base/form/form-dialog/form-dialog.component";
+import { ImportComponent } from "./import/import.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -152,10 +152,11 @@ export const dynamicComponents = [
   FaxServiceComponent,
 
   // Base components
+  ImportComponent,
   TriggersComponent,
   FormComponent,
   ReportComponent,
-
+  FormDialogComponent,
   // views
 
   // Form Parts
@@ -233,8 +234,6 @@ export const primaryComponents = [
   ChartComponent,
   SafePipe,
   NoteComponent,
-  FormDialogComponent
-
 ];
 
 @NgModule({
@@ -243,7 +242,6 @@ export const primaryComponents = [
     ...dynamicComponents,
     IframeComponent,
     HomeComponent,
-    AggregationComponent,
     PanelComponent,
   ],
   entryComponents: [],

@@ -783,7 +783,7 @@ export class ReportComponent implements OnInit {
         icon: "office-paper-work-pen",
         widgets: [
           {
-            component: "FormComponent",
+            component: "FormDialogComponent",
             inputs: {
               name: this.formName,
               entityName: this.entityName || this.report.entityName,
@@ -805,7 +805,7 @@ export class ReportComponent implements OnInit {
         icon: "plus-add-3",
         widgets: [
           {
-            component: "FormComponent",
+            component: "FormDialogComponent",
             inputs: {
               name: "format-form",
               model: {
@@ -829,7 +829,7 @@ export class ReportComponent implements OnInit {
           icon: "office-paper-work-pen",
           widgets: [
             {
-              component: "FormComponent",
+              component: "FormDialogComponent",
               inputs: {
                 name: this.formName,
                 formId: this.formId,

@@ -726,6 +726,7 @@ export class DataService {
 
     return model;
   }
+ 
   public async pushCollections(callback?: (_id: string, error?: any) => void) {
     const store = await this.idbService.syncIDB("push");
     const pushKeys = await store.keys();

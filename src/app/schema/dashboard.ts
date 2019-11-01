@@ -262,6 +262,17 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
     tabs: [
       {
         status: "default",
+        title: "بارگذاری",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "ImportComponent",
+            inputs: {}
+          }
+        ]
+      },
+      {
+        status: "default",
         title: "اشیا",
         icon: "tab-4",
         widgets: [
@@ -273,6 +284,22 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
               icon: "tab-4",
               entityLabelSingular: "شی",
               title: "اشیا"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "دیتا‌ سورس‌ها",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "ReportComponent",
+            inputs: {
+              entityName: "_dataSource",
+              icon: "tab-4",
+              entityLabelSingular: "دیتا سورس",
+              title: "دیتا سورس"
             }
           }
         ]

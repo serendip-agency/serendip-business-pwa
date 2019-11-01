@@ -49,9 +49,9 @@ import { AccountSessionsComponent } from "../account/account-sessions/account-se
 import { ObService } from "../ob.service";
 import { StorageService } from "../storage.service";
 import { ReportService } from "../report.service";
-import { AggregationComponent } from "../base/aggregation/aggregation.component";
 import { DynamicComponent } from "ng-dynamic-component";
-
+import { ImportComponent } from "../import/import.component";
+import { FormDialogComponent } from "../base/form/form-dialog/form-dialog.component";
 @Component({
   selector: "app-panel",
   templateUrl: "./panel.component.html",
@@ -59,25 +59,18 @@ import { DynamicComponent } from "ng-dynamic-component";
 })
 export class PanelComponent implements OnInit {
   dialogRef: any;
+  entitySocket: WebSocket;
+
   mobileNavVisible = false;
   constructor(
     public dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute,
-    public storageService: StorageService,
-    private router: Router,
-    public businessService: BusinessService,
-    private idbService: IdbService,
-    private changeRef: ChangeDetectorRef,
-    private reportService: ReportService,
-    private widgetService: WidgetService,
     private wsService: WsService,
     public obService: ObService,
-    public calendarService: CalendarService,
-    public weatherService: WeatherService,
-    public authService: AuthService,
-    public gmapsService: GmapsService,
     public dataService: DataService,
-    private snackBar: MatSnackBar,
+    private router: Router,
+    public businessService: BusinessService,
+
     public dialog: MatDialog
   ) {}
 
@@ -89,7 +82,8 @@ export class PanelComponent implements OnInit {
     AccountProfileComponent,
     AccountPasswordComponent,
     AccountSessionsComponent,
-    AggregationComponent
+    ImportComponent,
+    FormDialogComponent
   };
 
   async handleParams(params) {
@@ -114,20 +108,39 @@ export class PanelComponent implements OnInit {
         options.tab.widgets && options.tab.widgets[0]
           ? options.tab.widgets[0]
           : options.tab.widget;
- 
+
       if (widget) {
         this.dialogRef = this.dialog.open(
           this.dynamicComponents[widget.component],
           {
-            width: "480px",
+            width: window.innerWidth > 1024 ? "720px" : "420px",
             data: widget.inputs || {}
           }
         );
       }
     };
   }
+  async initEntitySocket() {
+    this.entitySocket = await this.wsService.newSocket("/entity", true);
+    this.entitySocket.onclose = () => this.initEntitySocket();
+    this.entitySocket.onmessage = msg => {
+      const data: {
+        event: "update" | "delete" | "insert";
+        model: EntityModel;
+      } = JSON.parse(msg.data);
 
+      if (data.model) {
+        data.model = this.dataService.decrypt(data.model);
+      }
+
+      this.obService.publish(data.model._entity, data.event, data.model);
+    };
+  }
   async ngOnInit() {
+    this.initEntitySocket()
+      .then()
+      .catch();
+
     await this.dashboardService.setDefaultSchema();
 
     if (!this.businessService.getActiveBusinessId()) {

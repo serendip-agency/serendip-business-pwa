@@ -1364,22 +1364,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
       }
     };
   }
-  async initEntitySocket() {
-    this.entitySocket = await this.wsService.newSocket("/entity", true);
-    this.entitySocket.onclose = () => this.initEntitySocket();
-    this.entitySocket.onmessage = msg => {
-      const data: {
-        event: "update" | "delete" | "insert";
-        model: EntityModel;
-      } = JSON.parse(msg.data);
 
-      if (data.model) {
-        data.model = this.dataService.decrypt(data.model);
-      }
-
-      this.obService.publish(data.model._entity, data.event, data.model);
-    };
-  }
 
   async manualSync() {
     this.dashboardReady = false;
@@ -1391,9 +1376,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.initEntitySocket()
-      .then()
-      .catch();
+  
     this.initDashboardSocket()
       .then()
       .catch();
