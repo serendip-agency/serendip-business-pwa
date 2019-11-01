@@ -691,9 +691,6 @@ export class ReportComponent implements OnInit {
 
     this.obService.listen(this.entityName).subscribe(async event => {
       if (this.obServiceActive) {
-
-      
-
         if (
           event.eventType === "update" &&
           _.find(this.page, { _id: event.model._id })
@@ -728,7 +725,6 @@ export class ReportComponent implements OnInit {
           [],
           this.report.fields.length === 0
         );
-        
       }
     });
 
@@ -833,6 +829,7 @@ export class ReportComponent implements OnInit {
               inputs: {
                 name: this.formName,
                 formId: this.formId,
+                entityName: this.entityName || this.report.entityName,
                 documentId: _id,
                 entityIcon: this.icon
               }
