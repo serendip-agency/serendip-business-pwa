@@ -19,6 +19,10 @@ export class BusinessService {
       }
     }
   }
+  set business(val) {
+    this._business = val;
+    localStorage.setItem("business", JSON.stringify(val));
+  }
 
   private _privateKey;
   public get privateKey() {
@@ -35,10 +39,7 @@ export class BusinessService {
     return this._privateKey;
   }
 
-  set business(val) {
-    this._business = val;
-    localStorage.setItem("business", JSON.stringify(val));
-  }
+ 
   constructor() {}
 
   getActiveBusinessId() {

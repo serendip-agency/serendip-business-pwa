@@ -40,9 +40,12 @@ export class FormSelectInputComponent implements OnInit {
       return false;
     }
 
-
     if (this.modelTrackBy) {
-      return this.modelTrackBy.map(p => o1.value[p] === o2.value[p]).indexOf(false) === -1;
+      return (
+        this.modelTrackBy
+          .map(p => o1.value[p] === o2.value[p])
+          .indexOf(false) === -1
+      );
     }
 
     try {

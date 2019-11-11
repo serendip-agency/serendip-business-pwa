@@ -31,10 +31,10 @@
     <nav class="primary">
       <ul>
         <li *ngFor="let section of dashboardService.schema.dashboard">
-          <a [class.active]="dashboardService.currentSection.name == section.name"
-            [routerLink]="['/panel' , section.name]">
+          <a [class.active]="dashboardService.currentSection?.name == section?.name"
+            [routerLink]="['/panel' , stringToSlug(section?.name)]">
             <img [src]="'assets/icons/' + section.icon + '.svg'" />
-            <span> {{ section.title }} </span>
+            <span> {{ section?.title }} </span>
           </a>
         </li>
       </ul>
@@ -45,7 +45,7 @@
       <ul>
         <li *ngFor="let tab of dashboardService.currentSection.tabs">
           <a [class.active]="dashboardService.currentTab.title == tab.title"
-            [routerLink]="['/panel' , dashboardService.currentSection.name,tab.title]">
+            [routerLink]="['/panel' , dashboardService.currentSection.name, stringToSlug( tab.title )]">
             <span> {{ tab.title }} </span>
           </a>
         </li>
@@ -64,7 +64,7 @@
           <ul>
             <li *ngFor="let tab of section?.tabs">
               <a [class.active]="dashboardService.currentTab?.title == tab?.title"
-                [routerLink]="['/panel' , section?.name,tab?.title]" (click)="mobileNavVisible=false">
+                [routerLink]="['/panel' , section?.name, stringToSlug(tab?.title)]" (click)="mobileNavVisible=false">
                 <span> {{ tab.title }} </span>
               </a>
             </li>
@@ -84,9 +84,9 @@
           </a>
         </li>
         <li>
-            <a [routerLink]="['/panel' ,  dashboardService.currentSection?.name,dashboardService.currentTab?.title]">
+          <a [routerLink]="['/panel' ,  dashboardService.currentSection?.name,dashboardService.currentTab?.title]">
 
-          <span> {{ dashboardService.currentTab?.title }} </span>
+            <span> {{ dashboardService.currentTab?.title }} </span>
 
           </a>
         </li>

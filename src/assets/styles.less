@@ -118,8 +118,9 @@ button,
 textarea {
   font-family: iranyekan;
 }
-.ngx-charts-outer{
-  margin:0 auto;
+
+.ngx-charts-outer {
+  margin: 0 auto;
 }
 
 .button-bordered {
@@ -137,6 +138,12 @@ textarea {
     height        : 26px;
     vertical-align: middle;
     filter        : invert(1);
+  }
+}
+
+g.pie-grid-item {
+  text {
+    text-anchor: middle !important;
   }
 }
 
@@ -200,6 +207,7 @@ button.sp-button-icon {
     height        : 100%;
   }
 }
+
 
 #dashboard-map {
   z-index: 5600;
@@ -1036,7 +1044,7 @@ div.timepicker {
 body {
   font-family: iranyekan;
   font-weight: 100;
-  font-size  : 12px;
+  font-size  : 13px;
   padding    : 0;
   margin     : 0;
   overflow-x : hidden;
@@ -1067,6 +1075,35 @@ ul,
 li,
 button {
   font-family: iranyekan;
+  padding    : 0;
+  margin     : 0;
+}
+
+ul {
+  li {
+    list-style: inside;
+  }
+}
+
+h1 {
+  font-size    : 23px;
+  margin-bottom: 15px;
+}
+
+h2 {
+  font-size    : 19px;
+  margin-bottom: 10px;
+
+}
+
+h3 {
+  font-size    : 16px;
+  margin-bottom: 5px;
+
+}
+
+p {
+  font-size: 14px;
 }
 
 body.swal2-shown {
@@ -1160,7 +1197,7 @@ body.hideScroll {
   clear  : both;
   content: " ";
 }
- 
+
 table {
   width: 100% !important;
 }
@@ -1239,6 +1276,7 @@ form {
 
 .account-widget {
   max-width: 360px;
+  margin   : 15px auto;
 }
 
 .array-label,

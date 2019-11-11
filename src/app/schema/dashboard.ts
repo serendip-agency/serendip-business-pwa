@@ -255,14 +255,27 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
     ]
   },
   {
-    name: "configurations",
-    title: "پیکربندی",
+    name: "start",
+    title: "شروع",
     icon: "dashboard-1",
     product: "base",
     tabs: [
       {
         status: "default",
-        title: "بارگذاری",
+        title: "راهنمای داشبورد",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "HelpComponent",
+            inputs: {
+              id: "dashboard-intro"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "ورود اطلاعات از Excel",
         icon: "tab-4",
         widgets: [
           {
@@ -271,6 +284,53 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
           }
         ]
       },
+      {
+        status: "default",
+        title: "راهنمای API",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "HelpComponent",
+            inputs: {
+              id: "api-intro"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "راهنمای SDK",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "HelpComponent",
+            inputs: {
+              id: "sdk-intro"
+            }
+          }
+        ]
+      },
+      {
+        status: "default",
+        title: "اتصال به دیتابیس",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "HelpComponent",
+            inputs: {
+              id: "sdk-intro"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  {
+    name: "configurations",
+    title: "پیکربندی",
+    icon: "dashboard-1",
+    product: "base",
+    tabs: [
       {
         status: "default",
         title: "اشیا",
@@ -300,23 +360,6 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
               icon: "tab-4",
               entityLabelSingular: "دیتا سورس",
               title: "دیتا سورس"
-            }
-          }
-        ]
-      },
-      {
-        status: "default",
-        title: "تاریخچه",
-        icon: "tab-4",
-        widgets: [
-          {
-            component: "ReportComponent",
-            inputs: {
-              reportName: "grid-default",
-              formName: "grid-form",
-              icon: "tab-4",
-              entityLabelSingular: "گرید",
-              title: "تاریخچه استفاده از گرید"
             }
           }
         ]

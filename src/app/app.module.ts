@@ -136,6 +136,9 @@ import { HomeComponent } from "./home/home.component";
 import { PanelComponent } from "./panel/panel.component";
 import { FormDialogComponent } from "./base/form/form-dialog/form-dialog.component";
 import { ImportComponent } from "./import/import.component";
+import { TPipe } from "./t.pipe";
+import { HelpComponent } from "./help/help.component";
+import { ConnectDatabaseComponent } from "./wizard/connect-database/connect-database.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -150,14 +153,17 @@ export const dynamicComponents = [
   SmsServiceComponent,
   EmailServiceComponent,
   FaxServiceComponent,
-
+  HelpComponent,
   // Base components
   ImportComponent,
   TriggersComponent,
   FormComponent,
   ReportComponent,
   FormDialogComponent,
+
   // views
+
+  ConnectDatabaseComponent,
 
   // Form Parts
 
@@ -233,7 +239,7 @@ export const primaryComponents = [
   SyncComponent,
   ChartComponent,
   SafePipe,
-  NoteComponent,
+  NoteComponent
 ];
 
 @NgModule({
@@ -243,6 +249,7 @@ export const primaryComponents = [
     IframeComponent,
     HomeComponent,
     PanelComponent,
+    TPipe
   ],
   entryComponents: [],
   imports: [

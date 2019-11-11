@@ -52,16 +52,14 @@ import { ReportService } from "../report.service";
 import { DynamicComponent } from "ng-dynamic-component";
 import { ImportComponent } from "../import/import.component";
 import { FormDialogComponent } from "../base/form/form-dialog/form-dialog.component";
+import { HelpComponent } from "../help/help.component";
+import { ConnectDatabaseComponent } from "../wizard/connect-database/connect-database.component";
 @Component({
   selector: "app-panel",
   templateUrl: "./panel.component.html",
   styleUrls: ["./panel.component.less"]
 })
 export class PanelComponent implements OnInit {
-  dialogRef: any;
-  entitySocket: WebSocket;
-
-  mobileNavVisible = false;
   constructor(
     public dashboardService: DashboardService,
     private activatedRoute: ActivatedRoute,
@@ -73,7 +71,10 @@ export class PanelComponent implements OnInit {
 
     public dialog: MatDialog
   ) {}
+  dialogRef: any;
+  entitySocket: WebSocket;
 
+  mobileNavVisible = false;
   dynamicComponents = {
     FormComponent,
     ReportComponent,
@@ -83,8 +84,17 @@ export class PanelComponent implements OnInit {
     AccountPasswordComponent,
     AccountSessionsComponent,
     ImportComponent,
-    FormDialogComponent
+    FormDialogComponent,
+    HelpComponent,
+    ConnectDatabaseComponent
   };
+
+  stringToSlug(input: string = "") {
+    return input
+      .toLowerCase()
+      .trim()
+      .replace(/ /g, "-");
+  }
 
   async handleParams(params) {
     this.dashboardService.currentSection = _.findWhere(
@@ -96,7 +106,7 @@ export class PanelComponent implements OnInit {
 
     this.dashboardService.currentTab =
       this.dashboardService.currentSection.tabs.find(
-        p => p.title === params.tab
+        p => this.stringToSlug(p.title) === this.stringToSlug(params.tab)
       ) || this.dashboardService.currentSection.tabs[0];
   }
 
@@ -137,16 +147,18 @@ export class PanelComponent implements OnInit {
     };
   }
   async ngOnInit() {
+    if (!this.businessService.getActiveBusinessId()) {
+      this.router.navigate(["/business"]);
+      return;
+    }
+
+    await this.dataService.loadBusiness();
+
     this.initEntitySocket()
       .then()
       .catch();
 
     await this.dashboardService.setDefaultSchema();
-
-    if (!this.businessService.getActiveBusinessId()) {
-      this.router.navigate(["/business"]);
-      return;
-    }
 
     await this.handleParams(this.activatedRoute.snapshot.params);
 
@@ -155,10 +167,5 @@ export class PanelComponent implements OnInit {
         await this.handleParams(this.activatedRoute.snapshot.params);
       }
     });
-
-    if (!this.businessService.getActiveBusinessId()) {
-      this.router.navigate(["/business"]);
-      return;
-    }
   }
 }

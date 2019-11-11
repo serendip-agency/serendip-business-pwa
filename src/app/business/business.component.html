@@ -1,66 +1,35 @@
 <div class="business-settings" *ngIf="router.url.indexOf('/business') == -1">
-  <mat-card>
+  <mat-card *ngIf="businessService.business">
     <mat-card-content>
       <div class="form-wrapper">
         <div class="top-box">
           <div class="logo">
-            <img
-              *ngIf="businessService.business.logo"
-              [src]="businessService.business.logo"
-              alt=""
-            />
-            <img
-              class="default"
-              src="assets/icons/building-production-unit-1.svg"
-              title="برای آپلود لوگو کلیک کنید"
-            />
+            <img *ngIf="businessService.business?.logo" [src]="businessService.business?.logo" alt="" />
+            <img class="default" src="assets/icons/building-production-unit-1.svg" title="برای آپلود لوگو کلیک کنید" />
           </div>
           <div class="info">
-            <app-form-text-input
-              [label]="'نام کسب‌وکار'"
-              [model]="businessService.business.title"
-            ></app-form-text-input>
+            <app-form-text-input [label]="'نام کسب‌وکار'" [model]="businessService.business?.title">
+            </app-form-text-input>
           </div>
 
           <div class="clearfix"></div>
         </div>
 
-        <div class="members">
-          <div class="title">
-            بات تلگرام
-          </div>
-          <app-form-text-input
-            [label]="'توکن بات تلگرام'"
-            [model]="businessService.business.telegramBotToken"
-          ></app-form-text-input>
-        </div>
+
 
         <div class="members">
           <div class="title">کاربران</div>
-          <div
-            class="member"
-            *ngFor="let m of businessService.business.members"
-          >
+          <div class="member" *ngFor="let m of businessService.business?.members">
             <div class="profile" *ngIf="m.profile">
               <div class="pic">
-                <img
-                  *ngIf="m.profile.profilePicture"
-                  [src]="businessService.business.logo"
-                  alt=""
-                />
-                <img
-                  class="default"
-                  src="assets/icons/account-profile-user-4.svg"
-                />
+                <img *ngIf="m.profile.profilePicture" [src]="businessService.business.logo" alt="" />
+                <img class="default" src="assets/icons/account-profile-user-4.svg" />
               </div>
             </div>
 
             <div class="no-profile" *ngIf="m.userId && !m.profile">
               <div class="pic">
-                <img
-                  class="default"
-                  src="assets/icons/account-profile-user-4.svg"
-                />
+                <img class="default" src="assets/icons/account-profile-user-4.svg" />
               </div>
 
               کاربر
@@ -86,20 +55,12 @@
 
           <div class="invite-form">
             <div class="code">
-              <app-form-text-input
-                [label]="'کد کشور'"
-                [model]="memberToAdd.code"
-                (modelChange)="memberToAdd.code = $event"
-                [dir]="'ltr'"
-              ></app-form-text-input>
+              <app-form-text-input [label]="'کد کشور'" [model]="memberToAdd.code"
+                (modelChange)="memberToAdd.code = $event" [dir]="'ltr'"></app-form-text-input>
             </div>
             <div class="mobile">
-              <app-form-text-input
-                [label]="'شماره موبایل کاربر جدید'"
-                [model]="memberToAdd.mobile"
-                (modelChange)="memberToAdd.mobile = $event"
-                [dir]="'ltr'"
-              ></app-form-text-input>
+              <app-form-text-input [label]="'شماره موبایل کاربر جدید'" [model]="memberToAdd.mobile"
+                (modelChange)="memberToAdd.mobile = $event" [dir]="'ltr'"></app-form-text-input>
             </div>
             <button type="button" (click)="addMember()">ثبت</button>
             <div class="clearfix"></div>
@@ -118,10 +79,7 @@
 
       <div class="logo">
         <a href="https://serendip.agency" target="_blank">
-          <img
-            src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg"
-            alt=""
-          />
+          <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="" />
         </a>
       </div>
     </div>
@@ -133,12 +91,7 @@
         <div class="subtitle">لطفا لحظاتی دیگر دوباره تلاش کنید</div>
 
         <div class="submit">
-          <button
-            (click)="refresh()"
-            [class.loading]="loading"
-            mat-raised-button
-            color="secondary"
-          >
+          <button (click)="refresh()" [class.loading]="loading" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -155,21 +108,11 @@
       <form *ngIf="tab == 'new'" class="">
         <div class="title">نام کسب‌وکار جدید را وارد کنید</div>
         <mat-form-field>
-          <input
-            matInput
-            placeholder="نام کسب و کار"
-            name="title"
-            [(ngModel)]="model.title"
-          />
+          <input matInput placeholder="نام کسب و کار" name="title" [(ngModel)]="model.title" />
         </mat-form-field>
 
         <div class="submit">
-          <button
-            (click)="saveBusiness()"
-            [class.loading]="loading"
-            mat-raised-button
-            color="secondary"
-          >
+          <button (click)="saveBusiness()" [class.loading]="loading" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -192,32 +135,19 @@
         </div>
 
         <div class="rsa-key">
-          <textarea
-            (change)="validateHexToImport(keyArea)"
-            [class.validated]="rsaKeyHexToImportValidated"
-            #keyArea
-          ></textarea>
+          <textarea (change)="validateHexToImport(keyArea)" [class.validated]="rsaKeyHexToImportValidated"
+            #keyArea></textarea>
 
           <button>
-            <input
-              (change)="uploadKey(fileInput, keyArea)"
-              #fileInput
-              type="file"
-              accept="text/plain"
-            />
+            <input (change)="uploadKey(fileInput, keyArea)" #fileInput type="file" accept="text/plain" />
             <img src="assets/icons/upload.svg" alt="" />
             آپلود کلید
           </button>
         </div>
 
         <div class="submit">
-          <button
-            [disabled]="!rsaKeyHexToImportValidated"
-            (click)="savePrivateKey(keyArea)"
-            [class.loading]="loading"
-            mat-raised-button
-            color="secondary"
-          >
+          <button [disabled]="!rsaKeyHexToImportValidated" (click)="savePrivateKey(keyArea)" [class.loading]="loading"
+            mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -241,12 +171,7 @@
         </div>
 
         <div class="rsa-key">
-          <textarea
-            class="rsa-key"
-            onclick="this.focus();this.select()"
-            readonly
-            >{{ rsaKeyHex }}</textarea
-          >
+          <textarea class="rsa-key" onclick="this.focus();this.select()" readonly>{{ rsaKeyHex }}</textarea>
 
           <button (click)="downloadRsaKey()">
             <img src="assets/icons/download.svg" alt="" />
@@ -265,13 +190,8 @@
         </mat-checkbox>
 
         <div class="submit">
-          <button
-            [disabled]="!agree.checked"
-            (click)="savePublicKey()"
-            [class.loading]="loading"
-            mat-raised-button
-            color="secondary"
-          >
+          <button [disabled]="!agree.checked" (click)="savePublicKey()" [class.loading]="loading" mat-raised-button
+            color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -291,20 +211,15 @@
 
       <form *ngIf="tab == 'schema'" class="schema">
         <ul class="schema-sections">
-          <li
-            *ngFor="
+          <li *ngFor="
               let item of dashboardService.schema
                 ? dashboardService.schema.dashboard
                 : []
-            "
-            [class.active]="dashboardService.currentSection.name == item.name"
-          >
-            <a
-              [routerLink]="[
+            " [class.active]="dashboardService.currentSection.name == item.name">
+            <a [routerLink]="[
                 '/dashboard',
                 item.name == 'dashboard' ? '' : item.name
-              ]"
-            >
+              ]">
               <img [src]="'assets/icons/' + item.icon + '.svg'" />
               <span> {{ item.title }} </span>
             </a>
@@ -318,20 +233,12 @@
         <div class="id">{{ currentBusiness | uppercase }}</div>
 
         <div class="radio-list">
-          <app-form-radio-input
-            (modelChange)="currentBusiness = $event"
-            [data]="businessesToSelect"
-            [display]="'block'"
-          ></app-form-radio-input>
+          <app-form-radio-input (modelChange)="currentBusiness = $event" [data]="businessesToSelect"
+            [display]="'block'"></app-form-radio-input>
         </div>
 
         <div class="submit">
-          <button
-            (click)="choose(currentBusiness)"
-            [class.loading]="loading"
-            mat-raised-button
-            color="secondary"
-          >
+          <button (click)="choose(currentBusiness)" [class.loading]="loading" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>

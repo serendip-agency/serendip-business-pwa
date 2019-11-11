@@ -77,7 +77,9 @@ export class DataService {
       this.businessService.business = _.findWhere(myBusinesses, {
         _id: this.businessService.getActiveBusinessId()
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   }
   setCurrentServer(srv?) {
     let lsServer = localStorage.server;
@@ -854,8 +856,9 @@ export class DataService {
         }
 
         if (
+        
           report.fields.filter(p => p.name === key).length === 0 &&
-          report.fields.filter(p => p.name.startsWith(key + ".")).length === 0
+          report.fields.filter(p => p.name && p.name.startsWith(key + ".")).length === 0
         ) {
           if (key.toLowerCase().indexOf("date") !== -1) {
             report.fields.push({

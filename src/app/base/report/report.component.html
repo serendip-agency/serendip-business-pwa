@@ -97,7 +97,8 @@
           "></app-form-select-input>
 
         <app-form-select-input [selectType]="'single'" [model]="format?.options?.valueBy"
-          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'" [data]="analyzeFieldsForSelect.valueBy" (modelChange)="
+          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'" [data]="analyzeFieldsForSelect.valueBy "
+          (modelChange)="
             format.options.valueBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
           "></app-form-select-input>

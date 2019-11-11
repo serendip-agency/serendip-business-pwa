@@ -310,7 +310,7 @@ export class ReportComponent implements OnInit {
           if (!curr.value) {
             prev.push({
               label: "شمارش تعداد رکوردها",
-              value: curr.value,
+              value: curr.value || "",
               operator: {
                 $sum: 1
               }

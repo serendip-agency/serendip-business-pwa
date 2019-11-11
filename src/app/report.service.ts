@@ -6,7 +6,7 @@ import {
   ReportInterface,
   ReportFormatInterface
 } from "serendip-business-model";
-import * as _ from "underscore";
+import * as _ from "lodash";
 import { DataService } from "./data.service";
 import { IdbService } from "./idb.service";
 import { WebWorkerService } from "./web-worker.service";
@@ -173,6 +173,16 @@ export class ReportService {
     rawReport: ReportInterface,
     format: ReportFormatInterface
   ) {
+    const DateUnitToFormatMap = {
+      minute: "YYYY-MM-DD kk:mm",
+      hour: "YYYY-MM-DD kk",
+      day: "jYYYY/jMM/jDD",
+      month: "YYYY-MM",
+      year: "YYYY",
+      jMonth: "jYYYY/jMM",
+      jYear: "jYYYY"
+    };
+
     let aggregation = [];
 
     if (!format.method) {
@@ -186,7 +196,7 @@ export class ReportService {
       );
     }
 
-    console.log(format, !format.options.groupBy || !format.options.valueBy);
+    console.log(format);
 
     if (format.method === "analyze1d") {
       if (!format.options.groupBy || !format.options.valueBy) {
@@ -217,6 +227,143 @@ export class ReportService {
         return p;
       });
     }
+
+    if (format.method === "analyze2d") {
+      if (!format.options.valueBy || !format.options.dateBy) {
+        return;
+      }
+
+      format.options.dateRangeStart = moment(format.options.dateRangeEnd)
+        .add(-1 * format.options.dateRangeCount, format.options.dateRangeUnit)
+        .toDate();
+
+      const pipeline = [
+        {
+          $match: this.createMatchStageQuery(rawReport)
+        },
+        {
+          $match: {
+            $expr: {
+              $lte: [
+                {
+                  $convert: {
+                    input: "$" + format.options.dateBy.name,
+                    to: "date"
+                  }
+                },
+                {
+                  $convert: { input: format.options.dateRangeEnd, to: "date" }
+                }
+              ]
+            }
+          }
+        },
+        {
+          $match: {
+            $expr: {
+              $gte: [
+                {
+                  $convert: {
+                    input: "$" + format.options.dateBy.name,
+                    to: "date"
+                  }
+                },
+                {
+                  $convert: { input: format.options.dateRangeStart, to: "date" }
+                }
+              ]
+            }
+          }
+        },
+        {
+          $group: {
+            _id: {
+              ...(format.options.groupBy
+                ? { group: "$" + format.options.groupBy.name }
+                : {}),
+              ...{
+                date: {
+                  $dateToString: {
+                    date: { $toDate: "$" + format.options.dateBy.name },
+                    format:
+                      format.options.dateRangeUnit === "minute" ||
+                      format.options.dateRangeUnit === "hour"
+                        ? "%Y-%m-%d %M:%S"
+                        : "%Y-%m-%d"
+                  }
+                }
+              }
+            },
+            value: format.options.valueBy.operator
+          }
+        },
+        {
+          $project: {
+            _id: 0,
+            date: "$_id.date",
+            group: "$_id.group",
+            value: "$value"
+          }
+        }
+      ];
+
+      console.log(JSON.stringify(pipeline, null, 2));
+      aggregation = await this.dataService.aggregate(
+        rawReport.entityName,
+        pipeline
+      );
+
+      const groupBy = _.groupBy(aggregation, p => p.group);
+
+      format.options.dateRangeFormat =
+        DateUnitToFormatMap[format.options.dateRangeUnit];
+
+      aggregation = Object.keys(groupBy).map(key => {
+        return {
+          name: key == "undefined" || !key ? "DATASET" : key,
+          series: _.range(format.options.dateRangeCount).map(n => {
+            const label = moment(format.options.dateRangeEnd || null)
+              .add(
+                (format.options.dateRangeCount - n) * -1,
+                format.options.dateRangeUnit
+              )
+              .format(format.options.dateRangeFormat);
+
+            console.log(
+              label,
+              _.get(
+                groupBy[key].find(
+                  r =>
+                    moment(r.date).format(format.options.dateRangeFormat) ===
+                    label
+                ),
+                "value"
+              )
+            );
+            return {
+              name: label,
+              value:
+                _.get(
+                  groupBy[key].find(
+                    r =>
+                      moment(r.date).format(format.options.dateRangeFormat) ===
+                      label
+                  ),
+                  "value"
+                ) || 0
+            };
+          })
+          // groupBy[key].map(p => {
+          //   return {
+          //     name: p.date,
+          //     value: p.value
+          //   };
+          // })
+        };
+      });
+    }
+
+    console.log(aggregation);
 
     const report = _.clone(rawReport);
     report.count = aggregation.length;
