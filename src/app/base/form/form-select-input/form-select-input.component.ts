@@ -18,6 +18,9 @@ export class FormSelectInputComponent implements OnInit {
   @Input() label: string;
   @Input() data: any;
 
+  @Input() labelField: string;
+  @Input() valueField: string;
+
   @Output() modelChange = new EventEmitter<any>();
 
   private _model: any;

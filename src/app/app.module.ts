@@ -139,6 +139,8 @@ import { ImportComponent } from "./import/import.component";
 import { TPipe } from "./t.pipe";
 import { HelpComponent } from "./help/help.component";
 import { ConnectDatabaseComponent } from "./wizard/connect-database/connect-database.component";
+import { GridComponent } from "./base/grid/grid.component";
+import { GridsterModule } from 'angular-gridster2';
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -160,6 +162,7 @@ export const dynamicComponents = [
   FormComponent,
   ReportComponent,
   FormDialogComponent,
+  GridComponent,
 
   // views
 
@@ -253,6 +256,7 @@ export const primaryComponents = [
   ],
   entryComponents: [],
   imports: [
+    GridsterModule,
     QuillModule,
     NgxMaskModule.forRoot(),
     NgxCurrencyModule,

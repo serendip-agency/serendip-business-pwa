@@ -1,12 +1,14 @@
 .helpers-container {
   margin-bottom: 5px;
   .helpers {
-    height: 0;
+    height: 30px;
     width: 100%;
-    transition: height ease 0.25s;
+    transition: opacity ease 0.25s;
     transition-delay: 0;
     overflow: hidden;
     ul {
+    display: none;
+
       padding: 0;
       margin: 0;
       height: 30px;
@@ -65,9 +67,10 @@
       }
     }
     &.fadeIn {
-      height: 30px;
+      display:block;
       transition-delay: 0;
       ul {
+        display: block;
         li {
           opacity: 1;
         }

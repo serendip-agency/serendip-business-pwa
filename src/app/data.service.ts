@@ -300,15 +300,17 @@ export class DataService {
       return [];
     } else {
       try {
-        return (await this.request({
-          method: "POST",
-          path: `/api/entity/${controller}/aggregate`,
-          timeout: 60000,
-          retry: false,
-          model: {
-            pipeline
-          }
-        })).map((p: EntityModel) => this.decrypt(p));
+        return (
+          await this.request({
+            method: "POST",
+            path: `/api/entity/${controller}/aggregate`,
+            timeout: 60000,
+            retry: false,
+            model: {
+              pipeline
+            }
+          })
+        ).map((p: EntityModel) => this.decrypt(p));
       } catch (error) {
         if (!offline) {
           return await this.aggregate(controller, pipeline, true);
@@ -348,16 +350,18 @@ export class DataService {
       return data;
     } else {
       try {
-        return (await this.request({
-          method: "POST",
-          path: `/api/entity/${controller}/list`,
-          timeout: 3000,
-          retry: false,
-          model: {
-            skip,
-            limit
-          }
-        })).map((p: EntityModel) => this.decrypt(p));
+        return (
+          await this.request({
+            method: "POST",
+            path: `/api/entity/${controller}/list`,
+            timeout: 3000,
+            retry: false,
+            model: {
+              skip,
+              limit
+            }
+          })
+        ).map((p: EntityModel) => this.decrypt(p));
       } catch (error) {
         if (!offline) {
           return await this.list(controller, skip, limit, true);
@@ -728,7 +732,7 @@ export class DataService {
 
     return model;
   }
- 
+
   public async pushCollections(callback?: (_id: string, error?: any) => void) {
     const store = await this.idbService.syncIDB("push");
     const pushKeys = await store.keys();
@@ -856,9 +860,9 @@ export class DataService {
         }
 
         if (
-        
           report.fields.filter(p => p.name === key).length === 0 &&
-          report.fields.filter(p => p.name && p.name.startsWith(key + ".")).length === 0
+          report.fields.filter(p => p.name && p.name.startsWith(key + "."))
+            .length === 0
         ) {
           if (key.toLowerCase().indexOf("date") !== -1) {
             report.fields.push({
@@ -890,17 +894,19 @@ export class DataService {
 
           if (typeof value === "object") {
             report.fields = report.fields.concat(
-              (await this.fields(
-                null,
-                {
-                  data: [value],
-                  fields: []
-                },
-                (depth || 0) + 1,
-                maxDepth === undefined ? 0 : maxDepth,
-                parents.concat([entityName]),
-                enableFields
-              )).map(p => {
+              (
+                await this.fields(
+                  null,
+                  {
+                    data: [value],
+                    fields: []
+                  },
+                  (depth || 0) + 1,
+                  maxDepth === undefined ? 0 : maxDepth,
+                  parents.concat([entityName]),
+                  enableFields
+                )
+              ).map(p => {
                 console.log(p);
                 p.name = key + "." + p.name;
                 p.label = key + "." + p.label;
@@ -911,44 +917,44 @@ export class DataService {
             continue;
           }
 
-          if (typeof value === "string" && value.length === 24) {
-            if (value === row._id) {
-              continue;
-            }
-            let model;
+          // if (typeof value === "string" && value.length === 24) {
+          //   if (value === row._id) {
+          //     continue;
+          //   }
+          //   let model;
 
-            try {
-              model = await this.details(null, value);
-            } catch (error) {}
+          //   try {
+          //     model = await this.details(null, value);
+          //   } catch (error) {}
 
-            if (model) {
-              if (parents.indexOf(model._entity) === -1) {
-                (await this.fields(
-                  model._entity,
-                  null,
-                  (depth || 0) + 1,
-                  maxDepth === undefined ? 0 : maxDepth,
-                  parents.concat([entityName]),
-                  enableFields
-                )).forEach(subField => {
-                  report.fields.push({
-                    name: key + "." + subField.name,
-                    label: key + "." + subField.name,
-                    analytical: true,
-                    method: "findEntityById",
-                    methodOptions: {
-                      entityName: model._entity,
-                      field: subField
-                    },
-                    enabled: false,
-                    type: subField.type
-                  });
-                });
-              }
+          //   if (model) {
+          //     if (parents.indexOf(model._entity) === -1) {
+          //       (await this.fields(
+          //         model._entity,
+          //         null,
+          //         (depth || 0) + 1,
+          //         maxDepth === undefined ? 0 : maxDepth,
+          //         parents.concat([entityName]),
+          //         enableFields
+          //       )).forEach(subField => {
+          //         report.fields.push({
+          //           name: key + "." + subField.name,
+          //           label: key + "." + subField.name,
+          //           analytical: true,
+          //           method: "findEntityById",
+          //           methodOptions: {
+          //             entityName: model._entity,
+          //             field: subField
+          //           },
+          //           enabled: false,
+          //           type: subField.type
+          //         });
+          //       });
+          //     }
 
-              continue;
-            }
-          }
+          //     continue;
+          //   }
+          // }
 
           report.fields.push({
             name: key,

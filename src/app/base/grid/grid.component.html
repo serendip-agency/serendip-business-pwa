@@ -1,0 +1,8 @@
+<gridster [options]="options">
+  <gridster-item [item]="item" *ngFor="let item of dashboard">
+    <!-- your content here -->
+    <ndc-dynamic [ndcDynamicComponent]="componentRepositoryService.dynamicComponents[item.component]"
+      [ndcDynamicInputs]="item.inputs || {}"></ndc-dynamic>
+
+  </gridster-item>
+</gridster>

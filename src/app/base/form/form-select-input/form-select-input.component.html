@@ -1,8 +1,11 @@
 <mat-form-field>
-  <mat-select [compareWith]="compareObjects" [placeholder]="label" [multiple]="selectType == 'multiple'" [(ngModel)]="model" (selectionChange)="modelChange.emit( model.value ||  model)"
-    name="type">
-    <mat-option *ngFor="let type of data" [value]="type.value || type">
-      {{type.label || type}} 
+  <mat-label *ngIf="label">
+    {{ label }}
+  </mat-label>
+  <mat-select [compareWith]="compareObjects" [placeholder]="label" [multiple]="selectType == 'multiple'"
+    [(ngModel)]="model" (selectionChange)="modelChange.emit( model.value ||  model)" name="type">
+    <mat-option *ngFor="let type of data" [value]="(valueField ? type[valueField] : type.value)  || type">
+      {{( labelField ? type[labelField] : type.label) || type}}
     </mat-option>
   </mat-select>
 </mat-form-field>

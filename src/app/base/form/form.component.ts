@@ -165,11 +165,25 @@ export class FormComponent implements OnInit {
     if (this.name) {
       this.formSchema = _.findWhere(this.formsSchema, { name: this.name });
     }
+
     if (this.formId) {
       this.formSchema = (await this.dataService.details(
         "_form",
         this.formId
       )) as any;
+    }
+
+    if (!this.formSchema) {
+      const query = await this.dataService.aggregate("_form", [
+        {
+          $match: {
+            entityName: this.entityName
+          }
+        }
+      ]);
+      if (query[0]) {
+        this.formSchema = query[0] as any;
+      }
     }
 
     if (!this.entityName) {

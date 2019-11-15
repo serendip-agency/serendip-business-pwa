@@ -42,7 +42,7 @@
 
 
     <nav class="secondary" *ngIf="dashboardService.currentSection">
-      <ul>
+      <ul *ngIf="dashboardService.currentSection.tabs.length < 8 && dashboardService.currentSection.tabs.length > 1">
         <li *ngFor="let tab of dashboardService.currentSection.tabs">
           <a [class.active]="dashboardService.currentTab.title == tab.title"
             [routerLink]="['/panel' , dashboardService.currentSection.name, stringToSlug( tab.title )]">
@@ -50,6 +50,13 @@
           </a>
         </li>
       </ul>
+      <div class="select">
+        <app-form-select-input *ngIf="dashboardService.currentSection.tabs.length >= 8"
+          [label]="'بخش مورد نظر را انتخاب کنید'" [model]="dashboardService.currentTab.title" [valueField]="'title'"
+          (modelChange)="router.navigate(['/panel' , dashboardService.currentSection.name, stringToSlug( $event )])"
+          [selectType]="'single'" [data]="dashboardService.currentSection.tabs" [labelField]="'title'">
+        </app-form-select-input>
+      </div>
     </nav>
 
     <nav class="mobile" *ngIf="mobileNavVisible">
@@ -99,7 +106,8 @@
     class="widget widget-{{widget.component.replace('Component','').toLowerCase()}}">
 
     <ndc-dynamic [ndcDynamicOutputs]="{
-    DashboardCommand: dashboardCommand()}" [ndcDynamicComponent]="dynamicComponents[widget.component]"
+    DashboardCommand: dashboardCommand()}"
+      [ndcDynamicComponent]="dynamicComponents[widget.component]"
       [ndcDynamicInputs]="widget.inputs || {}"></ndc-dynamic>
 
   </section>
@@ -108,7 +116,8 @@
     class="widget widget-{{widget.component.replace('Component','').toLowerCase()}}">
 
     <ndc-dynamic [ndcDynamicOutputs]="{
-    DashboardCommand: dashboardCommand()}" [ndcDynamicComponent]="dynamicComponents[widget.component]"
+    DashboardCommand: dashboardCommand()}"
+      [ndcDynamicComponent]="dynamicComponents[widget.component]"
       [ndcDynamicInputs]="widget.inputs || {}"></ndc-dynamic>
 
   </section>

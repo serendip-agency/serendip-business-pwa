@@ -326,6 +326,25 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
     ]
   },
   {
+    name: "analytics",
+    title: "تحلیل",
+    icon: "dashboard-1",
+    product: "base",
+    tabs: [
+      {
+        status: "default",
+        title: "داشبورد تحلیلی",
+        icon: "tab-4",
+        widgets: [
+          {
+            component: "GridComponent",
+            inputs: {}
+          }
+        ]
+      }
+    ]
+  },
+  {
     name: "configurations",
     title: "پیکربندی",
     icon: "dashboard-1",
