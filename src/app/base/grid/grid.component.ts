@@ -13,8 +13,10 @@ export class GridComponent implements OnInit {
   options: GridsterConfig = {
     gridType: "verticalFixed",
     displayGrid: "always",
-    minCols: 6,
-    minRows: 2,
+    minCols: 20,
+    minRows: 4,
+    margin: 0,
+    fixedRowHeight: 50,
     draggable: {
       enabled: true
     },
@@ -35,8 +37,8 @@ export class GridComponent implements OnInit {
   ngOnInit() {
     this.dashboard = [
       {
-        cols: 6,
-        rows: 2,
+        cols: 15,
+        rows: 15,
         y: 0,
         x: 0,
         component: "ReportComponent",
@@ -53,5 +55,18 @@ export class GridComponent implements OnInit {
 
   removeItem(item) {
     this.dashboard.splice(this.dashboard.indexOf(item), 1);
+  }
+
+  addItem() {
+    this.dashboard.push({
+      cols: 4,
+      rows: 3,
+      y: 0,
+      x: 0,
+      component: "ReportComponent",
+      inputs: {
+        entityName: "Tokens"
+      }
+    });
   }
 }

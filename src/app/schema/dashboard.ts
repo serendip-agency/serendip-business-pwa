@@ -221,13 +221,13 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
   },
   {
     name: "settings",
-    title: "تنظیمات",
+    title: "Settings",
     icon: "settings-1",
     product: "base",
     tabs: [
       {
         active: true,
-        title: "کسب‌وکار",
+        title: "‌Business profile",
         icon: "building-production-unit-1",
         status: "default",
         widget: {
@@ -236,7 +236,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         active: true,
-        title: "پروفایل",
+        title: "User profile",
         icon: "account-profile-user-4",
         status: "default",
         widget: {
@@ -245,7 +245,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         active: true,
-        title: "تغییر رمز",
+        title: "Change password",
         icon: "account-profile-user-4",
         status: "default",
         widget: {
@@ -256,13 +256,13 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
   },
   {
     name: "start",
-    title: "شروع",
+    title: "Start",
     icon: "dashboard-1",
     product: "base",
     tabs: [
       {
         status: "default",
-        title: "راهنمای داشبورد",
+        title: "Dashboard manual",
         icon: "tab-4",
         widgets: [
           {
@@ -275,7 +275,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         status: "default",
-        title: "ورود اطلاعات از Excel",
+        title: "Import from excel",
         icon: "tab-4",
         widgets: [
           {
@@ -286,7 +286,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         status: "default",
-        title: "راهنمای API",
+        title: "API manual",
         icon: "tab-4",
         widgets: [
           {
@@ -299,7 +299,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         status: "default",
-        title: "راهنمای SDK",
+        title: "SDK manual",
         icon: "tab-4",
         widgets: [
           {
@@ -312,7 +312,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         status: "default",
-        title: "اتصال به دیتابیس",
+        title: "Connect your database",
         icon: "tab-4",
         widgets: [
           {
@@ -327,13 +327,13 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
   },
   {
     name: "analytics",
-    title: "تحلیل",
+    title: "Analytics",
     icon: "dashboard-1",
     product: "base",
     tabs: [
       {
         status: "default",
-        title: "داشبورد تحلیلی",
+        title: "Analytical dashboard",
         icon: "tab-4",
         widgets: [
           {
@@ -346,13 +346,13 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
   },
   {
     name: "configurations",
-    title: "پیکربندی",
+    title: "Configurations",
     icon: "dashboard-1",
     product: "base",
     tabs: [
       {
         status: "default",
-        title: "اشیا",
+        title: "Entity types",
         icon: "tab-4",
         widgets: [
           {
@@ -369,7 +369,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         status: "default",
-        title: "دیتا‌ سورس‌ها",
+        title: "Data sources",
         icon: "tab-4",
         widgets: [
           {
@@ -377,15 +377,15 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
             inputs: {
               entityName: "_dataSource",
               icon: "tab-4",
-              entityLabelSingular: "دیتا سورس",
-              title: "دیتا سورس"
+              entityLabelSingular: "Data source",
+              title: "Data sources"
             }
           }
         ]
       },
       {
         status: "default",
-        title: "داشبورد‌ها",
+        title: "Dashboards",
         icon: "tab-3",
         widgets: [
           {
@@ -402,7 +402,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         status: "default",
-        title: "فرم‌ها",
+        title: "Forms",
         icon: "copy",
         widgets: [
           {
@@ -419,7 +419,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         status: "default",
-        title: "گزارشات",
+        title: "Reports",
         icon: "filter-6",
         widgets: [
           {
@@ -436,7 +436,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
       },
       {
         status: "default",
-        title: "تریگرها",
+        title: "Triggers",
         icon: "complaints-customize-customer-voice-3",
         widgets: [
           {
@@ -447,22 +447,6 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
               icon: "complaints-customize-customer-voice-3",
               entityLabelSingular: "تریگر",
               title: "تریگر‌ها"
-            }
-          }
-        ]
-      },
-      {
-        status: "default",
-        title: "روش‌های نتیجه‌گیری",
-        icon: "efficiency-chart-1",
-        widgets: [
-          {
-            component: "ReportComponent",
-            inputs: {
-              reportName: "format-default",
-              formName: "format-form",
-              icon: "efficiency-chart-1",
-              title: "روش‌های نتیجه‌گیری"
             }
           }
         ]

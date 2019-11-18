@@ -122,7 +122,7 @@ export class DashboardService {
         name: "raw",
         product: "base",
         icon: "copy",
-        title: "اسناد",
+        title: "Collections",
         tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name))).map(
           name => {
             return {

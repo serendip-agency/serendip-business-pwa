@@ -4,19 +4,38 @@
   <header id="header">
     <div class="inner">
       <div class="logo">
-        <img src="assets/graphics/brand/logo-6.svg" />
+        <img src="assets/favicon.png" />
+
+        <div class="text">
+
+          <h1>
+            Serendip
+          </h1>
+          <small>Data dashboard</small>
+        </div>
+
       </div>
 
       <div class="nav-toggle" (click)="mobileNavVisible = !mobileNavVisible" [class.active]="mobileNavVisible">
 
       </div>
 
-      <div class="profile">
-        <img src="assets/icons/account-profile-user-4.svg" alt="">
+      <div class="icon">
+        <img src="assets/icons/account-profile-user-1.svg" alt="">
       </div>
-      <div class="arrow">
-        <img src="assets/icons/arrow-down-below-8.svg" alt="">
+
+      <div class="icon">
+        <img src="assets/icons/notification-bell-5.svg" alt="">
       </div>
+      <div class="icon">
+        <img src="assets/icons/check-list-3.svg" alt="">
+      </div>
+
+      <div class="icon">
+        <img src="assets/icons/tab-4.svg" alt="">
+      </div>
+
+
       <!-- <div class="plan">
       نسخه پایه سی آر ام
     </div>
@@ -28,86 +47,57 @@
       <div class="clearfix"></div>
     </div>
 
-    <nav class="primary">
-      <ul>
-        <li *ngFor="let section of dashboardService.schema.dashboard">
-          <a [class.active]="dashboardService.currentSection?.name == section?.name"
-            [routerLink]="['/panel' , stringToSlug(section?.name)]">
-            <img [src]="'assets/icons/' + section.icon + '.svg'" />
-            <span> {{ section?.title }} </span>
-          </a>
-        </li>
-      </ul>
-    </nav>
 
-
-    <nav class="secondary" *ngIf="dashboardService.currentSection">
-      <ul *ngIf="dashboardService.currentSection.tabs.length < 8 && dashboardService.currentSection.tabs.length > 1">
-        <li *ngFor="let tab of dashboardService.currentSection.tabs">
-          <a [class.active]="dashboardService.currentTab.title == tab.title"
-            [routerLink]="['/panel' , dashboardService.currentSection.name, stringToSlug( tab.title )]">
-            <span> {{ tab.title }} </span>
-          </a>
-        </li>
-      </ul>
-      <div class="select">
-        <app-form-select-input *ngIf="dashboardService.currentSection.tabs.length >= 8"
-          [label]="'بخش مورد نظر را انتخاب کنید'" [model]="dashboardService.currentTab.title" [valueField]="'title'"
-          (modelChange)="router.navigate(['/panel' , dashboardService.currentSection.name, stringToSlug( $event )])"
-          [selectType]="'single'" [data]="dashboardService.currentSection.tabs" [labelField]="'title'">
-        </app-form-select-input>
-      </div>
-    </nav>
-
-    <nav class="mobile" *ngIf="mobileNavVisible">
-
-      <ul>
-        <li *ngFor="let section of dashboardService.schema?.dashboard">
-          <a [class.active]="dashboardService.currentSection?.name == section.name"
-            [routerLink]="['/panel' , section.name]" (click)="mobileNavVisible=false">
-            <img [src]="'assets/icons/' + section.icon + '.svg'" />
-            <span> {{ section.title }} </span>
-          </a>
-          <ul>
-            <li *ngFor="let tab of section?.tabs">
-              <a [class.active]="dashboardService.currentTab?.title == tab?.title"
-                [routerLink]="['/panel' , section?.name, stringToSlug(tab?.title)]" (click)="mobileNavVisible=false">
-                <span> {{ tab.title }} </span>
-              </a>
-            </li>
-          </ul>
-
-        </li>
-      </ul>
-
-    </nav>
-
-    <div class="bread-crumb">
-      <ul>
-        <li>
-          <a [routerLink]="['/panel' ,  dashboardService.currentSection?.name]">
-            <img [src]="'assets/icons/' + dashboardService.currentSection?.icon + '.svg'" />
-            <span> {{ dashboardService.currentSection?.title }} </span>
-          </a>
-        </li>
-        <li>
-          <a [routerLink]="['/panel' ,  dashboardService.currentSection?.name,dashboardService.currentTab?.title]">
-
-            <span> {{ dashboardService.currentTab?.title }} </span>
-
-          </a>
-        </li>
-      </ul>
-
-    </div>
   </header>
+
+
+  <nav class="primary">
+
+    <ul>
+      <li *ngFor="let section of dashboardService.schema?.dashboard">
+        <a [class.active]="dashboardService.currentSection?.name == section.name"
+          [routerLink]="['/panel' , section.name]" (click)="mobileNavVisible=false">
+          <img [src]="'assets/icons/' + section.icon + '.svg'" />
+          <span> {{ section.title }} </span>
+        </a>
+        <ul>
+          <li *ngFor="let tab of _.take(section?.tabs,6)">
+            <a [class.active]="dashboardService.currentTab?.title == tab?.title"
+              [routerLink]="['/panel' , section?.name, stringToSlug(tab?.title)]" (click)="mobileNavVisible=false">
+              <span> {{ tab.title }} </span>
+            </a>
+          </li>
+        </ul>
+
+      </li>
+    </ul>
+
+  </nav>
+
+  <div class="bread-crumb">
+    <ul>
+      <li>
+        <a [routerLink]="['/panel' ,  dashboardService.currentSection?.name]">
+          <img [src]="'assets/icons/' + dashboardService.currentSection?.icon + '.svg'" />
+          <span> {{ dashboardService.currentSection?.title }} </span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/panel' ,  dashboardService.currentSection?.name,dashboardService.currentTab?.title]">
+
+          <span> {{ dashboardService.currentTab?.title }} </span>
+
+        </a>
+      </li>
+    </ul>
+
+  </div>
 
   <section id="popup" *ngFor="let widget of popup?.widgets"
     class="widget widget-{{widget.component.replace('Component','').toLowerCase()}}">
 
     <ndc-dynamic [ndcDynamicOutputs]="{
-    DashboardCommand: dashboardCommand()}"
-      [ndcDynamicComponent]="dynamicComponents[widget.component]"
+    DashboardCommand: dashboardCommand()}" [ndcDynamicComponent]="dynamicComponents[widget.component]"
       [ndcDynamicInputs]="widget.inputs || {}"></ndc-dynamic>
 
   </section>
@@ -116,8 +106,7 @@
     class="widget widget-{{widget.component.replace('Component','').toLowerCase()}}">
 
     <ndc-dynamic [ndcDynamicOutputs]="{
-    DashboardCommand: dashboardCommand()}"
-      [ndcDynamicComponent]="dynamicComponents[widget.component]"
+    DashboardCommand: dashboardCommand()}" [ndcDynamicComponent]="dynamicComponents[widget.component]"
       [ndcDynamicInputs]="widget.inputs || {}"></ndc-dynamic>
 
   </section>

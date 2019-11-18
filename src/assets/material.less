@@ -4,8 +4,8 @@
 }
 
 label.mat-form-field-label {
-  color      : #576074 !important;
-  font-size  : 13px;
+  color: #576074 !important;
+
   font-weight: 100 !important;
 }
 
@@ -25,27 +25,10 @@ label.mat-form-field-label {
   stroke-width: 4px !important;
 }
 
-.mat-card-header {
-  display: block !important;
 
-  .mat-card-header-text {
-    float  : right;
-    padding: 0;
-  }
-
-  .mat-card-avatar {
-    float: right;
-  }
-
-  &:after {
-    clear  : both;
-    display: block;
-    content: " ";
-  }
-}
 
 .mat-option {
-  font-size    : 11px !important;
+
   height       : 30px !important;
   line-height  : 30px !important;
   border-bottom: 1px solid #ddd;
@@ -59,18 +42,37 @@ label.mat-form-field-label {
 }
 
 .mat-card-header {
+  display: block !important;
+
+  .mat-card-header-text {
+    float  : left;
+    padding: 0;
+  }
+
+  .mat-card-avatar {
+    float: left;
+  }
+
+  &:after {
+    clear  : both;
+    display: block;
+    content: " ";
+  }
+}
+
+.mat-card-header {
 
   .menu,
   .action,
   .search {
-    float        : left;
-    width        : 28px;
-    height       : 28px;
-    line-height  : 30px;
-    text-align   : center;
-    font-size    : 17px;
+    float      : right;
+    width      : 38px;
+    height     : 38px;
+    line-height: 40px;
+    text-align : center;
+
     border-radius: 100%;
-    margin-right : 2px;
+    margin-left  : 2px;
     transition   : all e ase 0.5s;
     margin-top   : 6px;
     font-weight  : 100;
@@ -91,10 +93,10 @@ label.mat-form-field-label {
     span {
       display       : inline-block;
       vertical-align: top;
-      padding-left  : 10px;
+      padding-right  : 10px;
       font-weight   : 100;
       color         : #000;
-      font-size     : 13px;
+
     }
   }
 
@@ -116,14 +118,16 @@ label.mat-form-field-label {
 
 .mat-button,
 .mat-raised-button {
-  font-size  : 13px !important;
+
   font-weight: 100;
 
   img {
-    width         : 24px;
-    height        : 24px;
+    width         : 30px;
+    height        : 30px;
     display       : inline-block;
+    margin-bottom : 5px;
     vertical-align: baseline;
+    vertical-align: middle !important;
   }
 }
 
@@ -134,8 +138,8 @@ input.mat-input-element {
 
 .mat-form-field {
   line-height: 1 !important;
-  width: 100%;
-  max-width: 360px;
+  width      : 100%;
+  max-width  : 360px;
 }
 
 .mat-form-field-invalid .mat-input-element,
@@ -175,7 +179,8 @@ textarea {
 }
 
 .double-field {
-  margin:0 auto;
+  margin: 0 auto;
+
   &:after {
     clear  : both;
     display: block;
@@ -288,17 +293,18 @@ input[dir="ltr"] {
   margin-bottom: 0 !important;
 }
 
-.mat-dialog-container{
-  padding:0!important;
-  max-height: 100vh!important;
+.mat-dialog-container {
+  padding   : 0 !important;
+  max-height: 100vh !important;
 }
+
 .minimal {
   .mat-card-subtitle {
     display: none;
   }
 
   .mat-card-title {
-    font-size  : 17px !important;
+
     font-weight: 100 !important;
     line-height: 42px !important;
     margin     : 0 !important;
@@ -309,6 +315,10 @@ input[dir="ltr"] {
   border-color: #d8d5ce !important;
 }
 
+.mat-card-content{
+  margin-bottom: 0!important;
+}
+
 .mat-card-avatar {
   height       : 40px !important;
   width        : 40px !important;
@@ -317,7 +327,6 @@ input[dir="ltr"] {
   box-sizing   : border-box;
   padding      : 4px;
   overflow     : hidden;
-  opacity      : 0.7;
 
   img {}
 }
@@ -334,9 +343,9 @@ input[dir="ltr"] {
   height   : 22px;
 }
 
-.mat-card 
-{
-  box-sizing: border-box;;
+.mat-card {
+  box-sizing: border-box;
+  ;
 }
 
 mat-form-field .location img,
@@ -375,9 +384,7 @@ mat-form-field .minus img {
   .mat-card {
     padding: 10px !important;
 
-    .mat-form-field {
-      font-size: 12px;
-    }
+    .mat-form-field {}
   }
 
   .mat-card-avatar {
@@ -395,21 +402,18 @@ mat-form-field .minus img {
   }
 
   .mat-card-title {
-    padding    : 0;
-    margin-top : 0 !important;
-    font-size  : 12px !important;
+    padding   : 0;
+    margin-top: 0 !important;
+
     line-height: 18px;
   }
 
   .mat-card-subtitle {
-    padding    : 0;
-    margin-top : 0 !important;
-    font-size  : 11px !important;
+    padding   : 0;
+    margin-top: 0 !important;
+
     line-height: 18px;
   }
 }
 
-.mat-form-field-wrapper{
-
-
-}
+.mat-form-field-wrapper {}

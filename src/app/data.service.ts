@@ -907,7 +907,7 @@ export class DataService {
                   enableFields
                 )
               ).map(p => {
-                console.log(p);
+                
                 p.name = key + "." + p.name;
                 p.label = key + "." + p.label;
                 return p;
@@ -956,6 +956,7 @@ export class DataService {
           //   }
           // }
 
+          if(value && value.length < 64)
           report.fields.push({
             name: key,
             label: key,

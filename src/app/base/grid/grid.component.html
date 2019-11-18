@@ -1,8 +1,16 @@
+<div class="head">
+  <button mat-raised-button (click)="addItem()">
+    <img src="assets/icons/plus-add-3.svg" />
+    Add widget</button>
+</div>
 <gridster [options]="options">
   <gridster-item [item]="item" *ngFor="let item of dashboard">
     <!-- your content here -->
-    <ndc-dynamic [ndcDynamicComponent]="componentRepositoryService.dynamicComponents[item.component]"
-      [ndcDynamicInputs]="item.inputs || {}"></ndc-dynamic>
+    <div class="gridster-item-content">
+      <ndc-dynamic [ndcDynamicComponent]="componentRepositoryService.dynamicComponents[item.component]"
+        [ndcDynamicInputs]="item.inputs || {}"></ndc-dynamic>
+
+    </div>
 
   </gridster-item>
 </gridster>

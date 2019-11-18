@@ -143,7 +143,7 @@ textarea {
 
 g.pie-grid-item {
   text {
-    text-anchor: middle !important;
+    // text-anchor: middle !important;
   }
 }
 
@@ -383,10 +383,7 @@ ngx-charts-number-card .cell .trimmed-label {
   }
 
   text {
-    font-size  : 11px !important;
-    font-weight: 100 !important;
-    text-anchor: start;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 15px !important;
   }
 
   .pie-label-line {
@@ -397,13 +394,13 @@ ngx-charts-number-card .cell .trimmed-label {
     font-weight: bold !important;
   }
 
-  text[style*="text-anchor: start;"] {
-    text-anchor: end !important;
-  }
+  // text[style*="text-anchor: start;"] {
+  //   text-anchor: end !important;
+  // }
 
-  text[style*="text-anchor: end;"] {
-    text-anchor: start !important;
-  }
+  // text[style*="text-anchor: end;"] {
+  //   text-anchor: start !important;
+  // }
 
   .chart-legend {
     background   : rgb(245, 245, 245);
@@ -1042,23 +1039,14 @@ div.timepicker {
 }
 
 body {
-  font-family: iranyekan;
-  font-weight: 100;
-  font-size  : 13px;
+  font-family: Ubuntu;
+  font-size  : 15px;
   padding    : 0;
   margin     : 0;
   overflow-x : hidden;
   user-select: none;
 }
 
-body {
-
-  .mat-card-subtitle,
-  .mat-card-content,
-  .mat-card-header .mat-card-title {
-    font-size: 12px;
-  }
-}
 
 div,
 p,
@@ -1074,9 +1062,9 @@ h5,
 ul,
 li,
 button {
-  font-family: iranyekan;
   padding    : 0;
   margin     : 0;
+  font-family: Ubuntu;
 }
 
 ul {
@@ -1102,9 +1090,6 @@ h3 {
 
 }
 
-p {
-  font-size: 14px;
-}
 
 body.swal2-shown {
   overflow: hidden;
@@ -1334,3 +1319,28 @@ form {
 // .codeflask--has-line-numbers .codeflask__flatten{
 //   width:100%!important;
 // }
+
+gridster {
+  min-height: calc(100vh - 100px);
+  height    : auto;
+  background: none !important;
+
+}
+
+gridster .gridster-row {
+  border-top   : 1px dashed #ddd !important;
+  border-bottom: 1px dashed #ddd !important;
+}
+
+gridster .gridster-column {
+  border-left : 1px dashed #ddd !important;
+  border-right: 1px dashed #ddd !important;
+}
+
+gridster-item {
+  background: #E3E0DB !important;
+}
+
+.gridster-item-content {
+  padding: 10px;
+}

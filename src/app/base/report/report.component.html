@@ -1,23 +1,7 @@
 <div class="widget" *ngIf="layout == 'widget'">
   <mat-card class="report">
-    <mat-card-header>
-      <div mat-card-avatar class="pull-right">
-        <img [src]="'assets/icons/' + icon + '.svg'" />
-      </div>
+    <mat-card-header >
 
-      <mat-card-title> {{ title }} </mat-card-title>
-
-      <mat-card-subtitle>
-
-        <span *ngIf="subtitle">
-          {{ subtitle }}
-        </span>
-        <span class="en" *ngIf="!subtitle">
-          REPORT COMPONENT
-        </span>
-
-
-      </mat-card-subtitle>
 
       <div class="menu" [class.active]="mode == 'chart'"
         (click)="mode == 'chart' ? setMode('data') : setMode('format')">
@@ -31,7 +15,7 @@
         <img [src]="'assets/icons/funnel.svg'" />
 
         <span *ngIf="activeFieldQueries().length > 0">
-          {{ activeFieldQueries()?.length?.toString() | rpd }} فیلتر
+          {{ activeFieldQueries()?.length?.toString() | rpd }} Filter
         </span>
       </div>
 
@@ -41,10 +25,28 @@
 
         <span>
           {{ report?.count?.toString() | rpd }}
-          سند
-          {{ report?.offline ? "آفلاین" : "" }}
+          Document
+          {{ report?.offline ? "Offline" : "" }}
         </span>
       </div>
+
+      <div mat-card-avatar>
+        <img [src]="'assets/icons/' + icon + '.svg'" />
+      </div>
+
+      <mat-card-title> {{ title || entityLabelPlural || entityName }} </mat-card-title>
+
+      <mat-card-subtitle>
+
+        <span *ngIf="subtitle">
+          {{ subtitle }}
+        </span>
+        <span class="en" *ngIf="!subtitle">
+          Report
+        </span>
+
+
+      </mat-card-subtitle>
     </mat-card-header>
     <mat-progress-bar *ngIf="resultLoading" mode="indeterminate"></mat-progress-bar>
     <mat-card-content *ngIf="initDone && error">
@@ -271,12 +273,10 @@
           <img class="icon" [src]="'assets/icons/'+ icon +'.svg'" />
 
           <h1>{{ title }}</h1>
-          <p>
-            موردی پیدا نشد!
-          </p>
-          <button class="button-bordered" (click)="new()">
+
+          <button mat-raised-button (click)="new()">
             <img src="assets/icons/plus-add-3.svg" />
-            ثبت {{title}}
+            New {{title}}
           </button>
         </div>
 
@@ -289,15 +289,15 @@
         report &&
         (mode == 'chart' || mode == 'format')
       ">
-      <button *ngIf="mode == 'format'" class="sp-button-icon with-text pull-left" (click)="generateFormat()">
+      <button *ngIf="mode == 'format'" (click)="generateFormat()">
         <span>نمایش نتیجه</span>
       </button>
 
-      <button *ngIf="mode == 'chart'" class="sp-button-icon pull-left" (click)="setMode('format')">
+      <button *ngIf="mode == 'chart'" (click)="setMode('format')">
         <img src="assets/icons/settings-adjust-reg.svg" />
       </button>
 
-      <button *ngIf="mode == 'chart'" class="sp-button-icon pull-left" (click)="generateFormat()">
+      <button *ngIf="mode == 'chart'" (click)="generateFormat()">
         <img src="assets/icons/refresh.svg" />
       </button>
 
@@ -317,35 +317,45 @@
     </mat-card-actions> -->
 
     <mat-card-actions *ngIf="initDone && !resultLoading && report && mode == 'data'">
-      <button class="sp-button-icon" (click)="new()">
-        <img src="assets/icons/plus-add-3.svg" />
+
+
+
+      <button mat-button (click)="refresh()">
+        <img src="assets/icons/refresh.svg" /> Refresh
       </button>
 
-      <button class="sp-button-icon" (click)="edit()" *ngIf="selected.length > 0">
+      <button mat-button (click)="new()">
+        <img src="assets/icons/plus-add-3.svg" /> New {{entityLabelSingular || entityName}}
+      </button>
+
+      <button mat-button (click)="edit()" *ngIf="selected.length == 1">
         <!-- ویرایش {{ (selected.length > 1 ? selected.length : '') | rpd}} {{ entityLabelSingular }} انتخاب‌شده -->
 
-        <img src="assets/icons/office-paper-work-pen.svg" />
+        <img src="assets/icons/office-paper-work-pen.svg" /> Edit selected
       </button>
 
-      <button class="sp-button-icon" (click)="delete()" *ngIf="selected.length > 0">
-        <img src="assets/icons/recycle-bin-trash.svg" />
+      <button  mat-button  (click)="delete()" *ngIf="selected.length > 0">
+        <img src="assets/icons/recycle-bin-trash.svg" /> Remove selected({{selected.length}})
       </button>
 
-      <div class="paginator pull-left" *ngIf="!resultLoading && report && report.count && pageCount > 1">
-        <div class="next" *ngIf="pageIndex < pageCount - 1" (click)="changePage(1)">
+      <div class="paginator pull-right" *ngIf="!resultLoading && report && report.count && pageCount > 1">
+
+        <button mat-icon-button *ngIf="pageIndex >= 1" (click)="changePage(-1)">
           <img src="assets/icons/arrow-left-back-10.svg" />
-        </div>
+
+        </button>
         <div class="current">
           {{ pageIndex + 1 | rpd }} - {{ pageCount | rpd }}
         </div>
-        <div class="prev" *ngIf="pageIndex >= 1" (click)="changePage(-1)">
+        <button mat-icon-button class="next" *ngIf="pageIndex < pageCount - 1" (click)="changePage(1)">
           <img src="assets/icons/arrow-right-next-10.svg" />
-        </div>
+
+        </button>
+
       </div>
 
-      <button class="sp-button-icon pull-left" (click)="refresh()">
-        <img src="assets/icons/refresh.svg" />
-      </button>
+
+
 
       <div class="clearfix"></div>
     </mat-card-actions>

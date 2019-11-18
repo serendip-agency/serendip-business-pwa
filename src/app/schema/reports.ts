@@ -9,7 +9,7 @@ export const ReportsSchema: ReportInterface[] = [
         indexing: true,
         type: "string",
         name: "_id",
-        label: "شناسه سند",
+        label: "ID",
         template: { component: "ObjectidViewComponent" }
       },
       {

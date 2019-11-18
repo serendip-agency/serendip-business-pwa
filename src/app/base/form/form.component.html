@@ -19,9 +19,9 @@
         ویرایش {{ entityName }}
       </mat-card-subtitle> -->
       <div class="mat-card-title single-title">
-        <span class="text" *ngIf="model?._cdate"> ویرایش سند</span>
+        <span class="text" *ngIf="model?._cdate"> Edit</span>
 
-        <span class="text" *ngIf="!model?._id"> ثبت سند جدید</span>
+        <span class="text" *ngIf="!model?._id">Create {{entityName}}</span>
 
         <span class="id" *ngIf="model?._id"> {{ model._id }} </span>
       </div>

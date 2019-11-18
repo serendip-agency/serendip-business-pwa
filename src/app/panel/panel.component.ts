@@ -44,6 +44,7 @@ export class PanelComponent implements OnInit {
 
   mobileNavVisible = false;
 
+  _ = _;
   stringToSlug(input: string = "") {
     return input
       .toLowerCase()
