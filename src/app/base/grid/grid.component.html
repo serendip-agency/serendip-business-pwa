@@ -7,7 +7,9 @@
   <gridster-item [item]="item" *ngFor="let item of dashboard">
     <!-- your content here -->
     <div class="gridster-item-content">
-      <ndc-dynamic [ndcDynamicComponent]="componentRepositoryService.dynamicComponents[item.component]"
+      <ndc-dynamic [ndcDynamicOutputs]="{
+        DashboardCommand: dashboardCommand()}"
+        [ndcDynamicComponent]="componentRepositoryService.dynamicComponents[item.component]"
         [ndcDynamicInputs]="item.inputs || {}"></ndc-dynamic>
 
     </div>

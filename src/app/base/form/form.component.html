@@ -21,7 +21,7 @@
       <div class="mat-card-title single-title">
         <span class="text" *ngIf="model?._cdate"> Edit</span>
 
-        <span class="text" *ngIf="!model?._id">Create {{entityName}}</span>
+        <span class="text" *ngIf="!model?._id">Create {{entityName.trim('_')}}</span>
 
         <span class="id" *ngIf="model?._id"> {{ model._id }} </span>
       </div>
@@ -29,7 +29,7 @@
       <!-- <div class="action" [class.active]="mode == 'note'" (click)="mode = mode == 'note' ? 'form' : 'note'">
         <img [src]="'assets/icons/note.svg'" />
       </div> -->
-<!-- 
+      <!-- 
       <div class="action" [class.active]="mode == 'triggers'" (click)="mode = mode == 'triggers' ? 'form' : 'triggers'">
         <img [src]="'assets/icons/complaints-customize-customer-voice-3.svg'" />
       </div> -->
@@ -42,7 +42,8 @@
         {{ "{}" }}
       </div>
 
-      <div class="action" *ngIf="formSchema && formSchema.parts.length" [class.active]="mode == 'form'" (click)="mode = 'form'">
+      <div class="action" *ngIf="formSchema && formSchema.parts.length" [class.active]="mode == 'form'"
+        (click)="mode = 'form'">
         <img [src]="'assets/icons/check-list-2.svg'" />
       </div>
 

@@ -6,7 +6,7 @@
 
 header {
 
-    background: #fff;
+    background   : #fff;
     border-bottom: 1px solid #E3E0DB;
     height       : 53px;
     box-sizing   : border-box;
@@ -14,7 +14,7 @@ header {
     top          : 0;
     left         : 0;
     width        : 100%;
-
+    z-index      : 999;
 
     .inner {
         margin    : 0 auto;
@@ -27,11 +27,23 @@ header {
         height  : 40px;
         width   : auto;
         position: relative;
+        cursor  : pointer;
 
         img {
             height        : 100%;
             width         : auto;
             vertical-align: middle;
+        }
+
+        &.with-border {
+            width         : 30px;
+            height        : 30px;
+            vertical-align: middle;
+            border        : 1px solid #000;
+            border-radius : 100%;
+            /* margin-top : 5px; */
+            box-sizing    : border-box;
+            margin        : 5px 5px 0 5px;
         }
     }
 

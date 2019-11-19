@@ -20,20 +20,46 @@
 
       </div>
 
-      <div class="icon">
+      <div class="icon" [matMenuTriggerFor]="appsMenu">
+        <img src="assets/icons/tab-4.svg" alt="">
+      </div>
+
+
+      <mat-menu #appsMenu="matMenu">
+        <button mat-menu-item>
+          <img src="assets/icons/note.svg" alt="">
+
+          Notes</button>
+        <button mat-menu-item>
+          <img src="assets/icons/calendar-1.svg" alt="">
+          Calendar</button>
+        <button mat-menu-item>
+          <img src="assets/icons/upload.svg" alt="">
+          File manager</button>
+      </mat-menu>
+
+
+      <div class="icon" [matMenuTriggerFor]="accountMenu">
         <img src="assets/icons/account-profile-user-1.svg" alt="">
+      </div>
+
+      <mat-menu #accountMenu="matMenu">
+        <button mat-menu-item>Profile</button>
+        <button mat-menu-item>Switch business</button>
+        <button mat-menu-item>Change password</button>
+        <button mat-menu-item>Logout</button>
+      </mat-menu>
+
+
+
+      <div class="icon with-border">
+        <img src="assets/icons/check-list-3.svg" alt="">
       </div>
 
       <div class="icon">
         <img src="assets/icons/notification-bell-5.svg" alt="">
       </div>
-      <div class="icon">
-        <img src="assets/icons/check-list-3.svg" alt="">
-      </div>
 
-      <div class="icon">
-        <img src="assets/icons/tab-4.svg" alt="">
-      </div>
 
 
       <!-- <div class="plan">

@@ -312,8 +312,8 @@ export const FormsSchema: FormInterface[] = [
             componentName: "ReportComponent",
             propertyName: "report",
             inputs: {
-              entityName : '_entity',
-              layout : 'report'
+              entityName: "_entity",
+              layout: "report"
             }
           },
           // {
@@ -493,6 +493,25 @@ export const FormsSchema: FormInterface[] = [
             }
           }
         ]
+      }
+    ]
+  },
+  {
+    name: "add-widadd-widget-to-grid-form",
+    entityName: "_gridWidget",
+    parts: [
+      {
+        componentName: "FormChipsInputComponent",
+        propertyName: "entity",
+        propertyType: "string",
+        cssClass: "w-60",
+        inputs: {
+          entityName: "_entity",
+          propertiesToSearch: ["name"],
+          propertiesSearchMode: "mix",
+          selectType: "single",
+          label: "Entity"
+        }
       }
     ]
   },

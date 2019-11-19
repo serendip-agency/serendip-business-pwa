@@ -1,6 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnInit, Output, EventEmitter, Inject } from "@angular/core";
 import { GridsterConfig, GridsterItem } from "angular-gridster2";
 import { ComponentRepositoryService } from "../../component-repository.service";
+import { DashboardTabInterface } from "serendip-business-model";
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 
 @Component({
   selector: "app-grid",
@@ -8,13 +10,22 @@ import { ComponentRepositoryService } from "../../component-repository.service";
   styleUrls: ["./grid.component.less"]
 })
 export class GridComponent implements OnInit {
-  constructor(public componentRepositoryService: ComponentRepositoryService) {}
+  dialogRef: MatDialogRef<AddWidgetToGridComponent, any>;
+  constructor(
+    public dialog: MatDialog,
+    public componentRepositoryService: ComponentRepositoryService
+  ) {}
 
+  @Output()
+  DashboardCommand = new EventEmitter<{
+    command: "open-tab";
+    tab: DashboardTabInterface;
+  }>();
   options: GridsterConfig = {
     gridType: "verticalFixed",
     displayGrid: "always",
-    minCols: 20,
-    minRows: 4,
+    minCols: 15,
+    minRows: 15,
     margin: 0,
     fixedRowHeight: 50,
     draggable: {
@@ -26,6 +37,14 @@ export class GridComponent implements OnInit {
   };
   dashboard: any[];
 
+  dashboardCommand() {
+    return (options: { command: "open-tab"; tab: DashboardTabInterface }) => {
+      // this.dashboardService.currentSection.tabs.push(options.tab);
+      // this.dashboardService.currentTab = options.tab;
+      this.DashboardCommand.emit(options);
+    };
+  }
+
   static itemChange(item, itemComponent) {
     console.info("itemChanged", item, itemComponent);
   }
@@ -34,20 +53,7 @@ export class GridComponent implements OnInit {
     console.info("itemResized", item, itemComponent);
   }
 
-  ngOnInit() {
-    this.dashboard = [
-      {
-        cols: 15,
-        rows: 15,
-        y: 0,
-        x: 0,
-        component: "ReportComponent",
-        inputs: {
-          entityName: "Tokens"
-        }
-      }
-    ];
-  }
+  ngOnInit() {}
 
   changedOptions() {
     this.options.api.optionsChanged();
@@ -58,15 +64,25 @@ export class GridComponent implements OnInit {
   }
 
   addItem() {
-    this.dashboard.push({
-      cols: 4,
-      rows: 3,
-      y: 0,
-      x: 0,
-      component: "ReportComponent",
-      inputs: {
-        entityName: "Tokens"
+    this.dialog.open(
+      this.componentRepositoryService.dynamicComponents["FormDialogComponent"],
+      {
+        width: window.innerWidth > 1024 ? "720px" : "420px",
+        data: {
+          name: "add-widadd-widget-to-grid-form"
+        }
       }
-    });
+    );
+
+    // this.dashboard.push({
+    //   cols: 15,
+    //   rows: 15,
+    //   y: 0,
+    //   x: 0,
+    //   component: "ReportComponent",
+    //   inputs: {
+    //     entityName: "Tokens"
+    //   }
+    // });
   }
 }

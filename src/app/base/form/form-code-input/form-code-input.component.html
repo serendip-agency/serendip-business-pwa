@@ -3,7 +3,7 @@
 
 <div class="code-input {{layout}} {{fullscreen ? 'fullscreen' : ''}}">
 
-    <ngx-monaco-editor [style.height]="  layout == 'full' || fullscreen ? 'calc(100vh - 50px)' : '640px'"
+    <ngx-monaco-editor [style.height]="  layout == 'full' || fullscreen ? '100vh' : '640px'"
         [(ngModel)]="internalModel" [options]="{ language : language , theme : theme}"></ngx-monaco-editor>
 
     <a class="fullscreen-toggle" (click)="fullscreen = !fullscreen">
