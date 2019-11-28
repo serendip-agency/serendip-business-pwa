@@ -17,7 +17,7 @@ export class FormRadioInputComponent implements OnInit {
 
   @Input() data: { label: string; value: string }[] | string[];
 
-  @Input() display: string;
+  @Input() display: string = "block";
   @Input() label: string;
   @Input() color: string;
   @Input() disabled: boolean;
@@ -25,9 +25,7 @@ export class FormRadioInputComponent implements OnInit {
   trackByFn(index: any, item: any) {
     return index;
   }
-  log(input) {
-    
-  }
+  log(input) {}
   typeof(obj) {
     return typeof obj;
   }

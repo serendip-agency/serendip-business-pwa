@@ -1,167 +1,176 @@
 .id {
-  font-size: 8px;
-  font-family: monospace;
-  user-select: text;
-  color: #a29597;
+  font-size     : 8px;
+  font-family   : monospace;
+  user-select   : text;
+  color         : #a29597;
   text-transform: uppercase;
-  direction: ltr;
+  direction     : ltr;
 }
 
 .rsa-key {
   textarea {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 2px;
-    box-sizing: border-box;
-    resize: none;
-    direction: ltr;
-    font-family: monospace;
-    font-size: 7px;
-    outline: none;
-    width: 140px;
-    height: 140px;
-    line-height: 10px;
-    display: inline-block;
+    border        : 1px solid #ccc;
+    border-radius : 5px;
+    padding       : 2px;
+    box-sizing    : border-box;
+    resize        : none;
+    direction     : ltr;
+    font-family   : monospace;
+    font-size     : 7px;
+    outline       : none;
+    width         : 140px;
+    height        : 140px;
+    line-height   : 10px;
+    display       : inline-block;
     vertical-align: middle;
 
-    &.validated{
-    
-      border:1px solid greenyellow;
+    &.validated {
+
+      border: 1px solid greenyellow;
 
     }
   }
+
   button {
     vertical-align: middle;
-    display: inline-block;
-    position: relative;
-    border: 1px solid #000;
-    font-weight: 100;
-    font-size: 13px;
-    border-radius: 5px;
-    line-height: 30px;
-    background: #fff;
-    margin-right: 30px;
+    display       : inline-block;
+    position      : relative;
+    border        : 1px solid #000;
+    font-weight   : 100;
+    font-size     : 13px;
+    border-radius : 5px;
+    line-height   : 30px;
+    background    : #fff;
+    margin-right  : 30px;
+
     img {
-      width: 30px !important;
+      width : 30px !important;
       height: 30px !important;
     }
 
     input {
       position: absolute;
-      opacity: 0;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      opacity : 0;
+      top     : 0;
+      left    : 0;
+      width   : 100%;
+      height  : 100%;
     }
   }
 }
 
 .business-settings {
   max-width: 420px;
-  margin: 0 auto;
+
 
   .invite-form {
+
     .code,
     .mobile,
     button {
-      float: left;
-      padding: 5px;
+      float         : left;
+      padding       : 5px;
       vertical-align: top;
-      box-sizing: border-box;
+      box-sizing    : border-box;
     }
 
     .code {
       width: 60px;
     }
+
     .mobile {
       width: calc(~"100% - 120px");
     }
-    button {
-      width: 60px;
-      border: none;
-      background: #6c87c3;
-      color: #fff;
-      font-weight: bold;
-      border-radius: 5px;
-      font-size: 11px;
 
-      margin-top: 20px;
-      height: 20px;
+    button {
+      width        : 60px;
+      border       : none;
+      background   : #6c87c3;
+      color        : #fff;
+      font-weight  : bold;
+      border-radius: 5px;
+      font-size    : 11px;
+
+      margin-top : 20px;
+      height     : 20px;
       line-height: 20px;
-      padding: 0;
+      padding    : 0;
     }
   }
+
   .invite,
   .members {
     padding: 10px 0;
 
     .title {
-      font-size: 14px;
+      font-size  : 14px;
       font-weight: 500;
       line-height: 30px;
     }
 
     p {
       padding-top: 0;
-      margin-top: 0;
-      color: #6b6898;
+      margin-top : 0;
+      color      : #6b6898;
     }
+
     .member {
-      padding: 10px 0;
+      padding      : 10px 0;
       border-bottom: 1px solid #d8d5ce;
       border-radius: 10px;
       margin-bottom: 10px;
+
       .pic {
-        display: inline-block;
+        display       : inline-block;
         vertical-align: middle;
-        width: 32px;
-        height: 32px;
-        border-radius: 100%;
-        background: #fff;
-        box-sizing: border-box;
-        padding: 2px;
+        width         : 32px;
+        height        : 32px;
+        border-radius : 100%;
+        background    : #fff;
+        box-sizing    : border-box;
+        padding       : 2px;
       }
     }
   }
 
   .logo {
-    border: 2px dashed #d8d5ce;
+    border       : 2px dashed #d8d5ce;
     border-radius: 100%;
-    background: #fff;
-    width: 100px;
-    height: 100px;
-    float: right;
-    box-sizing: border-box;
-    padding: 15px;
-    position: relative;
-    margin: 15px 0 10px 20px;
+    background   : #fff;
+    width        : 100px;
+    height       : 100px;
+    float        : left;
+    box-sizing   : border-box;
+    padding      : 15px;
+    position     : relative;
+    margin       : 15px 0 10px 20px;
+
     &:after {
-      position: absolute;
-      top: 10px;
-      left: calc(~"50% - 20px");
-      background: #eee;
+      position     : absolute;
+      top          : 10px;
+      left         : calc(~"50% - 20px");
+      background   : #eee;
       border-radius: 5px;
-      display: block;
-      z-index: 2;
-      width: 40px;
-      text-align: center;
-      line-height: 18px;
-      font-size: 9px;
-      content: "آپلود لوگو";
+      display      : block;
+      z-index      : 2;
+      width        : 40px;
+      text-align   : center;
+      line-height  : 18px;
+      font-size    : 9px;
+      content      : "upload"
     }
 
     img.default {
-      opacity: 0.3;
+      opacity : 0.3;
       position: relative;
     }
   }
 
   .info {
     padding-top: 20px;
-    float: left;
-    width: calc(~"100% - 120px");
-    font-size: 14px;
+    float      : left;
+    width      : calc(~"100% - 120px");
+    font-size  : 14px;
     font-weight: 500;
   }
 }

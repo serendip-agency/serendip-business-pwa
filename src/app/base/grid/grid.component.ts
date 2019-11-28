@@ -10,7 +10,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
   styleUrls: ["./grid.component.less"]
 })
 export class GridComponent implements OnInit {
-  dialogRef: MatDialogRef<AddWidgetToGridComponent, any>;
   constructor(
     public dialog: MatDialog,
     public componentRepositoryService: ComponentRepositoryService
@@ -53,7 +52,20 @@ export class GridComponent implements OnInit {
     console.info("itemResized", item, itemComponent);
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+
+    this.dashboard = [{
+      cols: 15,
+      rows: 15,
+      y: 0,
+      x: 0,
+      component: "ReportComponent",
+      inputs: {
+        entityName: "Tokens"
+      }
+    }];
+
+  }
 
   changedOptions() {
     this.options.api.optionsChanged();
@@ -64,25 +76,25 @@ export class GridComponent implements OnInit {
   }
 
   addItem() {
-    this.dialog.open(
-      this.componentRepositoryService.dynamicComponents["FormDialogComponent"],
-      {
-        width: window.innerWidth > 1024 ? "720px" : "420px",
-        data: {
-          name: "add-widadd-widget-to-grid-form"
-        }
-      }
-    );
-
-    // this.dashboard.push({
-    //   cols: 15,
-    //   rows: 15,
-    //   y: 0,
-    //   x: 0,
-    //   component: "ReportComponent",
-    //   inputs: {
-    //     entityName: "Tokens"
+    // this.dialog.open(
+    //   this.componentRepositoryService.dynamicComponents["FormDialogComponent"],
+    //   {
+    //     width: window.innerWidth > 1024 ? "720px" : "420px",
+    //     data: {
+    //       name: "add-widadd-widget-to-grid-form"
+    //     }
     //   }
-    // });
+    // );
+
+    this.dashboard.push({
+      cols: 15,
+      rows: 15,
+      y: 0,
+      x: 0,
+      component: "ReportComponent",
+      inputs: {
+        entityName: "Tokens"
+      }
+    });
   }
 }

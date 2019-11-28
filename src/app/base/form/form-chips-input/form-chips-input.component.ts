@@ -48,6 +48,8 @@ export class FormChipsInputComponent implements OnInit, OnDestroy {
 
   @Input() selectType: "single" | "multiple";
 
+  @Input() labelField;
+  @Input() valueField;
   @Input() formName;
   @Input() entityName: string;
   @Input() label: string;

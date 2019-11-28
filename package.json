@@ -48,6 +48,7 @@
     "ngx-currency": "^1.5.2",
     "ngx-drag-drop": "^1.1.0",
     "ngx-mask": "^7.9.9",
+    "ngx-mat-select-search": "^2.0.0",
     "ngx-quill": "^5.1.0",
     "promise-serial": "^0.1.5",
     "quill": "^1.3.6",

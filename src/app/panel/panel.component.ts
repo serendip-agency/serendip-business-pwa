@@ -11,6 +11,7 @@ import { DataService } from "../data.service";
 import { BusinessService } from "../business.service";
 import { ComponentRepositoryService } from "../component-repository.service";
 import { GridComponent } from "../base/grid/grid.component";
+import { AuthService } from "../auth.service";
 
 @Component({
   selector: "app-panel",
@@ -25,6 +26,8 @@ export class PanelComponent implements OnInit {
     public obService: ObService,
     public dataService: DataService,
     public router: Router,
+    public authService: AuthService,
+
     public businessService: BusinessService,
     public componentRepositoryService: ComponentRepositoryService,
 
@@ -52,6 +55,9 @@ export class PanelComponent implements OnInit {
       .replace(/ /g, "-");
   }
 
+  log(input) {
+    console.log(input);
+  }
   async handleParams(params) {
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,

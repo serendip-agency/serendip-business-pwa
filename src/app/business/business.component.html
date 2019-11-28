@@ -1,75 +1,71 @@
 <div class="business-settings" *ngIf="router.url.indexOf('/business') == -1">
-  <mat-card *ngIf="businessService.business">
-    <mat-card-content>
-      <div class="form-wrapper">
-        <div class="top-box">
-          <div class="logo">
-            <img *ngIf="businessService.business?.logo" [src]="businessService.business?.logo" alt="" />
-            <img class="default" src="assets/icons/building-production-unit-1.svg" title="برای آپلود لوگو کلیک کنید" />
-          </div>
-          <div class="info">
-            <app-form-text-input [label]="'نام کسب‌وکار'" [model]="businessService.business?.title">
-            </app-form-text-input>
+  <div *ngIf="businessService.business">
+
+    <div class="form-wrapper">
+      <div class="top-box">
+        <div class="logo">
+          <img *ngIf="businessService.business?.logo" [src]="businessService.business?.logo" alt="" />
+          <img class="default" src="assets/icons/building-production-unit-1.svg" title="Upload a logo" />
+        </div>
+        <div class="info">
+          <app-form-text-input [label]="'Business title'" [model]="businessService.business?.title">
+          </app-form-text-input>
+        </div>
+
+        <div class="clearfix"></div>
+      </div>
+
+
+
+      <div class="members">
+        <div class="title">Users</div>
+        <div class="member" *ngFor="let m of businessService.business?.members">
+          <div class="profile" *ngIf="m.profile">
+            <div class="pic">
+              <img *ngIf="m.profile.profilePicture" [src]="businessService.business.logo" alt="" />
+              <img class="default" src="assets/icons/account-profile-user-4.svg" />
+            </div>
           </div>
 
+          <div class="no-profile" *ngIf="m.userId && !m.profile">
+            <div class="pic">
+              <img class="default" src="assets/icons/account-profile-user-4.svg" />
+            </div>
+
+            <span *ngIf="m.mobile" class="ltr en">{{
+                m.mobileCountryCode + m.mobile
+              }}</span>
+            <span class="id ltr" *ngIf="!m.mobile"> m.userId</span>
+          </div>
+
+          <div class="no-user" *ngIf="m.mobile && !m.userId">
+
+            <span class="ltr en">{{ m.mobileCountryCode + m.mobile }}</span>
+            Not registered yet
+          </div>
+        </div>
+      </div>
+
+      <div class="invite">
+        <div class="title">Add user to business</div>
+
+        <div class="invite-form">
+          <div class="code">
+            <app-form-text-input [label]="'Country code'" [model]="memberToAdd.code"
+              (modelChange)="memberToAdd.code = $event" [dir]="'ltr'"></app-form-text-input>
+          </div>
+          <div class="mobile">
+            <app-form-text-input [label]="'Mobile number'" [model]="memberToAdd.mobile"
+              (modelChange)="memberToAdd.mobile = $event" [dir]="'ltr'"></app-form-text-input>
+          </div>
+          <button type="button" (click)="addMember()">Add</button>
           <div class="clearfix"></div>
         </div>
 
 
-
-        <div class="members">
-          <div class="title">کاربران</div>
-          <div class="member" *ngFor="let m of businessService.business?.members">
-            <div class="profile" *ngIf="m.profile">
-              <div class="pic">
-                <img *ngIf="m.profile.profilePicture" [src]="businessService.business.logo" alt="" />
-                <img class="default" src="assets/icons/account-profile-user-4.svg" />
-              </div>
-            </div>
-
-            <div class="no-profile" *ngIf="m.userId && !m.profile">
-              <div class="pic">
-                <img class="default" src="assets/icons/account-profile-user-4.svg" />
-              </div>
-
-              کاربر
-
-              <span *ngIf="m.mobile" class="ltr en">{{
-                m.mobileCountryCode + m.mobile
-              }}</span>
-              <span class="id ltr" *ngIf="!m.mobile"> m.userId</span> پروفایل
-              خود را تکمیل نکرده است.
-            </div>
-
-            <div class="no-user" *ngIf="m.mobile && !m.userId">
-              شماره
-              <span class="ltr en">{{ m.mobileCountryCode + m.mobile }}</span>
-
-              تا کنون وارد سیستم نشده است.
-            </div>
-          </div>
-        </div>
-
-        <div class="invite">
-          <div class="title">کاربر جدید</div>
-
-          <div class="invite-form">
-            <div class="code">
-              <app-form-text-input [label]="'کد کشور'" [model]="memberToAdd.code"
-                (modelChange)="memberToAdd.code = $event" [dir]="'ltr'"></app-form-text-input>
-            </div>
-            <div class="mobile">
-              <app-form-text-input [label]="'شماره موبایل کاربر جدید'" [model]="memberToAdd.mobile"
-                (modelChange)="memberToAdd.mobile = $event" [dir]="'ltr'"></app-form-text-input>
-            </div>
-            <button type="button" (click)="addMember()">ثبت</button>
-            <div class="clearfix"></div>
-          </div>
-          <p>نیازی نیست کاربر از قبل ثبت‌نام کرده باشد.</p>
-        </div>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </div>
 
 <div id="space" *ngIf="router.url.indexOf('/business') != -1">
@@ -86,9 +82,9 @@
 
     <div class="wizard" *ngIf="offline">
       <form action="">
-        <div class="title">دسترسی به سرور امکان پذیر نبود</div>
+        <div class="title">Server is unreachable</div>
 
-        <div class="subtitle">لطفا لحظاتی دیگر دوباره تلاش کنید</div>
+        <div class="subtitle">Please try again in few moments ...</div>
 
         <div class="submit">
           <button (click)="refresh()" [class.loading]="loading" mat-raised-button color="secondary">
@@ -99,16 +95,16 @@
               <div class="rect4"></div>
               <div class="rect5"></div>
             </div>
-            <span *ngIf="!loading"> تلاش مجدد</span>
+            <span *ngIf="!loading">Try again</span>
           </button>
         </div>
       </form>
     </div>
     <div class="wirzard" *ngIf="!offline">
       <form *ngIf="tab == 'new'" class="">
-        <div class="title">نام کسب‌وکار جدید را وارد کنید</div>
+        <div class="title">Register business</div>
         <mat-form-field>
-          <input matInput placeholder="نام کسب و کار" name="title" [(ngModel)]="model.title" />
+          <input matInput placeholder="Business title" name="title" [(ngModel)]="model.title" />
         </mat-form-field>
 
         <div class="submit">
@@ -120,18 +116,18 @@
               <div class="rect4"></div>
               <div class="rect5"></div>
             </div>
-            <span *ngIf="!loading"> ادامه</span>
+            <span *ngIf="!loading">Continue</span>
           </button>
         </div>
 
         <ul class="links">
-          <li><a [routerLink]="['/business', 'list']"> لیست کسب‌وکارها </a></li>
-          <li><a (click)="authService.logout()"> خروج از حساب </a></li>
+          <li><a [routerLink]="['/business', 'list']"> Businesses </a></li>
+          <li><a (click)="authService.logout()"> Logout </a></li>
         </ul>
       </form>
       <form *ngIf="tab == 'key'" class="">
         <div class="title">
-          کلید کسب‌وکار خود را در وارد کنید
+          Enter your business key
         </div>
 
         <div class="rsa-key">
@@ -141,7 +137,7 @@
           <button>
             <input (change)="uploadKey(fileInput, keyArea)" #fileInput type="file" accept="text/plain" />
             <img src="assets/icons/upload.svg" alt="" />
-            آپلود کلید
+            Upload key
           </button>
         </div>
 
@@ -155,19 +151,19 @@
               <div class="rect4"></div>
               <div class="rect5"></div>
             </div>
-            <span *ngIf="!loading"> ادامه</span>
+            <span *ngIf="!loading"> Continue</span>
           </button>
         </div>
 
         <ul class="links">
-          <li><a [routerLink]="['/business', 'list']"> لیست کسب‌وکارها </a></li>
-          <li><a (click)="authService.logout()"> خروج از حساب </a></li>
+          <li><a [routerLink]="['/business', 'list']"> Businesses </a></li>
+          <li><a (click)="authService.logout()"> Logout </a></li>
         </ul>
       </form>
 
       <form *ngIf="tab == 'encryption'" class="">
         <div class="title">
-          کلید کسب‌وکار خود را در فضای امن ذخیره کنید
+          Save your business key some where safe. your data would be lost without it.
         </div>
 
         <div class="rsa-key">
@@ -175,18 +171,22 @@
 
           <button (click)="downloadRsaKey()">
             <img src="assets/icons/download.svg" alt="" />
-            دانلود کلید
+            Download key
           </button>
         </div>
 
         <p>
-          خواندن اطلاعات کسب‌و‌کار شما بدون این کلید به هیچ وجه امکان‌پذیر
+          <!-- خواندن اطلاعات کسب‌و‌کار شما بدون این کلید به هیچ وجه امکان‌پذیر
           نمی‌باشد. پس از هر ورود برای رمزگشایی فایل‌ها به این کلید نیاز خواهید
-          داشت.
+          داشت. -->
+
+          Reading your encrypted data without this key is simply impossible.
+          <br>
+          Your need to upload key each time you login to this dashboard.
         </p>
 
         <mat-checkbox #agree>
-          کلید را در فضایی امن ذخیره کردم
+          I've saved it in a safe place
         </mat-checkbox>
 
         <div class="submit">
@@ -204,8 +204,8 @@
         </div>
 
         <ul class="links">
-          <li><a [routerLink]="['/business', 'list']"> لیست کسب‌وکارها </a></li>
-          <li><a (click)="authService.logout()"> خروج از حساب </a></li>
+          <li><a [routerLink]="['/business', 'list']"> Businesses </a></li>
+          <li><a (click)="authService.logout()"> Logout </a></li>
         </ul>
       </form>
 
@@ -228,7 +228,7 @@
       </form>
 
       <form class="list" *ngIf="tab == 'list'">
-        <div class="title">کسب‌وکار مورد نظر را انتخاب کنید.</div>
+        <div class="title">Choose a business</div>
 
         <div class="id">{{ currentBusiness | uppercase }}</div>
 
@@ -247,15 +247,15 @@
               <div class="rect5"></div>
             </div>
 
-            <span *ngIf="!loading"> ادامه</span>
+            <span *ngIf="!loading"> Continue</span>
           </button>
 
           <ul class="links">
             <li>
-              <a [routerLink]="['/business', 'new']">ثبت کسب‌و‌کار جدید</a>
+              <a [routerLink]="['/business', 'new']">New business</a>
             </li>
             <li>
-              <a (click)="authService.logout()">خروج از حساب</a>
+              <a (click)="authService.logout()">Logout</a>
             </li>
           </ul>
         </div>

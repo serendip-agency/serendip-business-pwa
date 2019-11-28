@@ -1,11 +1,12 @@
 import { Component, OnInit, EventEmitter, Output, Input } from "@angular/core";
-
+import * as _ from "lodash";
 @Component({
   selector: "app-form-select-input",
   templateUrl: "./form-select-input.component.html",
   styleUrls: ["./form-select-input.component.css"]
 })
 export class FormSelectInputComponent implements OnInit {
+  _ = _;
   SelectId = `form-select-${
     Math.random()
       .toString()
@@ -17,7 +18,7 @@ export class FormSelectInputComponent implements OnInit {
   @Input() modelTrackBy;
   @Input() label: string;
   @Input() data: any;
-
+  @Input() placeholder: string;
   @Input() labelField: string;
   @Input() valueField: string;
 
@@ -34,28 +35,14 @@ export class FormSelectInputComponent implements OnInit {
   }
   constructor() {}
 
-  ngOnInit() {}
+  ngOnInit() {
+    console.log(this.labelField, this.valueField);
+  }
   trackByFn(index: any, item: any) {
     return index;
   }
   compareObjects(o1, o2) {
-    if (!o1 && !o2) {
-      return false;
-    }
-
-    if (this.modelTrackBy) {
-      return (
-        this.modelTrackBy
-          .map(p => o1.value[p] === o2.value[p])
-          .indexOf(false) === -1
-      );
-    }
-
-    try {
-      return JSON.stringify(o1) === JSON.stringify(o2);
-    } catch (error) {
-      return false;
-    }
+    return _.isEqual(o1, o2);
   }
   rpd(input) {
     if (!input) {

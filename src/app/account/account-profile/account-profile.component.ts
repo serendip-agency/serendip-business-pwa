@@ -52,6 +52,8 @@ export class AccountProfileComponent implements OnInit {
 
         toPatch[property] = resizedDataUrl;
 
+       this.profile[property] = resizedDataUrl;
+
         //    this.userForm.patchValue(toPatch);
       };
       reader.onload = (e: any) => {

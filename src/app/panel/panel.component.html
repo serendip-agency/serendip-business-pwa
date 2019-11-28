@@ -44,10 +44,12 @@
       </div>
 
       <mat-menu #accountMenu="matMenu">
-        <button mat-menu-item>Profile</button>
-        <button mat-menu-item>Switch business</button>
-        <button mat-menu-item>Change password</button>
-        <button mat-menu-item>Logout</button>
+        <button [routerLink]="['/panel','settings','user-profile']" mat-menu-item>Profile</button>
+        <button mat-menu-item (click)="businessService.business = null;router.navigate(['/business'])">Switch
+          business</button>
+        <button [routerLink]="['/panel','settings','change-password']" mat-menu-item>Change
+          password</button>
+        <button mat-menu-item (click)="authService.logout()">Logout</button>
       </mat-menu>
 
 
@@ -86,14 +88,28 @@
           <img [src]="'assets/icons/' + section.icon + '.svg'" />
           <span> {{ section.title }} </span>
         </a>
-        <ul>
-          <li *ngFor="let tab of _.take(section?.tabs,6)">
+
+        <ul *ngIf="section?.tabs?.length >= 8">
+          <li>
+            <app-form-select-input [placeholder]="'Select from ' +  section.title"
+              (modelChange)="log($event);router.navigate(['/panel' , section?.name, stringToSlug($event)])"
+              [selectType]="'single'" [model]="dashboardService.currentTab" [data]="section?.tabs"
+              [valueField]="'title'" [labelField]="'title'"></app-form-select-input>
+
+          </li>
+        </ul>
+        <ul *ngIf="section?.tabs?.length < 8">
+
+          <li *ngFor="let tab of section?.tabs">
             <a [class.active]="dashboardService.currentTab?.title == tab?.title"
               [routerLink]="['/panel' , section?.name, stringToSlug(tab?.title)]" (click)="mobileNavVisible=false">
               <span> {{ tab.title }} </span>
             </a>
           </li>
+
         </ul>
+
+
 
       </li>
     </ul>

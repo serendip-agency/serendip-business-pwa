@@ -187,7 +187,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
   async refresh() {
     this.loading = true;
 
-    await this.sleep();
 
     if ((this.tab === "new" && this.list.length === 0) || this.tab === "list") {
       if (Date.now() - this.lastListReq > 500) {

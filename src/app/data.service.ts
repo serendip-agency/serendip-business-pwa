@@ -45,9 +45,9 @@ export class DataService {
 
   serversToSelect = [
     { label: "سرور ایران", value: "https://business.serendip.ir" },
-    { label: "سرور ابری آلمان", value: "https://business.serendip.cloud" },
-    { label: "سرور باکس سرندیپ", value: "box" },
-    { label: "سرور توسعه کلاد", value: "http://dev.serendip.cloud:2040" },
+    // { label: "سرور ابری آلمان", value: "https://business.serendip.cloud" },
+    // { label: "سرور باکس سرندیپ", value: "box" },
+    // { label: "سرور توسعه کلاد", value: "http://dev.serendip.cloud:2040" },
     { label: "سرور توسعه محلی", value: "http://localhost:2040" }
   ];
 
@@ -102,7 +102,7 @@ export class DataService {
             lsServer = "http://localhost:2040";
             break;
           default:
-            lsServer = "https://business.serendip.cloud";
+            lsServer = "https://business.serendip.ir";
             break;
         }
       }

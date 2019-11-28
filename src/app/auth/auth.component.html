@@ -4,10 +4,7 @@
       <div class="loader"></div>
 
       <div class="logo">
-        <img
-          src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg"
-          alt=""
-        />
+        <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="" />
       </div>
 
       <div class="text">Initiating authentication ...</div>
@@ -21,62 +18,30 @@
 
       <div class="logo">
         <a href="https://serendip.agency" target="_blank">
-          <img
-            src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg"
-            alt=""
-          />
+          <img src="assets/graphics/brand/fav-icon-call-to-action-button-5.svg" alt="" />
         </a>
       </div>
     </div>
 
     <div class="wizard">
       <form *ngIf="tab == 'login'" class="form-mobile">
-        <div class="title">شماره تماس خود را وارد کنید</div>
+        <div class="title">Enter your mobile number</div>
 
         <div class="mobile-inputs">
           <mat-form-field class="code">
-            <input
-              autocomplete="off"
-              type="tel"
-              matInput
-              dir="ltr"
-              [(ngModel)]="model.mobileCountryCode"
-              placeholder="کد"
-              autofocus
-              name="mobileCountryCode"
-              #mobileCountryCode="ngModel"
-            />
+            <input autocomplete="off" type="tel" matInput dir="ltr" [(ngModel)]="model.mobileCountryCode"
+              placeholder="Code" autofocus name="mobileCountryCode" #mobileCountryCode="ngModel" />
           </mat-form-field>
           <mat-form-field class="mobile">
-            <input
-              autocomplete="off"
-              type="tel"
-              matInput
-              dir="ltr"
-              (keypress)="removeMobileZero()"
-              [(ngModel)]="model.mobile"
-              placeholder="مثال ۹۱۲۷۸۹۱۲۳۴"
-              autofocus
-              name="mobile"
-              #mobile="ngModel"
-            />
+            <input autocomplete="off" type="tel" matInput dir="ltr" (keypress)="removeMobileZero()"
+              [(ngModel)]="model.mobile" placeholder="Mobile number" autofocus name="mobile" #mobile="ngModel" />
           </mat-form-field>
         </div>
 
-        <!--
-         <mat-form-field>
-          <input matInput type="password" dir="auto" required [(ngModel)]="model.password" dir=ltr name="password"
-            #username="ngModel" placeholder="رمز عبور" />
-        </mat-form-field>
-         -->
+
 
         <div class="submit">
-          <button
-            [class.loading]="loading"
-            (click)="sendOneTimePassword()"
-            mat-raised-button
-            color="secondary"
-          >
+          <button [class.loading]="loading" (click)="sendOneTimePassword()" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -85,43 +50,33 @@
               <div class="rect5"></div>
             </div>
 
-            <span *ngIf="!loading"> ادامه</span>
+            <span *ngIf="!loading"> Login </span>
           </button>
         </div>
 
         <ul class="links">
           <li>
-            <a target="_blank" href="https://serendip.agency">
-              وبسایت سرندیپ
+            <a href="https://serendip.agency">
+              Serendip website
             </a>
           </li>
           <li [routerLink]="['/auth', 'user-pass']">
-            <a> ورود با شناسه و رمز </a>
+            <a> Login with password </a>
           </li>
-          <li [routerLink]="['/auth', 'server']"><a> انتخاب سرور </a></li>
+          <li [routerLink]="['/auth', 'server']"><a> change server </a></li>
         </ul>
       </form>
 
       <form *ngIf="tab == 'code'" class="form-code">
-        <div class="title">کد دریافت شده از طریق پیامک را وارد کنید</div>
+        <div class="title">Enter the code you received with sms</div>
 
         <div class="subtitle">
-          کد احراز هویت به شماره {{ model.mobile | rpd }} ارسال شد.
+          Authentication code has been sent to {{ model.mobile  }}
+
         </div>
         <mat-form-field>
-          <input
-            type="tel"
-            matInput
-            dir="ltr"
-            [showMaskTyped]="true"
-            mask="0 0 0 0 0 0"
-            required
-            [(ngModel)]="model.oneTimePassword"
-            autofocus
-            dir="ltr"
-            name="oneTimePassword"
-            #oneTimePassword="ngModel"
-          />
+          <input type="tel" matInput dir="ltr" [showMaskTyped]="true" mask="0 0 0 0 0 0" required
+            [(ngModel)]="model.oneTimePassword" autofocus dir="ltr" name="oneTimePassword" #oneTimePassword="ngModel" />
         </mat-form-field>
 
         <!-- <mat-form-field>
@@ -130,12 +85,7 @@
         </mat-form-field> -->
 
         <div class="submit">
-          <button
-            [class.loading]="loading"
-            (click)="login('one-time')"
-            mat-raised-button
-            color="secondary"
-          >
+          <button [class.loading]="loading" (click)="login('one-time')" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -144,32 +94,21 @@
               <div class="rect5"></div>
             </div>
 
-            <span *ngIf="!loading"> ادامه</span>
+            <span *ngIf="!loading"> Login </span>
           </button>
         </div>
 
         <ul class="links">
-          <li><a [routerLink]="['/auth', 'login']"> اصلاح شماره </a></li>
+          <li><a [routerLink]="['/auth', 'login']"> Edit number </a></li>
         </ul>
       </form>
 
       <form *ngIf="tab == 'two-factor'" class="form-password">
-        <div class="title">رمز عبور حساب خود را وارد کنید</div>
+        <div class="title">Enter your password</div>
         <mat-form-field>
-          <input
-            type="text"
-            matInput
-            dir="ltr"
-            [showMaskTyped]="true"
-            mask="0 0 0 0 0 0"
-            required
-            [(ngModel)]="model.oneTimePassword"
-            autofocus
-            dir="ltr"
-            name="password"
-            #oneTimePassword="ngModel"
-          />
-          <mat-hint> در حال ورود با {{ model.mobile | rpd }} </mat-hint>
+          <input type="text" matInput dir="ltr" [showMaskTyped]="true" mask="0 0 0 0 0 0" required
+            [(ngModel)]="model.oneTimePassword" autofocus dir="ltr" name="password" #oneTimePassword="ngModel" />
+          <mat-hint> Login in with {{ model.mobile | rpd }} </mat-hint>
         </mat-form-field>
 
         <!-- <mat-form-field>
@@ -178,12 +117,7 @@
         </mat-form-field> -->
 
         <div class="submit">
-          <button
-            [class.loading]="loading"
-            (click)="login('two-factor')"
-            mat-raised-button
-            color="secondary"
-          >
+          <button [class.loading]="loading" (click)="login('two-factor')" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -192,54 +126,30 @@
               <div class="rect5"></div>
             </div>
 
-            <span *ngIf="!loading"> ادامه</span>
+            <span *ngIf="!loading"> Continue</span>
           </button>
         </div>
       </form>
 
       <form *ngIf="tab == 'user-pass'" class="form-user-pass">
-        <div class="title">شناسه و رمز عبور خود را وارد کنید</div>
+        <div class="title">Enter your login details</div>
 
         <mat-form-field>
-          <input
-            type="text"
-            placeholder="شناسه"
-            name="user-pass_username"
-            matInput
-            dir="ltr"
-            autofocus
-            [(ngModel)]="model.username"
-          />
+          <input type="text" placeholder="Username" name="user-pass_username" matInput dir="ltr" autofocus
+            [(ngModel)]="model.username" />
           <mat-hint>
-            موبایل (همراه با کد) و یا ایمیلی که بار اول با آن وارد
-            شدید</mat-hint
-          >
+            Probably your email address or mobile number ( with country code )
+          </mat-hint>
         </mat-form-field>
 
         <mat-form-field>
-          <input
-            type="password"
-            name="user-pass_password"
-            placeholder="رمز عبور"
-            matInput
-            dir="ltr"
-            autofocus
-            [(ngModel)]="model.password"
-          />
+          <input type="password" name="user-pass_password" placeholder="Password" matInput dir="ltr" autofocus
+            [(ngModel)]="model.password" />
         </mat-form-field>
 
-        <!-- <mat-form-field>
-          <input matInput type="password" dir="auto" required [(ngModel)]="model.password" dir=ltr name="password"
-            #username="ngModel" placeholder="رمز عبور" />
-        </mat-form-field> -->
 
         <div class="submit">
-          <button
-            [class.loading]="loading"
-            (click)="login('user-pass')"
-            mat-raised-button
-            color="secondary"
-          >
+          <button [class.loading]="loading" (click)="login('user-pass')" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -248,33 +158,29 @@
               <div class="rect5"></div>
             </div>
 
-            <span *ngIf="!loading"> ادامه</span>
+            <span *ngIf="!loading"> Continue</span>
           </button>
 
           <ul class="links">
             <li>
               <a target="_blank" href="https://serendip.agency">
-                وبسایت سرندیپ
+                Serendip website
               </a>
             </li>
             <li [routerLink]="['/auth', 'login']">
-              <a> ورود با شماره موبایل </a>
+              <a> Login with mobile </a>
             </li>
-            <li [routerLink]="['/auth', 'server']"><a> انتخاب سرور </a></li>
+            <li [routerLink]="['/auth', 'server']"><a> Change server </a></li>
           </ul>
         </div>
       </form>
 
       <form *ngIf="tab == 'server'" class="form-server">
-        <div class="title">سرور مورد نظر را انتخاب کنید</div>
+        <div class="title">Choose a server</div>
 
         <div class="radio-list">
-          <app-form-radio-input
-            [model]="dataService.currentServer"
-            (modelChange)="dataService.setCurrentServer($event)"
-            [data]="dataService.serversToSelect"
-            [display]="'block'"
-          ></app-form-radio-input>
+          <app-form-radio-input [model]="dataService.currentServer" (modelChange)="dataService.setCurrentServer($event)"
+            [data]="dataService.serversToSelect" [display]="'block'"></app-form-radio-input>
         </div>
 
         <!-- <mat-form-field>
@@ -283,12 +189,7 @@
         </mat-form-field> -->
 
         <div class="submit">
-          <button
-            [class.loading]="loading"
-            [routerLink]="['/auth', 'login']"
-            mat-raised-button
-            color="secondary"
-          >
+          <button [class.loading]="loading" [routerLink]="['/auth', 'login']" mat-raised-button color="secondary">
             <div class="spinner" *ngIf="loading">
               <div class="rect1"></div>
               <div class="rect2"></div>
@@ -297,7 +198,7 @@
               <div class="rect5"></div>
             </div>
 
-            <span *ngIf="!loading"> بازگشت</span>
+            <span *ngIf="!loading">Back</span>
           </button>
 
           <!-- <ul class="links">
