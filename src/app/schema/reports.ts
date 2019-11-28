@@ -15,30 +15,30 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: false,
         name: "_cdate",
-        label: "تاریخ ثبت",
+        label: "created at",
         type: "date"
       },
       {
         enabled: false,
         name: "_vdate",
-        label: "تاریخ آخرین تغییر",
+        label: "last change",
         type: "date"
       },
       {
         enabled: false,
         name: "_udate",
-        label: "تاریخ آخرین آپدیت",
+        label: "last update",
         type: "date"
       },
       {
         enabled: false,
         name: "_cuser",
-        label: "ثبت‌کننده"
+        label: "creator"
       },
       {
         enabled: false,
         name: "_vuser",
-        label: "آخرین تغییر‌دهنده"
+        label: "last user"
       }
     ]
   },
@@ -71,7 +71,7 @@ export const ReportsSchema: ReportInterface[] = [
         name: "section",
         analytical: true,
         label: "بخش",
-        type : "string",
+        type: "string",
         method: "javascript",
         methodOptions: { code: "(doc,field)=> doc.data.section" },
         template: { component: "ShortTextViewComponent" }
@@ -117,19 +117,19 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: true,
         name: "name",
-        label: "نام شی",
+        label: "Entity name",
         template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "access",
-        label: "دسترسی",
+        label: "Access",
         template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "icon",
-        label: "آیکون",
+        label: "Icon",
         template: { component: "IconViewComponent" }
       },
       {

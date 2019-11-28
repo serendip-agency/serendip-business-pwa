@@ -12,6 +12,7 @@ import { BusinessService } from "../business.service";
 import { ComponentRepositoryService } from "../component-repository.service";
 import { GridComponent } from "../base/grid/grid.component";
 import { AuthService } from "../auth.service";
+import { NotificationService } from "../notification.service";
 
 @Component({
   selector: "app-panel",
@@ -27,6 +28,7 @@ export class PanelComponent implements OnInit {
     public dataService: DataService,
     public router: Router,
     public authService: AuthService,
+    public notificationService: NotificationService,
 
     public businessService: BusinessService,
     public componentRepositoryService: ComponentRepositoryService,
@@ -104,6 +106,8 @@ export class PanelComponent implements OnInit {
       if (data.model) {
         data.model = this.dataService.decrypt(data.model);
       }
+
+      console.log(data);
 
       this.obService.publish(data.model._entity, data.event, data.model);
     };

@@ -68,7 +68,7 @@ export class FormComponent implements OnInit {
   @Input() minimal: boolean;
 
   @Input()
-  private model: EntityModel = null;
+  public model: EntityModel = null;
 
   @Input()
   formSchema: FormInterface;
@@ -109,6 +109,9 @@ export class FormComponent implements OnInit {
 
   @Input()
   formType: string;
+
+  @Input()
+  entityLabel: string;
 
   @Output()
   WidgetChange = new EventEmitter<DashboardWidgetInterface>();

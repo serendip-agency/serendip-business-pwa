@@ -159,18 +159,26 @@ export class BusinessComponent implements OnInit, OnDestroy {
     await this.dataService.request({
       method: "POST",
       model: this.businessService.business,
-      path: "/api/business/saveBusiness",
+      path: "/api/business/save",
       retry: false
     });
 
     this.router.navigate([environment.default]);
   }
 
+  async updateBusiness() {
+    await this.dataService.request({
+      method: "POST",
+      model: this.businessService.business,
+      path: "/api/business/save",
+      retry: false
+    });
+  }
   async saveBusiness() {
     await this.dataService.request({
       method: "POST",
       model: this.model,
-      path: "/api/business/saveBusiness",
+      path: "/api/business/save",
       retry: false
     });
 
@@ -186,7 +194,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
   }
   async refresh() {
     this.loading = true;
-
 
     if ((this.tab === "new" && this.list.length === 0) || this.tab === "list") {
       if (Date.now() - this.lastListReq > 500) {
@@ -262,6 +269,47 @@ export class BusinessComponent implements OnInit, OnDestroy {
         this.businessService.business.title +
         ".txt"
     );
+  }
+
+  logoChanged(event) {
+    if (event.target.files && event.target.files[0]) {
+      const reader = new FileReader();
+      const img = document.createElement("img");
+      const type = "image/jpeg";
+      const quality = 0.92;
+
+      const resizeWidth = 256;
+
+      img.onload = () => {
+        const oc = document.createElement("canvas"),
+          octx = oc.getContext("2d");
+        oc.width = img.width;
+        oc.height = img.height;
+        octx.drawImage(img, 0, 0);
+        while (oc.width * 0.5 > resizeWidth) {
+          oc.width *= 0.5;
+          oc.height *= 0.5;
+          octx.drawImage(oc, 0, 0, oc.width, oc.height);
+        }
+
+        oc.width = resizeWidth;
+        oc.height = (oc.width * img.height) / img.width;
+        octx.drawImage(img, 0, 0, oc.width, oc.height);
+
+        const resizedDataUrl = oc.toDataURL(type, quality);
+
+        // setting resized base64 to object property
+
+        this.businessService.business.logo = resizedDataUrl;
+
+        //    this.userForm.patchValue(toPatch);
+      };
+      reader.onload = (e: any) => {
+        img.src = e.target.result;
+      };
+
+      reader.readAsDataURL(event.target.files[0]);
+    }
   }
   async ngOnInit() {
     try {

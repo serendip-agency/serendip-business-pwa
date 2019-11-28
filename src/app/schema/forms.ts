@@ -398,7 +398,7 @@ export const FormsSchema: FormInterface[] = [
         componentName: "FormTextInputComponent",
         propertyName: "name",
         inputs: {
-          label: "نام شی",
+          label: "Entity name",
           type: "single-line",
           dir: "ltr"
         }
@@ -407,14 +407,14 @@ export const FormsSchema: FormInterface[] = [
         propertyName: "offline",
         componentName: "FormToggleInputComponent",
         inputs: {
-          label: "آفلاین"
+          label: "offline"
         }
       },
       {
         componentName: "FormIconInputComponent",
         propertyName: "icon",
         inputs: {
-          label: "آیکون شی"
+          label: "Entity icon"
         }
       }
     ],

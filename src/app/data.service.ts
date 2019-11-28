@@ -53,7 +53,14 @@ export class DataService {
 
   currentServer = "localhost:2040";
   _fieldsCache: any = {};
+  private _profile: any = {};
 
+  set profile(input) {
+    this._profile = input;
+  }
+  get profile() {
+    return this._profile;
+  }
   constructor(
     private obService: ObService,
     private authService: AuthService,
@@ -63,6 +70,28 @@ export class DataService {
     private businessService: BusinessService
   ) {
     this.setCurrentServer();
+
+    this.listenForProfileUpdates();
+  }
+
+  async listenForProfileUpdates() {
+    const token = await this.authService.token();
+
+    this._profile = ((
+      await this.aggregate("_profile", [
+        {
+          $match: {
+            userId: token.userId
+          }
+        }
+      ])
+    )[0] || {}) as ProfileModel;
+
+    this.obService.listen("_profile").subscribe(msg => {
+      if (msg.model.userId === token.userId) {
+        this._profile = msg.model as any;
+      }
+    });
   }
 
   async loadBusiness() {
@@ -112,23 +141,6 @@ export class DataService {
     this.currentServer = lsServer;
   }
 
-  async profile(): Promise<ProfileModel> {
-    let profileLs = localStorage.getItem("profile");
-
-    try {
-      const res = await this.request({ path: "/api/profile", method: "get" });
-      if (res) {
-        profileLs = res;
-        localStorage.setItem("profile", JSON.stringify(profileLs));
-      }
-    } catch (error) {
-      if (profileLs) {
-        return JSON.parse(profileLs);
-      } else {
-        throw error;
-      }
-    }
-  }
   public request(opts: DataRequestInterface): Promise<any> {
     return new Promise(async (resolve, reject) => {
       setTimeout(() => {
@@ -907,7 +919,6 @@ export class DataService {
                   enableFields
                 )
               ).map(p => {
-                
                 p.name = key + "." + p.name;
                 p.label = key + "." + p.label;
                 return p;
@@ -956,14 +967,15 @@ export class DataService {
           //   }
           // }
 
-          if(value && value.length < 64)
-          report.fields.push({
-            name: key,
-            label: key,
-            analytical: true,
-            enabled: false,
-            type: typeof value as any
-          });
+          if (value && value.length < 64) {
+            report.fields.push({
+              name: key,
+              label: key,
+              analytical: true,
+              enabled: false,
+              type: typeof value as any
+            });
+          }
         }
       }
     }

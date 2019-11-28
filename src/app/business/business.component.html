@@ -3,12 +3,16 @@
 
     <div class="form-wrapper">
       <div class="top-box">
-        <div class="logo">
+        <div class="logo file-upload">
           <img *ngIf="businessService.business?.logo" [src]="businessService.business?.logo" alt="" />
-          <img class="default" src="assets/icons/building-production-unit-1.svg" title="Upload a logo" />
+          <img class="default" *ngIf="!businessService.business?.logo" src="assets/icons/building-production-unit-1.svg"
+            title="Upload a logo" />
+          <input type="file" accept="image/*" (change)="logoChanged($event )" />
+
         </div>
         <div class="info">
-          <app-form-text-input [label]="'Business title'" [model]="businessService.business?.title">
+          <app-form-text-input [label]="'Business title'" (modelChange)="businessService.business.title = $event"
+            [model]="businessService.business?.title">
           </app-form-text-input>
         </div>
 
@@ -64,6 +68,8 @@
 
 
       </div>
+
+      <button mat-raised-button (click)="updateBusiness()">Save</button>
     </div>
   </div>
 </div>

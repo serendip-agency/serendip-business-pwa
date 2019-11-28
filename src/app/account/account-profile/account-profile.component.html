@@ -1,21 +1,22 @@
 <form class="form-wrapper">
   <div class="file-upload">
     <input type="file" accept="image/*" (change)="fileChanged($event, 'profilePicture')" />
-    <img [src]="profile.profilePicture" *ngIf="profile.profilePicture" alt="" />
-    <img src="assets/icons/account-profile-user-4.svg" class="default" *ngIf="!profile.profilePicture" alt="" />
+    <img [src]="dataService.profile.profilePicture" *ngIf="dataService.profile.profilePicture" alt="" />
+    <img src="assets/icons/account-profile-user-4.svg" class="default" *ngIf="!dataService.profile.profilePicture"
+      alt="" />
   </div>
 
   <mat-form-field>
-    <input matInput placeholder="First name" name="firstName" [(ngModel)]="profile.firstName" />
+    <input matInput placeholder="First name" name="firstName" [(ngModel)]="dataService.profile.firstName" />
   </mat-form-field>
 
   <mat-form-field>
-    <input matInput placeholder="Last name" [(ngModel)]="profile.lastName" name="lastName" />
+    <input matInput placeholder="Last name" [(ngModel)]="dataService.profile.lastName" name="lastName" />
   </mat-form-field>
 
   <div class="form-group">
-
-    <app-form-radio-input [label]="'Gender'" [model]="profile.gender" (modelChange)="profile.gender = $event" [data]="[{label : 'Male',
+    <app-form-radio-input [label]="'Gender'" [model]="dataService.profile.gender"
+      (modelChange)="dataService.profile.gender = $event" [data]="[{label : 'Male',
     value : 'male'},{label : 'Female',
     value : 'female'}]"></app-form-radio-input>
 

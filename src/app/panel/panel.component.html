@@ -25,6 +25,8 @@
       </div>
 
 
+
+
       <mat-menu #appsMenu="matMenu">
         <button mat-menu-item>
           <img src="assets/icons/note.svg" alt="">
@@ -49,7 +51,7 @@
           business</button>
         <button [routerLink]="['/panel','settings','change-password']" mat-menu-item>Change
           password</button>
-        <button mat-menu-item (click)="authService.logout()">Logout</button>
+        <button mat-menu-item (click)="dashboardService.logout()">Logout</button>
       </mat-menu>
 
 
@@ -58,10 +60,17 @@
         <img src="assets/icons/check-list-3.svg" alt="">
       </div>
 
-      <div class="icon">
+      <div class="icon" [matMenuTriggerFor]="notificationMenu">
         <img src="assets/icons/notification-bell-5.svg" alt="">
       </div>
 
+      <mat-menu #notificationMenu="matMenu">
+
+        <button *ngFor="let item of notificationService.latest" mat-menu-item>
+          {{ item.text }}
+        </button>
+
+      </mat-menu>
 
 
       <!-- <div class="plan">
@@ -116,7 +125,7 @@
 
   </nav>
 
-  <div class="bread-crumb">
+  <div class="bread-crumb" *ngIf="dashboardService.currentSection && dashboardService.currentTab">
     <ul>
       <li>
         <a [routerLink]="['/panel' ,  dashboardService.currentSection?.name]">

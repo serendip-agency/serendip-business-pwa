@@ -1,9 +1,10 @@
-.file-upload{
-margin:15px 0 30px 0;
-border-radius: 100%;
+.file-upload {
+    margin       : 15px 0 30px 0;
+    border-radius: 15px;
+    overflow     : hidden;
 
 }
 
-.form-wrapper{
+.form-wrapper {
     max-width: 420px;
 }

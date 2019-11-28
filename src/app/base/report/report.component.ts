@@ -782,6 +782,7 @@ export class ReportComponent implements OnInit {
             component: "FormDialogComponent",
             inputs: {
               name: this.formName,
+              entityLabel: this.entityLabelSingular,
               entityName: this.entityName || this.report.entityName,
               entityIcon: this.icon,
               formId: this.formId

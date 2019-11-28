@@ -1,5 +1,7 @@
 import { Injectable } from "@angular/core";
 import { BusinessModel } from "serendip-business-model";
+import { ObService } from "./ob.service";
+import { MatSnackBar } from "@angular/material";
 
 @Injectable({
   providedIn: "root"
@@ -39,8 +41,13 @@ export class BusinessService {
     return this._privateKey;
   }
 
- 
-  constructor() {}
+  constructor(private obService: ObService, private snackBar: MatSnackBar) {
+    this.obService.listen("_business").subscribe(msg => {
+      this.snackBar.open("Business info updated !", "ok", {
+        duration: 1000
+      });
+    });
+  }
 
   getActiveBusinessId() {
     const business = localStorage.getItem("businessId");

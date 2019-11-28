@@ -1,6 +1,7 @@
 import { DataService } from "src/app/data.service";
 import { Component, OnInit } from "@angular/core";
 import { ProfileModel } from "serendip-business-model";
+import { AuthService } from "src/app/auth.service";
 
 @Component({
   selector: "app-account-profle",
@@ -8,15 +9,19 @@ import { ProfileModel } from "serendip-business-model";
   styleUrls: ["./account-profile.component.css"]
 })
 export class AccountProfileComponent implements OnInit {
-  profile: ProfileModel = {} as any;
-  constructor(private dataService: DataService) {}
+  constructor(
+    public dataService: DataService,
+    private authService: AuthService
+  ) {}
 
-  async refresh() {
-    this.profile = await this.dataService.profile();
-  }
+  async refresh() {}
+
   async ngOnInit() {}
 
-  async save() {}
+  async save() {
+    this.dataService.profile.userId = (await this.authService.token()).userId;
+    await this.dataService.update("_profile", this.dataService.profile);
+  }
   handleParams(): any {}
 
   fileChanged(event, property, resizeWidth?) {
@@ -52,7 +57,7 @@ export class AccountProfileComponent implements OnInit {
 
         toPatch[property] = resizedDataUrl;
 
-       this.profile[property] = resizedDataUrl;
+        this.dataService.profile[property] = resizedDataUrl;
 
         //    this.userForm.patchValue(toPatch);
       };

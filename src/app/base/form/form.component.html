@@ -22,7 +22,7 @@
       <div class="mat-card-title single-title">
         <span class="text" *ngIf="model?._cdate"> Edit</span>
 
-        <span class="text" *ngIf="!model?._id">Create {{entityName.trim('_')}}</span>
+        <span class="text" *ngIf="!model?._id">Create {{entityLabel || entityName}}</span>
 
         <span class="id" *ngIf="model?._id"> {{ model._id }} </span>
       </div>
@@ -107,14 +107,13 @@
     </mat-card-content>
 
     <mat-card-actions *ngIf="mode == 'json' || mode == 'form'">
-      <button (click)="save()" class="sp-button-icon">
-        <img *ngIf="saveButtonIcon" [src]="'assets/icons/' + saveButtonIcon + '.svg'" />
-        <!-- {{saveButtonText}} -->
+      <button (click)="save()" mat-raised-button>
+        Save
       </button>
 
-      <button class="pull-left sp-button-icon" (click)="init(true)">
+      <!-- <button class="pull-left " mat-raised-button (click)="init(true)">
         <img [src]="'assets/icons/refresh.svg'" />
-      </button>
+      </button> -->
 
       <div class="clearfix"></div>
     </mat-card-actions>

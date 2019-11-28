@@ -361,8 +361,8 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
               reportName: "entity-default",
               formName: "entity-form",
               icon: "tab-4",
-              entityLabelSingular: "شی",
-              title: "اشیا"
+              entityLabelSingular: "Entity",
+              title: "Entity types",
             }
           }
         ]

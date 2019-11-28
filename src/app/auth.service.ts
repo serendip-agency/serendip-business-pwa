@@ -29,9 +29,9 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
   async logout() {
-    setTimeout(() => {
-      this.router.navigate(["/auth"]);
-    }, 1000);
+    // setTimeout(() => {
+    //   this.router.navigate(["/auth"]);
+    // }, 1000);
     localStorage.clear();
     await IdbDeleteAllDatabases();
     

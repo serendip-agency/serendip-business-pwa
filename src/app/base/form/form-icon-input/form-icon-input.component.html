@@ -5,29 +5,20 @@
 
   <div>
 
-    <span class="btn-choose" *ngIf="!browse" (click)="browse = true"> انتخاب از گالری</span>
-    <span class="btn-close" *ngIf="browse" (click)="browse = false"> بستن گالری</span>
+    <span class="btn-choose" *ngIf="!browse" (click)="browse = true"> Choose ...</span>
+    <span class="btn-close" *ngIf="browse" (click)="browse = false"> Close </span>
 
-    <img
-    class="model"
-    *ngIf="model"
-    [src]="'/assets/icons/' + model + '.svg'"
-    alt=""
-  />
+    <img class="model" *ngIf="model" [src]="'/assets/icons/' + model + '.svg'" alt="" />
 
-  <div class="clear"></div>
+    <div class="clear"></div>
   </div>
 
   <div class="icons" *ngIf="browse">
-    <div
-      class="icon"
-      *ngFor="let item of icons"
-      (click)="
+    <div class="icon" *ngFor="let item of icons" (click)="
         model = item.split('.')[0];
         modelChange.emit(item.split('.')[0]);
         browse = false
-      "
-    >
+      ">
       <img [src]="'/assets/icons/' + item" />
     </div>
   </div>
