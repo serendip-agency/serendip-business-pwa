@@ -265,7 +265,7 @@ export class ReportComponent implements OnInit {
     public changeRef: ChangeDetectorRef,
     private obService: ObService
   ) {
-    moment.loadPersian();
+    // moment.loadPersian();
   }
 
   map(array, key) {

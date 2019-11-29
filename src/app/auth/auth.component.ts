@@ -6,7 +6,7 @@ import { DataService } from "../data.service";
 import * as _ from "underscore";
 import { MatSnackBar } from "@angular/material";
 import { TokenModel } from "serendip-business-model";
-import { querystring } from 'serendip-utility';
+import { querystring } from "serendip-utility";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
 
@@ -52,7 +52,7 @@ export class AuthComponent implements OnInit {
     ];
 
     return this.sanitizer.bypassSecurityTrustHtml(
-      input.toString().replace(/\d(?=[^<>]*(<|$))/g, function ($0) {
+      input.toString().replace(/\d(?=[^<>]*(<|$))/g, function($0) {
         return map[$0];
       })
     );
@@ -66,7 +66,7 @@ export class AuthComponent implements OnInit {
     public dataService: DataService,
     private http: HttpClient,
     public sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
   async login(mode?: "user-pass" | "two-factor" | "one-time") {
     if (mode === "user-pass") {
@@ -382,9 +382,10 @@ export class AuthComponent implements OnInit {
     }
   }
 
-  loginWithCode() { }
-  logout() {
-    this.authService.logout();
+  loginWithCode() {}
+  async logout() {
+    await this.authService.logout();
+
     this.router.navigate(["/auth", "login"]);
   }
 
@@ -402,42 +403,52 @@ export class AuthComponent implements OnInit {
     this.initiating = true;
     try {
       await this.authService.token();
-    } catch (error) { }
-
+    } catch (error) {}
 
     this.qs = querystring.toObject(location.href.toString());
 
     if (this.qs.code && this.qs.codeId && this.qs.redirectUri) {
-
       try {
-        localStorage.setItem('token', JSON.stringify(await this.http.post(this.dataService.currentServer + '/api/auth/token', {
-          grant_type: 'authorization_code',
-          code: decodeURIComponent(this.qs.code),
-          codeId: decodeURIComponent(this.qs.codeId),
-          redirectUri: decodeURIComponent(this.qs.redirectUri),
-        },
-          {
-            headers: {
-              clientId: 'serendip-business-pwa',
-            }
-          }).toPromise()));
+        localStorage.setItem(
+          "token",
+          JSON.stringify(
+            await this.http
+              .post(
+                this.dataService.currentServer + "/api/auth/token",
+                {
+                  grant_type: "authorization_code",
+                  code: decodeURIComponent(this.qs.code),
+                  codeId: decodeURIComponent(this.qs.codeId),
+                  redirectUri: decodeURIComponent(this.qs.redirectUri)
+                },
+                {
+                  headers: {
+                    clientId: "serendip-business-pwa"
+                  }
+                }
+              )
+              .toPromise()
+          )
+        );
 
-        location.href = '/'
-
+        location.href = "/";
       } catch (error) {
         setTimeout(() => {
           // tslint:disable-next-line:max-line-length
-          location.href = `${environment.sso}/?redirectUri=${encodeURIComponent(location.href.toString())}&clientId=serendip-business-pwa`;
+          location.href = `${environment.sso}/?redirectUri=${encodeURIComponent(
+            location.href.toString()
+          )}&clientId=serendip-business-pwa`;
         }, 1000);
 
         return;
       }
-
     }
 
     if (!this.authService.loggedIn && environment.sso) {
       if (!querystring.toObject(location.href.toString()).code) {
-        location.href = `${environment.sso}/?redirectUri=${encodeURIComponent(location.href.toString())}&clientId=serendip-business-pwa`;
+        location.href = `${environment.sso}/?redirectUri=${encodeURIComponent(
+          location.href.toString()
+        )}&clientId=serendip-business-pwa`;
         return;
       }
     }
@@ -455,8 +466,6 @@ export class AuthComponent implements OnInit {
       } else {
         this.router.navigateByUrl("/");
       }
-
-      
     } else {
       if (!this.model.mobile && this.tab !== "user-pass") {
         this.router.navigate(["/auth", "login"]);

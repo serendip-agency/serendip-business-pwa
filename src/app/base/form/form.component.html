@@ -34,19 +34,19 @@
       <div class="action" [class.active]="mode == 'triggers'" (click)="mode = mode == 'triggers' ? 'form' : 'triggers'">
         <img [src]="'assets/icons/complaints-customize-customer-voice-3.svg'" />
       </div> -->
-
+      <div class="action" [class.active]="mode == 'json'" (click)="mode = mode == 'json' ? 'form' : 'json'">
+        <img [src]="'assets/icons/vscode.svg'" />
+      </div>
       <div class="action" [class.active]="mode == 'access'" (click)="mode = mode == 'access' ? 'form' : 'access'">
         <img [src]="'assets/icons/password-lock-pad.svg'" />
-      </div>
-
-      <div class="action" [class.active]="mode == 'json'" (click)="mode = mode == 'json' ? 'form' : 'json'">
-        {{ "{}" }}
       </div>
 
       <div class="action" *ngIf="formSchema && formSchema.parts.length" [class.active]="mode == 'form'"
         (click)="mode = 'form'">
         <img [src]="'assets/icons/check-list-2.svg'" />
       </div>
+
+  
 
     </mat-card-header>
 

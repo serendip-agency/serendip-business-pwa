@@ -270,7 +270,11 @@ export class BusinessComponent implements OnInit, OnDestroy {
         ".txt"
     );
   }
+  async logout() {
+    await this.authService.logout();
 
+    this.router.navigate(["/auth", "login"]);
+  }
   logoChanged(event) {
     if (event.target.files && event.target.files[0]) {
       const reader = new FileReader();

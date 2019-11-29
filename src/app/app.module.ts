@@ -140,7 +140,8 @@ import { TPipe } from "./t.pipe";
 import { HelpComponent } from "./help/help.component";
 import { ConnectDatabaseComponent } from "./wizard/connect-database/connect-database.component";
 import { GridComponent } from "./base/grid/grid.component";
-import { GridsterModule } from 'angular-gridster2';
+import { GridsterModule } from "angular-gridster2";
+import { FormTriggerInputComponent } from "./base/form/form-trigger-input/form-trigger-input.component";
 
 export const dynamicComponents = [
   CalendarMonthComponent,
@@ -195,6 +196,8 @@ export const dynamicComponents = [
   FormHtmlInputComponent,
   FormFieldValueCompareComponent,
   FormQuillInputComponent,
+  FormTriggerInputComponent,
+
   // Business related form parts
 
   ContactInputComponent,

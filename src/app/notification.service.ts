@@ -22,47 +22,45 @@ export class NotificationService {
     localStorage.setItem(this.localCacheKey, JSON.stringify(input));
   }
 
+  async init() {
+    const token = await this.authService.token();
+
+    this.obService.listen("_notification").subscribe(msg => {
+      if (msg.model.userId === token.userId) {
+        if (!msg.model.flash) {
+          this._latest.unshift(msg.model);
+          if (this._latest.length > 10) this._latest.pop();
+        }
+
+        this.snackBar.open(msg.model.text, "", {
+          duration: 3000
+        });
+      }
+    });
+
+    this.latest = await this.dataService.aggregate("_notification", [
+      {
+        $match: {
+          viewed: false,
+          userId: token.userId,
+          flash: false
+        }
+      },
+      {
+        $sort: {
+          _cdate: -1
+        }
+      },
+      {
+        $limit: 10
+      }
+    ]);
+  }
+
   constructor(
     private obService: ObService,
     private authService: AuthService,
     private dataService: DataService,
     private snackBar: MatSnackBar
-  ) {
-    (async () => {
-      const token = await this.authService.token();
-
-      this.obService.listen("_notification").subscribe(msg => {
-        if (msg.model.userId === token.userId) {
-          if (msg.model.flash) {
-            this.snackBar.open(msg.model.text, "OK", {
-              duration: 1000
-            });
-          } else {
-            this._latest.unshift(msg.model);
-            if (this._latest.length > 10) this._latest.pop();
-          }
-        }
-      });
-
-      this.latest = await this.dataService.aggregate("_notification", [
-        {
-          $match: {
-            viewed: false,
-            userId: token.userId,
-            flash: false
-          }
-        },
-        {
-          $sort: {
-            _cdate: -1
-          }
-        },
-        {
-          $limit: 10
-        }
-      ]);
-    })()
-      .then(() => {})
-      .catch(console.warn);
-  }
+  ) {}
 }

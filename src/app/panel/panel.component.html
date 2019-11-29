@@ -66,9 +66,25 @@
 
       <mat-menu #notificationMenu="matMenu">
 
-        <button *ngFor="let item of notificationService.latest" mat-menu-item>
-          {{ item.text }}
-        </button>
+        <div class="notification-item" *ngFor="let item of _.take( notificationService.latest,6)" mat-menu-item>
+
+          <div class="icon">
+            <img [src]=" 'assets/icons/'+ (item.icon || 'notification-bell-4') +'.svg'" alt="">
+          </div>
+          <div class="text">
+            {{ item.text }}
+          </div>
+          <div class="when">
+            {{
+              moment(item._cdate).fromNow()
+            }}
+          </div>
+
+        </div>
+
+        <div class="notification-item-archive">
+          See all
+        </div>
 
       </mat-menu>
 

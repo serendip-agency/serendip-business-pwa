@@ -56,7 +56,7 @@ export class ReportService {
     private obService: ObService,
     private webWorker: WebWorkerService
   ) {
-    moment.loadPersian();
+    // moment.loadPersian();
   }
 
   createMatchStageQuery(report: ReportInterface) {
@@ -112,7 +112,6 @@ export class ReportService {
         });
     });
 
-    console.log(matchQuery);
     return matchQuery;
   }
 
@@ -196,7 +195,6 @@ export class ReportService {
       );
     }
 
-    console.log(format);
 
     if (format.method === "analyze1d") {
       if (!format.options.groupBy || !format.options.valueBy) {
@@ -307,7 +305,7 @@ export class ReportService {
         }
       ];
 
-      console.log(JSON.stringify(pipeline, null, 2));
+      // console.log(JSON.stringify(pipeline, null, 2));
       aggregation = await this.dataService.aggregate(
         rawReport.entityName,
         pipeline
@@ -362,8 +360,6 @@ export class ReportService {
         };
       });
     }
-
-    console.log(aggregation);
 
     const report = _.clone(rawReport);
     report.count = aggregation.length;

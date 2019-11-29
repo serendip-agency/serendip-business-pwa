@@ -64,8 +64,8 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit() {
     swal.setDefaults({
       buttonsStyling: false,
-      cancelButtonText: "انصراف",
-      confirmButtonText: "بسیار خب"
+      cancelButtonText: "Cancel",
+      confirmButtonText: "OK"
     });
 
     this.routerSubscription = this.router.events.subscribe(

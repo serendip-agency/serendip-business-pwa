@@ -18,6 +18,7 @@ import { FormMultipleTextInputComponent } from "../form-multiple-text-input/form
 import { FormPriceInputComponent } from "../form-price-input/form-price-input.component";
 import { FormRadioInputComponent } from "../form-radio-input/form-radio-input.component";
 import { FormRelativeDateInputComponent } from "../form-relative-date-input/form-relative-date-input.component";
+import { FormTriggerInputComponent } from "../form-trigger-input/form-trigger-input.component";
 import { FormSelectInputComponent } from "../form-select-input/form-select-input.component";
 import { FormStateInputComponent } from "../form-state-input/form-state-input.component";
 import { FormTelephoneInputComponent } from "../form-telephone-input/form-telephone-input.component";
@@ -42,6 +43,7 @@ export class FormPartsComponent implements OnInit {
   @Input() public WidgetChange: any;
   @Input() public formSchema: any;
   private DynamicParts = {
+    FormTriggerInputComponent,
     FormHtmlInputComponent,
     FormTextInputComponent,
     FormMultipleTextInputComponent,

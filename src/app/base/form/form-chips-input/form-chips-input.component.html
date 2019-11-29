@@ -21,13 +21,13 @@
 <div *ngIf="selectType == 'single'">
 
   <div class="single-chip" *ngIf="model">
-    
+
     <div class="text">
       <span (click)="goEntity(model)" *ngIf="getEntity(model)">
         <span *ngFor="let prop of propertiesToSearch"> {{label}}: {{ cachedEntities[model][prop] | rpd }} </span>
       </span>
       <span (click)="goEntity(model)" *ngIf="!getEntity(model)">
-          {{label}}: {{ model | json}}
+        {{label}}: {{ model | json}}
       </span>
     </div>
     <div class="icon" (click)="model = null; modelChange.emit(null)">
@@ -37,7 +37,7 @@
 
   <div class="single-chip" *ngIf="creatingEntity">
     <div class="text">
-     Waiting for you to create a record ...
+      Waiting for you to create a record ...
     </div>
     <div class="icon" (click)="creatingEntity= false">
       <img src="assets/icons/close-5.svg" alt="" />
@@ -46,13 +46,15 @@
   </div>
 
   <mat-form-field *ngIf="!model && !creatingEntity">
-    <input matInput [placeholder]="label" #entitySingleAutoInput (input)="filterEntities(entitySingleAutoInput.value,[model])"
-      [matAutocomplete]="entityAuto" (matChipInputTokenEnd)="entitySingleAutoInput.value= ''">
+    <input matInput [placeholder]="label" #entitySingleAutoInput
+      (input)="filterEntities(entitySingleAutoInput.value,[model])" [matAutocomplete]="entityAuto"
+      (matChipInputTokenEnd)="entitySingleAutoInput.value= ''">
   </mat-form-field>
 
 </div>
 
-<mat-autocomplete #entityAuto="matAutocomplete" [autoActiveFirstOption]="true" (optionSelected)="selectEntity(  $event);">
+<mat-autocomplete #entityAuto="matAutocomplete" [autoActiveFirstOption]="true"
+  (optionSelected)="selectEntity(  $event);">
 
   <mat-option *ngFor="let item of filteredEntities" [value]="item._id">
 
@@ -63,7 +65,7 @@
 
   <mat-option value="new">
     <img src="assets/icons/plus-add-1.svg" alt="" />
-   New {{label}}
+    New {{label}}
   </mat-option>
 
 

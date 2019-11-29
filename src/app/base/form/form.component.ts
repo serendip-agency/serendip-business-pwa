@@ -37,6 +37,7 @@ export class FormComponent implements OnInit {
     }
   }
 
+  onSave: () => void = null;
   public sUtil = sUtil;
   constructor(
     public dashboardService: DashboardService,
@@ -61,7 +62,9 @@ export class FormComponent implements OnInit {
   _ = _;
 
   public ProxyWidgetChange = new EventEmitter();
-  @Input() saveButtonText = "ثبت";
+
+  @Input() closeOnSave = false;
+  @Input() saveButtonText = "Save";
   @Input() saveButtonIcon = "save-backup-1";
 
   @Input() title: string;
@@ -156,6 +159,8 @@ export class FormComponent implements OnInit {
         documentId: doc._id
       }
     });
+
+    this.onSave();
 
     this.loading = false;
   }

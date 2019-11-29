@@ -370,7 +370,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public dataService: DataService,
     private snackBar: MatSnackBar
   ) {
-    moment.loadPersian({ dialect: "persian-modern", usePersianDigits: false });
+    // moment.loadPersian({ dialect: "persian-modern", usePersianDigits: false });
   }
 
   clickOnStartWrapper(event: MouseEvent) {

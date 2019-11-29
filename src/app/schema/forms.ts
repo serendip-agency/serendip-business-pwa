@@ -254,138 +254,15 @@ export const FormsSchema: FormInterface[] = [
         componentName: "FormTextInputComponent",
         propertyName: "name",
         inputs: {
-          label: "نام تریگر",
+          label: "Trigger name",
           type: "single-line",
           dir: "ltr"
         }
       },
+
       {
-        componentName: "FormChipsInputComponent",
-        propertyName: "entity",
-        propertyType: "string",
-        cssClass: "w-60",
-        inputs: {
-          entityName: "_entity",
-          formName: "entity-form",
-          propertiesToSearch: ["name"],
-          propertiesSearchMode: "mix",
-          selectType: "single",
-          label: "شی مرتبط"
-        }
-      },
-      {
-        label: "شرایط فعال سازی",
-        propertyType: "object",
-        propertyName: "condition",
-        parts: [
-          {
-            propertyName: "type",
-            componentName: "FormRadioInputComponent",
-            inputs: {
-              display: "inline-block",
-              label: "نوع شرط",
-              data: [
-                {
-                  label: "ثبت",
-                  value: "insert"
-                },
-                {
-                  label: "ویرایش",
-                  value: "update"
-                },
-                {
-                  label: "حذف",
-                  value: "delete"
-                },
-                {
-                  label: "زمان مشخص",
-                  value: "date"
-                },
-                {
-                  label: "تایمر",
-                  value: "timer"
-                }
-              ]
-            }
-          },
-          {
-            componentName: "ReportComponent",
-            propertyName: "report",
-            inputs: {
-              entityName: "_entity",
-              layout: "report"
-            }
-          },
-          // {
-          //   componentName: "FormChipsInputComponent",
-          //   propertyName: "reportId",
-          //   propertyType: "string",
-          //   cssClass: "w-60",
-          //   inputs: {
-          //     entityName: "_report",
-          //     formName: "report-form",
-          //     propertiesToSearch: ["name"],
-          //     propertiesSearchMode: "mix",
-          //     selectType: "single",
-          //     label: "گزارش مرتبط"
-          //   }
-          // },
-          {
-            if: '^form.type == "form"',
-            propertyName: "formEvent",
-            componentName: "FormRadioInputComponent",
-            inputs: {
-              display: "inline-block",
-              label: "نوع تغییر فرم",
-              data: [
-                {
-                  label: "ثبت سند جدید",
-                  value: "insert"
-                },
-                {
-                  label: "ویرایش سند",
-                  value: "update"
-                },
-                {
-                  label: "حذف سند",
-                  value: "delete"
-                }
-              ]
-            }
-          },
-          {
-            if: '^form.type == "form" && ^form.formEvent != "delete"',
-            propertyName: "formHasFieldFilter",
-            componentName: "FormCheckboxInputComponent",
-            inputs: {
-              label: "فیلتر فیلد خاص"
-            }
-          },
-          {
-            if:
-              "^form.type == 'form' && ^form.formEvent != 'delete' && ^form.formHasFieldFilter",
-            componentName: "FormChipsInputComponent",
-            propertyName: "formId",
-            propertyType: "string",
-            cssClass: "w-60",
-            inputs: {
-              entityName: "_form",
-              propertiesToSearch: ["name"],
-              propertiesSearchMode: "mix",
-              selectType: "single",
-              label: "فرم مرتبط"
-            }
-          },
-          {
-            if:
-              '^form.type == "form" && ^form.formEvent != "delete" && ^form.formHasFieldFilter && ^form.formId',
-            propertyName: "formFieldFilterModel",
-            componentName: "FormFieldValueCompareComponent",
-            inputs: {
-              formId: "^form.formId"
-            }
-          }
-        ]
+        propertyName: "options",
+        componentName: "FormTriggerInputComponent"
       }
     ],
     defaultModel: {}

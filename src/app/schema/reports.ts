@@ -148,13 +148,13 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: true,
         name: "name",
-        label: "نام تریگر",
+        label: "Trigger name",
         template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "entity",
-        label: "نام شی",
+        label: "Entity name",
         template: { component: "ShortTextViewComponent" }
       }
     ]

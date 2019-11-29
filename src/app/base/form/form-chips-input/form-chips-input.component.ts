@@ -100,18 +100,16 @@ export class FormChipsInputComponent implements OnInit, OnDestroy {
     const model = this.getEntity(_id);
     this.snackBar
       .open(
-        "اطلاعات موجود از " +
+        "Want to edit " +
           (model
-            ? this.rpd(
-                this.propertiesToSearch
-                  .map(key => {
-                    return model[key] || "";
-                  })
-                  .join(" ")
-              )
+            ? this.propertiesToSearch
+                .map(key => {
+                  return model[key] || "";
+                })
+                .join(" ")
             : _id) +
-          " را میخواهید؟",
-        "بله",
+          " ?",
+        "Yes",
         {
           duration: 3000
         }
@@ -126,12 +124,13 @@ export class FormChipsInputComponent implements OnInit, OnDestroy {
             icon: "office-paper-work-pen",
             widgets: [
               {
-                component: "FormComponent",
+                component: "FormDialogComponent",
                 inputs: {
                   name: this.formName,
                   documentId: _id,
                   entityName: this.entityName,
-                  entityLabel: this.label
+                  entityLabel: this.label,
+                  closeOnSave: true
                 }
               }
             ]
@@ -156,11 +155,12 @@ export class FormChipsInputComponent implements OnInit, OnDestroy {
           icon: "office-paper-work-pen",
           widgets: [
             {
-              component: "FormComponent",
+              component: "FormDialogComponent",
               inputs: {
                 name: this.formName,
                 entityName: this.entityName,
-                entityLabel: this.label
+                entityLabel: this.label,
+                closeOnSave: true
               }
             }
           ]

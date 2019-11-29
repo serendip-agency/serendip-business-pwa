@@ -128,7 +128,7 @@
 
         <ul class="links">
           <li><a [routerLink]="['/business', 'list']"> Businesses </a></li>
-          <li><a (click)="authService.logout()"> Logout </a></li>
+          <li><a (click)="logout()"> Logout </a></li>
         </ul>
       </form>
       <form *ngIf="tab == 'key'" class="">
@@ -163,7 +163,7 @@
 
         <ul class="links">
           <li><a [routerLink]="['/business', 'list']"> Businesses </a></li>
-          <li><a (click)="authService.logout()"> Logout </a></li>
+          <li><a (click)="logout()"> Logout </a></li>
         </ul>
       </form>
 
@@ -211,7 +211,7 @@
 
         <ul class="links">
           <li><a [routerLink]="['/business', 'list']"> Businesses </a></li>
-          <li><a (click)="authService.logout()"> Logout </a></li>
+          <li><a (click)="logout()"> Logout </a></li>
         </ul>
       </form>
 
@@ -261,7 +261,7 @@
               <a [routerLink]="['/business', 'new']">New business</a>
             </li>
             <li>
-              <a (click)="authService.logout()">Logout</a>
+              <a (click)="logout()">Logout</a>
             </li>
           </ul>
         </div>

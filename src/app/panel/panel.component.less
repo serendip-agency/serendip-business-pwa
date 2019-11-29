@@ -1,7 +1,40 @@
-@max-width: 980px;
-
 #panel {
     padding-top: 60px;
+}
+
+.notification-item {
+
+    line-height   : 20px;
+    white-space   : normal;
+    height        : auto;
+    padding       : 10px;
+    padding-bottom: 0;
+    border-bottom : 1px solid #ccc;
+    font-size     : .9em;
+    font-weight   : 100;
+    color         : #111;
+
+    .icon {
+        width: 40px;
+        float: left;
+    }
+
+    .text {
+        width: calc(100% - 40px);
+        float: left;
+    }
+
+    .when {
+        font-size  : .8em;
+        color      : #333;
+        text-align : end;
+        line-height: 30px;
+
+    }
+}
+
+.notification-item-archive {
+    text-align: center;
 }
 
 header {
@@ -113,6 +146,7 @@ header {
 
 
 }
+
 
 
 

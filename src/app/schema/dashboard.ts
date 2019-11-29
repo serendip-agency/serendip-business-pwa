@@ -220,41 +220,6 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
     ]
   },
   {
-    name: "settings",
-    title: "Settings",
-    icon: "settings-1",
-    product: "base",
-    tabs: [
-      {
-        active: true,
-        title: "‌Business profile",
-        icon: "building-production-unit-1",
-        status: "default",
-        widget: {
-          component: "BusinessComponent"
-        }
-      },
-      {
-        active: true,
-        title: "User profile",
-        icon: "account-profile-user-4",
-        status: "default",
-        widget: {
-          component: "AccountProfileComponent"
-        }
-      },
-      {
-        active: true,
-        title: "Change password",
-        icon: "account-profile-user-4",
-        status: "default",
-        widget: {
-          component: "AccountPasswordComponent"
-        }
-      }
-    ]
-  },
-  {
     name: "start",
     title: "Start",
     icon: "dashboard-1",
@@ -326,6 +291,42 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
     ]
   },
   {
+    name: "settings",
+    title: "Settings",
+    icon: "settings-1",
+    product: "base",
+    tabs: [
+      {
+        active: true,
+        title: "‌Business profile",
+        icon: "building-production-unit-1",
+        status: "default",
+        widget: {
+          component: "BusinessComponent"
+        }
+      },
+      {
+        active: true,
+        title: "User profile",
+        icon: "account-profile-user-4",
+        status: "default",
+        widget: {
+          component: "AccountProfileComponent"
+        }
+      },
+      {
+        active: true,
+        title: "Change password",
+        icon: "account-profile-user-4",
+        status: "default",
+        widget: {
+          component: "AccountPasswordComponent"
+        }
+      }
+    ]
+  },
+
+  {
     name: "analytics",
     title: "Analytics",
     icon: "dashboard-1",
@@ -362,7 +363,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
               formName: "entity-form",
               icon: "tab-4",
               entityLabelSingular: "Entity",
-              title: "Entity types",
+              title: "Entity types"
             }
           }
         ]
@@ -417,23 +418,23 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
           }
         ]
       },
-      {
-        status: "default",
-        title: "Reports",
-        icon: "filter-6",
-        widgets: [
-          {
-            component: "ReportComponent",
-            inputs: {
-              reportName: "report-default",
-              formName: "report-form",
-              icon: "filter-6",
-              entityLabelSingular: "گرارش",
-              title: "گزارشات"
-            }
-          }
-        ]
-      },
+      // {
+      //   status: "default",
+      //   title: "Reports",
+      //   icon: "filter-6",
+      //   widgets: [
+      //     {
+      //       component: "ReportComponent",
+      //       inputs: {
+      //         reportName: "report-default",
+      //         formName: "report-form",
+      //         icon: "filter-6",
+      //         entityLabelSingular: "گرارش",
+      //         title: "گزارشات"
+      //       }
+      //     }
+      //   ]
+      // },
       {
         status: "default",
         title: "Triggers",
@@ -445,8 +446,8 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
               reportName: "trigger-default",
               formName: "trigger-form",
               icon: "complaints-customize-customer-voice-3",
-              entityLabelSingular: "تریگر",
-              title: "تریگر‌ها"
+              entityLabelSingular: "trigger",
+              title: "Triggers"
             }
           }
         ]

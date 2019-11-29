@@ -13,7 +13,7 @@ import { ComponentRepositoryService } from "../component-repository.service";
 import { GridComponent } from "../base/grid/grid.component";
 import { AuthService } from "../auth.service";
 import { NotificationService } from "../notification.service";
-
+import * as moment from "moment";
 @Component({
   selector: "app-panel",
   templateUrl: "./panel.component.html",
@@ -34,7 +34,13 @@ export class PanelComponent implements OnInit {
     public componentRepositoryService: ComponentRepositoryService,
 
     public dialog: MatDialog
-  ) {}
+  ) {
+    this.dashboardService.dashboardCommand.on("command", input => {
+      this.dashboardCommand()(input);
+    });
+  }
+
+  moment = moment;
 
   get dynamicComponents() {
     return {
@@ -64,7 +70,7 @@ export class PanelComponent implements OnInit {
     this.dashboardService.currentSection = _.findWhere(
       this.dashboardService.schema.dashboard,
       {
-        name: params.section || "raw"
+        name: params.section || "analytics"
       }
     );
 
@@ -107,7 +113,7 @@ export class PanelComponent implements OnInit {
         data.model = this.dataService.decrypt(data.model);
       }
 
-      console.log(data);
+      console.log("entitySocket", data);
 
       this.obService.publish(data.model._entity, data.event, data.model);
     };
@@ -120,13 +126,18 @@ export class PanelComponent implements OnInit {
 
     await this.dataService.loadBusiness();
 
-    this.initEntitySocket()
-      .then()
-      .catch();
-
     await this.dashboardService.setDefaultSchema();
 
     await this.handleParams(this.activatedRoute.snapshot.params);
+
+    this.initEntitySocket()
+      .then()
+      .catch(console.warn);
+
+    this.notificationService
+      .init()
+      .then(() => {})
+      .catch(console.warn);
 
     this.router.events.subscribe(async (event: any) => {
       if (event instanceof NavigationEnd) {
