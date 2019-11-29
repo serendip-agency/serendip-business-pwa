@@ -111,37 +111,32 @@ export class DashboardService {
       retry: false
     });
 
+    console.log("entityTypes", entityTypes);
     const entitiesInDb = await this.dataService.list("_entity");
 
-    if (entityTypes.length > 0) {
-      this.schema.dashboard = this.schema.dashboard.filter(
-        p => p.name !== "raw"
-      );
-
-      this.schema.dashboard.unshift({
-        name: "raw",
-        product: "base",
-        icon: "copy",
-        title: "Collections",
-        tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name))).map(
-          name => {
-            return {
-              icon: "copy",
-              active: true,
-              title: name,
-              widgets: [
-                {
-                  component: "ReportComponent",
-                  inputs: {
-                    entityName: name
-                  }
+    this.schema.dashboard.unshift({
+      name: "raw",
+      product: "base",
+      icon: "copy",
+      title: "Collections",
+      tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name))).map(
+        name => {
+          return {
+            icon: "copy",
+            active: true,
+            title: name,
+            widgets: [
+              {
+                component: "ReportComponent",
+                inputs: {
+                  entityName: name
                 }
-              ]
-            };
-          }
-        ) as any
-      });
-    }
+              }
+            ]
+          };
+        }
+      ) as any
+    });
   }
   getActiveTabs() {
     if (!this.currentSection) {

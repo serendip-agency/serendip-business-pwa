@@ -166,6 +166,8 @@ export class FormComponent implements OnInit {
   }
 
   async init(reset?: boolean) {
+
+    console.log('init',this.name)
     if (!this.formsSchema) {
       this.formsSchema = this.dashboardService.schema.forms;
     }
@@ -256,7 +258,8 @@ export class FormComponent implements OnInit {
   }
 
   async ngOnInit() {
-    console.log(this.name, this.formId);
+
+
     this.loading = true;
 
     await this.init();

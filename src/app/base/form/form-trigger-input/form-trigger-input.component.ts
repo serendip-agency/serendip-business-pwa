@@ -7,23 +7,8 @@ import { Component, OnInit, Output, Input, EventEmitter } from "@angular/core";
 })
 export class FormTriggerInputComponent implements OnInit {
   @Output() modelChange = new EventEmitter<any>();
-  @Input() model = {};
+  @Input() model: any;
 
-        // {
-      //   componentName: "FormChipsInputComponent",
-      //   propertyName: "entity",
-      //   propertyType: "string",
-      //   cssClass: "w-60",
-      //   inputs: {
-      //     entityName: "_entity",
-      //     formName: "entity-form",
-      //     propertiesToSearch: ["name"],
-      //     propertiesSearchMode: "mix",
-      //     selectType: "single",
-      //     label: "Related entity"
-      //   }
-      // },
-      
   types = [
     {
       label: "On document insert",
@@ -49,5 +34,15 @@ export class FormTriggerInputComponent implements OnInit {
 
   constructor() {}
 
-  ngOnInit() {}
+  log(input) {
+    console.log(input);
+  }
+  ngOnInit() {
+    this.modelChange.emit(
+      this.model || {
+        type: "",
+        entity: ""
+      }
+    );
+  }
 }

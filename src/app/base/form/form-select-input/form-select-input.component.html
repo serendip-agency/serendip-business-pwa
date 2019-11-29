@@ -3,7 +3,7 @@
     {{ label }}
   </mat-label>
   <mat-select [compareWith]="compareObjects" [placeholder]="placeholder || label" [multiple]="selectType == 'multiple'"
-    [(ngModel)]="valueField ? model ? model[valueField] : null : model"
+    [(ngModel)]="valueField ?  model[valueField] || model  : model"
     (selectionChange)="modelChange.emit( _.get($event.value,valueField,$event.value))" name="type">
     <mat-option *ngFor="let type of data" [value]="_.get(type,valueField,type)">
       {{_.get(type,labelField || 'label',type) }}

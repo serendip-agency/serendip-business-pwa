@@ -26,13 +26,15 @@ export class NotificationService {
     const token = await this.authService.token();
 
     this.obService.listen("_notification").subscribe(msg => {
-      if (msg.model.userId === token.userId) {
+      if (!msg.model.userId || msg.model.userId === token.userId) {
         if (!msg.model.flash) {
           this._latest.unshift(msg.model);
-          if (this._latest.length > 10) this._latest.pop();
+          if (this._latest.length > 10) {
+            this._latest.pop();
+          }
         }
 
-        this.snackBar.open(msg.model.text, "", {
+        this.snackBar.open(msg.model.text.replace(/_/g, " ").trim(), "", {
           duration: 3000
         });
       }
@@ -42,8 +44,15 @@ export class NotificationService {
       {
         $match: {
           viewed: false,
-          userId: token.userId,
-          flash: false
+          flash: false,
+          $or: [
+            {
+              userId: token.userId
+            },
+            {
+              userId: { $eq: null }
+            }
+          ]
         }
       },
       {

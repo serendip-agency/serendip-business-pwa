@@ -144,20 +144,7 @@ export const ReportsSchema: ReportInterface[] = [
     name: "trigger-default",
     entityName: "_trigger",
     label: "",
-    fields: [
-      {
-        enabled: true,
-        name: "name",
-        label: "Trigger name",
-        template: { component: "ShortTextViewComponent" }
-      },
-      {
-        enabled: true,
-        name: "entity",
-        label: "Entity name",
-        template: { component: "ShortTextViewComponent" }
-      }
-    ]
+    fields: []
   },
   {
     name: "format-default",

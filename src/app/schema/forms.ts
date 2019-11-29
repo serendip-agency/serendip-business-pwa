@@ -259,13 +259,15 @@ export const FormsSchema: FormInterface[] = [
           dir: "ltr"
         }
       },
-
       {
         propertyName: "options",
-        componentName: "FormTriggerInputComponent"
+        componentName: "FormTriggerInputComponent",
+        inputs: {}
       }
     ],
-    defaultModel: {}
+    defaultModel: {
+      options: {}
+    }
   },
   {
     name: "entity-form",

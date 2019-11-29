@@ -26,9 +26,27 @@
         <div class="member" *ngFor="let m of businessService.business?.members">
           <div class="profile" *ngIf="m.profile">
             <div class="pic">
-              <img *ngIf="m.profile.profilePicture" [src]="businessService.business.logo" alt="" />
-              <img class="default" src="assets/icons/account-profile-user-4.svg" />
+              <img *ngIf="m.profile.profilePicture" [src]="m.profile.profilePicture" alt="" />
+              <img *ngIf="!m.profile.profilePicture" src="assets/icons/account-profile-user-4.svg" />
+
             </div>
+
+            <span class=" ">
+              ({{m.mobileCountryCode}})
+              {{
+                 m.mobile
+              }}
+              {{
+                m.profile.firstName
+              }} {{
+                m.profile.lastName
+              }}
+            </span>
+
+            <div class="close" (click)="deleteMember(m)">
+              <img src="assets/icons/close-5.svg" />
+            </div>
+            <div class="clear"></div>
           </div>
 
           <div class="no-profile" *ngIf="m.userId && !m.profile">
@@ -36,17 +54,34 @@
               <img class="default" src="assets/icons/account-profile-user-4.svg" />
             </div>
 
-            <span *ngIf="m.mobile" class="ltr en">{{
+            <span *ngIf="m.mobile" class=" ">{{
                 m.mobileCountryCode + m.mobile
               }}</span>
             <span class="id ltr" *ngIf="!m.mobile"> m.userId</span>
+
+            <div class="close" (click)="deleteMember(m)">
+              <img src="assets/icons/close-5.svg" />
+            </div>
+
+
+            <div class="clear"></div>
+
           </div>
 
           <div class="no-user" *ngIf="m.mobile && !m.userId">
 
             <span class="ltr en">{{ m.mobileCountryCode + m.mobile }}</span>
             Not registered yet
+
+            <div class="close" (click)="deleteMember(m)">
+              <img src="assets/icons/close-5.svg" />
+            </div>
+            <div class="clear"></div>
+
+
           </div>
+
+
         </div>
       </div>
 

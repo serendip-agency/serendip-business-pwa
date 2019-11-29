@@ -86,6 +86,47 @@ export class BusinessComponent implements OnInit, OnDestroy {
     reader.readAsText(fileInput.files[0]);
   }
 
+  deleteMember(member: { mobile: string; mobileCountryCode: string }) {
+    this.loading = true;
+
+    this.dataService
+      .request({
+        method: "POST",
+        path: "/api/business/deleteMember",
+        model: member
+      })
+      .then(async res => {
+        await this.dataService.loadBusiness();
+        this.memberToAdd = { code: "+98", mobile: "" };
+        this.loading = false;
+      })
+      .catch(res => {
+        if (res.error) {
+          if (res.error.description === "duplicate") {
+            this.snackBar.open("User already has access to business!", "", {
+              duration: 3000
+            });
+          } else {
+            if (res.status === 400) {
+              return this.snackBar.open("Verify inputs!", "", {
+                duration: 3000
+              });
+            }
+
+            if (res.status === 0) {
+              return this.snackBar.open("Connection lost!", "", {
+                duration: 3000
+              });
+            } else {
+              return this.snackBar.open("Try again in few moments!", "", {
+                duration: 3000
+              });
+            }
+          }
+        }
+        this.loading = false;
+      });
+  }
   addMember() {
     this.loading = true;
 
@@ -99,8 +140,6 @@ export class BusinessComponent implements OnInit, OnDestroy {
         }
       })
       .then(async res => {
-        this.snackBar.open("کاربر جدید اضافه شد!", "", { duration: 3000 });
-
         await this.dataService.loadBusiness();
         this.memberToAdd = { code: "+98", mobile: "" };
         this.loading = false;
@@ -108,24 +147,22 @@ export class BusinessComponent implements OnInit, OnDestroy {
       .catch(res => {
         if (res.error) {
           if (res.error.description === "duplicate") {
-            this.snackBar.open(
-              "این کاربر قبلا به کسب‌وکار اضافه شده است!",
-              "",
-              { duration: 3000 }
-            );
+            this.snackBar.open("User already has access to business!", "", {
+              duration: 3000
+            });
           } else {
             if (res.status === 400) {
-              return this.snackBar.open("موبایل و کد رو بازبینی کنید!", "", {
+              return this.snackBar.open("Verify inputs!", "", {
                 duration: 3000
               });
             }
 
             if (res.status === 0) {
-              return this.snackBar.open("اتصال شبکه شما قطع است!", "", {
+              return this.snackBar.open("Connection lost!", "", {
                 duration: 3000
               });
             } else {
-              return this.snackBar.open("لطفا لحظاتی دیگر تلاش کنید!", "", {
+              return this.snackBar.open("Try again in few moments!", "", {
                 duration: 3000
               });
             }
