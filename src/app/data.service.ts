@@ -305,7 +305,7 @@ export class DataService {
 
   async aggregate<A>(
     controller: string,
-    pipeline: any[] = [],
+    pipeline: any[] | any = [],
     offline?: boolean
   ): Promise<EntityModel[]> {
     if (offline) {

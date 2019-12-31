@@ -46,7 +46,7 @@
         <img [src]="'assets/icons/check-list-2.svg'" />
       </div>
 
-  
+
 
     </mat-card-header>
 
@@ -77,22 +77,20 @@
       <div class="access">
         <div class="form-wrapper">
           <label for="">
-            سطح دسترسی به این سند را مشخص کنید
+            Set access level to this entity
           </label>
 
           <div style="padding:5px 15px">
             <app-form-radio-input [display]="'block'" [model]="model['_access']" (modelChange)="
                 model['_access'] = $event; WidgetChange.emit({ model: model })
               " [data]="[
-                { value: '', label: 'اعضای تیم' },
-                { value: 'me', label: 'فقط من' },
-                { value: 'public', label: 'عمومی' },
-                { value: 'users', label: 'کاربران مشخص' },
-                { value: 'encrypted', label: 'رمزگذاری شده' }
+                { value: '', label: 'Team members' },
+                { value: 'me', label: 'Just me' },
+                { value: 'public', label: 'Public (accessible trough network)' } 
               ]"></app-form-radio-input>
 
-            <app-form-text-input [label]="'رمز سند'" *ngIf="model['_access'] === 'encrypted'">
-            </app-form-text-input>
+            <!-- <app-form-text-input [label]="'رمز سند'" *ngIf="model['_access'] === 'encrypted'">
+            </app-form-text-input> -->
           </div>
         </div>
       </div>

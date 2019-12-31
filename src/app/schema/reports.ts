@@ -50,13 +50,13 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: true,
         name: "name",
-        label: "نام",
+        label: "Name",
         template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "title",
-        label: "عنوان  ",
+        label: "Title  ",
         template: { component: "ShortTextViewComponent" }
       }
     ]
@@ -86,25 +86,25 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: true,
         name: "name",
-        label: "نام گزارش",
+        label: "Report name",
         template: { component: "LongTextViewComponent" }
       },
       {
         enabled: true,
         name: "label",
-        label: "لیبل گزارش",
+        label: "Report label",
         template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "offline",
-        label: "آفلاین",
+        label: "Default offline",
         template: { component: "ShortTextViewComponent" }
       },
       {
         enabled: true,
         name: "entityName",
-        label: "نام شی",
+        label: "Entity name",
         template: { component: "ShortTextViewComponent" }
       }
     ]
@@ -173,7 +173,7 @@ export const ReportsSchema: ReportInterface[] = [
       {
         enabled: true,
         name: "name",
-        label: "نام فرم",
+        label: "Form name",
         template: { component: "ShortTextViewComponent" }
       }
     ]

@@ -172,6 +172,7 @@ export class ReportService {
     rawReport: ReportInterface,
     format: ReportFormatInterface
   ) {
+    // tslint:disable-next-line: no-shadowed-variable
     const DateUnitToFormatMap = {
       minute: "YYYY-MM-DD kk:mm",
       hour: "YYYY-MM-DD kk",
@@ -188,13 +189,14 @@ export class ReportService {
       return;
     }
 
+    console.log(format);
+
     if (format.method === "aggregate") {
       aggregation = await this.dataService.aggregate(
         rawReport.entityName,
         format.options.pipeline
       );
     }
-
 
     if (format.method === "analyze1d") {
       if (!format.options.groupBy || !format.options.valueBy) {
@@ -303,7 +305,7 @@ export class ReportService {
             value: "$value"
           }
         }
-      ];
+      ].find(p => p);
 
       // console.log(JSON.stringify(pipeline, null, 2));
       aggregation = await this.dataService.aggregate(

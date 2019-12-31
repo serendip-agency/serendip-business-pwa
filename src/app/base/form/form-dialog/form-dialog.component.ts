@@ -5,7 +5,7 @@ import { HttpClient } from "@angular/common/http";
 import { BusinessService } from "../../../business.service";
 import { DashboardService } from "../../../dashboard.service";
 import { IdbService } from "../../../idb.service";
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialogRef } from "@angular/material";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material";
 
 @Component({
   selector: "app-form-dialog",

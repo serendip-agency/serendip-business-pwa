@@ -120,11 +120,11 @@ export class DashboardService {
       icon: "copy",
       title: "Collections",
       tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name))).map(
-        name => {
+        (name: any) => {
           return {
             icon: "copy",
             active: true,
-            title: name,
+            title: name.replace(/_/g, " ").trim(),
             widgets: [
               {
                 component: "ReportComponent",

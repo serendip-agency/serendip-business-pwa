@@ -5,19 +5,15 @@
     <div class="inner">
       <div class="logo">
         <img src="assets/favicon.png" />
-
         <div class="text">
-
           <h1>
             Serendip
           </h1>
           <small>Data dashboard</small>
         </div>
-
       </div>
 
       <div class="nav-toggle" (click)="mobileNavVisible = !mobileNavVisible" [class.active]="mobileNavVisible">
-
       </div>
 
       <div class="icon" [matMenuTriggerFor]="appsMenu">
@@ -25,12 +21,9 @@
       </div>
 
 
-
-
       <mat-menu #appsMenu="matMenu">
         <button mat-menu-item>
           <img src="assets/icons/note.svg" alt="">
-
           Notes</button>
         <button mat-menu-item>
           <img src="assets/icons/calendar-1.svg" alt="">
@@ -66,7 +59,7 @@
 
       <mat-menu #notificationMenu="matMenu">
 
-        <div class="notification-item" *ngFor="let item of _.take( notificationService.latest,6)" mat-menu-item>
+        <div class="notification-item" *ngFor="let item of _.take( notificationService.latest,4)" mat-menu-item>
 
           <div class="icon">
             <img [src]=" 'assets/icons/'+ (item.icon || 'notification-bell-4') +'.svg'" alt="">

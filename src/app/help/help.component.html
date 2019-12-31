@@ -2,87 +2,89 @@
 
   <div class="text">
     <h1>
-      راهنمای داشبورد
+      Getting started
     </h1>
 
     <ul>
       <li>
         <h2>
-          داشبورد اسناد
+          Collections
         </h2>
         <div>
           <p>
-            داشبورد اسناد به صورت پیش‌فرض از دیتاسورس‌هایی که در نرم‌افزار ثبت کرده‌اید نمونه‌گیری کرده و گزارش‌های خامی
-            را برای شروع سریعتر برای شما ‌می‌سازد.
+
+            Document collections are added via data sources or entities you add in
+            <a [routerLink]="['/panel','configurations','entity-types']"> entity configuration </a>
+            when you connect a <a [routerLink]="['/panel','configurations','data-sources']"> data source </a>
+            collections of that source will automatically added to the Collections menu.
           </p>
           <p>
-            این بخش می‌تواند بدون نیاز به هیچ پیکربندی یک داشبورد برای مدیریت دیتای فعلی شما باشد.
+            This section could act as database browser for you, and you could also have customized forms, reports,
+            trigger on your data.
           </p>
         </div>
       </li>
       <li>
         <h2>
-          پیکربندی نرم‌افزار
+          Configuration
         </h2>
         <div>
           <p>
-
-            با استفاده از این بخش می‌توانید یک داشبورد کامل برای مدیریت و اتوماسیون دیتای خود پیکربندی کنید.
-            این بخش شامل موارد زیر می‌شود:
-
+            This section will provide all you need to create and customize a dashboard for
+            managing and analyzing your data and automating your business workflows.
+          </p>
+          <p>
+            Automation's are based on a trigger system, to get it working you need to define a condition of for your
+            trigger and then specify an action.
           </p>
           <ul>
             <li>
               <h3>
-                اشیا
+                Entity
               </h3>
               <p>
-                هر سندی که داخل سرندیپ ثبت ‌می‌شود باید به یک شی متصل شود. این اشیا در واقع همان دسته‌های دیتا هستند.
+                Every document type that exist in the system are called entity.
               </p>
             </li>
 
             <li>
               <h3>
-                دیتا سورس‌ها
+                Data source
               </h3>
               <p>
-                دیتا سورس‌ها همان دیتابیس‌هایی هستند که می‌توانید به سرندیپ متصل کنید تا امکان تحلیل و مدیریت دیتای
-                آن‌ها را
-                داشته باشید.
+                The only supported data source for now is Mongodb.
               </p>
             </li>
 
             <li>
               <h3>
-                داشبورد‌ها
+                Dashboards
               </h3>
               <p>
-                داشبورد‌هایی که از منوی اصلی در دسترس هستند از طریق این بخش قابل اضافه کردن یا پیکربندی هستند. هر
-                داشبورد
-                شامل چند تب خواهد بود که هر کدام می‌توانند یک یا چند کامپوننت مانند نمودار، فرم و گزارش را شامل شوند.
-              </p>
-            </li>
-
-
-            <li>
-              <h3>
-                فرم‌ها
-              </h3>
-              <p>
-                این بخش برای ساختن و مدیریت فرم‌ها می‌باشد.ساختار فرم‌هایی که در این بخش تعریف می‌شوند به عنوان ورودی
-                کامپوننت فرم‌ساز استفاده خواهند شد.
+                You can create your own dashboards using configuration section and add chart, form or report widgets to
+                it.
               </p>
             </li>
 
 
             <li>
               <h3>
-                گزارشات
+                Forms
               </h3>
               <p>
-                سرندیپ به صورت پیش‌فرض می‌تواند گزارشات شما را با نمونه‌گیری از اسناد شما بسازد. اما اگر به دنبال سفارشی
-                کردن
-                فیلد‌های گزارش هستید این بخش به کمک شما خواهد آمد.
+                Serendip have a built-in form builder that supports arrays and objects of fields in your form.
+              </p>
+            </li>
+
+
+            <li>
+              <h3>
+                Reports
+              </h3>
+              <p>
+                Serendip created a default set of reports with a quick sampling of your data.
+                in this process type of fields in your data records will be analyzed and then it will 
+                create query forms and columns in the report.
               </p>
             </li>
 
@@ -107,97 +109,21 @@
 
   <div class="text">
     <h1>
-      آشنایی با
-      <span class="en">
-        API
-      </span>
-      سرندیپ
+      Getting started with the rest API
+      
     </h1>
 
+    
     <p>
-      تمامی امکاناتی که در داشبورد سرندیپ وجود دارد و حتی فراتر از آن، از طریق
-      <span class="en">
-        API
-      </span>
-      سرندیپ در دسترس می‌باشد. برخی از این امکانات:
-
-
-
+      You can access, search and manage your data using serendip rest API.
     </p>
-
     <ul>
       <li>
         <h3>
-          سرویس اسناد
+          Generate a token
         </h3>
         <p>
-          این سرویس امکان ثبت،‌ ویرایش و حذف اسناد را می‌دهد. هر سند یک آبجکت
-          <span class="en">
-            JSON
-          </span>
-          است.
-          رویداد‌های تغییر اطلاعات می‌توانند از طریق وب‌سوکت برای شما ارسال شوند.
-        </p>
-      </li>
-      <li>
-        <h3>
-          سرویس تریگر
-
-        </h3>
-
-        <p>
-          جهت خودکارسازی هر فرآیند می‌توان یک یا چند ماشه تعریف کرد. ماشه‌ها تعریفی از شرط‌ها هستند که توسط آن‌ها
-          فرآیند‌ها یا اقداماتی به صورت خودکار انجام خواهند شد.
-        </p>
-      </li>
-      <li>
-        <h3>
-          سرویس ذخیره‌سازی فایل
-        </h3>
-        <p>
-          سرویسی بر پایه stream برای آپلود و دانلود فایل‌ها بر روی بستر سرندیپ.
-        </p>
-      </li>
-      <li>
-
-        <h3>
-          سرویس ایمیل، پیامک و فکس
-        </h3>
-
-        <p>
-          سرندیپ مسیرهای متنوعی برای برقراری ارتباط و ایجاد تعامل با مخاتبانتان در اختیار شما می‌گذارد که از طریق این
-          API در دسترس
-        </p>
-
-
-      </li>
-
-    </ul>
-
-  </div>
-
-  <div class="text">
-    <h1>
-      شروع کار با
-      <span class="en">
-        API
-      </span>
-    </h1>
-    <ul>
-      <li>
-        <h3>
-          دریافت توکن
-        </h3>
-        <p>
-          برای کار با تمام
-          <span class="en">
-            API
-          </span> ها نیاز دارید یک رشته توکن امنیتی
-          در
-          <span class="en">
-            header
-          </span>
-          درخواست‌ها قرار دهید. این توکن را با درخواست زیر میتوانید دریافت کنید:
+          To access all api routes you need to set an 'Authorization Bearer' token in your header.
         </p>
         <pre>
 // REQUEST
@@ -223,11 +149,12 @@ curl --request POST \
 
       <li>
         <h3>
-          انتخاب کسب‌وکار
+         Business list
         </h3>
         <p>
-          برای کار با سرویس‌های مربوط به کسب‌وکار نیاز دارید شناسه کسب‌وکار مورد نظر را در هدر
-          درخواست‌ها قرار دهید.
+          As serendip is a multi business/project dashboard you need to send 
+          a _business field to some of API's. to get list of all your registered businesses 
+          see the following request.
         </p>
         <pre>
 // REQUEST
@@ -240,7 +167,7 @@ curl --request GET \
 [
     {
         "_id": "5ccd3f6f42xxc062be1dxx51",
-        "title": "سرندیپ",
+        "title": "Example Business",
         "owner": "5ccxxf544204c06xxe1d1245",
         "members": [
             {
@@ -256,5 +183,6 @@ curl --request GET \
 
     </ul>
   </div>
+ 
 
 </section>

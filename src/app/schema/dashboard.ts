@@ -238,17 +238,17 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
           }
         ]
       },
-      {
-        status: "default",
-        title: "Import from excel",
-        icon: "tab-4",
-        widgets: [
-          {
-            component: "ImportComponent",
-            inputs: {}
-          }
-        ]
-      },
+      // {
+      //   status: "default",
+      //   title: "Import from excel",
+      //   icon: "tab-4",
+      //   widgets: [
+      //     {
+      //       component: "ImportComponent",
+      //       inputs: {}
+      //     }
+      //   ]
+      // },
       {
         status: "default",
         title: "API manual",
@@ -262,32 +262,19 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
           }
         ]
       },
-      {
-        status: "default",
-        title: "SDK manual",
-        icon: "tab-4",
-        widgets: [
-          {
-            component: "HelpComponent",
-            inputs: {
-              id: "sdk-intro"
-            }
-          }
-        ]
-      },
-      {
-        status: "default",
-        title: "Connect your database",
-        icon: "tab-4",
-        widgets: [
-          {
-            component: "HelpComponent",
-            inputs: {
-              id: "sdk-intro"
-            }
-          }
-        ]
-      }
+      // {
+      //   status: "default",
+      //   title: "Connect your database",
+      //   icon: "tab-4",
+      //   widgets: [
+      //     {
+      //       component: "HelpComponent",
+      //       inputs: {
+      //         id: "sdk-intro"
+      //       }
+      //     }
+      //   ]
+      // }
     ]
   },
   {
@@ -395,8 +382,8 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
               reportName: "dashboard-default",
               formName: "dashboard-form",
               icon: "tab-3",
-              entityLabelSingular: "داشبورد",
-              title: "داشبورد‌ها"
+              entityLabelSingular: "Dashboard",
+              title: "Dashboard's"
             }
           }
         ]
@@ -412,8 +399,8 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
               reportName: "form-default",
               formName: "form-form",
               icon: "copy",
-              entityLabelSingular: "فرم",
-              title: "فرم‌ها"
+              entityLabelSingular: "Form",
+              title: "Forms"
             }
           }
         ]

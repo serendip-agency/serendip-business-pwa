@@ -50,6 +50,8 @@ export class PanelComponent implements OnInit {
       }
     };
   }
+
+  popup: any;
   dialogRef: any;
   entitySocket: WebSocket;
 

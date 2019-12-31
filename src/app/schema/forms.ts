@@ -107,7 +107,7 @@ export const FormsSchema: FormInterface[] = [
         componentName: "FormTextInputComponent",
         propertyName: "name",
         inputs: {
-          label: "نام داشبورد",
+          label: "Dashboard name",
           type: "single-line",
           dir: "ltr"
         }
@@ -117,7 +117,7 @@ export const FormsSchema: FormInterface[] = [
         componentName: "FormTextInputComponent",
         propertyName: "title",
         inputs: {
-          label: "عنوان داشبورد",
+          label: "Dashboard title",
           type: "single-line"
         }
       },
@@ -125,67 +125,49 @@ export const FormsSchema: FormInterface[] = [
         componentName: "FormIconInputComponent",
         propertyName: "icon",
         inputs: {
-          label: "آیکون داشبورد"
+          label: "Icon"
         }
       },
       {
         propertyName: "tabs",
         propertyType: "array",
-        label: "تب‌ها",
+        label: "Tab's",
         parts: [
           {
             propertyType: "string",
             propertyName: "title",
             componentName: "FormTextInputComponent",
             inputs: {
-              label: "عنوان تب",
+              label: "Tab title",
               type: "single-line"
             }
           },
-          {
-            componentName: "FormIconInputComponent",
-            propertyName: "icon",
-            inputs: {
-              label: "آیکون تب"
-            }
-          },
-          {
-            propertyName: "status",
-            componentName: "FormRadioInputComponent",
-            inputs: {
-              display: "inline-block",
-              label: "وضعیت",
-              data: [
-                {
-                  label: "نمایش در صفحه",
-                  value: "default"
-                },
-                {
-                  label: "نمایش در منو کناری",
-                  value: "menu"
-                }
-              ]
-            }
-          },
+          // {
+          //   componentName: "FormIconInputComponent",
+          //   propertyName: "icon",
+          //   inputs: {
+          //     label: "آیکون تب"
+          //   }
+          // },
           {
             propertyName: "widget",
             propertyType: "object",
-            label: "ویجت",
+            label: "Widget",
             parts: [
               {
                 propertyName: "component",
                 componentName: "FormSelectInputComponent",
                 inputs: {
                   display: "inline-block",
-                  label: "نام",
+                  label: "component name",
                   selectType: "single",
                   data: [
                     {
-                      label: "ویجت گزارش‌",
+                      label: "Report component",
                       value: "ReportComponent"
                     },
                     {
-                      label: "ویجت فرم",
+                      label: "Form component",
                       value: "FormComponent"
                     }
                   ]
@@ -195,13 +177,13 @@ export const FormsSchema: FormInterface[] = [
                 if: "^form.component == 'ReportComponent'",
                 propertyName: "inputs",
                 propertyType: "object",
-                label: "ورودی‌های ویجت",
+                label: "Input widgets",
                 parts: [
                   {
                     componentName: "FormTextInputComponent",
                     propertyName: "title",
                     inputs: {
-                      label: "عنوان ویجت",
+                      label: "Widget title",
                       type: "single-line"
                     }
                   },
@@ -215,7 +197,7 @@ export const FormsSchema: FormInterface[] = [
                       propertiesToSearch: ["name"],
                       propertiesSearchMode: "mix",
                       selectType: "single",
-                      label: "گزارش مرتبط"
+                      label: "Related report"
                     }
                   },
                   {
@@ -228,16 +210,16 @@ export const FormsSchema: FormInterface[] = [
                       propertiesToSearch: ["name"],
                       propertiesSearchMode: "mix",
                       selectType: "single",
-                      label: "فرم ثبت و ویرایش"
+                      label: "Input form"
                     }
                   },
-                  {
-                    propertyName: "minimal",
-                    componentName: "FormToggleInputComponent",
-                    inputs: {
-                      label: "حالت ساده"
-                    }
-                  }
+                  // {
+                  //   propertyName: "minimal",
+                  //   componentName: "FormToggleInputComponent",
+                  //   inputs: {
+                  //     label: "حالت ساده"
+                  //   }
+                  // }
                 ]
               }
             ]
@@ -602,7 +584,7 @@ export const FormsSchema: FormInterface[] = [
         componentName: "FormTextInputComponent",
         propertyName: "name",
         inputs: {
-          label: "نام فرم",
+          label: "Form name",
           type: "single-line"
         }
       },
@@ -610,7 +592,7 @@ export const FormsSchema: FormInterface[] = [
         componentName: "FormTextInputComponent",
         propertyName: "entityName",
         inputs: {
-          label: "نام شی",
+          label: "Entity name",
           type: "single-line",
           dir: "ltr"
         }
@@ -618,14 +600,14 @@ export const FormsSchema: FormInterface[] = [
       {
         propertyName: "parts",
         propertyType: "array",
-        label: "اجزای فرم",
+        label: "Form parts",
         parts: [
           {
             propertyType: "string",
             propertyName: "propertyName",
             componentName: "FormTextInputComponent",
             inputs: {
-              label: "نام فیلد",
+              label: "Field name",
               type: "single-line",
               dir: "ltr"
             }
@@ -635,18 +617,18 @@ export const FormsSchema: FormInterface[] = [
             componentName: "FormRadioInputComponent",
             inputs: {
               display: "inline-block",
-              label: "نوع فیلد",
+              label: "Field type",
               data: [
                 {
-                  label: "فیلد ورودی",
+                  label: "Input field",
                   value: ""
                 },
                 {
-                  label: "آبجکت",
+                  label: "Object",
                   value: "object"
                 },
                 {
-                  label: "آرایه",
+                  label: "Array",
                   value: "array"
                 }
               ]
@@ -658,7 +640,7 @@ export const FormsSchema: FormInterface[] = [
             propertyName: "label",
             componentName: "FormTextInputComponent",
             inputs: {
-              label: "لیبل آرایه",
+              label: "Array label",
               type: "single-line"
             }
           },
@@ -668,35 +650,35 @@ export const FormsSchema: FormInterface[] = [
             componentName: "FormSelectInputComponent",
             inputs: {
               display: "inline-block",
-              label: "ابزار ورود اطلاعات",
+              label: "Input component",
               selectType: "single",
               data: [
                 {
-                  label: "فیلد متنی",
+                  label: "Text",
                   value: "FormTextInputComponent"
                 },
                 {
-                  label: "رادیو لیست",
+                  label: "Radio list",
                   value: "FormRadioInputComponent"
                 },
                 {
-                  label: "چک لیست",
+                  label: "Check list",
                   value: "FormCheckboxInputComponent"
                 },
                 {
-                  label: "منو کشویی",
+                  label: "Drop down select",
                   value: "FormSelectInputComponent"
                 },
                 {
-                  label: "انتخاب از مدیریت فایل",
+                  label: "Select from files",
                   value: "FormStorageInputComponent"
                 },
                 {
-                  label: "فایل ضمیمه سند",
+                  label: "Base64 file",
                   value: "FormFileInputComponent"
                 },
                 {
-                  label: "انتخاب موقعیت جغرافیایی",
+                  label: "Select location on map",
                   value: "FormLatlngInputComponent"
                 }
               ]
@@ -707,14 +689,14 @@ export const FormsSchema: FormInterface[] = [
               "!^form.propertyType && ^form.componentName == 'FormStorageInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
-            label: "تنظیمات فیلد انتخاب از فایل‌ها",
+            label: "",
             parts: [
               {
                 propertyType: "string",
                 propertyName: "label",
                 componentName: "FormTextInputComponent",
                 inputs: {
-                  label: "لیبل فیلد",
+                  label: "Label",
                   type: "single-line"
                 }
               }
@@ -725,14 +707,14 @@ export const FormsSchema: FormInterface[] = [
               "!^form.propertyType && ^form.componentName == 'FormTextInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
-            label: "تنظیمات فیلد متنی",
+            label: "",
             parts: [
               {
                 propertyType: "string",
                 propertyName: "label",
                 componentName: "FormTextInputComponent",
                 inputs: {
-                  label: "لیبل فیلد",
+                  label: "Label",
                   type: "single-line"
                 }
               },
@@ -742,11 +724,11 @@ export const FormsSchema: FormInterface[] = [
                 inputs: {
                   data: [
                     {
-                      label: "تک خط",
+                      label: "Single line",
                       value: "single-line"
                     },
                     {
-                      label: "چند خط",
+                      label: "Multi line",
                       value: "multi-line"
                     }
                   ]
@@ -759,14 +741,14 @@ export const FormsSchema: FormInterface[] = [
               "!^form.propertyType && ^form.componentName == 'FormRadioInputComponent'",
             propertyType: "object",
             propertyName: "inputs",
-            label: "تنظیمات فیلد رادیو",
+            label: "",
             parts: [
               {
                 propertyType: "string",
                 propertyName: "label",
                 componentName: "FormTextInputComponent",
                 inputs: {
-                  label: "لیبل فیلد",
+                  label: "Label",
                   type: "single-line"
                 }
               },
@@ -776,11 +758,11 @@ export const FormsSchema: FormInterface[] = [
                 inputs: {
                   data: [
                     {
-                      label: "ورود دستی مقادیر",
+                      label: "Enter single values",
                       value: "manual-value-list"
                     },
                     {
-                      label: "ورود دستی مقادیر + لیبل",
+                      label: "Enter value label pairs",
                       value: "manual-value-label-list"
                     }
                   ]
@@ -790,7 +772,7 @@ export const FormsSchema: FormInterface[] = [
                 if: "^form.dataType ==  'manual-value-label-list'",
                 propertyName: "data",
                 propertyType: "array",
-                label: "مقادیر قابل انتخاب",
+                label: "",
                 parts: [
                   {
                     propertyType: "string",
@@ -798,7 +780,7 @@ export const FormsSchema: FormInterface[] = [
                     propertyName: "label",
                     componentName: "FormTextInputComponent",
                     inputs: {
-                      label: "لیبل",
+                      label: "Label",
                       type: "single-line"
                     }
                   },
@@ -808,7 +790,7 @@ export const FormsSchema: FormInterface[] = [
                     cssClass: "w-50",
                     componentName: "FormTextInputComponent",
                     inputs: {
-                      label: "مقدار",
+                      label: "Value",
                       type: "single-line"
                     }
                   }
@@ -819,7 +801,7 @@ export const FormsSchema: FormInterface[] = [
                 propertyName: "data",
                 componentName: "FormMultipleTextInputComponent",
                 inputs: {
-                  label: "مقادیر قابل انتخاب"
+                  label: "Add value items"
                 }
               }
             ]
@@ -829,7 +811,7 @@ export const FormsSchema: FormInterface[] = [
               "^form.propertyType === 'array' || ^form.propertyType === 'object'",
             propertyName: "parts",
             propertyType: "array",
-            label: "اجزای فیلد",
+            label: "Field parts",
             parts: "clone-top-parts"
           }
         ]
