@@ -18,6 +18,7 @@ import { EventEmitter } from "events";
 import { ObService } from "./ob.service";
 import swal from "sweetalert2";
 import { AuthService } from "./auth.service";
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: "root"
@@ -42,17 +43,24 @@ export class DashboardService {
     return window.innerWidth < 860 ? "mobile" : "desktop";
   }
   dashboardCommand = new EventEmitter();
-
+  setSchemaTimeout;
   constructor(
     private dataService: DataService,
+    private businessService: BusinessService,
     private authService: AuthService,
     private obService: ObService,
     private router: Router
   ) {
+
     this.obService.listen("_dashboard").subscribe(msg => {
-      setTimeout(() => {
+
+      if (this.setSchemaTimeout) {
+        clearTimeout(this.setSchemaTimeout);
+      }
+
+      this.setSchemaTimeout = setTimeout(() => {
         this.setDefaultSchema();
-      }, 100);
+      }, 1000);
     });
 
     this.obService.listen("_entity").subscribe(msg => {
@@ -114,12 +122,16 @@ export class DashboardService {
     console.log("entityTypes", entityTypes);
     const entitiesInDb = await this.dataService.list("_entity");
 
+    if (this.schema.dashboard.find(p => p.name === 'raw')) {
+      this.schema.dashboard.shift();
+    }
+
     this.schema.dashboard.unshift({
       name: "raw",
       product: "base",
       icon: "copy",
       title: "Collections",
-      tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name))).map(
+      tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name).filter((p: string) => !p.startsWith('_')))).map(
         (name: any) => {
           return {
             icon: "copy",

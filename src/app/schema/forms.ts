@@ -282,6 +282,89 @@ export const FormsSchema: FormInterface[] = [
     defaultModel: {}
   },
   {
+    name: "data-source-form",
+    entityName: "_dataSource",
+    parts: [
+      {
+        propertyName: "type",
+        componentName: "FormRadioInputComponent",
+        inputs: {
+          label : 'Type',
+          data: [
+            {
+              label: "Mongodb",
+              value: "mongodb"
+            }
+          ]
+        }
+      },
+      {
+        componentName: "FormTextInputComponent",
+        propertyName: "name",
+        inputs: {
+          label: "Name",
+          type: "single-line",
+        }
+      },
+      
+      {
+        propertyName: "options",
+        propertyType: 'object',
+
+        parts: [
+          {
+
+            componentName: "FormTextInputComponent",
+            propertyName: "mongoUrl",
+            inputs: {
+              label: "URI",
+              type: "single-line",
+            }
+          },
+          {
+
+            componentName: "FormTextInputComponent",
+            propertyName: "mongoDb",
+            inputs: {
+              label: "DB Name",
+              type: "single-line",
+            }
+          },
+          {
+
+            componentName: "FormTextInputComponent",
+            propertyName: "authSource",
+            inputs: {
+              label: "Auth Source",
+              type: "single-line",
+            }
+          }
+          ,
+          {
+
+            componentName: "FormTextInputComponent",
+            propertyName: "user",
+            inputs: {
+              label: "Username",
+              type: "single-line",
+            }
+          },
+          {
+
+            componentName: "FormTextInputComponent",
+            propertyName: "password",
+            inputs: {
+              label: "Password",
+              type: "single-line",
+            }
+          }
+        ]
+      },
+
+    ],
+    defaultModel: {}
+  },
+  {
     name: "format-form",
     entityName: "_format",
     parts: [

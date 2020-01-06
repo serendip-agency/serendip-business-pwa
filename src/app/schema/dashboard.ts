@@ -364,6 +364,7 @@ export const DashboardSchema: DashboardSectionInterface[] | any[] = [
             component: "ReportComponent",
             inputs: {
               entityName: "_dataSource",
+              formName : 'data-source-form',
               icon: "tab-4",
               entityLabelSingular: "Data source",
               title: "Data sources"

@@ -1,17 +1,10 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  Router,
-  RouterStateSnapshot
-} from "@angular/router";
-import { TokenModel, UserModel } from "serendip-business-model";
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { TokenModel } from 'serendip-business-model';
 
-import { BusinessService } from "./business.service";
-import { IdbDeleteAllDatabases } from "./idb.service";
-import { environment } from "src/environments/environment";
-import { querystring } from "serendip-utility";
+import { BusinessService } from './business.service';
+import { IdbDeleteAllDatabases } from './idb.service';
 
 @Injectable()
 export class AuthService {
@@ -21,20 +14,27 @@ export class AuthService {
   _apiUrl: string;
   qs: any;
 
+  get mode() {
+    return localStorage.getItem('mode');
+  }
+
+  set mode(value) {
+    localStorage.setItem('mode', value);
+  }
   get apiUrl() {
     return localStorage.server;
   }
 
   profile: any = {};
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
   async logout() {
     // setTimeout(() => {
     //   this.router.navigate(["/auth"]);
     // }, 1000);
     localStorage.clear();
     await IdbDeleteAllDatabases();
-    
+
   }
 
   async token(): Promise<TokenModel> {
@@ -55,6 +55,16 @@ export class AuthService {
       return token;
     } else {
       this.loggedIn = false;
+
+      this.mode = await this.http.get(this.apiUrl + '/api/business/mode').toPromise() as string;
+
+      if (this.mode === 'single-user') {
+        token = await this.login('default', null, 'serendip', null);
+        if (token) {
+          return token;
+        }
+      }
+
       throw new Error("cant get token");
     }
   }
@@ -208,7 +218,7 @@ export class AuthGuard implements CanActivate {
     private authService: AuthService,
     private businessService: BusinessService,
     private router: Router
-  ) {}
+  ) { }
 
   /**
    * Main function of [AuthGuard] checks [AuthService.loggedIn] and set "lastUrl" in localStorage before redirecting to auth/login

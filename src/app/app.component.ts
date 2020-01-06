@@ -12,6 +12,10 @@ import { Subscription } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import swal from "sweetalert2";
 import { environment } from "src/environments/environment";
+import { DataService } from './data.service';
+import { BusinessService } from './business.service';
+import { AuthService } from './auth.service';
+import { ObService } from './ob.service';
 
 @Component({
   selector: "app-root",
@@ -27,7 +31,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
   routerSubscription: Subscription;
 
-  constructor(private router: Router) {
+  constructor(
+    private dataService: DataService,
+    private businessService: BusinessService,
+    private authService: AuthService,
+    private obService: ObService,
+    private router: Router
+  ) {
     // setInterval(() => {
     //   this.loggedIn = this.authService.loggedIn;
     // }, 1000);
@@ -50,7 +60,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   updatePwa() {
-    navigator.serviceWorker.getRegistration().then(function(registration) {
+    navigator.serviceWorker.getRegistration().then(function (registration) {
       caches.delete("cache-from-zip");
 
       if (registration) {
@@ -62,6 +72,10 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+
+  
+
     swal.setDefaults({
       buttonsStyling: false,
       cancelButtonText: "Cancel",
@@ -71,6 +85,17 @@ export class AppComponent implements OnInit, OnDestroy {
     this.routerSubscription = this.router.events.subscribe(
       async (event: any) => {
         this.routerLoading = true;
+
+
+        if (!this.authService.loggedIn) {
+          this.routerLoading = true;
+          (async () => {
+
+            this.routerLoading = false;
+
+          })().then(() => { }).catch(console.error);
+        }
+
         if (
           event instanceof NavigationEnd ||
           event instanceof NavigationCancel
@@ -79,5 +104,9 @@ export class AppComponent implements OnInit, OnDestroy {
         }
       }
     );
+
+
+
   }
+
 }

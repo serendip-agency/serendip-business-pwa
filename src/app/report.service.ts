@@ -189,8 +189,6 @@ export class ReportService {
       return;
     }
 
-    console.log(format);
-
     if (format.method === "aggregate") {
       aggregation = await this.dataService.aggregate(
         rawReport.entityName,
@@ -220,7 +218,7 @@ export class ReportService {
             value: "$value"
           }
         }
-      ]);
+      ] as any);
 
       aggregation = aggregation.map(p => {
         if (!p.name) p.name = "null";
@@ -305,12 +303,12 @@ export class ReportService {
             value: "$value"
           }
         }
-      ].find(p => p);
+      ].find((p : any) => p) as any;
 
       // console.log(JSON.stringify(pipeline, null, 2));
       aggregation = await this.dataService.aggregate(
         rawReport.entityName,
-        pipeline
+        pipeline as any
       );
 
       const groupBy = _.groupBy(aggregation, p => p.group);

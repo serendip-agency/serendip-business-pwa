@@ -9,6 +9,7 @@ import { TokenModel } from "serendip-business-model";
 import { querystring } from "serendip-utility";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "src/environments/environment";
+import { DashboardService } from '../dashboard.service';
 
 @Component({
   selector: "app-auth",
@@ -52,7 +53,7 @@ export class AuthComponent implements OnInit {
     ];
 
     return this.sanitizer.bypassSecurityTrustHtml(
-      input.toString().replace(/\d(?=[^<>]*(<|$))/g, function($0) {
+      input.toString().replace(/\d(?=[^<>]*(<|$))/g, function ($0) {
         return map[$0];
       })
     );
@@ -61,12 +62,13 @@ export class AuthComponent implements OnInit {
     public snackBar: MatSnackBar,
     public router: Router,
     public authService: AuthService,
+    public dashboardService: DashboardService,
     public activatedRoute: ActivatedRoute,
     public ref: ChangeDetectorRef,
     public dataService: DataService,
     private http: HttpClient,
     public sanitizer: DomSanitizer
-  ) {}
+  ) { }
 
   async login(mode?: "user-pass" | "two-factor" | "one-time") {
     if (mode === "user-pass") {
@@ -382,7 +384,7 @@ export class AuthComponent implements OnInit {
     }
   }
 
-  loginWithCode() {}
+  loginWithCode() { }
   async logout() {
     await this.authService.logout();
 
@@ -403,7 +405,7 @@ export class AuthComponent implements OnInit {
     this.initiating = true;
     try {
       await this.authService.token();
-    } catch (error) {}
+    } catch (error) { }
 
     this.qs = querystring.toObject(location.href.toString());
 

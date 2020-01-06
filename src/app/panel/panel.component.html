@@ -44,7 +44,7 @@
           business</button>
         <button [routerLink]="['/panel','settings','change-password']" mat-menu-item>Change
           password</button>
-        <button mat-menu-item (click)="dashboardService.logout()">Logout</button>
+        <button mat-menu-item *ngIf="authService.mode !== 'single-user'" (click)="dashboardService.logout()">Logout</button>
       </mat-menu>
 
 
