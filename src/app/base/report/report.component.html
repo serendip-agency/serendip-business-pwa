@@ -1,6 +1,6 @@
 <div class="widget" *ngIf="layout == 'widget'">
   <mat-card class="report">
-    <mat-card-header >
+    <mat-card-header>
 
 
       <div class="menu" [class.active]="mode == 'chart'"
@@ -61,15 +61,15 @@
 
     <mat-card-content *ngIf="initDone && !error">
       <div class="form-wrapper report-save" *ngIf="mode == 'save' && report">
-        <app-form-text-input [label]="'نام گزارش'" (modelChange)="report.label = $event" [model]="report.label">
+        <app-form-text-input [label]="'Report name'" (modelChange)="report.label = $event" [model]="report.label">
         </app-form-text-input>
         <app-form-radio-input (modelChange)="saveMode = $event" [model]="!report.offline ? 'report' : 'data'" [data]="[
-            { value: 'report', label: 'ذخیره گزارش' },
-            { value: 'data', label: 'ذخیره گزارش و نتیجه' }
+            { value: 'report', label: 'Save' },
+            { value: 'data', label: 'Save and show' }
           ]"></app-form-radio-input>
       </div>
 
-      <div class="report-chart form-wrapper" *ngIf="!formatsLoading && !resultLoading && mode == 'format'">
+      <div class="report-chart form-wrapper" *ngIf=" !resultLoading && mode == 'format'">
         <!-- <label for="">نوع نتیجه‌گیری از این گزارش را انتخاب کنید:</label>
 
         <app-form-radio-input
@@ -84,7 +84,7 @@
 
 
         <app-form-select-input [selectType]="'single'" [model]="format?.options?.groupBy" [label]="
-            'ویژگی‌ای را برای گروه بندی اطلاعات انتخاب کنید ' 
+            'Group by ' 
           " [data]="analyzeFieldsForSelect.groupBy" (modelChange)="
             format.options.groupBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
@@ -92,15 +92,14 @@
 
 
         <app-form-select-input [selectType]="'single'" [model]="format?.options?.dateBy" [label]="
-            'ویژگی‌ای را برای معیار زمان  (X) انتخاب کنید'           
+            'Time Axis'           
           " [data]="analyzeFieldsForSelect.dateBy" (modelChange)="
             format.options.dateBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
           "></app-form-select-input>
 
-        <app-form-select-input [selectType]="'single'" [model]="format?.options?.valueBy"
-          [label]="'ویژگی را برای مقدار هر نقطه انتخاب کنید  (Y)'" [data]="analyzeFieldsForSelect.valueBy "
-          (modelChange)="
+        <app-form-select-input [selectType]="'single'" [model]="format?.options?.valueBy" [label]="'Value axis'"
+          [data]="analyzeFieldsForSelect.valueBy " (modelChange)="
             format.options.valueBy = $event;
             WidgetChange.emit({ inputs: { format: format } })
           "></app-form-select-input>
@@ -113,15 +112,15 @@
       </div>
       <div *ngIf="formatted && mode == 'chart'">
         <div class="form-wrapper" style="text-align: center;">
-          <div class="double-field" *ngIf="format?.type != '1d'" style="max-width: 400px">
+          <div class="double-field chart-date-fields" *ngIf="format?.type != '1d'" style="max-width: 400px">
             <div class="w-20">
-              <app-form-select-input [data]="dateRangeUnitsToSelect" [label]="'بازه‌های زمانی'" [selectType]="'single'"
+              <app-form-select-input [data]="dateRangeUnitsToSelect" [label]="'Date ranges'" [selectType]="'single'"
                 (modelChange)="formatDateRangeUnitChange($event)" [modelTrackBy]="['unit', 'format']"
                 [model]="format.options.dateRangeUnit"></app-form-select-input>
             </div>
 
             <div class="w-20">
-              <app-form-text-input [label]="'تعداد بازه'" dir="ltr" (modelChange)="
+              <app-form-text-input [label]="'Range count'" dir="ltr" (modelChange)="
                   format.options.dateRangeCount = $event;
                   generateFormat();
                   WidgetChange.emit({ inputs: { format: format } })
@@ -129,7 +128,7 @@
             </div>
 
             <div class="w-60">
-              <app-form-date-input [label]="'تا تاریخ'" dir="ltr" (modelChange)="
+              <app-form-date-input [label]="'Date end'" dir="ltr" (modelChange)="
                   format.options.dateRangeEnd = $event;
                   generateFormat();
                   WidgetChange.emit({ inputs: { format: format } })
@@ -158,11 +157,11 @@
           <div class="title" *ngIf="format.type == '1d'">
             {{
               format?.options?.valueBy
-                ? "مجموع " + format?.options?.valueBy.label
-                : "تعداد رکورد‌ها"
+                ? "aggregate " + format?.options?.valueBy.label
+                : "document count"
             }}
-            در
-            {{ title || entityName }} به تفکیک
+            for
+            {{ title || entityName }} grouped by
             {{
               format?.options?.groupBy?.label
                 ? format?.options?.groupBy?.label
@@ -171,17 +170,17 @@
           </div>
 
           <div class="title" *ngIf="format.type == '2d'">
-            بررسی
+            Analyze
             {{
               format?.options?.valueBy?.label
-                ? "مجموع " + format?.options?.valueBy?.label + " های "
-                : "تعداد"
+                ? "sum of " + format?.options?.valueBy?.label
+                : "count"
             }}
-            {{ title || entityName }} در طول زمان به تفکیک
+            {{ title || entityName }} in timelines
             {{
               format?.options?.groupBy?.label
-                ? format?.options?.groupBy?.label
-                : format?.options?.groupBy?.name
+                ? 'grouped by ' + format?.options?.groupBy?.label
+                :  'grouped by ' + format?.options?.groupBy?.name
             }}
           </div>
         </div>
@@ -289,8 +288,8 @@
         report &&
         (mode == 'chart' || mode == 'format')
       ">
-      <button *ngIf="mode == 'format'" (click)="generateFormat()">
-        <span>نمایش نتیجه</span>
+      <button mat-raised-button *ngIf="mode == 'format'" (click)="generateFormat()">
+        <span>Show</span>
       </button>
 
       <button *ngIf="mode == 'chart'" (click)="setMode('format')">
@@ -334,7 +333,7 @@
         <img src="assets/icons/office-paper-work-pen.svg" /> Edit selected
       </button>
 
-      <button  mat-button  (click)="delete()" *ngIf="selected.length > 0">
+      <button mat-button (click)="delete()" *ngIf="selected.length > 0">
         <img src="assets/icons/recycle-bin-trash.svg" /> Remove selected({{selected.length}})
       </button>
 

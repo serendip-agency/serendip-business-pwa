@@ -134,13 +134,13 @@ export class ReportService {
       },
       skip
         ? {
-            $skip: skip
-          }
+          $skip: skip
+        }
         : null,
       limit
         ? {
-            $limit: limit
-          }
+          $limit: limit
+        }
         : null
     ].filter(p => p);
 
@@ -196,8 +196,11 @@ export class ReportService {
       );
     }
 
+    console.log(JSON.stringify(format, null, 2));
+
+
     if (format.method === "analyze1d") {
-      if (!format.options.groupBy || !format.options.valueBy) {
+      if (!format.options.groupBy.value) {
         return;
       }
 
@@ -207,8 +210,11 @@ export class ReportService {
         },
         {
           $group: {
-            _id: "$" + format.options.groupBy.name,
-            value: format.options.valueBy.operator
+            _id: "$" + format.options.groupBy.value.name,
+            value: format.options.valueBy && format.options.valueBy.operator ?
+              format.options.valueBy.operator : {
+                $sum: 1
+              }
           }
         },
         {
@@ -227,7 +233,7 @@ export class ReportService {
     }
 
     if (format.method === "analyze2d") {
-      if (!format.options.valueBy || !format.options.dateBy) {
+      if (!format.options.dateBy.value) {
         return;
       }
 
@@ -245,7 +251,7 @@ export class ReportService {
               $lte: [
                 {
                   $convert: {
-                    input: "$" + format.options.dateBy.name,
+                    input: "$" + format.options.dateBy.value.name,
                     to: "date"
                   }
                 },
@@ -262,7 +268,7 @@ export class ReportService {
               $gte: [
                 {
                   $convert: {
-                    input: "$" + format.options.dateBy.name,
+                    input: "$" + format.options.dateBy.value.name,
                     to: "date"
                   }
                 },
@@ -277,22 +283,24 @@ export class ReportService {
           $group: {
             _id: {
               ...(format.options.groupBy
-                ? { group: "$" + format.options.groupBy.name }
+                ? { group: "$" + format.options.groupBy.value.name }
                 : {}),
               ...{
                 date: {
                   $dateToString: {
-                    date: { $toDate: "$" + format.options.dateBy.name },
+                    date: { $toDate: "$" + format.options.dateBy.value.name },
                     format:
                       format.options.dateRangeUnit === "minute" ||
-                      format.options.dateRangeUnit === "hour"
+                        format.options.dateRangeUnit === "hour"
                         ? "%Y-%m-%d %M:%S"
                         : "%Y-%m-%d"
                   }
                 }
               }
             },
-            value: format.options.valueBy.operator
+            value: format.options.valueBy && format.options.valueBy.operator ? format.options.valueBy.operator : {
+              $sum: 1
+            }
           }
         },
         {
@@ -303,7 +311,7 @@ export class ReportService {
             value: "$value"
           }
         }
-      ].find((p : any) => p) as any;
+      ].filter((p: any) => p) as any;
 
       // console.log(JSON.stringify(pipeline, null, 2));
       aggregation = await this.dataService.aggregate(

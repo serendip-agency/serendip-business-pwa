@@ -73,9 +73,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-
-  
-
     swal.setDefaults({
       buttonsStyling: false,
       cancelButtonText: "Cancel",

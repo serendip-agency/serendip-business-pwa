@@ -64,9 +64,13 @@ export class DashboardService {
     });
 
     this.obService.listen("_entity").subscribe(msg => {
-      setTimeout(() => {
+      if (this.setSchemaTimeout) {
+        clearTimeout(this.setSchemaTimeout);
+      }
+
+      this.setSchemaTimeout = setTimeout(() => {
         this.setDefaultSchema();
-      }, 100);
+      }, 1000);
     });
   }
   logout() {
@@ -131,7 +135,7 @@ export class DashboardService {
       product: "base",
       icon: "copy",
       title: "Collections",
-      tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name).filter((p: string) => !p.startsWith('_')))).map(
+      tabs: _.uniq(entityTypes.concat(entitiesInDb.map(p => p.name))).filter((p: string) => !p.startsWith('_')).map(
         (name: any) => {
           return {
             icon: "copy",

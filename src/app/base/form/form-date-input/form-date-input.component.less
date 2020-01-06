@@ -1,76 +1,89 @@
 .helpers-container {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+
+  height  : 30px;
+  overflow: hidden;
+
+
   .helpers {
-    height: 30px;
-    width: 100%;
-    transition: opacity ease 0.25s;
+    width           : 100%;
+    transition      : opacity ease 0.25s;
     transition-delay: 0;
-    overflow: hidden;
+
     ul {
-    display: none;
+      display: none;
 
       padding: 0;
-      margin: 0;
-      height: 30px;
+      margin : 0;
+      height : 30px;
+
       li {
-        padding: 0;
-        margin: 0;
-        float: right;
-        width: 20%;
-        display: block;
-        font-size: 9px;
-        text-align: center;
+        padding    : 0;
+        margin     : 0;
+        float      : right;
+        width      : 20%;
+        display    : block;
+        font-size  : 9px;
+        text-align : center;
         font-weight: 500;
-        box-sizing: border-box;
+        box-sizing : border-box;
         line-height: 30px;
-        padding: 0 2px;
-        opacity: 0;
-        transition: all ease 0.1s;
+        padding    : 0 2px;
+        opacity    : 0;
+        transition : all ease 0.1s;
         user-select: none;
 
         span {
-          border: 2px solid rgb(230, 230, 230);
-          display: block;
+          border       : 2px solid rgb(230, 230, 230);
+          display      : block;
           border-radius: 15px;
-          height: 30px;
-          line-height: 26px;
-          box-sizing: border-box;
-          cursor: pointer;
+          height       : 30px;
+          line-height  : 26px;
+          box-sizing   : border-box;
+          cursor       : pointer;
         }
 
         &:active {
           span {
             background: #6c87c3;
-            border: 2px solid #fff;
-            color: #fff;
+            border    : 2px solid #fff;
+            color     : #fff;
           }
         }
 
         &:nth-child(1) {
           transition-delay: 300ms;
         }
+
         &:nth-child(2) {
           transition-delay: 350ms;
         }
+
         &:nth-child(3) {
           transition-delay: 400ms;
         }
+
         &:nth-child(4) {
           transition-delay: 450ms;
         }
+
         &:nth-child(5) {
           transition-delay: 500ms;
+
           span {
             background: rgb(240, 240, 240);
           }
         }
       }
     }
+
     &.fadeIn {
-      display:block;
+      display         : block;
       transition-delay: 0;
+
       ul {
         display: block;
+
         li {
           opacity: 1;
         }

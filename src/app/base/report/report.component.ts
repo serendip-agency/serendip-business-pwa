@@ -293,7 +293,7 @@ export class ReportComponent implements OnInit {
       });
     });
 
-    fields.unshift({ label: "انتخاب نشده", value: null });
+    fields.unshift({ label: "Not selected", value: null });
 
     this.analyzeFieldsForSelect = {
       groupBy: fields.filter(
@@ -309,7 +309,7 @@ export class ReportComponent implements OnInit {
         .reduce((prev, curr) => {
           if (!curr.value) {
             prev.push({
-              label: "شمارش تعداد رکوردها",
+              label: "Count documents",
               value: curr.value || "",
               operator: {
                 $sum: 1
@@ -317,7 +317,7 @@ export class ReportComponent implements OnInit {
             });
           } else {
             prev.push({
-              label: "مجموع " + _.clone(curr.label),
+              label: "Sum of " + _.clone(curr.label),
               value: curr.value,
               operator: {
                 $sum: "$" + curr.value.name
@@ -325,7 +325,7 @@ export class ReportComponent implements OnInit {
             });
 
             prev.push({
-              label: "میانگین " + _.clone(curr.label),
+              label: "Average of " + _.clone(curr.label),
               value: curr.value,
               operator: {
                 $avg: "$" + curr.value.name
@@ -340,11 +340,11 @@ export class ReportComponent implements OnInit {
   getFormatTypes() {
     return [
       {
-        label: `بررسی ${this.title} به تفکیک ویژگی`,
+        label: `Analyze ${this.title} By group`,
         value: "1d"
       },
       {
-        label: `بررسی ${this.title} در طول زمان`,
+        label: `Analyze ${this.title} on timeline`,
         value: "2d"
       }
     ];
@@ -368,20 +368,20 @@ export class ReportComponent implements OnInit {
       this.format.options.dateRangeUnitEnd = new Date().toString();
     }
 
-    if (this.format.options.groupBy) {
+    if (this.format.options.groupBy && this.format.options.groupBy.value) {
       this.format.method = "analyze1d";
       this.format.type = "1d";
     }
 
-    if (this.format.options.dateBy) {
-      if (!this.format.options.groupBy) {
+    if (this.format.options.dateBy && this.format.options.dateBy.value) {
+      if (!this.format.options.groupBy.value) {
         return;
       }
       this.format.method = "analyze2d";
       this.format.type = "2d";
     }
 
-    if (this.format.options.sizeBy) {
+    if (this.format.options.sizeBy && this.format.options.sizeBy.value) {
       if (!this.format.options.dateBy || !this.format.options.groupBy) {
         return;
       }

@@ -21,7 +21,7 @@
       <input
         dir="ltr"
         matInput
-        placeholder="ساعت"
+        placeholder="Time"
         [showMaskTyped]="true"
         (focus)="dateHelpers = false; timeHelpers = true"
         (mousemove)="dateHelpers = false; timeHelpers = true"
@@ -34,12 +34,16 @@
     </mat-form-field>
   </div>
 
+ 
+
+  <div class="clearfix"></div>
+
   <div class="helpers-container">
     <div class="helpers" [class.fadeIn]=" dateHelpers">
       <ul>
         <li>
           <span (click)="model = moment().toDate(); inputsChange()">
-            الان
+            Now
           </span>
         </li>
 
@@ -52,7 +56,7 @@
               inputsChange()
             "
           >
-            - روز
+            - Day
           </span>
         </li>
 
@@ -65,7 +69,7 @@
               inputsChange()
             "
           >
-            + روز
+            + Day
           </span>
         </li>
 
@@ -78,7 +82,7 @@
               inputsChange()
             "
           >
-            - ماه
+            - Month
           </span>
         </li>
 
@@ -91,7 +95,7 @@
               inputsChange()
             "
           >
-            + ماه
+            + Month
           </span>
         </li>
       </ul>
@@ -109,7 +113,7 @@
               inputsChange()
             "
           >
-            -{{ 1 | rpd }} ساعت
+            -{{ 1 | rpd }} Hour
           </span>
         </li>
 
@@ -123,7 +127,7 @@
               inputsChange()
             "
           >
-            +{{ 1 | rpd }} ساعت
+            +{{ 1 | rpd }} Hour
           </span>
         </li>
 
@@ -137,7 +141,7 @@
               inputsChange()
             "
           >
-            -{{ 15 | rpd }} دقیقه
+            -{{ 15 | rpd }} Minute
           </span>
         </li>
 
@@ -151,7 +155,7 @@
               inputsChange()
             "
           >
-            +{{ 15 | rpd }} دقیقه
+            +{{ 15 | rpd }} Minute
           </span>
         </li>
 
@@ -165,12 +169,10 @@
               inputsChange()
             "
           >
-            +{{ 30 | rpd }} دقیقه
+            +{{ 30 | rpd }} Minute
           </span>
         </li>
       </ul>
     </div>
   </div>
-
-  <div class="clearfix"></div>
 </div>
