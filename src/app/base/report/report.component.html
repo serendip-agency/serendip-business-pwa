@@ -292,12 +292,12 @@
         <span>Show</span>
       </button>
 
-      <button *ngIf="mode == 'chart'" (click)="setMode('format')">
-        <img src="assets/icons/settings-adjust-reg.svg" />
+      <button *ngIf="mode == 'chart'" mat-raised-button (click)="setMode('format')">
+        Settings
       </button>
 
-      <button *ngIf="mode == 'chart'" (click)="generateFormat()">
-        <img src="assets/icons/refresh.svg" />
+      <button *ngIf="mode == 'chart'" mat-raised-button (click)="generateFormat()">
+        Refresh
       </button>
 
       <div class="clearfix"></div>
